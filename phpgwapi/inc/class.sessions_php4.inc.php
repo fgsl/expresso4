@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Session management                                      *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -30,7 +32,7 @@
 		{
 			$this->sessions_();
 			//controls the time out for php4 sessions - skwashd 18-May-2003
-			ini_set('session.gc_maxlifetime', $GLOBALS['phpgw_info']['server']['sessions_timeout']);
+			ini_set('session.gc_maxlifetime', GlobalService::get('phpgw_info')['server']['sessions_timeout']);
 			session_name('sessionid');
 			
 		}
@@ -43,7 +45,7 @@
 			}
 			session_id($this->sessionid);
 			session_start();
-			return $GLOBALS['phpgw_session'] = $_SESSION['phpgw_session'];
+			return GlobalService::set('phpgw_session', $_SESSION['phpgw_session']);
 		}
 
 		function set_cookie_params($domain)
@@ -62,17 +64,17 @@
 		{
 			// session_start() is now called in new_session_id() !!!
 
-			$GLOBALS['phpgw_session']['session_id'] = $this->sessionid;
-			$GLOBALS['phpgw_session']['session_lid'] = $login;
-			$GLOBALS['phpgw_session']['session_ip'] = $user_ip;
-			$GLOBALS['phpgw_session']['session_logintime'] = $now;
-			$GLOBALS['phpgw_session']['session_dla'] = $now;
-			$GLOBALS['phpgw_session']['session_action'] = $_SERVER['PHP_SELF'];
-			$GLOBALS['phpgw_session']['session_flags'] = $session_flags;
+			GlobalService::get('phpgw_session')['session_id'] = $this->sessionid;
+			GlobalService::get('phpgw_session')['session_lid'] = $login;
+			GlobalService::get('phpgw_session')['session_ip'] = $user_ip;
+			GlobalService::get('phpgw_session')['session_logintime'] = $now;
+			GlobalService::get('phpgw_session')['session_dla'] = $now;
+			GlobalService::get('phpgw_session')['session_action'] = $_SERVER['PHP_SELF'];
+			GlobalService::get('phpgw_session')['session_flags'] = $session_flags;
 			// we need the install-id to differ between serveral installs shareing one tmp-dir
-			$GLOBALS['phpgw_session']['session_install_id'] = $GLOBALS['phpgw_info']['server']['install_id'];
+			GlobalService::get('phpgw_session')['session_install_id'] = GlobalService::get('phpgw_info')['server']['install_id'];
 
-			$_SESSION['phpgw_session'] = $GLOBALS['phpgw_session'];
+			$_SESSION['phpgw_session'] = GlobalService::get('phpgw_session');
 		}
 
 		// This will update the DateLastActive column, so the login does not expire
@@ -94,10 +96,10 @@
 				$action = $this->xmlrpc_method_called;
 			}
 
-			$GLOBALS['phpgw_session']['session_dla'] = time();
-			$GLOBALS['phpgw_session']['session_action'] = $action;
+			GlobalService::get('phpgw_session')['session_dla'] = time();
+			GlobalService::get('phpgw_session')['session_action'] = $action;
 
-			$_SESSION['phpgw_session'] = $GLOBALS['phpgw_session'];
+			$_SESSION['phpgw_session'] = GlobalService::get('phpgw_session');
 
 			return True;
 		}
@@ -110,10 +112,10 @@
 			else $this->logout_access( $id, $sid );
 			
 			// Only do the following, if where working with the current user
-			if ( $sid === $GLOBALS['phpgw_info']['user']['sessionid'] ) {
+			if ( $sid === GlobalService::get('phpgw_info')['user']['sessionid'] ) {
 				session_unset();
 				@session_destroy();
-				if ( $GLOBALS['phpgw_info']['server']['usecookies'] ) $this->phpgw_setcookie( session_name() );
+				if ( GlobalService::get('phpgw_info')['server']['usecookies'] ) $this->phpgw_setcookie( session_name() );
 				return true;
 			}
 			switch ( ini_get( 'session.save_handler' ) ) {
@@ -124,7 +126,7 @@
 					break;
 				
 				case 'memcached':
-					$memcache = new Memcached();
+					$memcache = new \Memcached();
 					$url      = parse_url( ini_get( 'session.save_path' ) );
 					$prefix   = ini_get( 'memcached.sess_prefix' );
 					$memcache->addServer( $url['host'], $url['port'] );
@@ -145,37 +147,37 @@
 		{
 			$account_id = get_account_id($accountid,$this->account_id);
 
-			$GLOBALS['phpgw_session']['phpgw_app_sessions']['phpgwapi']['phpgw_info_cache'] = '';
+			GlobalService::get('phpgw_session')['phpgw_app_sessions']['phpgwapi']['phpgw_info_cache'] = '';
 
-			$_SESSION['phpgw_session'] = $GLOBALS['phpgw_session'];
+			$_SESSION['phpgw_session'] = GlobalService::get('phpgw_session');
 		}
 
 		function appsession($location = 'default', $appname = '', $data = '##NOTHING##')
 		{
 			if (! $appname)
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 
 			/* This allows the user to put '' as the value. */
 			if ($data == '##NOTHING##')
 			{
 				// I added these into seperate steps for easier debugging
-				$data = $GLOBALS['phpgw_session']['phpgw_app_sessions'][$appname][$location]['content'];
+				$data = GlobalService::get('phpgw_session')['phpgw_app_sessions'][$appname][$location]['content'];
 
 				/* do not decrypt and return if no data (decrypt returning garbage) */
 				if($data)
 				{
-					$data = $GLOBALS['phpgw']->crypto->decrypt($data);
+					$data = GlobalService::get('phpgw')->crypto->decrypt($data);
 					//echo "appsession returning: location='$location',app='$appname',data=$data"; _debug_array($data);
 					return $data;
 				}
 			}
 			else
 			{
-				$encrypteddata = $GLOBALS['phpgw']->crypto->encrypt($data);
-				$GLOBALS['phpgw_session']['phpgw_app_sessions'][$appname][$location]['content'] = $encrypteddata;
-				$_SESSION['phpgw_session'] = $GLOBALS['phpgw_session'];
+				$encrypteddata = GlobalService::get('phpgw')->crypto->encrypt($data);
+				GlobalService::get('phpgw_session')['phpgw_app_sessions'][$appname][$location]['content'] = $encrypteddata;
+				$_SESSION['phpgw_session'] = GlobalService::get('phpgw_session');
 				return $data;
 			}
 			return false;
@@ -183,7 +185,7 @@
 		
 		function cache( $location = 'default', $appname = null, $data = null )
 		{
-			if ( is_null($appname) ) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if ( is_null($appname) ) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			
 			/* This allows the user to put '' as the value. */
 			if ( is_null($data) ) {
@@ -205,7 +207,7 @@
 					
 				case 'memcached':
 					
-					$memcache = new Memcached();
+					$memcache = new \Memcached();
 					$url      = parse_url( ini_get( 'session.save_path' ) );
 					$prefix   = ini_get( 'memcached.sess_prefix' );
 					$memcache->addServer( $url['host'], $url['port'] );
@@ -229,7 +231,7 @@
 		{
 			$changed = false;
 			$time = time();
-			$maxmatchs = $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'];
+			$maxmatchs = GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'];
 			$restore = $this->cache('currentsessions_session_data');
 			$result = ( isset($restore) && (!is_null($restore['timestamp'])) && $restore['timestamp'] > ($time-(60*60)) )?
 				$restore :
@@ -258,7 +260,7 @@
 					case 'memcached':
 						
 						$keys = array();
-						$memcache = new Memcached();
+						$memcache = new \Memcached();
 						$url = parse_url( ini_get( 'session.save_path' ) );
 						$memcache->addServer( $url['host'], $url['port'] );
 						foreach ( $memcache->getAllKeys() as $key )

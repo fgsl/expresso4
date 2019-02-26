@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -27,7 +29,7 @@
 		function boacl($session=False)
 		{
 			$this->so = CreateObject('news_admin.soacl');
-			$this->accounts = $GLOBALS['phpgw']->accounts->get_list('groups');
+			$this->accounts = GlobalService::get('phpgw')->accounts->get_list('groups');
 			$this->debug = False;
 			//all this is only needed when called from uiacl. not from ui,
 			if($session)
@@ -64,12 +66,12 @@
 				'limit' => $this->limit,
 			);
 			if($this->debug) { echo '<br>Read:'; _debug_array($data); }
-			$GLOBALS['phpgw']->session->appsession('session_data','news_admin_acl',$data);
+			GlobalService::get('phpgw')->session->appsession('session_data','news_admin_acl',$data);
 		}
 
 		function read_sessiondata()
 		{
-			$data = $GLOBALS['phpgw']->session->appsession('session_data','news_admin_acl');
+			$data = GlobalService::get('phpgw')->session->appsession('session_data','news_admin_acl');
 			if($this->debug) { echo '<br>Read:'; _debug_array($data); }
 
 			$this->start  = $data['start'];
@@ -115,7 +117,7 @@
 					(in_array($account_id,$readcat) ? PHPGW_ACL_READ : False);
 				if ($rights)
 				{
-					$GLOBALS['phpgw']->acl->add_repository('news_admin','L'.$cat_id,$account_id,$rights);
+					GlobalService::get('phpgw')->acl->add_repository('news_admin','L'.$cat_id,$account_id,$rights);
 				}
 			}
 		}
@@ -123,6 +125,6 @@
 		//access permissions for current user
 		function get_permissions($inc_groups = False)
 		{
-			return $this->so->get_permissions($GLOBALS['phpgw_info']['user']['account_id'], $inc_groups);
+			return $this->so->get_permissions(GlobalService::get('phpgw_info')['user']['account_id'], $inc_groups);
 		}
 	}

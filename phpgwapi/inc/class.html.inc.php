@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - HTML creation class                                         *
 * http://www.eGroupWare.org                                                *
@@ -33,11 +35,11 @@ class html
 		$this->prefered_img_title = $this->netscape4 ? 'alt' : 'title';
 		//echo "<p>HTTP_USER_AGENT='$_SERVER[HTTP_USER_AGENT]', UserAgent: '$this->user_agent', Version: '$this->ua_version', img_title: '$this->prefered_img_title'</p>\n";
 
-		if ($GLOBALS['phpgw']->translation)
+		if (GlobalService::get('phpgw')->translation)
 		{
-			$this->charset = $GLOBALS['phpgw']->translation->charset();
+			$this->charset = GlobalService::get('phpgw')->translation->charset();
 		}
-		$this->phpgwapi_js_url = $GLOBALS['phpgw_info']['server']['webserver_url'].'/phpgwapi/js';
+		$this->phpgwapi_js_url = GlobalService::get('phpgw_info')['server']['webserver_url'].'/phpgwapi/js';
 	}
 
 	/**
@@ -75,9 +77,9 @@ class html
 	{
 		if (!$this->wz_tooltip_included)
 		{
-			if (!strstr('wz_tooltip',$GLOBALS['phpgw_info']['flags']['need_footer']))
+			if (!strstr('wz_tooltip',GlobalService::get('phpgw_info')['flags']['need_footer']))
 			{
-				$GLOBALS['phpgw_info']['flags']['need_footer'] .= '<script language="JavaScript" type="text/javascript" src="'.$this->phpgwapi_js_url.'/wz_tooltip/wz_tooltip.js"></script>'."\n";
+				GlobalService::get('phpgw_info')['flags']['need_footer'] .= '<script language="JavaScript" type="text/javascript" src="'.$this->phpgwapi_js_url.'/wz_tooltip/wz_tooltip.js"></script>'."\n";
 			}
 			$this->wz_tooltip_included = True;
 		}
@@ -238,13 +240,13 @@ class html
 	 *
 	 * Please note: it need to be called before the call to phpgw_header() !!!
 	 * @author ralfbecker
-	 * @param $name string name and id of the input-field
-	 * @param $content string of the htmlarea (will be run through htmlspecialchars !!!), default ''
-	 * @param $style string inline styles, eg. dimension of textarea element
-	 * @param $base_href string set a base href to get relative image-pathes working
-	 * @param $plugins string plugins to load seperated by comma's, eg 'TableOperations,ContextMenu'
+	 * @param string $name string name and id of the input-field
+	 * @param string $content string of the htmlarea (will be run through htmlspecialchars !!!), default ''
+	 * @param string $style string inline styles, eg. dimension of textarea element
+	 * @param string $base_href string set a base href to get relative image-pathes working
+	 * @param string $plugins string plugins to load seperated by comma's, eg 'TableOperations,ContextMenu'
 	 * (htmlarea breaks when a plugin calls a nonexisiting lang file)
-	 * @return the necessary html for the textarea
+	 * @return string the necessary html for the textarea
 	 */
 	function htmlarea($name,$content='',$style='',$base_href='',$plugins='')
 	{
@@ -256,27 +258,27 @@ class html
 		}
 		if (!$plugins) $plugins = 'ContextMenu,TableOperations,SpellChecker';
 
-		if (!is_object($GLOBALS['phpgw']->js))
+		if (!is_object(GlobalService::get('phpgw')->js))
 		{
-			$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+			GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 		}
-		if (!strstr($GLOBALS['phpgw_info']['flags']['java_script'],'htmlarea'))
+		if (!strstr(GlobalService::get('phpgw_info')['flags']['java_script'],'htmlarea'))
 		{
-			$GLOBALS['phpgw']->js->validate_file('htmlarea','htmlarea');
-			$GLOBALS['phpgw']->js->validate_file('htmlarea','dialog');
-			$lang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+			GlobalService::get('phpgw')->js->validate_file('htmlarea','htmlarea');
+			GlobalService::get('phpgw')->js->validate_file('htmlarea','dialog');
+			$lang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 			if ($lang == 'en')	// other lang-files are utf-8 only and incomplete (crashes htmlarea as of 3.0beta)
 			{
-				$GLOBALS['phpgw']->js->validate_file('htmlarea',"lang/$lang");
+				GlobalService::get('phpgw')->js->validate_file('htmlarea',"lang/$lang");
 			}
 			else
 			{
-				$GLOBALS['phpgw_info']['flags']['java_script'] .=
+				GlobalService::get('phpgw_info')['flags']['java_script'] .=
 					'<script type="text/javascript" src="'.preg_replace('/[?&]*click_history=[0-9a-f]*/','',
-					$GLOBALS['phpgw']->link('/phpgwapi/inc/htmlarea-lang.php',array('lang'=>$lang))).'"></script>'."\n";
+					GlobalService::get('phpgw')->link('/phpgwapi/inc/htmlarea-lang.php',array('lang'=>$lang))).'"></script>'."\n";
 			}
 
-			$GLOBALS['phpgw_info']['flags']['java_script_thirst'] .=
+			GlobalService::get('phpgw_info')['flags']['java_script_thirst'] .=
 				'<style type="text/css">@import url(' . $this->phpgwapi_js_url . '/htmlarea/htmlarea.css);</style>
 <script type="text/javascript">
 
@@ -288,8 +290,8 @@ _editor_url = "'."$this->phpgwapi_js_url/htmlarea/".'";
 			// set a base href to get relative image-pathes working
 			if ($base_href && $this->user_agent != 'msie')	// HTMLarea does not work in IE with base href set !!!
 			{
-				$GLOBALS['phpgw_info']['flags']['java_script_thirst'] .= '<base href="'.
-					($base_href[0] != '/' && substr($base_href,0,4) != 'http' ? $GLOBALS['phpgw_info']['server']['webserver_url'].'/' : '').
+				GlobalService::get('phpgw_info')['flags']['java_script_thirst'] .= '<base href="'.
+					($base_href[0] != '/' && substr($base_href,0,4) != 'http' ? GlobalService::get('phpgw_info')['server']['webserver_url'].'/' : '').
 					$base_href.'" />'."\n";
 			}
 
@@ -306,23 +308,23 @@ _editor_url = "'."$this->phpgwapi_js_url/htmlarea/".'";
 						continue;	// else htmlarea fails with js errors
 					}
 					$script_name = strtolower(preg_replace('/([A-Z][a-z]+)([A-Z][a-z]+)/','\\1-\\2',$plg_name));
-					$GLOBALS['phpgw']->js->validate_file('htmlarea',"plugins/$plg_name/$script_name");
+					GlobalService::get('phpgw')->js->validate_file('htmlarea',"plugins/$plg_name/$script_name");
 					if ($lang == 'en' || !@file_exists($plg_lang_script))	// other lang-files are utf-8 only and incomplete (crashes htmlarea as of 3.0beta)
 					{
-						$GLOBALS['phpgw']->js->validate_file('htmlarea',"plugins/$plg_name/lang/$lang");
+						GlobalService::get('phpgw')->js->validate_file('htmlarea',"plugins/$plg_name/lang/$lang");
 					}
 					else
 					{
-						$GLOBALS['phpgw_info']['flags']['java_script'] .=
+						GlobalService::get('phpgw_info')['flags']['java_script'] .=
 							'<script type="text/javascript" src="'.preg_replace('/[?&]*click_history=[0-9a-f]*/','',
-							$GLOBALS['phpgw']->link("/phpgwapi/js/htmlarea/plugins/$plg_name/lang/lang.php",array('lang'=>$lang))).'"></script>'."\n";
+							GlobalService::get('phpgw')->link("/phpgwapi/js/htmlarea/plugins/$plg_name/lang/lang.php",array('lang'=>$lang))).'"></script>'."\n";
 					}
 					//$load_plugin_string .= 'HTMLArea.loadPlugin("'.$plg_name.'");'."\n";
 					$register_plugin_string .= 'ret_editor = editor.registerPlugin("'.$plg_name.'");'."\n";
 				}
 			}
 
-			$GLOBALS['phpgw_info']['flags']['java_script'] .=
+			GlobalService::get('phpgw_info')['flags']['java_script'] .=
 '<script type="text/javascript">
 
 /** Replacement for the replace-helperfunction to make it possible to include plugins. */
@@ -348,11 +350,11 @@ HTMLArea.replace = function(id, config)
 var htmlareaConfig = new HTMLArea.Config();
 htmlareaConfig.editorURL = '."'$this->phpgwapi_js_url/htmlarea/';";
 
-			$GLOBALS['phpgw_info']['flags']['java_script'] .="</script>\n";
+			GlobalService::get('phpgw_info')['flags']['java_script'] .="</script>\n";
 		}
 		$id = str_replace(array('[',']'),array('_',''),$name);	// no brakets in the id allowed by js
 
-		$GLOBALS['phpgw']->js->set_onload("HTMLArea.replace('$id',htmlareaConfig);");
+		GlobalService::get('phpgw')->js->set_onload("HTMLArea.replace('$id',htmlareaConfig);");
 
 		if (!empty($style)) $style = " style=\"$style\"";
 
@@ -379,7 +381,7 @@ htmlareaConfig.editorURL = '."'$this->phpgwapi_js_url/htmlarea/';";
 		{
 			$image = str_replace(array('.gif','.GIF','.png','.PNG'),'',$image);
 
-			if (!($path = $GLOBALS['phpgw']->common->image($app,$image)))
+			if (!($path = GlobalService::get('phpgw')->common->image($app,$image)))
 			{
 			$path = $image;		// name may already contain absolut path
 			}
@@ -434,7 +436,7 @@ htmlareaConfig.editorURL = '."'$this->phpgwapi_js_url/htmlarea/';";
 			parse_str($v,$v);
 			$vars += $v;
 		}
-		return $GLOBALS['phpgw']->link($url,$vars);
+		return GlobalService::get('phpgw')->link($url,$vars);
 	}
 
 	function checkbox($name,$value='')
@@ -547,11 +549,11 @@ htmlareaConfig.editorURL = '."'$this->phpgwapi_js_url/htmlarea/';";
 	{
 		$name = str_replace(array('.gif','.GIF','.png','.PNG'),'',$name);
 
-		if (!($path = $GLOBALS['phpgw']->common->image($app,$name)))
+		if (!($path = GlobalService::get('phpgw')->common->image($app,$name)))
 		{
 			$path = $name;		// name may already contain absolut path
 		}
-		if (!@is_readable(str_replace($GLOBALS['phpgw_info']['server']['webserver_url'],PHPGW_SERVER_ROOT,$path)))
+		if (!@is_readable(str_replace(GlobalService::get('phpgw_info')['server']['webserver_url'],PHPGW_SERVER_ROOT,$path)))
 		{
 			// if the image-name is a percentage, use a progressbar
 			if (substr($name,-1) == '%' && is_numeric($percent = substr($name,0,-1)))
@@ -636,9 +638,9 @@ htmlareaConfig.editorURL = '."'$this->phpgwapi_js_url/htmlarea/';";
 	 */
 	function theme2css()
 	{
-		return ".th { background: ".$GLOBALS['phpgw_info']['theme']['th_bg']."; }\n".
-		".row_on,.th_bright { background: ".$GLOBALS['phpgw_info']['theme']['row_on']."; }\n".
-		".row_off { background: ".$GLOBALS['phpgw_info']['theme']['row_off']."; }\n";
+		return ".th { background: ".GlobalService::get('phpgw_info')['theme']['th_bg']."; }\n".
+		".row_on,.th_bright { background: ".GlobalService::get('phpgw_info')['theme']['row_on']."; }\n".
+		".row_off { background: ".GlobalService::get('phpgw_info')['theme']['row_off']."; }\n";
 	}
 
 	function style($styles)

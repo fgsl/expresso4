@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Accounts manager for LDAP                               *
 	* Written by Joseph Engo <jengo@phpgroupware.org>                          *
@@ -37,15 +39,15 @@
 
 		function accounts_()
 		{
-			$this->ds = $GLOBALS['phpgw']->common->ldapConnect();
+			$this->ds = GlobalService::get('phpgw')->common->ldapConnect();
 			if(!$this->ds)
-				$this->ds = $GLOBALS['phpgw']->common->ldapConnect();
-			if(!@is_object($GLOBALS['phpgw']->translation))
+				$this->ds = GlobalService::get('phpgw')->common->ldapConnect();
+			if(!@is_object(GlobalService::get('phpgw')->translation))
 			{
-				$GLOBALS['phpgw']->translation = CreateObject('phpgwapi.translation');
+				GlobalService::get('phpgw')->translation = CreateObject('phpgwapi.translation');
 			}
-			$this->user_context  = $GLOBALS['phpgw_info']['server']['ldap_context'];
-			$this->group_context = $GLOBALS['phpgw_info']['server']['ldap_group_context'];
+			$this->user_context  = GlobalService::get('phpgw_info')['server']['ldap_context'];
+			$this->group_context = GlobalService::get('phpgw_info')['server']['ldap_group_context'];
 		}
 
 		function read_repository()
@@ -74,7 +76,7 @@
 			{
 				$this->data['account_id']   = $allValues[0]['gidnumber'][0];
 				$this->data['account_lid']  = $allValues[0]['cn'][0];
-				$this->data['firstname']    = $GLOBALS['phpgw']->translation->convert($allValues[0]['cn'][0],'utf-8');
+				$this->data['firstname']    = GlobalService::get('phpgw')->translation->convert($allValues[0]['cn'][0],'utf-8');
 				$this->data['lastname']     = lang('Group');
 			}
 			else
@@ -82,8 +84,8 @@
 				$this->data['account_id']  = $allValues[0]['uidnumber'][0];
 				$this->data['account_primary_group'] = $allValues[0]['gidnumber'][0];
 				$this->data['account_lid'] = $allValues[0]['uid'][0];
-				$this->data['firstname']   = $GLOBALS['phpgw']->translation->convert($allValues[0]['givenname'][0],'utf-8');
-				$this->data['lastname']    = $GLOBALS['phpgw']->translation->convert($allValues[0]['sn'][0],'utf-8');
+				$this->data['firstname']   = GlobalService::get('phpgw')->translation->convert($allValues[0]['givenname'][0],'utf-8');
+				$this->data['lastname']    = GlobalService::get('phpgw')->translation->convert($allValues[0]['sn'][0],'utf-8');
 				if(isset($allValues[0]['mail'][0]))
 				{
 					$this->data['email'] = $allValues[0]['mail'][0];
@@ -104,11 +106,11 @@
 				$this->data['agree_terms']   = $allValues[0]['phpgwagreeterm'][0];
 			}
 			$this->data['account_dn']  = $allValues[0]['dn'];
-			$this->data['fullname']    = $GLOBALS['phpgw']->translation->convert($allValues[0]['cn'][0],'utf-8');
+			$this->data['fullname']    = GlobalService::get('phpgw')->translation->convert($allValues[0]['cn'][0],'utf-8');
 
 			/* jakjr: this is not used for expressoLivre */
 			/*
-			if ($GLOBALS['phpgw_info']['server']['ldap_extra_attributes'])
+			if (GlobalService::get('phpgw_info')['server']['ldap_extra_attributes'])
 			{
 				$this->data['homedirectory']  = $allValues[0]['homedirectory'][0];
 				$this->data['loginshell'] = $allValues[0]['loginshell'][0];
@@ -138,30 +140,30 @@
 			if($acct_type == 'u')
 			{
 				// data for posixaccount
-				$newData['cn'] = $GLOBALS['phpgw']->translation->convert(sprintf("%s %s",
+				$newData['cn'] = GlobalService::get('phpgw')->translation->convert(sprintf("%s %s",
 					$this->data['firstname'],
-					$this->data['lastname']),$GLOBALS['phpgw']->translation->charset(),'utf-8'
+					$this->data['lastname']),GlobalService::get('phpgw')->translation->charset(),'utf-8'
 				);
-				$newData['uid'] = $GLOBALS['phpgw']->translation->convert(
+				$newData['uid'] = GlobalService::get('phpgw')->translation->convert(
 					$this->data['account_lid'],
-					$GLOBALS['phpgw']->translation->charset(),'utf-8'
+					GlobalService::get('phpgw')->translation->charset(),'utf-8'
 				);
 				if($this->data['lastname'])
 				{
-					$newData['sn'] = $GLOBALS['phpgw']->translation->convert(
+					$newData['sn'] = GlobalService::get('phpgw')->translation->convert(
 						$this->data['lastname'],
-						$GLOBALS['phpgw']->translation->charset(),'utf-8'
+						GlobalService::get('phpgw')->translation->charset(),'utf-8'
 					);
 				}
 
 				if($this->data['firstname'])
 				{
-					$newData['givenname'] = $GLOBALS['phpgw']->translation->convert(
+					$newData['givenname'] = GlobalService::get('phpgw')->translation->convert(
 						$this->data['firstname'],
-						$GLOBALS['phpgw']->translation->charset(),'utf-8'
+						GlobalService::get('phpgw')->translation->charset(),'utf-8'
 					);
 				}
-				if ($GLOBALS['phpgw_info']['server']['ldap_extra_attributes'])
+				if (GlobalService::get('phpgw_info')['server']['ldap_extra_attributes'])
 				{
 					$newData['homedirectory'] = $this->data['homedirectory'];
 					$newData['loginshell']    = $this->data['loginshell'];
@@ -211,9 +213,9 @@
 			else
 			{
 				// data for posixgroup
-				$newData['cn'] = $GLOBALS['phpgw']->translation->convert(
+				$newData['cn'] = GlobalService::get('phpgw')->translation->convert(
 					$this->data['account_lid'],
-					$GLOBALS['phpgw']->translation->charset(), 'utf-8'
+					GlobalService::get('phpgw')->translation->charset(), 'utf-8'
 				);
 				$newData['gidnumber'] = $this->account_id;
 				$newGroupID = $newData['cn'];
@@ -236,7 +238,7 @@
 			{
 				$test = $allValues[0]['uid'][0];
 			}
-			if($GLOBALS['phpgw']->translation->convert($test,'utf-8') != $this->data['account_lid'])
+			if(GlobalService::get('phpgw')->translation->convert($test,'utf-8') != $this->data['account_lid'])
 			{
 				$oldData = $allValues[0];
 				$oldDN   = $oldData['dn'];
@@ -513,14 +515,14 @@
 				{
 					settype($allVals,'array');
 					$test = @$allVals['uid'][0];
-					if (!$GLOBALS['phpgw_info']['server']['global_denied_users'][$test] && $allVals['uid'][0])
+					if (!GlobalService::get('phpgw_info')['server']['global_denied_users'][$test] && $allVals['uid'][0])
 					{
 						$accounts[] = Array(
 							'account_id'        => $allVals['uidnumber'][0],
 							'account_lid'       => $allVals['uid'][0],
 							'account_type'      => $allVals['phpgwaccounttype'][0],
-							'account_firstname' => $GLOBALS['phpgw']->translation->convert($allVals['givenname'][0],'utf-8'),
-							'account_lastname'  => $GLOBALS['phpgw']->translation->convert($allVals['sn'][0],'utf-8'),
+							'account_firstname' => GlobalService::get('phpgw')->translation->convert($allVals['givenname'][0],'utf-8'),
+							'account_lastname'  => GlobalService::get('phpgw')->translation->convert($allVals['sn'][0],'utf-8'),
 							'account_status'    => $allVals['phpgwaccountstatus'][0],
 							'account_email'     => $allVals['mail'][0],
 						);
@@ -546,14 +548,14 @@
 				{
 					settype($allVals,'array');
 					$test = $allVals['cn'][0];
-					if (!$GLOBALS['phpgw_info']['server']['global_denied_groups'][$test] && $allVals['cn'][0])
+					if (!GlobalService::get('phpgw_info')['server']['global_denied_groups'][$test] && $allVals['cn'][0])
 					{
 						$accounts[] = Array(
 							'account_id'        => $allVals['gidnumber'][0],
 							'account_lid'       => $allVals['cn'][0],
 							'account_type'      => $allVals['phpgwaccounttype'][0],
-							'account_firstname' => $GLOBALS['phpgw']->translation->convert($allVals['givenname'][0],'utf-8'),
-							'account_lastname'  => $GLOBALS['phpgw']->translation->convert($allVals['sn'][0],'utf-8'),
+							'account_firstname' => GlobalService::get('phpgw')->translation->convert($allVals['givenname'][0],'utf-8'),
+							'account_lastname'  => GlobalService::get('phpgw')->translation->convert($allVals['sn'][0],'utf-8'),
 							'account_status'    => $allVals['phpgwaccountstatus'][0],
 							'account_email'     => $allVals['mail'][0],
 						);
@@ -580,7 +582,7 @@
 				}
 				elseif(is_int($start))
 				{
-					return array_slice($sortedAccounts, $start, $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs']);
+					return array_slice($sortedAccounts, $start, GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs']);
 				}
 				else
 				{
@@ -790,10 +792,10 @@
 				return False;
 			$allValues = ldap_get_entries($this->ds, $sri);
 
-			if ($GLOBALS['phpgw_info']['server']['ldap_extra_attributes'] && $account_info['account_type'] != 'g')
+			if (GlobalService::get('phpgw_info')['server']['ldap_extra_attributes'] && $account_info['account_type'] != 'g')
 			{
-				$entry['homedirectory'] = $account_info['homedirectory'] && $account_info['homedirectory'] != $GLOBALS['phpgw_info']['server']['ldap_account_home'] ? $account_info['homedirectory'] : $GLOBALS['phpgw_info']['server']['ldap_account_home'].SEP.$account_info['account_lid'];
-				$entry['loginshell'] = $account_info['loginshell'] ? $account_info['loginshell'] : $GLOBALS['phpgw_info']['server']['ldap_account_shell'];
+				$entry['homedirectory'] = $account_info['homedirectory'] && $account_info['homedirectory'] != GlobalService::get('phpgw_info')['server']['ldap_account_home'] ? $account_info['homedirectory'] : GlobalService::get('phpgw_info')['server']['ldap_account_home'].SEP.$account_info['account_lid'];
+				$entry['loginshell'] = $account_info['loginshell'] ? $account_info['loginshell'] : GlobalService::get('phpgw_info')['server']['ldap_account_shell'];
 			}
 			elseif($account_info['account_type'] != 'g')
 			{
@@ -840,7 +842,7 @@
 					$tmpentry['objectclass'][1] = 'person';
 					$tmpentry['objectclass'][2] = 'organizationalPerson';
 					$tmpentry['objectclass'][3] = 'inetOrgPerson';
-					$tmpentry['userpassword']   = $GLOBALS['phpgw']->common->encrypt_password($account_info['account_passwd'],False);
+					$tmpentry['userpassword']   = GlobalService::get('phpgw')->common->encrypt_password($account_info['account_passwd'],False);
 					/* $tmpentry['objectclass'][4] = 'account'; Causes problems with some LDAP servers */
 					$tmpentry['objectclass'][4] = 'posixAccount';
 					$tmpentry['objectclass'][5] = 'shadowAccount';
@@ -862,51 +864,51 @@
 					$entry['objectclass'][0] = 'top';
 					$entry['objectclass'][1] = 'posixGroup';
 					$entry['objectclass'][2] = 'phpgwAccount';
-					$entry['cn']             = $GLOBALS['phpgw']->translation->convert($account_info['account_lid'],$GLOBALS['phpgw']->translation->charset(),'utf-8');
+					$entry['cn']             = GlobalService::get('phpgw')->translation->convert($account_info['account_lid'],GlobalService::get('phpgw')->translation->charset(),'utf-8');
 					$entry['gidnumber']      = $account_id;
-					#$entry['userpassword']   = $GLOBALS['phpgw']->common->encrypt_password($account_info['account_passwd']);
+					#$entry['userpassword']   = GlobalService::get('phpgw')->common->encrypt_password($account_info['account_passwd']);
 					$entry['description']    = 'phpgw-created group';
 				}
 				else
 				{
 					$dn = 'uid=' . $account_info['account_lid'] . ',' . $this->user_context;
 
-					$entry['cn'] = $GLOBALS['phpgw']->translation->convert(
+					$entry['cn'] = GlobalService::get('phpgw')->translation->convert(
 						sprintf(
 							"%s %s",
 							$account_info['account_firstname'],
 							$account_info['account_lastname']
 						),
-						$GLOBALS['phpgw']->translation->charset(),
+						GlobalService::get('phpgw')->translation->charset(),
 						'utf-8'
 					);
 
-					$entry['sn'] = $GLOBALS['phpgw']->translation->convert(
+					$entry['sn'] = GlobalService::get('phpgw')->translation->convert(
 						$account_info['account_lastname'],
-						$GLOBALS['phpgw']->translation->charset(),
+						GlobalService::get('phpgw')->translation->charset(),
 						'utf-8'
 					);
 
 					if($account_info['account_firstname'])
 					{
-						$entry['givenname'] = $GLOBALS['phpgw']->translation->convert(
+						$entry['givenname'] = GlobalService::get('phpgw')->translation->convert(
 							$account_info['account_firstname'],
-							$GLOBALS['phpgw']->translation->charset(),
+							GlobalService::get('phpgw')->translation->charset(),
 							'utf-8'
 						);
 					}
 					if($account_info['account_email'])
 					{
-						$entry['mail'] = $GLOBALS['phpgw']->translation->convert(
+						$entry['mail'] = GlobalService::get('phpgw')->translation->convert(
 							$account_info['account_email'],
-							$GLOBALS['phpgw']->translation->charset(),
+							GlobalService::get('phpgw')->translation->charset(),
 							'utf-8'
 						);
 					}
 					$entry['uid']            = $account_info['account_lid'];
 					$entry['uidnumber']      = $account_id;
 					$entry['gidnumber']      = $account_info['account_primary_group'];
-					$entry['userpassword']   = $GLOBALS['phpgw']->common->encrypt_password($account_info['account_passwd']);
+					$entry['userpassword']   = GlobalService::get('phpgw')->common->encrypt_password($account_info['account_passwd']);
 					$entry['objectclass'][0] = 'top';
 					$entry['objectclass'][1] = 'person';
 					$entry['objectclass'][2] = 'organizationalPerson';
@@ -973,9 +975,9 @@
 				}
 			}
 
-			if($account_id && is_object($GLOBALS['phpgw']->preferences) && $default_prefs)
+			if($account_id && is_object(GlobalService::get('phpgw')->preferences) && $default_prefs)
 			{
-				$GLOBALS['phpgw']->preferences->create_defaults($account_id);
+				GlobalService::get('phpgw')->preferences->create_defaults($account_id);
 			}
 
 			return $account_id;
@@ -985,15 +987,15 @@
 		{
 			if ($expiredate == 0)
 			{
-				if(isset($GLOBALS['phpgw_info']['server']['auto_create_expire']) == True)
+				if(isset(GlobalService::get('phpgw_info')['server']['auto_create_expire']) == True)
 				{
-					if($GLOBALS['phpgw_info']['server']['auto_create_expire'] == 'never')
+					if(GlobalService::get('phpgw_info')['server']['auto_create_expire'] == 'never')
 					{
 						$expires = -1;
 					}
 					else
 					{
-						$expiredate = time() + $GLOBALS['phpgw_info']['server']['auto_create_expire'];
+						$expiredate = time() + GlobalService::get('phpgw_info')['server']['auto_create_expire'];
 					}
 				}
 			}
@@ -1008,34 +1010,34 @@
 				$expires = mktime(2,0,0,date('n',$expiredate), (int)date('d',$expiredate), date('Y',$expiredate));
 			}
 
-			$default_group_id  = $this->name2id($GLOBALS['phpgw_info']['server']['default_group_lid']);
+			$default_group_id  = $this->name2id(GlobalService::get('phpgw_info')['server']['default_group_lid']);
 			if (!$default_group_id)
 			{
 				$default_group_id = (int) $this->name2id('Default');
 			}
-			$primary_group = $GLOBALS['auto_create_acct']['primary_group'] &&
-				$this->get_type((int)$GLOBALS['auto_create_acct']['primary_group']) == 'g' ?
-				(int) $GLOBALS['auto_create_acct']['primary_group'] : $default_group_id;
+			$primary_group = GlobalService::get('auto_create_acct')['primary_group'] &&
+				$this->get_type((int)GlobalService::get('auto_create_acct')['primary_group']) == 'g' ?
+				(int) GlobalService::get('auto_create_acct')['primary_group'] : $default_group_id;
 
 			$acct_info = array(
 				'account_lid'       => $accountname,
 				'account_type'      => 'u',
 				'account_passwd'    => $passwd,
-				'account_firstname' => $GLOBALS['auto_create_acct']['firstname'] ? $GLOBALS['auto_create_acct']['firstname'] : 'New',
-				'account_lastname'  => $GLOBALS['auto_create_acct']['lastname'] ? $GLOBALS['auto_create_acct']['lastname'] : 'User',
+				'account_firstname' => GlobalService::get('auto_create_acct')['firstname'] ? GlobalService::get('auto_create_acct')['firstname'] : 'New',
+				'account_lastname'  => GlobalService::get('auto_create_acct')['lastname'] ? GlobalService::get('auto_create_acct')['lastname'] : 'User',
 				'account_status'    => $account_status,
 				'account_expires'   => $expires,
 				'account_primary_group' => $primary_group,
 			);
 
 			/* attempt to set an email address */
-			if (isset($GLOBALS['auto_create_acct']['email']) == True && $GLOBALS['auto_create_acct']['email'] != '')
+			if (isset(GlobalService::get('auto_create_acct')['email']) == True && GlobalService::get('auto_create_acct')['email'] != '')
 			{
-				$acct_info['account_email'] = $GLOBALS['auto_create_acct']['email'];
+				$acct_info['account_email'] = GlobalService::get('auto_create_acct')['email'];
 			}
-			elseif(isset($GLOBALS['phpgw_info']['server']['mail_suffix']) == True && $GLOBALS['phpgw_info']['server']['mail_suffix'] != '')
+			elseif(isset(GlobalService::get('phpgw_info')['server']['mail_suffix']) == True && GlobalService::get('phpgw_info')['server']['mail_suffix'] != '')
 			{
-				$acct_info['account_email'] = $accountname . '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$acct_info['account_email'] = $accountname . '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
 
 			$this->db->transaction_begin();
@@ -1057,35 +1059,35 @@
 				 */
 
 				/* if we have an mail address set it in the uesrs' email preference */
-				if (isset($GLOBALS['auto_create_acct']['email']) && $GLOBALS['auto_create_acct']['email'] != '')
+				if (isset(GlobalService::get('auto_create_acct')['email']) && GlobalService::get('auto_create_acct')['email'] != '')
 				{
-					$GLOBALS['phpgw']->acl->acl($accountid);        /* needed als preferences::save_repository calls acl */
-					$GLOBALS['phpgw']->preferences->preferences($accountid);
-					$GLOBALS['phpgw']->preferences->read_repository();
-					$GLOBALS['phpgw']->preferences->add('email','address',$GLOBALS['auto_create_acct']['email']);
-					$GLOBALS['phpgw']->preferences->save_repository();
+					GlobalService::get('phpgw')->acl->acl($accountid);        /* needed als preferences::save_repository calls acl */
+					GlobalService::get('phpgw')->preferences->preferences($accountid);
+					GlobalService::get('phpgw')->preferences->read_repository();
+					GlobalService::get('phpgw')->preferences->add('email','address',GlobalService::get('auto_create_acct')['email']);
+					GlobalService::get('phpgw')->preferences->save_repository();
 				}
 				/* use the default mail domain to set the uesrs' email preference  */
-				elseif(isset($GLOBALS['phpgw_info']['server']['mail_suffix']) && $GLOBALS['phpgw_info']['server']['mail_suffix'] != '')
+				elseif(isset(GlobalService::get('phpgw_info')['server']['mail_suffix']) && GlobalService::get('phpgw_info')['server']['mail_suffix'] != '')
 				{
-					$GLOBALS['phpgw']->acl->acl($accountid);        /* needed als preferences::save_repository calls acl */
-					$GLOBALS['phpgw']->preferences->preferences($accountid);
-					$GLOBALS['phpgw']->preferences->read_repository();
-					$GLOBALS['phpgw']->preferences->add('email','address', $accountname . '@' . $GLOBALS['phpgw_info']['server']['mail_suffix']);
-					$GLOBALS['phpgw']->preferences->save_repository();
+					GlobalService::get('phpgw')->acl->acl($accountid);        /* needed als preferences::save_repository calls acl */
+					GlobalService::get('phpgw')->preferences->preferences($accountid);
+					GlobalService::get('phpgw')->preferences->read_repository();
+					GlobalService::get('phpgw')->preferences->add('email','address', $accountname . '@' . GlobalService::get('phpgw_info')['server']['mail_suffix']);
+					GlobalService::get('phpgw')->preferences->save_repository();
 				}
 
 				/* commit the new account transaction */
 				$this->db->transaction_commit();
 
 				/* does anyone know what the heck this is required for? */
-				$GLOBALS['hook_values']['account_lid']	= $acct_info['account_lid'];
-				$GLOBALS['hook_values']['account_id']	= $accountid;
-				$GLOBALS['hook_values']['new_passwd']	= $acct_info['account_passwd'];
-				$GLOBALS['hook_values']['account_status'] = $acct_info['account_status'];
-				$GLOBALS['hook_values']['account_firstname'] = $acct_info['account_firstname'];
-				$GLOBALS['hook_values']['account_lastname'] = $acct_info['account_lastname'];
-				$GLOBALS['phpgw']->hooks->process($GLOBALS['hook_values']+array(
+				GlobalService::get('hook_values')['account_lid']	= $acct_info['account_lid'];
+				GlobalService::get('hook_values')['account_id']	= $accountid;
+				GlobalService::get('hook_values')['new_passwd']	= $acct_info['account_passwd'];
+				GlobalService::get('hook_values')['account_status'] = $acct_info['account_status'];
+				GlobalService::get('hook_values')['account_firstname'] = $acct_info['account_firstname'];
+				GlobalService::get('hook_values')['account_lastname'] = $acct_info['account_lastname'];
+				GlobalService::get('phpgw')->hooks->process(GlobalService::get('hook_values')+array(
 					'location' => 'addaccount'
 				),False,True);  // called for every app now, not only enabled ones
 
@@ -1124,15 +1126,15 @@
 
 			if($acct_type =='g')
 			{
-				$lid   = $GLOBALS['phpgw']->translation->convert($allValues[0]['cn'][0],'utf-8');
-				$fname = $GLOBALS['phpgw']->translation->convert($allValues[0]['cn'][0],'utf-8');
+				$lid   = GlobalService::get('phpgw')->translation->convert($allValues[0]['cn'][0],'utf-8');
+				$fname = GlobalService::get('phpgw')->translation->convert($allValues[0]['cn'][0],'utf-8');
 				$lname = lang('Group');
 			}
 			else
 			{
-				$lid   = $GLOBALS['phpgw']->translation->convert($allValues[0]['uid'][0],'utf-8');
-				$fname = $GLOBALS['phpgw']->translation->convert($allValues[0]['givenname'][0],'utf-8');
-				$lname = $GLOBALS['phpgw']->translation->convert($allValues[0]['sn'][0],'utf-8');
+				$lid   = GlobalService::get('phpgw')->translation->convert($allValues[0]['uid'][0],'utf-8');
+				$fname = GlobalService::get('phpgw')->translation->convert($allValues[0]['givenname'][0],'utf-8');
+				$lname = GlobalService::get('phpgw')->translation->convert($allValues[0]['sn'][0],'utf-8');
 			}
 			return !empty($lid);
 		}
@@ -1158,7 +1160,7 @@
 		//by JakJr, add organization support
 		function get_organization($dn)
 		{
-			$ldap_context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			$ldap_context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 			$end = (strpos($dn, $ldap_context)-1);
 			$tmp =  substr($dn, 0, $end);
 			$begin = (strrpos($tmp, '=')+1);

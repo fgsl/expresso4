@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Utilies loader                                          *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -41,12 +43,12 @@
 
 		function utilities_()
 		{
-			//      $GLOBALS['phpgw']->rssparser = CreateObject("phpgwapi.rssparser");
-			//      $GLOBALS['phpgw']->clientsniffer = CreateObject("phpgwapi.clientsniffer");
-			//      $GLOBALS['phpgw']->http = CreateObject("phpgwapi.http");
-			//     $GLOBALS['phpgw']->matrixview = CreateObject("phpgwapi.matrixview");
-			//     $GLOBALS['phpgw']->menutree = CreateObject("phpgwapi.menutree");
-			$GLOBALS['phpgw']->sbox = CreateObject('phpgwapi.portalbox');
+			//      GlobalService::get('phpgw')->rssparser = CreateObject("phpgwapi.rssparser");
+			//      GlobalService::get('phpgw')->clientsniffer = CreateObject("phpgwapi.clientsniffer");
+			//      GlobalService::get('phpgw')->http = CreateObject("phpgwapi.http");
+			//     GlobalService::get('phpgw')->matrixview = CreateObject("phpgwapi.matrixview");
+			//     GlobalService::get('phpgw')->menutree = CreateObject("phpgwapi.menutree");
+			GlobalService::get('phpgw')->sbox = CreateObject('phpgwapi.portalbox');
 		}
 	}
 ?>

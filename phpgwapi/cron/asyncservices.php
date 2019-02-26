@@ -1,3 +1,6 @@
+<?php
+use Expresso\Core\GlobalService;
+?>
 #!/usr/bin/php -q
 <?php
 /**************************************************************************\
@@ -47,7 +50,7 @@ async_log( "asyncservice started" );
 $path_to_egroupware = realpath(dirname(__FILE__).'/../..');
 
 // 'noapi' => true : this stops header.inc.php to include phpgwapi/inc/function.inc.php
-$GLOBALS['phpgw_info']['flags'] = array(
+GlobalService::get('phpgw_info')['flags'] = array(
 	'currentapp'	=> 'login',
 	'noapi'			=> true,
 );
@@ -58,10 +61,10 @@ if ( !is_readable( $path_to_egroupware.'/header.inc.php' ) ) {
 }
 
 include($path_to_egroupware.'/header.inc.php');
-unset($GLOBALS['phpgw_info']['flags']['noapi']);
+unset(GlobalService::get('phpgw_info')['flags']['noapi']);
 
-$db_type = $GLOBALS['phpgw_domain'][$_GET['domain']]['db_type'];
-if ( !isset($GLOBALS['phpgw_domain'][$_GET['domain']]) || empty($db_type) ) {
+$db_type = GlobalService::get('phpgw_domain')[$_GET['domain']]['db_type'];
+if ( !isset(GlobalService::get('phpgw_domain')[$_GET['domain']]) || empty($db_type) ) {
 	async_log( "asyncservice.php: Domain '$_GET[domain]' is not configured or renamed, exiting !!!" );
 	exit(1);
 }
@@ -76,7 +79,7 @@ if ( ( !extension_loaded( $db_type ) ) && !( version_compare( PHP_VERSION, '5.3.
 }
 
 // No php4-sessions availible for cgi
-$GLOBALS['phpgw_info']['server']['sessions_type'] = 'db';
+GlobalService::get('phpgw_info')['server']['sessions_type'] = 'db';
 
 include(PHPGW_API_INC.'/functions.inc.php');
 $preferences = createobject('phpgwapi.preferences');
@@ -85,4 +88,4 @@ $preferences->read();
 $num = ExecMethod('phpgwapi.asyncservice.check_run','crontab');
 async_log( $num ? "$num job(s) executed\n" : 'Nothing to execute'."\n" );
 
-$GLOBALS['phpgw']->common->phpgw_exit();
+GlobalService::get('phpgw')->common->phpgw_exit();

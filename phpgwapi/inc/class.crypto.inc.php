@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Crypto                                                  *
   * This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -36,9 +38,9 @@
 
 		function crypto($vars='')
 		{
-			if($GLOBALS['phpgw_info']['flags']['currentapp'] == 'login' ||
-				$GLOBALS['phpgw_info']['flags']['currentapp'] == 'logout' ||
-				$GLOBALS['phpgw_info']['flags']['currentapp'] == 'home'
+			if(GlobalService::get('phpgw_info')['flags']['currentapp'] == 'login' ||
+				GlobalService::get('phpgw_info')['flags']['currentapp'] == 'logout' ||
+				GlobalService::get('phpgw_info')['flags']['currentapp'] == 'home'
 			)
 			{
 				$this->debug = False;
@@ -55,15 +57,15 @@
 			$key = $vars[0];
 			$iv  = $vars[1];
 
-			if($GLOBALS['phpgw_info']['server']['mcrypt_enabled'] && extension_loaded('mcrypt'))
+			if(GlobalService::get('phpgw_info')['server']['mcrypt_enabled'] && extension_loaded('mcrypt'))
 			{
-				if($GLOBALS['phpgw_info']['server']['mcrypt_algo'])
+				if(GlobalService::get('phpgw_info')['server']['mcrypt_algo'])
 				{
-					$this->algo = $GLOBALS['phpgw_info']['server']['mcrypt_algo'];
+					$this->algo = GlobalService::get('phpgw_info')['server']['mcrypt_algo'];
 				}
-				if($GLOBALS['phpgw_info']['server']['mcrypt_mode'])
+				if(GlobalService::get('phpgw_info')['server']['mcrypt_mode'])
 				{
-					$this->mode = $GLOBALS['phpgw_info']['server']['mcrypt_mode'];
+					$this->mode = GlobalService::get('phpgw_info')['server']['mcrypt_mode'];
 				}
 
 				if($this->debug)
@@ -73,7 +75,7 @@
 				}
 
 				$this->enabled = True;
-				$this->mcrypt_version = $GLOBALS['phpgw_info']['server']['versions']['mcrypt'];
+				$this->mcrypt_version = GlobalService::get('phpgw_info')['server']['versions']['mcrypt'];
 				if($this->mcrypt_version == 'old')
 				{
 					$this->td = False;

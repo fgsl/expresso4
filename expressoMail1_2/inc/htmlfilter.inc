@@ -39,7 +39,7 @@
  *
  * htmlfilter.inc.new will contain no debugging calls.
  *
- * @param  $message  A string with the message to output.
+ * @param  $message string A string with the message to output.
  * @return           void.
  */
 function spew($message){
@@ -54,10 +54,10 @@ function spew($message){
  * of attributes, and the type of the tag. This function is called by 
  * sanitize internally.
  *
- * @param  $tagname  the name of the tag.
- * @param  $attary   the array of attributes and their values
- * @param  $tagtype  The type of the tag (see in comments).
- * @return           a string with the final tag representation.
+ * @param  $tagname  string the name of the tag.
+ * @param  $attary   array the array of attributes and their values
+ * @param  $tagtype  string The type of the tag (see in comments).
+ * @return           string a string with the final tag representation.
  */
 function tagprint($tagname, $attary, $tagtype){
     $me = 'tagprint';
@@ -82,24 +82,24 @@ function tagprint($tagname, $attary, $tagtype){
 }
 
 /**
- * A small helper function to use with array_walk. Modifies a by-ref
+ * A small helper function to use with array_walk. Modifies a
  * value and makes it lowercase.
  *
- * @param  $val a value passed by-ref.
- * @return      void since it modifies a by-ref value.
+ * @param  $val string a value.
+ * @return string
  */
-function casenormalize(&$val){
-    $val = strtolower($val);
+function casenormalize($val){
+    return strtolower($val);
 }
 
 /**
  * This function skips any whitespace from the current position within
  * a string and to the next non-whitespace value.
  * 
- * @param  $body   the string
- * @param  $offset the offset within the string where we should start
+ * @param  $body   string the string
+ * @param  $offset string the offset within the string where we should start
  *                 looking for the next non-whitespace character.
- * @return         the location within the $body where the next
+ * @return         string the location within the $body where the next
  *                 non-whitespace char is located.
  */
 function skipspace($body, $offset){
@@ -118,10 +118,10 @@ function skipspace($body, $offset){
  * really just a glorified "strpos", except it catches the failures
  * nicely.
  *
- * @param  $body   The string to look for needle in.
- * @param  $offset Start looking from this position.
- * @param  $needle The character/string to look for.
- * @return         location of the next occurance of the needle, or
+ * @param  $body   string The string to look for needle in.
+ * @param  $offset integer Start looking from this position.
+ * @param  $needle string The character/string to look for.
+ * @return         integer location of the next occurance of the needle, or
  *                 strlen($body) if needle wasn't found.
  */
 function findnxstr($body, $offset, $needle){
@@ -139,10 +139,10 @@ function findnxstr($body, $offset, $needle){
  * This function takes a PCRE-style regexp and tries to match it
  * within the string.
  *
- * @param  $body   The string to look for needle in.
- * @param  $offset Start looking from here.
- * @param  $reg    A PCRE-style regex to match.
- * @return         Returns a false if no matches found, or an array
+ * @param  $body   string The string to look for needle in.
+ * @param  $offset integer Start looking from here.
+ * @param  $reg    string A PCRE-style regex to match.
+ * @return         boolean | array Returns a false if no matches found, or an array
  *                 with the following members:
  *                 - integer with the location of the match within $body
  *                 - string with whatever content between offset and the match
@@ -512,10 +512,10 @@ function getnxtag($body, $offset){
 /**
  * Translates entities into literal values so they can be checked.
  *
- * @param $attvalue the by-ref value to check.
- * @param $regex    the regular expression to check against.
- * @param $hex      whether the entites are hexadecimal.
- * @return          True or False depending on whether there were matches.
+ * @param $attvalue mixed the by-ref value to check.
+ * @param $regex    string the regular expression to check against.
+ * @param $hex      boolean whether the entites are hexadecimal.
+ * @return          boolean True or False depending on whether there were matches.
  */
 function deent(&$attvalue, $regex, $hex=false){
     $me = 'deent';
@@ -548,8 +548,7 @@ function deent(&$attvalue, $regex, $hex=false){
  * and returns them translated into 8-bit strings so we can run
  * checks on them.
  *
- * @param  $attvalue A string to run entity check against.
- * @return           Nothing, modifies a reference value.
+ * @param  $attvalue string A string to run entity check against.
  */
 function defang(&$attvalue){
     $me = 'defang';
@@ -579,8 +578,7 @@ function defang(&$attvalue){
  * makers of the browser with 95% market value decided that it'd
  * be funny to make "java[tab]script" be just as good as "javascript".
  * 
- * @param  attvalue  The attribute value before extraneous spaces removed.
- * @return attvalue  Nothing, modifies a reference value.
+ * @param  attvalue mixed The attribute value before extraneous spaces removed.
  */
 function unspace(&$attvalue){
     $me = 'unspace';
@@ -595,11 +593,11 @@ function unspace(&$attvalue){
 /**
  * This function runs various checks against the attributes.
  *
- * @param  $tagname         String with the name of the tag.
- * @param  $attary          Array with all tag attributes.
- * @param  $rm_attnames     See description for sanitize
- * @param  $bad_attvals     See description for sanitize
- * @param  $add_attr_to_tag See description for sanitize
+ * @param  $tagname         string String with the name of the tag.
+ * @param  $attary          array Array with all tag attributes.
+ * @param  $rm_attnames     string See description for sanitize
+ * @param  $bad_attvals     string See description for sanitize
+ * @param  $add_attr_to_tag string See description for sanitize
  * @return                  Array with modified attributes.
  */
 function fixatts($tagname, 
@@ -860,15 +858,15 @@ function fixatts($tagname,
  *
  *
  *
- * @param $body                 the string with HTML you wish to filter
- * @param $tag_list             see description above
- * @param $rm_tags_with_content see description above
- * @param $self_closing_tags    see description above
- * @param $force_tag_closing    see description above
- * @param $rm_attnames          see description above
- * @param $bad_attvals          see description above
- * @param $add_attr_to_tag      see description above
- * @return                      sanitized html safe to show on your pages.
+ * @param $body                 string the string with HTML you wish to filter
+ * @param $tag_list             string see description above
+ * @param $rm_tags_with_content string see description above
+ * @param $self_closing_tags    string see description above
+ * @param $force_tag_closing    string see description above
+ * @param $rm_attnames          string see description above
+ * @param $bad_attvals          string see description above
+ * @param $add_attr_to_tag      string see description above
+ * @return                      string sanitized html safe to show on your pages.
  */
 function sanitize($body, 
                   $tag_list, 

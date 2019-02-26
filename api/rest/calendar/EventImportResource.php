@@ -13,7 +13,7 @@ class EventImportResource extends CatalogAdapter
 
 	public function setDocumentation() {
 
-		$this->setResource("VCALENDAR","/vcalendar/import/#","Recebe um hash e importa o compromisso na agenda. Substitua # por um hash válido gerado pelo Expresso.",array("GET"));
+		$this->setResource("VCALENDAR","/vcalendar/import/#","Recebe um hash e importa o compromisso na agenda. Substitua # por um hash vï¿½lido gerado pelo Expresso.",array("GET"));
 		$this->setIsMobile(true);
 	}
 
@@ -70,8 +70,8 @@ class EventImportResource extends CatalogAdapter
 					$y = date('Y', strtotime($dateStart)); //get date year
 					$now = date('Y-m-d G:i:s'); //current date and time
 					$eventdate = date('Y-m-d G:i:s', strtotime($dateStart)); //user friendly date
-					$dtStart = new DateTime($eventdate);
-					$dtStart->sub(new DateInterval('PT3H'));
+					$dtStart = new \DateTime($eventdate);
+					$dtStart->sub(new \DateInterval('PT3H'));
 				} else {
 					$dateStart = str_replace('T', '', $dateStart); //remove T
 					$d = date('d', strtotime($dateStart)); //get date day
@@ -79,7 +79,7 @@ class EventImportResource extends CatalogAdapter
 					$y = date('Y', strtotime($dateStart)); //get date year
 					$now = date('Y-m-d G:i:s'); //current date and time
 					$eventdate = date('Y-m-d G:i:s', strtotime($dateStart)); //user friendly date
-					$dtStart = new DateTime($eventdate);
+					$dtStart = new \DateTime($eventdate);
 				}
 
 				$dateEnd = $event->DTEND . ''; //get date from ical
@@ -91,8 +91,8 @@ class EventImportResource extends CatalogAdapter
 					$y = date('Y', strtotime($dateEnd)); //get date year
 					$now = date('Y-m-d G:i:s'); //current date and time
 					$eventdate = date('Y-m-d G:i:s', strtotime($dateEnd)); //user friendly date
-					$dtEnd = new DateTime($eventdate);
-					$dtEnd->sub(new DateInterval('PT3H'));
+					$dtEnd = new \DateTime($eventdate);
+					$dtEnd->sub(new \DateInterval('PT3H'));
 				} else {
 					$dateEnd = str_replace('T', '', $dateEnd); //remove T
 					$d = date('d', strtotime($dateEnd)); //get date day
@@ -100,7 +100,7 @@ class EventImportResource extends CatalogAdapter
 					$y = date('Y', strtotime($dateEnd)); //get date year
 					$now = date('Y-m-d G:i:s'); //current date and time
 					$eventdate = date('Y-m-d G:i:s', strtotime($dateEnd)); //user friendly date
-					$dtEnd = new DateTime($eventdate);
+					$dtEnd = new \DateTime($eventdate);
 				}
 
 				$dateNow = date(strtotime('now'));

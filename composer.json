@@ -1,0 +1,30 @@
+{
+	"name" : "fgsl/expresso4",
+	"description" : "Groupware",
+	"type" : "groupware",
+	"keywords" : [
+		"Addressbook",
+		"Collaboration",
+		"Contact",
+		"Calendar",
+		"Groupware"
+	],
+	"homepage" : "http://www.tine20.org",
+	"license" : "AGPL-3.0",
+	"require" : {
+		"php" : "^7.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^6.0"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Expresso\\" : "src/"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"ExpressoTest\\" : "test/"
+		}
+	}
+}

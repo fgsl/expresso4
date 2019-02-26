@@ -1,5 +1,7 @@
 <?php
-if ( $GLOBALS['phpgw_info']['server']['deny_all_logins'] ) {
+use Expresso\Core\GlobalService;
+
+if ( GlobalService::get('phpgw_info')['server']['deny_all_logins'] ) {
 	if ( !empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest' ) {
 		if ( preg_match( '#application/json#', $_SERVER['HTTP_ACCEPT'] ) ) {
 			header( 'Content-Type: application/json' );

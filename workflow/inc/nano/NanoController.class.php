@@ -125,7 +125,7 @@ class NanoController
      * Enter description here...
      *
      * @param boolean $print_data
-     * @return unknown
+     * @return mixed
      */
     public function iterateOverVirtualRequests()
     {
@@ -142,7 +142,7 @@ class NanoController
 
                 $output['data'] = $this->_mObjNanoRequest->executeRequest();
             }
-            catch (Exception $exception)
+            catch (\Exception $exception)
             {
                 $output['exception'] = $exception->getMessage();
             }

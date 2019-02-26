@@ -2,7 +2,7 @@
 require_once('class.utils.php');
 /**
  * Contains useful methods for string handling that extend standard PHP set and include new tools
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @author Marcos Pont
  * @version 1.0
  * @link http://workflow.celepar.parana/doc-workflow/classes/stringutils Complete reference
@@ -14,7 +14,7 @@ class StringUtils extends Utils
 	/**
 	 * Strips all blank  characters from the beginning and end of a string
 	 * @param string $str
-	 * @return result string
+	 * @return string result
 	 * @access public 
 	 */
 	function allTrim($str) {
@@ -107,8 +107,8 @@ class StringUtils extends Utils
 	/**
 	 * Search a string in another string 
 	 * @param string $str reference string  
-	 * @param $sValue search string
-	 * @param $caseSensitive caseSensitive true or false 
+	 * @param $sValue string search
+	 * @param $caseSensitive boolean caseSensitive true or false 
 	 * @return string position of  first occurrence of  sValue in str 
 	 * @access public
 	 */
@@ -208,7 +208,7 @@ class StringUtils extends Utils
 	 * Concat two strings
 	 * @param string $str first string
 	 * @param string $concat second string
-	 * @return result string 
+	 * @return string result 
 	 */
 	function concat($str, $concat) {
 		return $str . $concat;
@@ -228,9 +228,9 @@ class StringUtils extends Utils
 	
 	/**
 	 * Insert a value in a determined  position in a string
-	 * @param $str reference string
-	 * @param $insValue value to insert
-	 * @param $insPos insert position 
+	 * @param $str string reference
+	 * @param $insValue string value to insert
+	 * @param $insPos integer insert position 
 	 * @return string 
 	 * @access public
 	 */
@@ -574,7 +574,7 @@ class StringUtils extends Utils
 	
 	/**
 	 * Insert Char in string 
-	 * @param $str reference string 
+	 * @param $str string reference 
 	 * @param bool $stringEmpty 
 	 * @param string $char 
 	 * @return string 
@@ -618,7 +618,7 @@ class StringUtils extends Utils
 	/**
 	 * Wrap  ....
 	 * 
-	 * @param $str reference string 
+	 * @param $str string reference 
 	 * @param string $breakString separator
 	 * @return string  $processed  
 	 * @access public
@@ -651,7 +651,7 @@ class StringUtils extends Utils
 		// divide a string em linhas de um array
 		$line = explode("\n", $str);
 		$size = sizeof($line);
-		// calcula a largura maxima da numeraçao de acordo com o numero de linhas
+		// calcula a largura maxima da numeraï¿½ao de acordo com o numero de linhas
 		$width = strlen((string)($start + $size -1));
 		$indent = max($width, $indent);
 		// gera a numeraï¿½ï¿½o de linhas da string

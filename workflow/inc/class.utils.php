@@ -229,7 +229,7 @@ class Utils
 	
 	/**
 	 * Return Environment variable
-	 * @return enviroment variable
+	 * @return string | null enviroment variable
 	 * @access public
 	 */	
 	function get($key) {

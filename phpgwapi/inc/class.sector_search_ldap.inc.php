@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 /* * ************************************************************************\
  * phpGroupWare API - Accounts manager for LDAP                             *
  * Written by Joao Alfredo Knopik Junior <jakje@celepar.pr.gov.br>          *
@@ -48,10 +50,10 @@ class sector_search_ldap {
 		$this->sector_context = $sector_context;
 		$this->sector_level = $sector_level;
 		$this->sector_leaf = $sector_leaf;
-		$this->_server_conf = $GLOBALS['phpgw_info']['server'];
+		$this->_server_conf = GlobalService::get('phpgw_info')['server'];
 	}
 	
-	// All levels of ou´s, organizations (first level) and sectors (rest levels)
+	// All levels of ouï¿½s, organizations (first level) and sectors (rest levels)
 	function sector_search($ldap_context, $clear_static_vars=true) {
 		static $sectors_list = array();
 		static $level = 0;
@@ -100,7 +102,7 @@ class sector_search_ldap {
 		return $sectors_list;
 	}
 	
-	// Retorna os organizações com os options prontos
+	// Retorna os organizaï¿½ï¿½es com os options prontos
 	// Parametro master: realiza ldap_connect utilizando dados do Contact Center, permitindo buscas completas em todos os ldaps.
 	function get_organizations($context, $selected='', $referral=false, $show_invisible_ou=false, $master=false, $filter_config=false) {
 		if ($master) {
@@ -137,7 +139,7 @@ class sector_search_ldap {
 		
 			ldap_close($ldap_conn);
 			
-			// Retiro o count do array info e inverto o array para ordenação.
+			// Retiro o count do array info e inverto o array para ordenaï¿½ï¿½o.
 			if( $info["count"] == 0) {
 				return $options = "<option value='$context' selected=\"selected\"> $context </option>";
 			}
@@ -145,7 +147,7 @@ class sector_search_ldap {
 			for ($i = 0; $i < $info["count"]; $i++) {
 				$dn = $info[$i]["dn"];
 				
-				// Necessário, pq em uma busca com ldapsearch objectClass=organizationalUnit, traz tb o próprio ou.
+				// Necessï¿½rio, pq em uma busca com ldapsearch objectClass=organizationalUnit, traz tb o prï¿½prio ou.
 				if (strtolower($dn) == $context)
 					continue;
 				
@@ -163,10 +165,10 @@ class sector_search_ldap {
 			}
 
 			if (is_array($inverted_dn)) {
-				// Ordenação
+				// Ordenaï¿½ï¿½o
 				natcasesort($inverted_dn);
 				
-				// Construção do select
+				// Construï¿½ï¿½o do select
 				$level = 0;
 				foreach ($inverted_dn as $dn => $invert_ufn) {
 					$display = '';
@@ -251,7 +253,7 @@ class sector_search_ldap {
 	{
 		if ( is_null($this->_my_org_units) ) {
 			
-			$this->_my_org_units = new stdClass();
+			$this->_my_org_units = new \stdClass();
 			$this->_my_org_units->allow = isset($this->_server_conf['my_org_units'])? unserialize($this->_server_conf['my_org_units']) : array();
 			
 			$conn = ldap_connect($this->_server_conf['ldap_host']);

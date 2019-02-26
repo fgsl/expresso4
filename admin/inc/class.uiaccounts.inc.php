@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - account administration                                      *
 	* http://www.egroupware.org                                                *
@@ -55,7 +57,7 @@
 
 		function row_action($action,$type,$account_id)
 		{
-			return '<a href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+			return '<a href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 				'menuaction' => 'admin.uiaccounts.'.$action.'_'.$type,
 				'account_id' => $account_id
 			)).'"> '.lang($action).' </a>';
@@ -63,18 +65,18 @@
 
 		function list_groups()
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
 
-			$GLOBALS['cd'] = ($_GET['cd']?$_GET['cd']:0);
+			GlobalService::set('cd',($_GET['cd']?$_GET['cd']:0));
 
 			if(isset($_POST['query']))
 			{
 				// limit query to limit characters
 				if(preg_match('/^[a-z_0-9]+$/i',$_POST['query']))
-					$GLOBALS['query'] = $_POST['query'];
+					GlobalService::set('query', $_POST['query']);
 			}
 			
 			if(isset($_POST['start']))
@@ -107,16 +109,16 @@
 					break;
 			}
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['admin']['title'].' - '.
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['admin']['title'].' - '.
 				lang('User groups');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(
@@ -128,18 +130,18 @@
 			$p->set_block('groups','row','row');
 			$p->set_block('groups','row_empty','row_empty');
 
-			if (! $GLOBALS['phpgw']->acl->check('account_access',2,'admin'))
+			if (! GlobalService::get('phpgw')->acl->check('account_access',2,'admin'))
 			{
-				$account_info = $GLOBALS['phpgw']->accounts->get_list('groups',$start,$sort, $order, $GLOBALS['query']);
+				$account_info = GlobalService::get('phpgw')->accounts->get_list('groups',$start,$sort, $order, GlobalService::get('query'));
 			}
 			else
 			{
-				$account_info = $GLOBALS['phpgw']->accounts->get_list('groups',$start,$sort, $order);
+				$account_info = GlobalService::get('phpgw')->accounts->get_list('groups',$start,$sort, $order);
 			}
-			$total = $GLOBALS['phpgw']->accounts->total;
+			$total = GlobalService::get('phpgw')->accounts->total;
 
 			$var = Array(
-				'th_bg'             => $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg'             => GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'left_next_matchs'  => $this->nextmatchs->left('/index.php',$start,$total,'menuaction=admin.uiaccounts.list_groups'),
 				'right_next_matchs' => $this->nextmatchs->right('/index.php',$start,$total,'menuaction=admin.uiaccounts.list_groups'),
 				'lang_groups' => lang('%1 - %2 of %3 user groups',$start+1,$start+count($account_info),$total),
@@ -156,17 +158,17 @@
 			}
 			else
 			{
-				if (! $GLOBALS['phpgw']->acl->check('group_access',8,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('group_access',8,'admin'))
 				{
 					$can_view = True;
 				}
 
-				if (! $GLOBALS['phpgw']->acl->check('group_access',16,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('group_access',16,'admin'))
 				{
 					$can_edit = True;
 				}
 
-				if (! $GLOBALS['phpgw']->acl->check('group_access',32,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('group_access',32,'admin'))
 				{
 					$can_delete = True;
 				}
@@ -204,19 +206,19 @@
 				}
 			}
 			$var = Array(
-				'new_action'    => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.add_group'),
-				'search_action' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_groups')
+				'new_action'    => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.add_group'),
+				'search_action' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_groups')
 			);
 			$p->set_var($var);
 
-			if (! $GLOBALS['phpgw']->acl->check('group_access',4,'admin'))
+			if (! GlobalService::get('phpgw')->acl->check('group_access',4,'admin'))
 			{
 				$p->set_var('input_add','<input type="submit" value="' . lang('Add') . '">');
 			}
 
-			if (! $GLOBALS['phpgw']->acl->check('group_access',2,'admin'))
+			if (! GlobalService::get('phpgw')->acl->check('group_access',2,'admin'))
 			{
-				$p->set_var('input_search',lang('Search') . '&nbsp;<input name="query" value="'.htmlspecialchars(stripslashes($GLOBALS['query'])).'">');
+				$p->set_var('input_search',lang('Search') . '&nbsp;<input name="query" value="'.htmlspecialchars(stripslashes(GlobalService::get('query'))).'">');
 			}
 
 			$p->pfp('out','list');
@@ -224,13 +226,13 @@
 
 		function list_users($param_cd='')
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('account_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
 
 			if($param_cd)
@@ -242,7 +244,7 @@
 			{
 				// limit query to limit characters
 				if(preg_match('/^[a-z_0-9]+$/i',$_REQUEST['query']))
-					$GLOBALS['query'] = $_REQUEST['query'];
+					GlobalService::get('query') = $_REQUEST['query'];
 			}
 			
 			if(isset($_REQUEST['start']))
@@ -278,16 +280,16 @@
 					break;
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['admin']['title'].' - '.
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['admin']['title'].' - '.
 				lang('User accounts');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 
@@ -307,12 +309,12 @@
 				'order' => $order,
 				'query_type' => $_REQUEST['query_type'],
 			);
-			if (!$GLOBALS['phpgw']->acl->check('account_access',2,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('account_access',2,'admin'))
 			{
-				$search_param['query'] = $GLOBALS['query'];
+				$search_param['query'] = GlobalService::get('query');
 			}
-			$account_info = $GLOBALS['phpgw']->accounts->search($search_param);
-			$total = $GLOBALS['phpgw']->accounts->total;
+			$account_info = GlobalService::get('phpgw')->accounts->search($search_param);
+			$total = GlobalService::get('phpgw')->accounts->total;
 
 			$link_data = array(
 				'menuaction' => 'admin.uiaccounts.list_users',
@@ -322,8 +324,8 @@
 			$uiaccountsel = CreateObject('phpgwapi.uiaccountsel');
 			$p->set_var(array(
 				'left_next_matchs'   => $this->nextmatchs->left('/index.php',$start,$total,$link_data),
-				'lang_showing' => ($_REQUEST['group_id'] ? $GLOBALS['phpgw']->common->grab_owner_name($_REQUEST['group_id']).': ' : '').
-					($GLOBALS['query'] ? lang("Search %1 '%2'",lang($uiaccountsel->query_types[$_REQUEST['query_type']]),$GLOBALS['query']).': ' : '')
+				'lang_showing' => ($_REQUEST['group_id'] ? GlobalService::get('phpgw')->common->grab_owner_name($_REQUEST['group_id']).': ' : '').
+					(GlobalService::get('query') ? lang("Search %1 '%2'",lang($uiaccountsel->query_types[$_REQUEST['query_type']]),GlobalService::get('query')).': ' : '')
 					.$this->nextmatchs->show_hits($total,$start),
 				'right_next_matchs'  => $this->nextmatchs->right('/index.php',$start,$total,$link_data),
 				'lang_loginid'       => $this->nextmatchs->show_sort_order($sort,'account_lid',$order,'/index.php',lang('LoginID'),$link_data),
@@ -340,10 +342,10 @@
 				'sort'       => $sort,
 			);
 			$p->set_var(array(
-				'query_type' => is_array($uiaccountsel->query_types) ? $GLOBALS['phpgw']->html->select('query_type',$_REQUEST['query_type'],$uiaccountsel->query_types) : '',
+				'query_type' => is_array($uiaccountsel->query_types) ? GlobalService::get('phpgw')->html->select('query_type',$_REQUEST['query_type'],$uiaccountsel->query_types) : '',
 				'lang_group' => lang('group'),
 				'group' => $uiaccountsel->selection('group_id','admin_uiaccount_listusers_group_id',$_REQUEST['group_id'],'groups',0,False,'','this.form.submit();',lang('all')),
-				'accounts_url' => $GLOBALS['phpgw']->link('/index.php',$link_data),
+				'accounts_url' => GlobalService::get('phpgw')->link('/index.php',$link_data),
 			));
 			$letters = lang('alphabet');
 			$letters = explode(',',substr($letters,-1) != '*' ? $letters : 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z');
@@ -353,8 +355,8 @@
 				$link_data['query'] = $letter;
 				$p->set_var(array(
 					'letter' => $letter,
-					'link'   => $GLOBALS['phpgw']->link('/index.php',$link_data),
-					'class'  => $GLOBALS['query'] == $letter && $_REQUEST['query_type'] == 'start' ? 'letter_box_active' : 'letter_box',
+					'link'   => GlobalService::get('phpgw')->link('/index.php',$link_data),
+					'class'  => GlobalService::get('query') == $letter && $_REQUEST['query_type'] == 'start' ? 'letter_box_active' : 'letter_box',
 				));
 				$p->fp('letter_search_cells','letter_search',True);
 			}
@@ -362,14 +364,14 @@
 			unset($link_data['query_type']);
 			$p->set_var(array(
 				'letter' => lang('all'),
-				'link'   => $GLOBALS['phpgw']->link('/index.php',$link_data),
-				'class'  => $_REQUEST['query_type'] != 'start' || !in_array($GLOBALS['query'],$letters) ? 'letter_box_active' : 'letter_box',
+				'link'   => GlobalService::get('phpgw')->link('/index.php',$link_data),
+				'class'  => $_REQUEST['query_type'] != 'start' || !in_array(GlobalService::get('query'),$letters) ? 'letter_box_active' : 'letter_box',
 			));
 			$p->fp('letter_search_cells','letter_search',True);
 
-			if (! $GLOBALS['phpgw']->acl->check('account_access',4,'admin'))
+			if (! GlobalService::get('phpgw')->acl->check('account_access',4,'admin'))
 			{
-				$p->set_var('new_action',$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.add_user'));
+				$p->set_var('new_action',GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.add_user'));
 				$p->set_var('input_add','<input type="submit" value="' . lang('Add') . '">');
 			}
 
@@ -380,17 +382,17 @@
 			}
 			else
 			{
-				if (! $GLOBALS['phpgw']->acl->check('account_access',8,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('account_access',8,'admin'))
 				{
 					$can_view = True;
 				}
 
-				if (! $GLOBALS['phpgw']->acl->check('account_access',16,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('account_access',16,'admin'))
 				{
 					$can_edit = True;
 				}
 
-				if (! $GLOBALS['phpgw']->acl->check('account_access',32,'admin'))
+				if (! GlobalService::get('phpgw')->acl->check('account_access',32,'admin'))
 				{
 					$can_delete = True;
 				}
@@ -412,7 +414,7 @@
 
 					if ($can_delete)
 					{
-						$p->set_var('row_delete',($GLOBALS['phpgw_info']['user']['userid'] != $account['account_lid']?$this->row_action('delete','user',$account['account_id']):'&nbsp'));
+						$p->set_var('row_delete',(GlobalService::get('phpgw_info')['user']['userid'] != $account['account_lid']?$this->row_action('delete','user',$account['account_id']):'&nbsp'));
 					}
 					else
 					{
@@ -435,7 +437,7 @@
 
 		function add_group()
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',4,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',4,'admin'))
 			{
 				$this->list_groups();
 				return False;
@@ -452,7 +454,7 @@
 
 		function add_user()
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',4,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('account_access',4,'admin'))
 			{
 				$this->list_users();
 			}
@@ -464,7 +466,7 @@
 
 		function delete_group()
 		{
-			if ($_POST['no'] || $_POST['yes'] || !@isset($_GET['account_id']) || !@$_GET['account_id'] || $GLOBALS['phpgw']->acl->check('group_access',32,'admin'))
+			if ($_POST['no'] || $_POST['yes'] || !@isset($_GET['account_id']) || !@$_GET['account_id'] || GlobalService::get('phpgw')->acl->check('group_access',32,'admin'))
 			{
 				if ($_POST['yes'])
 				{
@@ -474,14 +476,14 @@
 				return False;
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(
@@ -495,11 +497,11 @@
 			$p->set_var('message_display',lang('Are you sure you want to delete this group ?'));
 			$p->parse('messages','message_row');
 
-			$old_group_list = $GLOBALS['phpgw']->acl->get_ids_for_location((int)$_GET['account_id'],1,'phpgw_group');
+			$old_group_list = GlobalService::get('phpgw')->acl->get_ids_for_location((int)$_GET['account_id'],1,'phpgw_group');
 
 			if($old_group_list)
 			{
-				$group_name = $GLOBALS['phpgw']->accounts->id2name($_GET['account_id']);
+				$group_name = GlobalService::get('phpgw')->accounts->id2name($_GET['account_id']);
 
 				$p->set_var('message_display','<br>');
 				$p->parse('messages','message_row',True);
@@ -507,12 +509,12 @@
 				$user_list = '';
 				while (list(,$id) = each($old_group_list))
 				{
-					$user_list .= '<a href="' . $GLOBALS['phpgw']->link('/index.php',
+					$user_list .= '<a href="' . GlobalService::get('phpgw')->link('/index.php',
 						Array(
 							'menuaction' => 'admin.uiaccounts.edit_user',
 							'account_id' => $id
 						)
-					) . '">' . $GLOBALS['phpgw']->common->grab_owner_name($id) . '</a><br>';
+					) . '">' . GlobalService::get('phpgw')->common->grab_owner_name($id) . '</a><br>';
 				}
 				$p->set_var('message_display',$user_list);
 				$p->parse('messages','message_row',True);
@@ -523,7 +525,7 @@
 			}
 
 			$var = Array(
-				'form_action' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.delete_group'),
+				'form_action' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.delete_group'),
 				'hidden_vars' => '<input type="hidden" name="account_id" value="'.$_GET['account_id'].'">',
 				'yes'         => lang('Yes'),
 				'no'          => lang('No')
@@ -534,7 +536,7 @@
 
 			$var = Array(
 				'submit_button' => lang('Submit'),
-				'action_url_button'     => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_groups'),
+				'action_url_button'     => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_groups'),
 				'action_text_button'    => ' '.lang('No'),
 				'action_confirm_button' => '',
 				'action_extra_field'    => ''
@@ -547,20 +549,20 @@
 
 		function delete_user()
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',32,'admin') || $GLOBALS['phpgw_info']['user']['account_id'] == $_GET['account_id'])
+			if (GlobalService::get('phpgw')->acl->check('account_access',32,'admin') || GlobalService::get('phpgw_info')['user']['account_id'] == $_GET['account_id'])
 			{
 				$this->list_users();
 				return False;
 			}
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$t->set_file(
@@ -569,7 +571,7 @@
 				)
 			);
 			$var = Array(
-				'form_action' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.boaccounts.delete_user'),
+				'form_action' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.boaccounts.delete_user'),
 				'account_id'  => $_GET['account_id']
 			);
 
@@ -577,12 +579,12 @@
 			$account_id = rawurlencode($_GET['account_id']);
 
 			// Find out who the new owner is of the deleted users records...
-			$users = $GLOBALS['phpgw']->accounts->get_list('accounts');
+			$users = GlobalService::get('phpgw')->accounts->get_list('accounts');
 			$c_users = count($users);
 			$str = '';
 			for($i=0;$i<$c_users;$i++)
 			{
-				$str .= '<option value='.$users[$i]['account_id'].'>'.$GLOBALS['phpgw']->common->display_fullname($users[$i]['account_lid'],$users[$i]['account_firstname'],$users[$i]['account_lastname']).'</option>'."\n";
+				$str .= '<option value='.$users[$i]['account_id'].'>'.GlobalService::get('phpgw')->common->display_fullname($users[$i]['account_lid'],$users[$i]['account_firstname'],$users[$i]['account_lastname']).'</option>'."\n";
 			}
 			$var['lang_new_owner'] = lang('Who would you like to transfer ALL records owned by the deleted user to?');
 			$var['new_owner_select'] = '<select name="new_owner" size="5">'."\n".'<option value=0 selected>'.lang('Delete All Records').'</option>'."\n".$str.'</select>'."\n";
@@ -594,7 +596,7 @@
 
 		function edit_group($cd='',$account_id='')
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',16,'admin'))
 			{
 				$this->list_groups();
 				return False;
@@ -618,7 +620,7 @@
 			{
 				$group_info = Array(
 					'account_id'   => (int)$_GET['account_id'],
-					'account_name' => $GLOBALS['phpgw']->accounts->id2name($_GET['account_id']),
+					'account_name' => GlobalService::get('phpgw')->accounts->id2name($_GET['account_id']),
 					'account_user' => $this->bo->load_group_users($_GET['account_id']),
 					'account_apps' => $this->bo->load_group_apps($_GET['account_id'])
 				);
@@ -628,9 +630,9 @@
 
 		function edit_view_user_hook()
 		{
-			if (!$GLOBALS['phpgw']->acl->check('current_sessions_access',1,'admin'))	// no rights to view
+			if (!GlobalService::get('phpgw')->acl->check('current_sessions_access',1,'admin'))	// no rights to view
 			{
-				$GLOBALS['menuData'][] = array(
+				GlobalService::get('menuData')[] = array(
 					'description' => 'Login History',
 					'url'         => '/index.php',
 					'extradata'   => 'menuaction=admin.uiaccess_history.list_history'
@@ -638,9 +640,9 @@
 			}
 			// not sure if this realy belongs here, or only in edit_user
 			if ($_GET['account_id'] && 	// can't set it on add
-			    !$GLOBALS['phpgw']->acl->check('account_access',64,'admin'))	// no rights to set ACL-rights
+			    !GlobalService::get('phpgw')->acl->check('account_access',64,'admin'))	// no rights to set ACL-rights
 			{
-				$GLOBALS['menuData'][] = array(
+				GlobalService::get('menuData')[] = array(
 					'description' => 'ACL Rights',
 					'url'         => '/index.php',
 					'extradata'   => 'menuaction=admin.uiaclmanager.list_apps'
@@ -650,7 +652,7 @@
 
 		function edit_user($cd='',$account_id='')
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('account_access',16,'admin'))
 			{
 				$this->list_users();
 				return False;
@@ -679,19 +681,19 @@
 
 		function view_user()
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',8,'admin') || ! $_GET['account_id'])
+			if (GlobalService::get('phpgw')->acl->check('account_access',8,'admin') || ! $_GET['account_id'])
 			{
 				$this->list_users();
 				return False;
 			}
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$t->set_unknowns('remove');
@@ -705,9 +707,9 @@
 			$t->set_block('account','link_row');
 
 			$var = Array(
-				'th_bg'        => $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'tr_color1'    => $GLOBALS['phpgw_info']['theme']['row_on'],
-				'tr_color2'    => $GLOBALS['phpgw_info']['theme']['row_off'],
+				'th_bg'        => GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'tr_color1'    => GlobalService::get('phpgw_info')['theme']['row_on'],
+				'tr_color2'    => GlobalService::get('phpgw_info')['theme']['row_off'],
 				'lang_action'  => lang('View user account'),
 				'lang_loginid' => lang('LoginID'),
 				'lang_account_active'   => lang('Account active'),
@@ -747,7 +749,7 @@
 			// Last login time
 			if ($userData['lastlogin'])
 			{
-				$var['account_lastlogin'] = $GLOBALS['phpgw']->common->show_date($userData['lastlogin']);
+				$var['account_lastlogin'] = GlobalService::get('phpgw')->common->show_date($userData['lastlogin']);
 			}
 			else
 			{
@@ -767,7 +769,7 @@
 			// Account expires
 			if ($userData['expires'] != -1)
 			{
-				$var['input_expires'] = $GLOBALS['phpgw']->common->show_date($userData['expires']);
+				$var['input_expires'] = GlobalService::get('phpgw')->common->show_date($userData['expires']);
 			}
 			else
 			{
@@ -796,7 +798,7 @@
 			// create list of available app
 			$i = 0;
 
-			$availableApps = $GLOBALS['phpgw_info']['apps'];
+			$availableApps = GlobalService::get('phpgw_info')['apps'];
 			@asort($availableApps);
 			@reset($availableApps);
 			foreach($availableApps as $app => $data) 
@@ -833,7 +835,7 @@
 					$part2 = '<td colspan="2">&nbsp;</td>';
 				}
 
-				$appRightsOutput .= sprintf("<tr bgcolor=\"%s\">$part1$part2</tr>\n",$GLOBALS['phpgw_info']['theme']['row_on']);
+				$appRightsOutput .= sprintf("<tr bgcolor=\"%s\">$part1$part2</tr>\n",GlobalService::get('phpgw_info')['theme']['row_on']);
 			}
 
 			$var['permissions_list'] = $appRightsOutput;
@@ -848,7 +850,7 @@
 
 		function group_manager($cd='',$account_id='')
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',16,'admin'))
 			{
 				$this->list_groups();
 				return False;
@@ -872,8 +874,8 @@
 			{
 				$group_info = Array(
 					'account_id'   => (int)$_GET['account_id'],
-					'account_name' => $GLOBALS['phpgw']->accounts->id2name($_GET['account_id']),
-					'account_user' => $GLOBALS['phpgw']->accounts->member($_GET['account_id']),
+					'account_name' => GlobalService::get('phpgw')->accounts->id2name($_GET['account_id']),
+					'account_user' => GlobalService::get('phpgw')->accounts->member($_GET['account_id']),
 					'account_managers' => $this->bo->load_group_managers($_GET['account_id'])
 				);
 
@@ -885,14 +887,14 @@
 		{
 			$sbox = createobject('phpgwapi.sbox');
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(Array('edit' => 'group_form.tpl'));
 			$p->set_block('edit','select');
@@ -900,19 +902,19 @@
 
 			$accounts = CreateObject('phpgwapi.accounts',$group_info['account_id'],'g');
 
-			if (!is_object($GLOBALS['phpgw']->uiaccountsel))
+			if (!is_object(GlobalService::get('phpgw')->uiaccountsel))
 			{
-				$GLOBALS['phpgw']->uiaccountsel = CreateObject('phpgwapi.uiaccountsel');
+				GlobalService::get('phpgw')->uiaccountsel = CreateObject('phpgwapi.uiaccountsel');
 			}
-			$p->set_var('accounts',$GLOBALS['phpgw']->uiaccountsel->selection('account_user[]','admin_uiaccounts_user',$group_info['account_user'],'accounts',min(3+count($group_info['account_user']),10)));
+			$p->set_var('accounts',GlobalService::get('phpgw')->uiaccountsel->selection('account_user[]','admin_uiaccounts_user',$group_info['account_user'],'accounts',min(3+count($group_info['account_user']),10)));
 
 			$var = Array(
-				'form_action'       => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.boaccounts.'.($group_info['account_id']?'edit':'add').'_group'),
+				'form_action'       => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.boaccounts.'.($group_info['account_id']?'edit':'add').'_group'),
 				'hidden_vars'       => '<input type="hidden" name="account_id" value="' . $group_info['account_id'] . '">',
 				'lang_group_name'   => lang('group name'),
 				'group_name_value'  => $group_info['account_name'],
 				'lang_include_user' => lang('Select users for inclusion'),
-				'error'             => (!$_errors?'':'<center>'.$GLOBALS['phpgw']->common->error_list($_errors).'</center>'),
+				'error'             => (!$_errors?'':'<center>'.GlobalService::get('phpgw')->common->error_list($_errors).'</center>'),
 				'lang_permissions'  => lang('Permissions this group has')
 			);
 			$p->set_var($var);
@@ -920,7 +922,7 @@
 			$group_repository = $accounts->read_repository();
 			if (!$group_repository['file_space'])
 			{
-				$group_repository['file_space'] = $GLOBALS['phpgw_info']['server']['vfs_default_account_size_number'] . "-" . $GLOBALS['phpgw_info']['server']['vfs_default_account_size_type'];
+				$group_repository['file_space'] = GlobalService::get('phpgw_info')['server']['vfs_default_account_size_number'] . "-" . GlobalService::get('phpgw_info')['server']['vfs_default_account_size_type'];
 			}
 	/*
 			$file_space_array = explode ('-', $group_repository['file_space']);
@@ -934,8 +936,8 @@
 			$p->set_var ('account_file_space_select','<select name="account_file_space_type">'."\n".$account_file_space_select.'</select>'."\n");
 	*/
 
-			reset($GLOBALS['phpgw_info']['apps']);
-			$sorted_apps = $GLOBALS['phpgw_info']['apps'];
+			reset(GlobalService::get('phpgw_info')['apps']);
+			$sorted_apps = GlobalService::get('phpgw_info')['apps'];
 			@asort($sorted_apps);
 			@reset($sorted_apps);
 			while ($permission = each($sorted_apps))
@@ -953,7 +955,7 @@
 			$perm_html = '<tr class="th">'.
 				$perm_html.$perm_html."</tr>\n";
 			
-			$tr_color = $GLOBALS['phpgw_info']['theme']['row_off'];
+			$tr_color = GlobalService::get('phpgw_info')['theme']['row_off'];
 			for ($i=0;$i < count($perm_display);$i++)
 			{
 				$app = $perm_display[$i][0];
@@ -965,8 +967,8 @@
 				$perm_html .= '<td>' . $perm_display[$i][1] . '</td>'
 					. '<td><input type="checkbox" name="account_apps['
 					. $perm_display[$i][0] . ']" value="True"'.($group_info['account_apps'][$app]?' checked':'').'> '
-					. ($this->apps_with_acl[$app] && $group_info['account_id']?'<a href="'.$GLOBALS['phpgw']->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$app.'&owner='.$group_info['account_id'])
-					. '"><img src="'.$GLOBALS['phpgw']->common->image('phpgwapi','edit').'" border="0" hspace="3" align="absmiddle" title="'
+					. ($this->apps_with_acl[$app] && $group_info['account_id']?'<a href="'.GlobalService::get('phpgw')->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$app.'&owner='.$group_info['account_id'])
+					. '"><img src="'.GlobalService::get('phpgw')->common->image('phpgwapi','edit').'" border="0" hspace="3" align="absmiddle" title="'
 					. lang('Grant Access').': '.lang("edit group ACL's").'"></a>':'&nbsp;').'</td>'.($i & 1?'</tr>':'')."\n";
 			}
 			if($i & 1)
@@ -994,19 +996,19 @@
 			$sbox = createobject('phpgwapi.sbox');
 			$jscal = CreateObject('phpgwapi.jscalendar');
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$t->set_unknowns('remove');
 
-			if ($GLOBALS['phpgw_info']['server']['ldap_extra_attributes'] && ($GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap'))
+			if (GlobalService::get('phpgw_info')['server']['ldap_extra_attributes'] && (GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap'))
 			{
 				$t->set_file(array('account' => 'account_form_ldap.tpl'));
 			}
@@ -1067,11 +1069,11 @@
 			}
 
 			$var = Array(
-				'form_action'    => $GLOBALS['phpgw']->link('/index.php',$page_params),
-				'error_messages' => (!$_errors?'':'<center>'.$GLOBALS['phpgw']->common->error_list($_errors).'</center>'),
-				'th_bg'          => $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'tr_color1'      => $GLOBALS['phpgw_info']['theme']['row_on'],
-				'tr_color2'      => $GLOBALS['phpgw_info']['theme']['row_off'],
+				'form_action'    => GlobalService::get('phpgw')->link('/index.php',$page_params),
+				'error_messages' => (!$_errors?'':'<center>'.GlobalService::get('phpgw')->common->error_list($_errors).'</center>'),
+				'th_bg'          => GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'tr_color1'      => GlobalService::get('phpgw_info')['theme']['row_on'],
+				'tr_color2'      => GlobalService::get('phpgw_info')['theme']['row_off'],
 				'lang_action'    => ($_account_id?lang('Edit user account'):lang('Add new account')),
 				'lang_loginid'   => lang('LoginID'),
 				'lang_account_active' => lang('Account active'),
@@ -1091,14 +1093,14 @@
 			$t->set_var($var);
 			$t->parse('form_buttons','form_buttons_',True);
 
-			if ($GLOBALS['phpgw_info']['server']['ldap_extra_attributes']) {
+			if (GlobalService::get('phpgw_info')['server']['ldap_extra_attributes']) {
 				$lang_homedir = lang('home directory');
 				$lang_shell = lang('login shell');
 				$homedirectory = '<input name="homedirectory" value="'
-					. ($_account_id?$userData['homedirectory']:$GLOBALS['phpgw_info']['server']['ldap_account_home'].$account_lid)
+					. ($_account_id?$userData['homedirectory']:GlobalService::get('phpgw_info')['server']['ldap_account_home'].$account_lid)
 					. '">';
 				$loginshell = '<input name="loginshell" value="'
-					. ($_account_id?$userData['loginshell']:$GLOBALS['phpgw_info']['server']['ldap_account_shell'])
+					. ($_account_id?$userData['loginshell']:GlobalService::get('phpgw_info')['server']['ldap_account_shell'])
 					. '">';
 			}
 			else
@@ -1112,7 +1114,7 @@
 		/*
 			if (!$userData['file_space'])
 			{
-				$userData['file_space'] = $GLOBALS['phpgw_info']['server']['vfs_default_account_size_number'] . "-" . $GLOBALS['phpgw_info']['server']['vfs_default_account_size_type'];
+				$userData['file_space'] = GlobalService::get('phpgw_info')['server']['vfs_default_account_size_number'] . "-" . GlobalService::get('phpgw_info')['server']['vfs_default_account_size_type'];
 			}
 			$file_space_array = explode ('-', $userData['file_space']);
 			$account_file_space_number = $file_space_array[0];
@@ -1136,9 +1138,9 @@
 			$t->set_var($var);
 		*/
 			$accountPrefix = '';
-			if(isset($GLOBALS['phpgw_info']['server']['account_prefix']))
+			if(isset(GlobalService::get('phpgw_info')['server']['account_prefix']))
 			{
-				$accountPrefix = $GLOBALS['phpgw_info']['server']['account_prefix'];
+				$accountPrefix = GlobalService::get('phpgw_info')['server']['account_prefix'];
 				if (preg_match ("/^$accountPrefix(.*)/i", $userData['account_lid'], $matches))
 				{
 					$userData['account_lid'] = $matches[1];
@@ -1213,7 +1215,7 @@
 			$apps = CreateObject('phpgwapi.applications',$_account_id);
 			$db_perms = $apps->read_account_specific();
 
-			$availableApps = $GLOBALS['phpgw_info']['apps'];
+			$availableApps = GlobalService::get('phpgw_info')['apps'];
 			uasort($availableApps,create_function('$a,$b','return strcasecmp($a["title"],$b["title"]);'));
 
 			$appRightsOutput = '';
@@ -1227,8 +1229,8 @@
 				$checked = (@$userData['account_permissions'][$app] || @$db_perms[$app]) && $_account_id ? ' checked="1"' : '';
 				$part[$i&1] = sprintf('<td>%s</td><td><input type="checkbox" name="account_permissions[%s]" value="True"%s>',
 					$data['title'],$app,$checked).	
-					($this->apps_with_acl[$app] && $_account_id?'<a href="'.$GLOBALS['phpgw']->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$app.'&owner='.$_account_id)
-					. '"><img src="'.$GLOBALS['phpgw']->common->image('phpgwapi','edit').'" border="0" hspace="3" align="absmiddle" title="'
+					($this->apps_with_acl[$app] && $_account_id?'<a href="'.GlobalService::get('phpgw')->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$app.'&owner='.$_account_id)
+					. '"><img src="'.GlobalService::get('phpgw')->common->image('phpgwapi','edit').'" border="0" hspace="3" align="absmiddle" title="'
 					. lang('Grant Access').'"></a>':'&nbsp;').'</td>';
 
 				if ($i & 1)
@@ -1258,7 +1260,7 @@
 			// create the menu on the left, if needed
 //			$menuClass = CreateObject('admin.uimenuclass');
 			// This is now using ExecMethod()
-			$GLOBALS['account_id'] = $_account_id;
+			GlobalService::get('account_id') = $_account_id;
 			$t->set_var('rows',ExecMethod('admin.uimenuclass.createHTMLCode','edit_user'));
 
 			echo $t->fp('out','form');
@@ -1266,7 +1268,7 @@
 
 		function edit_group_managers($group_info,$_errors='')
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',16,'admin'))
 			{
 				$this->list_groups();
 				return False;
@@ -1279,18 +1281,18 @@
 			{
 				$user_list .= '<option value="' . $entry['account_id'] . '"'
 					. $group_info['account_managers'][(int)$entry['account_id']] . '>'
-					. $GLOBALS['phpgw']->common->grab_owner_name($entry['account_id'])
+					. GlobalService::get('phpgw')->common->grab_owner_name($entry['account_id'])
 					. '</option>'."\n";
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			if(!@is_object($GLOBALS['phpgw']->js))
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$t->set_unknowns('remove');
@@ -1304,11 +1306,11 @@
 			$t->set_block('manager','form','form');
 			$t->set_block('manager','link_row','link_row');
 
-			$var['th_bg'] = $GLOBALS['phpgw_info']['user']['theme']['th_bg'];
+			$var['th_bg'] = GlobalService::get('phpgw_info')['user']['theme']['th_bg'];
 			$var['lang_group'] = lang('Group');
 			$var['group_name'] = $group_info['account_name'];
-			$var['tr_color1'] = $GLOBALS['phpgw_info']['user']['theme']['row_on'];
-			$var['form_action'] = $GLOBALS['phpgw']->link('/index.php','menuaction=admin.boaccounts.set_group_managers');
+			$var['tr_color1'] = GlobalService::get('phpgw_info')['user']['theme']['row_on'];
+			$var['form_action'] = GlobalService::get('phpgw')->link('/index.php','menuaction=admin.boaccounts.set_group_managers');
 			$var['hidden'] = '<input type="hidden" name="account_id" value="'.$group_info['account_id'].'">';
 			$var['lang_select_managers'] = lang('Select Group Managers');
 			$var['group_members'] = '<select name="managers[]" size="'.(count($account_list)<5?count($account_list):5).'" multiple>'.$user_list.'</select>';

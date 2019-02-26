@@ -20,7 +20,7 @@ require_once 'class.bo_ajaxinterface.inc.php';
 class bo_adminjobs extends bo_ajaxinterface
 {
 	/**
-	 * @var object $so Acesso à camada model.
+	 * @var object $so Acesso ï¿½ camada model.
 	 * @access private
 	 */
 	private $so;
@@ -38,7 +38,7 @@ class bo_adminjobs extends bo_ajaxinterface
 
 	/**
 	 * Carrega a lista de todos os jobs de um determinado processo.
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
 	 * @return array Lista dos jobs (ordenada por nome)
 	 * @access public
 	 */
@@ -53,8 +53,8 @@ class bo_adminjobs extends bo_ajaxinterface
 	}
 
 	/**
-	 * Atualiza um job ou cria um novo job (dependendo dos parâmetros passados)
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
+	 * Atualiza um job ou cria um novo job (dependendo dos parï¿½metros passados)
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
 	 * @return array Lista dos jobs (ordenada por nome)
 	 * @access public
 	 */
@@ -74,7 +74,7 @@ class bo_adminjobs extends bo_ajaxinterface
 
 	/**
 	 * Remove um job (e seus logs)
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
 	 * @return void
 	 * @access public
 	 */
@@ -85,7 +85,7 @@ class bo_adminjobs extends bo_ajaxinterface
 
 	/**
 	 * Carrega a lista dos logs de um Job
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
 	 * @return array Lista dos logs
 	 * @access public
 	 */
@@ -101,7 +101,7 @@ class bo_adminjobs extends bo_ajaxinterface
 		$logs = $paging->restrictItems($logs);
 
 		/* use a more human readable time notation (today, yesterday) */
-		$date = new DateTime();
+		$date = new \DateTime();
 		$writtenDates = array();
 		$writtenDates[$date->format('d/m/Y')] = 'Hoje';
 		$date->modify('-1 day');
@@ -123,7 +123,7 @@ class bo_adminjobs extends bo_ajaxinterface
 
 	/**
 	 * Alterna o status do Job entre ativado e desativado
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
 	 * @return array Lista dos jobs (ordenada por nome)
 	 * @access public
 	 */
@@ -139,8 +139,8 @@ class bo_adminjobs extends bo_ajaxinterface
 
 	/**
 	 * Executa um determinado Job
-	 * @param array $params Uma array contendo os parâmetros advindos da chamada Ajax
-	 * @return array Uma array contendo a saída da execução do Job (saída padrão e saída de erro) e outras mensagens
+	 * @param array $params Uma array contendo os parï¿½metros advindos da chamada Ajax
+	 * @return array Uma array contendo a saï¿½da da execuï¿½ï¿½o do Job (saï¿½da padrï¿½o e saï¿½da de erro) e outras mensagens
 	 * @access public
 	 */
 	function runJob($params)

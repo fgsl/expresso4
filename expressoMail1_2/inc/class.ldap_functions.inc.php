@@ -25,7 +25,7 @@ class ldap_functions
 	{
 		if ( is_null($this->_my_org_units) ) {
 			
-			$this->_my_org_units = new stdClass();
+			$this->_my_org_units = new \stdClass();
 			$this->_my_org_units->allow = isset($this->_server_conf['my_org_units'])? unserialize($this->_server_conf['my_org_units']) : array();
 			
 			$conn = ldap_connect($this->_server_conf['ldap_host']);

@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 include_once('class.configserial.inc.php');
 
 class Messenger extends ConfigSerial
@@ -38,7 +40,7 @@ class Messenger extends ConfigSerial
 	 * Return user info connection with jabber.
 	 * stdClass->{ client, user, auth }
 	 * 
-	 * @return stdClass | false
+	 * @return \stdClass | false
 	 */
 	public function getAuth()
 	{
@@ -113,13 +115,13 @@ class Messenger extends ConfigSerial
 	
 	private function _getUserInfo()
 	{
-		return is_array($GLOBALS['phpgw_info']['user'])?
-			$GLOBALS['phpgw_info']['user'] : $_SESSION['phpgw_info']['expressomail']['user'];
+		return is_array(GlobalService::get('phpgw_info')['user'])?
+			GlobalService::get('phpgw_info')['user'] : $_SESSION['phpgw_info']['expressomail']['user'];
 	}
 
 	private function _getLdapConn()
 	{
-		if ( is_null( $this->_ldap_conn ) ) $this->_ldap_conn = $GLOBALS['phpgw']->common->ldapConnect();
+		if ( is_null( $this->_ldap_conn ) ) $this->_ldap_conn = GlobalService::get('phpgw')->common->ldapConnect();
 		return $this->_ldap_conn;
 	}
 	
@@ -128,7 +130,7 @@ class Messenger extends ConfigSerial
 		if ( !$this->checkAuth() ) return null;
 		$info = $this->_getUserInfo();
 		
-		$obj = new stdClass();
+		$obj = new \stdClass();
 		$obj->client = self::CLIENT_NAME;
 		$obj->user   = $info['account_lid'];
 		$obj->auth   = base64_encode( $obj->user.'@'.$obj->domain."\0".$obj->user."\0".$this->_encrypt( $info['passwd'] ) );

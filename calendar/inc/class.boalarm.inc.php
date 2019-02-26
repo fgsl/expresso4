@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -42,7 +44,7 @@
 			}
 			$this->bo = CreateObject('calendar.bocalendar',1);
 			$this->so = CreateObject('calendar.socalendar',1);
-			$this->tz_offset = $GLOBALS['phpgw']->datetime->tz_offset;
+			$this->tz_offset = GlobalService::get('phpgw')->datetime->tz_offset;
 
 			if($this->debug)
 			{
@@ -135,7 +137,7 @@
 			{
 				if ($this->check_perms(PHPGW_ACL_SETALARM,$uid))
 				{
-					$participants[$uid] = $fullnames ? $GLOBALS['phpgw']->common->grab_owner_name($uid) : True;
+					$participants[$uid] = $fullnames ? GlobalService::get('phpgw')->common->grab_owner_name($uid) : True;
 				}
 			}
 			return $participants;

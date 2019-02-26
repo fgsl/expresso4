@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* EGroupWare - pdf creation class                                           *
 	* http://www.linux-at-work.de                                               *
@@ -53,8 +55,8 @@
 		function pdf()
 		{
 			parent::FPDF();
-			$this->SetCreator('eGroupWare '.$GLOBALS['phpgw_info']['server']['versions']['phpgwapi']);
-			$this->SetAuthor($GLOBALS['phpgw']->common->display_fullname());
+			$this->SetCreator('eGroupWare '.GlobalService::get('phpgw_info')['server']['versions']['phpgwapi']);
+			$this->SetAuthor(GlobalService::get('phpgw')->common->display_fullname());
 		}
 		
 		//Page footer

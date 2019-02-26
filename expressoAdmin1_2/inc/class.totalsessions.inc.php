@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/*************************************************************************************\
-	* Expresso Administração                 						           			 *
+	* Expresso Administraï¿½ï¿½o                 						           			 *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	 *
 	* -----------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			 *
@@ -21,13 +23,13 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		function totalsessions()
 		{
 			$this->functions = createobject('expressoAdmin1_2.functions');
-			$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$tmp = $this->functions->read_acl($account_lid);
 			$manager_context = $tmp[0]['context'];
 			// Verifica se o administrador tem acesso.
 			if (!$this->functions->check_acl( $account_lid, ACL_Managers::ACL_VW_GLOBAL_SESSIONS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 			
 			$this->template = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -40,7 +42,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				
 				case 'user':
 					include_once(PHPGW_API_INC.'/class.dbsession.php');
-					$dbsession = new dbsession();
+					$dbsession = new \dbsession();
 					$sum = $dbsession->get_users_online();
 					break;
 				
@@ -55,7 +57,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				case 'memcached':
 					$bo       = CreateObject( 'admin.bocurrentsessions' );
 					$conts    = $bo->get_total_itens();
-					$memcache = new Memcached();
+					$memcache = new \Memcached();
 					$url = parse_url( ini_get( 'session.save_path' ) );
 					$memcache->addServer( $url['host'], $url['port'] );
 					$stats    = current( $memcache->getStats() );
@@ -68,8 +70,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 					error_log('destroy session warning: handler '.ini_get('session.save_handler').'not implemented.');
 			}
 			
-			$GLOBALS['phpgw_info']['flags']['app_header'] = 'ExpressoAdmin - '.lang('Total Sessions');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = 'ExpressoAdmin - '.lang('Total Sessions');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			
 			echo parse_navbar();
 			
@@ -78,7 +80,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$this->template->set_var($this->functions->make_dinamic_lang($this->template, 'list'));
 			$this->template->set_var('lang_total', lang("Total sessions on server"));
 			$this->template->set_var('total', $sum);
-			$this->template->set_var('back_url', $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php'));
+			$this->template->set_var('back_url', GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php'));
 			$this->template->pfp('out','list');
 		}
 		

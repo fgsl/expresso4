@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare                                                               *
 	* http://www.egroupware.org                                                *
@@ -14,12 +16,12 @@
 // Only Modify the $file and $title variables.....
 	$title = $appname;
 	$file = Array(
-		'Site Configuration' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname),
-		'Custom fields and sorting' => $GLOBALS['phpgw']->link('/index.php','menuaction=calendar.uicustom_fields.index'),
-		'Calendar Holiday Management' => $GLOBALS['phpgw']->link('/index.php','menuaction=calendar.uiholiday.admin'),
-		'Import CSV-File' => $GLOBALS['phpgw']->link('/calendar/csv_import.php'),
-		'Global Categories' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uicategories.index&appname=calendar'),
-		'Grant Access by Group' => $GLOBALS['phpgw']->link('/index.php','menuaction=calendar.uigroup_access.index')
+		'Site Configuration' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname),
+		'Custom fields and sorting' => GlobalService::get('phpgw')->link('/index.php','menuaction=calendar.uicustom_fields.index'),
+		'Calendar Holiday Management' => GlobalService::get('phpgw')->link('/index.php','menuaction=calendar.uiholiday.admin'),
+		'Import CSV-File' => GlobalService::get('phpgw')->link('/calendar/csv_import.php'),
+		'Global Categories' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uicategories.index&appname=calendar'),
+		'Grant Access by Group' => GlobalService::get('phpgw')->link('/index.php','menuaction=calendar.uigroup_access.index')
 	);
 //Do not modify below this line
 	display_section($appname,$title,$file);

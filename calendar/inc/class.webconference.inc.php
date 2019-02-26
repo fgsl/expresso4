@@ -50,7 +50,7 @@ class webconference
 
 		$isCreated = true;
 		try{ $result = $this->bbb->createMeetingWithXmlResponseArray($creationParams); }
-		catch( Exception $e ){ $isCreated = false; }
+		catch( \Exception $e ){ $isCreated = false; }
 
 		if( $isCreated == true )
 		{

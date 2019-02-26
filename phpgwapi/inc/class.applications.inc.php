@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Applications manager functions                          *
 	* This file written by Mark Peters <skeeter@phpgroupware.org>              *
@@ -48,7 +50,7 @@
 		*/
 		function applications($account_id = '')
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 			$this->account_id = get_account_id($account_id);
 
 			$this->xmlrpc_methods[] = array(
@@ -105,8 +107,8 @@
 		*/
 		function read_repository()
 		{
-			if (!isset($GLOBALS['phpgw_info']['apps']) ||
-				!is_array($GLOBALS['phpgw_info']['apps']))
+			if (!isset(GlobalService::get('phpgw_info')['apps']) ||
+				!is_array(GlobalService::get('phpgw_info')['apps']))
 			{
 				$this->read_installed_apps();
 			}
@@ -115,17 +117,17 @@
 			{
 				return False;
 			}
-			$apps = $GLOBALS['phpgw']->acl->get_user_applications($this->account_id);
-			foreach($GLOBALS['phpgw_info']['apps'] as $app => $data)
+			$apps = GlobalService::get('phpgw')->acl->get_user_applications($this->account_id);
+			foreach(GlobalService::get('phpgw_info')['apps'] as $app => $data)
 			{
 				if (isset($apps[$app]) && $apps[$app])
 				{
 					$this->data[$app] = array(
-						'title'   => $GLOBALS['phpgw_info']['apps'][$app]['title'],
+						'title'   => GlobalService::get('phpgw_info')['apps'][$app]['title'],
 						'name'    => $app,
 						'enabled' => True,
-						'status'  => $GLOBALS['phpgw_info']['apps'][$app]['status'],
-						'id'      => $GLOBALS['phpgw_info']['apps'][$app]['id']
+						'status'  => GlobalService::get('phpgw_info')['apps'][$app]['status'],
+						'id'      => GlobalService::get('phpgw_info')['apps'][$app]['id']
 					);
 				}
 			}
@@ -158,22 +160,22 @@
 				foreach($apps as $app)
 				{
 					$this->data[$app] = array(
-						'title'   => $GLOBALS['phpgw_info']['apps'][$app]['title'],
+						'title'   => GlobalService::get('phpgw_info')['apps'][$app]['title'],
 						'name'    => $app,
 						'enabled' => True,
-						'status'  => $GLOBALS['phpgw_info']['apps'][$app]['status'],
-						'id'      => $GLOBALS['phpgw_info']['apps'][$app]['id']
+						'status'  => GlobalService::get('phpgw_info')['apps'][$app]['status'],
+						'id'      => GlobalService::get('phpgw_info')['apps'][$app]['id']
 					);
 				}
 			}
 			elseif(gettype($apps))
 			{
 				$this->data[$apps] = array(
-					'title'   => $GLOBALS['phpgw_info']['apps'][$apps]['title'],
+					'title'   => GlobalService::get('phpgw_info')['apps'][$apps]['title'],
 					'name'    => $apps,
 					'enabled' => True,
-					'status'  => $GLOBALS['phpgw_info']['apps'][$apps]['status'],
-					'id'      => $GLOBALS['phpgw_info']['apps'][$apps]['id']
+					'status'  => GlobalService::get('phpgw_info')['apps'][$apps]['status'],
+					'id'      => GlobalService::get('phpgw_info')['apps'][$apps]['id']
 				);
 			}
 			return $this->data;
@@ -210,14 +212,14 @@
 		*/
 		function save_repository()
 		{
-			$num_rows = $GLOBALS['phpgw']->acl->delete_repository("%%", 'run', $this->account_id);
+			$num_rows = GlobalService::get('phpgw')->acl->delete_repository("%%", 'run', $this->account_id);
 			foreach($this->data as $app => $data)
 			{
 				if(!$this->is_system_enabled($app))
 				{
 					continue;
 				}
-				$GLOBALS['phpgw']->acl->add_repository($app,'run',$this->account_id,1);
+				GlobalService::get('phpgw')->acl->add_repository($app,'run',$this->account_id,1);
 			}
 			return $this->data;
 		}
@@ -241,22 +243,22 @@
 
 		function read_account_specific()
 		{
-			if (!is_array($GLOBALS['phpgw_info']['apps']))
+			if (!is_array(GlobalService::get('phpgw_info')['apps']))
 			{
 				$this->read_installed_apps();
 			}
-			if ($app_list = $GLOBALS['phpgw']->acl->get_app_list_for_id('run',1,$this->account_id))
+			if ($app_list = GlobalService::get('phpgw')->acl->get_app_list_for_id('run',1,$this->account_id))
 			{
 				foreach($app_list as $app)
 				{
 					if ($this->is_system_enabled($app))
 					{
 						$this->data[$app] = array(
-							'title'   => $GLOBALS['phpgw_info']['apps'][$app]['title'],
+							'title'   => GlobalService::get('phpgw_info')['apps'][$app]['title'],
 							'name'    => $app,
 							'enabled' => True,
-							'status'  => $GLOBALS['phpgw_info']['apps'][$app]['status'],
-							'id'      => $GLOBALS['phpgw_info']['apps'][$app]['id']
+							'status'  => GlobalService::get('phpgw_info')['apps'][$app]['status'],
+							'id'      => GlobalService::get('phpgw_info')['apps'][$app]['id']
 						);
 					}
 				}
@@ -275,7 +277,7 @@
 		function read_installed_apps()
 		{
 			//jakjr: so vai ao banco, caso o array de apps esteja vazio.
-			if (empty($GLOBALS['phpgw_info']['apps']))
+			if (empty(GlobalService::get('phpgw_info')['apps']))
 			{
 				$this->db->query('select * from phpgw_applications where app_enabled != 0 order by app_order asc',__LINE__,__FILE__);
 				if($this->db->num_rows())
@@ -284,12 +286,12 @@
 					{
 						$title = $app_name = $this->db->f('app_name');
 
-						if (@is_array($GLOBALS['phpgw_info']['user']['preferences']) &&
+						if (@is_array(GlobalService::get('phpgw_info')['user']['preferences']) &&
 						    ($t = lang($app_name)) != $app_name.'*')
 						{
 							$title = $t;
 						}
-						$GLOBALS['phpgw_info']['apps'][$this->db->f('app_name')] = Array(
+						GlobalService::get('phpgw_info')['apps'][$this->db->f('app_name')] = Array(
 							'title'   => $title,
 							'name'    => $this->db->f('app_name'),
 							'enabled' => True,
@@ -309,11 +311,11 @@
 		*/
 		function is_system_enabled($appname)
 		{
-			if(!is_array($GLOBALS['phpgw_info']['apps']))
+			if(!is_array(GlobalService::get('phpgw_info')['apps']))
 			{
 				$this->read_installed_apps();
 			}
-			if ($GLOBALS['phpgw_info']['apps'][$appname]['enabled'])
+			if (GlobalService::get('phpgw_info')['apps'][$appname]['enabled'])
 			{
 				return True;
 			}
@@ -325,7 +327,7 @@
 
 		function id2name($id)
 		{
-			foreach($GLOBALS['phpgw_info']['apps'] as $appname => $app)
+			foreach(GlobalService::get('phpgw_info')['apps'] as $appname => $app)
 			{
 				if((int)$app['id'] == (int)$id)
 				{
@@ -337,9 +339,9 @@
 
 		function name2id($appname)
 		{
-			if(is_array($GLOBALS['phpgw_info']['apps'][$appname]))
+			if(is_array(GlobalService::get('phpgw_info')['apps'][$appname]))
 			{
-				return $GLOBALS['phpgw_info']['apps'][$appname]['id'];
+				return GlobalService::get('phpgw_info')['apps'][$appname]['id'];
 			}
 			return 0;
 		}

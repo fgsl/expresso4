@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Auth from SQL                                           *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -30,7 +32,7 @@
 
 		function auth_()
 		{
-			copyobj($GLOBALS['phpgw']->db,$this->db);
+			copyobj(GlobalService::get('phpgw')->db,$this->db);
 		}
 
 		function authenticate($username, $passwd, $passwd_type)
@@ -38,8 +40,8 @@
 			if($passwd_type == 'text')
 			{
 				/* normal web form login */
-				$type = @$GLOBALS['phpgw_info']['server']['sql_encryption_type']
-					? strtolower($GLOBALS['phpgw_info']['server']['sql_encryption_type'])
+				$type = @GlobalService::get('phpgw_info')['server']['sql_encryption_type']
+					? strtolower(GlobalService::get('phpgw_info')['server']['sql_encryption_type'])
 					: 'md5';
 				switch($type)
 				{
@@ -49,7 +51,7 @@
 							. " account_status ='A'",__LINE__,__FILE__);
 						$this->db->next_record();
 
-						if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+						if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 						{
 							if($this->db->f('account_lid') != $username)
 							{
@@ -67,7 +69,7 @@
 							. " account_status ='A'",__LINE__,__FILE__);
 						$this->db->next_record();
 
-						if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+						if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 						{
 							if($this->db->f('account_lid') != $username)
 							{
@@ -85,7 +87,7 @@
 							. " account_status ='A'",__LINE__,__FILE__);
 						$this->db->next_record();
 
-						if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+						if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 						{
 							if($this->db->f('account_lid') != $username)
 							{
@@ -106,7 +108,7 @@
 							. " account_status ='A'",__LINE__,__FILE__);
 						$this->db->next_record();
 
-						if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+						if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 						{
 							if($this->db->f('account_lid') != $username)
 							{
@@ -125,7 +127,7 @@
 							. "account_pwd='" . md5($passwd) . "' AND account_status ='A'",__LINE__,__FILE__);
 						$this->db->next_record();
 
-						if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+						if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 						{
 							if($this->db->f('account_lid') != $username)
 							{
@@ -152,7 +154,7 @@
 					. "account_pwd='" . $passwd . "' AND account_status ='A'",__LINE__,__FILE__);
 				$this->db->next_record();
 
-				if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+				if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 				{
 					if($this->db->f('account_lid') != $username)
 					{
@@ -179,16 +181,16 @@
 		{
 			$admin = True;
 			// Don't allow password changes for other accounts when using XML-RPC
-			if(!$account_id || $GLOBALS['phpgw_info']['flags']['currentapp'] == 'login')
+			if(!$account_id || GlobalService::get('phpgw_info')['flags']['currentapp'] == 'login')
 			{
 				$admin = False;
-				$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+				$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 			}
 			$encrypted_passwd = $this->encrypt_sql($new_passwd);
 
 			/* Grab configured type, or default to md5() (old method) */
-			$type = @$GLOBALS['phpgw_info']['server']['sql_encryption_type']
-				? strtolower($GLOBALS['phpgw_info']['server']['sql_encryption_type'])
+			$type = @GlobalService::get('phpgw_info')['server']['sql_encryption_type']
+				? strtolower(GlobalService::get('phpgw_info')['server']['sql_encryption_type'])
 				: 'md5';
 			switch($type)
 			{
@@ -293,7 +295,7 @@
 					{
 						if(!$admin)
 						{
-							$GLOBALS['phpgw']->session->appsession('password','phpgwapi',$new_passwd);
+							GlobalService::get('phpgw')->session->appsession('password','phpgwapi',$new_passwd);
 						}
 						return $encrypted_passwd;
 					}
@@ -319,7 +321,7 @@
 			{
 				if(!$admin)
 				{
-					$GLOBALS['phpgw']->session->appsession('password','phpgwapi',$new_passwd);
+					GlobalService::get('phpgw')->session->appsession('password','phpgwapi',$new_passwd);
 				}
 				return $encrypted_passwd;
 			}
@@ -331,7 +333,7 @@
 
 		function update_lastlogin($account_id, $ip)
 		{
-			$GLOBALS['phpgw']->db->query("UPDATE phpgw_accounts SET account_lastloginfrom='"
+			GlobalService::get('phpgw')->db->query("UPDATE phpgw_accounts SET account_lastloginfrom='"
 				. "$ip', account_lastlogin='" . time()
 				. "' WHERE account_id='$account_id'",__LINE__,__FILE__);
 		}

@@ -11,7 +11,7 @@ $lsioid = (isset($_POST['lsioid'])) ? $_POST['lsioid'] : $_GET['lsioid'];
 if ($acao == "excluir_indicador") {
     $sql = "delete from listagem.listagem_indicador where lsioid = $lsioid ";
     pg_query($conn,$sql);
-    $msg = "Parâmetro Excluído com sucesso!";
+    $msg = "ParÃ¢metro Excluï¿½do com sucesso!";
 }
 
 if ($form->isSubmit("atualizar_parametro",true)) {
@@ -60,7 +60,7 @@ if ($form->isSubmit("atualizar_parametro",true)) {
     
     			echo $sql;
                 $res = pg_query($conn,$sql);
-                //ATUALIZA A VERSÃO DA LISTAGEM PARA MANTER O PROCESSO DE SINCRONIZAÇÃO
+                //ATUALIZA A VERSï¿½O DA LISTAGEM PARA MANTER O PROCESSO DE SINCRONIZAï¿½ï¿½O
                 //atualizarVersao($conn,$lstoid);
                 
                 $msg=  "Indicador adicionado com Sucesso!";
@@ -77,7 +77,7 @@ if ($form->isSubmit("atualizar_parametro",true)) {
                     where lsioid = $lsioid ";
     
            $res = pg_query($conn,$sql);
-           //ATUALIZA A VERSÃO DA LISTAGEM PARA MANTER O PROCESSO DE SINCRONIZAÇÃO
+           //ATUALIZA A VERSï¿½O DA LISTAGEM PARA MANTER O PROCESSO DE SINCRONIZAï¿½ï¿½O
            //atualizarVersao($conn,$lstoid);
            $msg=  "Indicador atualizado com Sucesso!";
            $lsioid = "";
@@ -85,7 +85,7 @@ if ($form->isSubmit("atualizar_parametro",true)) {
         }
      pg_query($conn,"COMMIT;");
     
-     } catch (exception $e) {
+     } catch (\Exception $e) {
                 $msg = "ERRO: " . $e->getMessage();
                 pg_query($conn,"ROLLBACK;");
      }
@@ -126,27 +126,27 @@ if(isset($lstoid{0})){
     $form->adicionarHidden("lsioid",$lsioid); 
     $form->adicionarHidden("abaMenu",$abaMenu);
     $form->adicionarHidden("acao","editar");
-    $form->adicionarCampo("lsiidindicador","lsiidindicador","ID do Indicador:","Identificador do Indicador",$lsiidindicador,true,"20","","Identificador do Indicador. (Não usar {}).");
+    $form->adicionarCampo("lsiidindicador","lsiidindicador","ID do Indicador:","Identificador do Indicador",$lsiidindicador,true,"20","","Identificador do Indicador. (Nï¿½o usar {}).");
     
     $arrTipoIndicador = array (  '' => '---',
                                  'Q'        => 'Quadrado' ,
                                  'R'      => 'Redondo' ,
                                  'T'      => 'Triangulo',
-                                 'I'      => 'Ícone');
+                                 'I'      => 'ï¿½cone');
     $form->adicionarSelect("lsitipo","Tipo do Indicador:","Tipo do Indicador:",$lsitipo,$arrTipoIndicador,true);
     $form->adicionarCampoAcao("lsitipo","onchange","selecionaTipoIndicador(this.value,'$lsiimagem');");
 
     $arrImagemIndicador = array();
     $form->adicionarSelect("lsiimagem","Imagem do Indicador:","Imagem do Indicador:",$lsiimagem,$arrImagemIndicador,true,"","150");
     
-    $form->adicionarCampo("lsilegenda","lsilegenda","Legenda:","Legenda",$lsilegenda,false,"30","","(Deixe em branco para não exibir)");
-    $form->adicionarCampo("lsilegenda_csv","lsilegenda_csv","Legenda CSV:","Legenda",$lsilegenda_csv,false,"30","","Legenda que será exibida no arquivo CSV.");
-    $form->adicionarCampo("lsicondicao","lsicondicao","Condição de Exibição:","Condição",$lsicondicao,false,"50","","Condição para exibir o indicador. Ex: (({meustatus} == 1) && ({tipo} > 200))");
+    $form->adicionarCampo("lsilegenda","lsilegenda","Legenda:","Legenda",$lsilegenda,false,"30","","(Deixe em branco para nï¿½o exibir)");
+    $form->adicionarCampo("lsilegenda_csv","lsilegenda_csv","Legenda CSV:","Legenda",$lsilegenda_csv,false,"30","","Legenda que serï¿½ exibida no arquivo CSV.");
+    $form->adicionarCampo("lsicondicao","lsicondicao","Condiï¿½ï¿½o de Exibiï¿½ï¿½o:","Condiï¿½ï¿½o",$lsicondicao,false,"50","","Condiï¿½ï¿½o para exibir o indicador. Ex: (({meustatus} == 1) && ({tipo} > 200))");
     
     $form->adicionarQuadro("quadro2","Cadastro de Indicadores");
     $form->adicionarSubmit("quadro2","btn_cadastrar","Atualizar","atualizar_parametro");
 
-    //LISTAGEM DE PARÂMETROS
+    //LISTAGEM DE PARï¿½METROS
     $sql = "SELECT * FROM listagem.listagem_indicador WHERE lsilstoid=$lstoid order by lsioid";
     $res = pg_query($sql);
     
@@ -165,7 +165,7 @@ if(isset($lstoid{0})){
     $listagem->adicionarColuna("lsiidindicador","ID do indicador","{lsiidindicador}","text","left","100px");
     $listagem->adicionarColuna("lsilegenda","Legenda","{lsilegenda}","text","left","200px");
     $listagem->adicionarColuna("lsilegenda_csv","Legenda CSV","{lsilegenda_csv}","text","left","200px");
-    $listagem->adicionarColuna("lsicondicao","Condição de Exibição","{lsicondicao}","text","left","200px");
+    $listagem->adicionarColuna("lsicondicao","Condiï¿½ï¿½o de Exibiï¿½ï¿½o","{lsicondicao}","text","left","200px");
 
     $listagem->adicionarColuna("lsioid","Excluir","[Excluir]","text","center","50px");
     $listagem->adicionarLink("lsioid",$BASE_URL . "&abaMenu=indicadores&lstoid=$lstoid&lsioid={lsioid}&acao=excluir_indicador");

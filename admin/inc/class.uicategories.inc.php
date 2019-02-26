@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Admin - Global categories                                   *
 	* http://www.egroupware.org                                                *
@@ -35,30 +37,30 @@
 
 		function uicategories()
 		{
-			if ($GLOBALS['phpgw']->acl->check('global_categories_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('global_categories_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 
 			$this->bo			= CreateObject('admin.bocategories');
-			$this->template		= $GLOBALS['phpgw']->template;
+			$this->template		= GlobalService::get('phpgw')->template;
 			$this->nextmatchs	= CreateObject('phpgwapi.nextmatchs');
 
-			$this->acl_search = !$GLOBALS['phpgw']->acl->check('global_categories_access',2,'admin');
-			$this->acl_add    = !$GLOBALS['phpgw']->acl->check('global_categories_access',4,'admin');
-			$this->acl_view   = !$GLOBALS['phpgw']->acl->check('global_categories_access',8,'admin');
-			$this->acl_edit   = !$GLOBALS['phpgw']->acl->check('global_categories_access',16,'admin');
-			$this->acl_delete = !$GLOBALS['phpgw']->acl->check('global_categories_access',32,'admin');
-			$this->acl_add_sub= !$GLOBALS['phpgw']->acl->check('global_categories_access',64,'admin');
+			$this->acl_search = !GlobalService::get('phpgw')->acl->check('global_categories_access',2,'admin');
+			$this->acl_add    = !GlobalService::get('phpgw')->acl->check('global_categories_access',4,'admin');
+			$this->acl_view   = !GlobalService::get('phpgw')->acl->check('global_categories_access',8,'admin');
+			$this->acl_edit   = !GlobalService::get('phpgw')->acl->check('global_categories_access',16,'admin');
+			$this->acl_delete = !GlobalService::get('phpgw')->acl->check('global_categories_access',32,'admin');
+			$this->acl_add_sub= !GlobalService::get('phpgw')->acl->check('global_categories_access',64,'admin');
 
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
 
 			$this->appname = get_var('appname',array('GET','POST'));
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps'][$this->appname ? $this->appname : 'admin']['title'];
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps'][$this->appname ? $this->appname : 'admin']['title'];
 
 			$this->start		= $this->bo->start;
 			$this->query		= $this->bo->query;
@@ -78,8 +80,8 @@
 			}
 			$dir->close();
 			sort($this->icons);
-			$this->img_url = $GLOBALS['phpgw_info']['server']['webserver_url'].'/phpgwapi/images/';
-			$this->template_dir = 'calendar/templates/'.$GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'];
+			$this->img_url = GlobalService::get('phpgw_info')['server']['webserver_url'].'/phpgwapi/images/';
+			$this->template_dir = 'calendar/templates/'.GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'];
 		}
 
 		function _debug_sqsof()
@@ -157,12 +159,12 @@
 
 			if ($_POST['add'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php',$link_data);
+				GlobalService::get('phpgw')->redirect_link('/index.php',$link_data);
 			}
 
 			if ($_POST['done'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+				GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 			}
 	
 			
@@ -177,21 +179,21 @@
 				$this->template->set_block('cat_list_t','search','searchhandle');
 			}
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] .= ' - '.lang('Global categories');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] .= ' - '.lang('Global categories');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 			$this->set_langs();
 
 			$this->template->set_var('query',$this->query);
 			
 			// if ExpressoMail 1.2 has been installed and enabled, show the plugin using AJAX. 
-			if($GLOBALS['phpgw_info']['server']['cal_expressoMail']) {
-				$module_name = 'expressoMail'.(str_replace("1.","1_",$GLOBALS['phpgw_info']['server']['cal_expressoMail']));
-				if($GLOBALS['phpgw_info']['user']['apps'][$module_name]){								
+			if(GlobalService::get('phpgw_info')['server']['cal_expressoMail']) {
+				$module_name = 'expressoMail'.(str_replace("1.","1_",GlobalService::get('phpgw_info')['server']['cal_expressoMail']));
+				if(GlobalService::get('phpgw_info')['user']['apps'][$module_name]){								
 					$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
-					$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];				
-					$_SESSION['phpgw_info']['expressomail']['user']['owner'] = $GLOBALS['phpgw_info']['user']['account_id'];
-					$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+					$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];				
+					$_SESSION['phpgw_info']['expressomail']['user']['owner'] = GlobalService::get('phpgw_info')['user']['account_id'];
+					$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 					$_SESSION['phpgw_info']['expressomail']['ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
 					// Carrega todos scripts necessarios				
 					$scripts =	"<script src='".$module_name."/js/connector.js' type='text/javascript'></script>".
@@ -204,7 +206,7 @@
 			$this->template->set_var('template_set',$this->template_dir);
 
 			$link_data['menuaction'] = 'admin.uicategories.index';
-			$this->template->set_var('action_url',$GLOBALS['phpgw']->link('/index.php',$link_data));
+			$this->template->set_var('action_url',GlobalService::get('phpgw')->link('/index.php',$link_data));
 
 			if(!$start)
 			{
@@ -247,7 +249,7 @@
 
 				$id = $cat['id'];
 				$level = $cat['level'];
-				$cat_name = $GLOBALS['phpgw']->strip_html($cat['name']);
+				$cat_name = GlobalService::get('phpgw')->strip_html($cat['name']);
 
 				if ($level > 0)
 				{
@@ -256,7 +258,7 @@
 					$cat_name = $spaceset . $cat_name;
 				}
 
-				$descr = $GLOBALS['phpgw']->strip_html($cat['description']);
+				$descr = GlobalService::get('phpgw')->strip_html($cat['description']);
 				if (!$descr) { $descr = '&nbsp;'; }
 
 				if ($level == 0)
@@ -285,7 +287,7 @@
 					$link_data['menuaction'] = 'admin.uicategories.edit';
 					$link_data['cat_parent'] = $id;
 					unset($link_data['cat_id']);
-					$this->template->set_var('add_sub','<a href="'.$GLOBALS['phpgw']->link('/index.php',$link_data).'">'.
+					$this->template->set_var('add_sub','<a href="'.GlobalService::get('phpgw')->link('/index.php',$link_data).'">'.
 						lang('Add sub').'</a>');
 				}
 				if ($this->appname && $cat['app_name'] == $this->appname)
@@ -306,7 +308,7 @@
 				if ($show_edit_del && $this->acl_edit)
 				{
 					$link_data['menuaction'] = 'admin.uicategories.edit';
-					$this->template->set_var('edit','<a href="'.$GLOBALS['phpgw']->link('/index.php',$link_data).'">'.
+					$this->template->set_var('edit','<a href="'.GlobalService::get('phpgw')->link('/index.php',$link_data).'">'.
 						lang('Edit').'</a>');
 				}
 				else
@@ -316,7 +318,7 @@
 				if ($show_edit_del && $this->acl_delete)
 				{
 					$link_data['menuaction'] = 'admin.uicategories.delete';
-					$this->template->set_var('delete','<a href="'.$GLOBALS['phpgw']->link('/index.php',$link_data).'">'.
+					$this->template->set_var('delete','<a href="'.GlobalService::get('phpgw')->link('/index.php',$link_data).'">'.
 						lang('Delete').'</a>');
 				}
 				else
@@ -326,9 +328,9 @@
 
 				$data = unserialize($cat['data']);
 				$icon = $data['icon'];				
-				$permission = ($cat['owner'] == '-1' ? lang("all"): $GLOBALS['phpgw']->accounts->id2name( $cat['owner']) );
+				$permission = ($cat['owner'] == '-1' ? lang("all"): GlobalService::get('phpgw')->accounts->id2name( $cat['owner']) );
 				$this->template->set_var('permission', $permission);
-				$dir_img = $GLOBALS['phpgw_info']['server']['webserver_url'] . SEP . 'phpgwapi' . SEP . 'images' . SEP;
+				$dir_img = GlobalService::get('phpgw_info')['server']['webserver_url'] . SEP . 'phpgwapi' . SEP . 'images' . SEP;
 				$this->template->set_var('icon', !$icon ? lang("None") : "<img src='". $dir_img . $icon  ."'>");
 
 				$this->template->fp('list','cat_list',True);
@@ -336,7 +338,7 @@
 			$link_data['menuaction'] = 'admin.uicategories.edit';
 			unset($link_data['cat_id']);
 			unset($link_data['cat_parent']);
-			$this->template->set_var('add_action',$GLOBALS['phpgw']->link('/index.php',$link_data));
+			$this->template->set_var('add_action',GlobalService::get('phpgw')->link('/index.php',$link_data));
 
 			$this->save_sessiondata();
 			$this->template->pfp('out','cat_list_t',True);
@@ -369,12 +371,12 @@
 
 			if (!$this->acl_add && $cat_parent == 0 || !$this->acl_add_sub && $cat_parent != 0)
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 			if ($_POST['cancel'] || $this->cat_id && !$this->acl_edit || $this->cat_id &&
 				(!$this->acl_add && $cat_parent == 0 || !$this->acl_add_sub && $cat_parent != 0))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php',$link_data);
+				GlobalService::get('phpgw')->redirect_link('/index.php',$link_data);
 			}
 
 			
@@ -406,7 +408,7 @@
 					$error = $this->bo->check_values($values);
 					if (is_array($error))
 					{
-						$this->template->set_var('message',$GLOBALS['phpgw']->common->error_list($error));
+						$this->template->set_var('message',GlobalService::get('phpgw')->common->error_list($error));
 					}
 					else
 					{
@@ -416,21 +418,21 @@
 					}
 					}
 					if ($redirect_)
-						$GLOBALS['phpgw']->redirect_link('/index.php',$link_data);
+						GlobalService::get('phpgw')->redirect_link('/index.php',$link_data);
 
 			}
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] .= ' - '.($this->cat_id ? lang('Edit global category'):lang('Add global category'));
+			GlobalService::get('phpgw_info')['flags']['app_header'] .= ' - '.($this->cat_id ? lang('Edit global category'):lang('Add global category'));
 
 			$this->set_langs();
 		// if ExpressoMail 1.2 has been installed and enabled, show the plugin using AJAX. 
-		if($GLOBALS['phpgw_info']['server']['cal_expressoMail']) {
-			$module_name = 'expressoMail'.(str_replace("1.","1_",$GLOBALS['phpgw_info']['server']['cal_expressoMail']));
-			if($GLOBALS['phpgw_info']['user']['apps'][$module_name]){								
+		if(GlobalService::get('phpgw_info')['server']['cal_expressoMail']) {
+			$module_name = 'expressoMail'.(str_replace("1.","1_",GlobalService::get('phpgw_info')['server']['cal_expressoMail']));
+			if(GlobalService::get('phpgw_info')['user']['apps'][$module_name]){								
 				$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
-				$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];				
-				$_SESSION['phpgw_info']['expressomail']['user']['owner'] = $GLOBALS['phpgw_info']['user']['account_id'];
-				$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+				$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];				
+				$_SESSION['phpgw_info']['expressomail']['user']['owner'] = GlobalService::get('phpgw_info')['user']['account_id'];
+				$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 				$_SESSION['phpgw_info']['expressomail']['ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
 				// Carrega todos scripts necessarios				
 				$scripts =	"<script src='".$module_name."/js/connector.js' type='text/javascript'></script>".
@@ -468,7 +470,7 @@
 				$cat['name_group'] = lang("All");
 				$cat['id_group'] = 0;
 			}
-			$this->template->set_var('category_namegroup',$GLOBALS['phpgw']->strip_html($cat['name_group']));
+			$this->template->set_var('category_namegroup',GlobalService::get('phpgw')->strip_html($cat['name_group']));
 
 			// Hidden vars
 			$this->template->set_var('cat_id',$this->cat_id);
@@ -479,28 +481,28 @@
 
 			$link_data['menuaction']	= 'admin.uicategories.edit';
 			$link_data['cat_id']		= $this->cat_id; 
-			$this->template->set_var('action_url',$GLOBALS['phpgw']->link('/index.php',$link_data));
+			$this->template->set_var('action_url',GlobalService::get('phpgw')->link('/index.php',$link_data));
 
 			if ($this->acl_delete)
 			{
 				$link_data['menuaction'] = 'admin.uicategories.delete';
 
-				$this->template->set_var('delete','<form method="POST" action="' . $GLOBALS['phpgw']->link('/index.php',$link_data)
+				$this->template->set_var('delete','<form method="POST" action="' . GlobalService::get('phpgw')->link('/index.php',$link_data)
 					. '"><input type="submit" value="' . lang('Delete') .'"></form>');
 			}
 			else
 			{
 				$this->template->set_var('delete','&nbsp;');
 			}
-			$this->template->set_var('cat_name',$GLOBALS['phpgw']->strip_html($cat['name']));
-			$this->template->set_var('cat_description',$GLOBALS['phpgw']->strip_html($cat['description']));
+			$this->template->set_var('cat_name',GlobalService::get('phpgw')->strip_html($cat['name']));
+			$this->template->set_var('cat_description',GlobalService::get('phpgw')->strip_html($cat['description']));
 			$this->template->set_var('category_list',$this->bo->cats->formatted_list(array('selected' => $cat['parent'],'self' => $this->cat_id)));
 			$this->template->set_var('bt_rem_id_group_visibility',$cat['name_group'] ? "visible" : "hidden");
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
-			$this->template->set_var('color',$GLOBALS['phpgw']->html->inputColor('cat_data[color]',$cat['data']['color'],lang('Click to select a color')));
+			$this->template->set_var('color',GlobalService::get('phpgw')->html->inputColor('cat_data[color]',$cat['data']['color'],lang('Click to select a color')));
 			$options = '';
 			//$options = '<option value="aanone.gif"'.(!$cat['data']['icon'] ? ' selected="1"':'').'>'.lang('none')."</options>\n";
 			foreach ($this->icons as $icon)
@@ -540,7 +542,7 @@
 			}
 			$this->template->set_var('hidden_vars',$hidden_vars);
 
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
 			$this->template->pfp('out','form');
@@ -550,7 +552,7 @@
 		{
 			if (!$this->acl_delete)
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 			$link_data = array
 			(
@@ -560,7 +562,7 @@
 
 			if (!$this->cat_id || $_POST['cancel'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php',$link_data);
+				GlobalService::get('phpgw')->redirect_link('/index.php',$link_data);
 			}
 
 			if ($_POST['confirm'])
@@ -573,7 +575,7 @@
 				{
 					$this->bo->delete($this->cat_id,False);
 				}
-				$GLOBALS['phpgw']->redirect_link('/index.php',$link_data);
+				GlobalService::get('phpgw')->redirect_link('/index.php',$link_data);
 			}
 			$this->template->set_file(array('category_delete' => 'delete_cat.tpl'));
 
@@ -593,13 +595,13 @@
 				'cat_id'   => $this->cat_id
 			));
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] .= ' - '.lang('Delete category');
-			if(!@is_object($GLOBALS['phpgw']->js))
+			GlobalService::get('phpgw_info')['flags']['app_header'] .= ' - '.lang('Delete category');
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
 			$hidden_vars = '<input type="hidden" name="cat_id" value="' . $this->cat_id . '">' . "\n";
@@ -647,7 +649,7 @@
 
 				$link_data['menuaction'] = 'admin.uicategories.delete';
 				$link_data['cat_id'] = $this->cat_id;
-				$this->template->set_var('action_url',$GLOBALS['phpgw']->link('/index.php',$link_data));
+				$this->template->set_var('action_url',GlobalService::get('phpgw')->link('/index.php',$link_data));
 				$this->template->set_var('lang_yes',lang('Yes'));
 				$this->template->set_var('lang_no',lang('No'));
 				$this->template->pfp('out','category_delete');

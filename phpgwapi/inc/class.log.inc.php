@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - log                                                         *
 	* http://www.egroupware.org                                                *
@@ -81,11 +83,11 @@
 
 		function commit()
 		{
-			$db = $GLOBALS['phpgw']->db;
+			$db = GlobalService::get('phpgw')->db;
 			$db->query("insert into phpgw_log (log_date, log_user, log_app, log_severity) values "
-				."('". $GLOBALS['phpgw']->db->to_timestamp(time())
-				."','".$GLOBALS['phpgw']->session->account_id
-				."','".$GLOBALS['phpgw_info']['flags']['currentapp']."'"
+				."('". GlobalService::get('phpgw')->db->to_timestamp(time())
+				."','".GlobalService::get('phpgw')->session->account_id
+				."','".GlobalService::get('phpgw_info')['flags']['currentapp']."'"
 				.",'".$this->severity()."'"
 				.")"
 				,__LINE__,__FILE__);
@@ -98,7 +100,7 @@
 					. "(log_msg_seq_no, log_msg_date, "
 					. "log_msg_severity, log_msg_code, log_msg_msg, log_msg_parms) values "
 					. "(" . $i
-					. ", '" . $GLOBALS['phpgw']->db->to_timestamp($err->timestamp)
+					. ", '" . GlobalService::get('phpgw')->db->to_timestamp($err->timestamp)
 					. "', '". $err->severity . "'"
 					. ", '". $err->code      . "'"
 					. ", '". $err->msg       . "'"
@@ -161,8 +163,8 @@
 
 				$html .= "\t<tr bgcolor=".'"'.$color.'"'.">\n";
 				$html .= "\t\t<td align=center>".$i."</td>\n";
-				$html .= "\t\t<td>".$GLOBALS['phpgw']->common->show_date($err->timestamp)."</td>\n";
-				$html .= "\t\t<td>".$GLOBALS['phpgw_info']['flags']['currentapp']."&nbsp </td>\n";
+				$html .= "\t\t<td>".GlobalService::get('phpgw')->common->show_date($err->timestamp)."</td>\n";
+				$html .= "\t\t<td>".GlobalService::get('phpgw_info')['flags']['currentapp']."&nbsp </td>\n";
 				$html .= "\t\t<td align=center>".$err->severity."</td>\n";
 				$html .= "\t\t<td>".$err->code."</td>\n";
 				$html .= "\t\t<td>".$err->langmsg()."</td>\n";

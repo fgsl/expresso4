@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare                                                               *
   * http://www.egroupware.org                                                *
@@ -18,10 +20,10 @@
 
 	function add_image_ahref($link,$image,$alt)
 	{
-		return '<a href="'.$link.'"><img src="'.$GLOBALS['phpgw']->common->image('calendar',$image).'" alt="'.$alt.'" title="'.$alt.'" border="0"></a>';
+		return '<a href="'.$link.'"><img src="'.GlobalService::get('phpgw')->common->image('calendar',$image).'" alt="'.$alt.'" title="'.$alt.'" border="0"></a>';
 	}
 
-	$refer = explode('.',$GLOBALS['HTTP_GET_VARS']['menuaction']);
+	$refer = explode('.',GlobalService::get('HTTP_GET_VARS')['menuaction']);
 	$referrer = $refer[2];
 
 	$templates = Array(
@@ -44,7 +46,7 @@
 		$tpl->set_var('cols',7);
 	}
 
-	$today = date('Ymd',$GLOBALS['phpgw']->datetime->users_localtime);
+	$today = date('Ymd',GlobalService::get('phpgw')->datetime->users_localtime);
 
 	$col_width = 12;
 
@@ -77,22 +79,22 @@
 	{
 		$remainder = 72;
 		
-		$date = (isset($GLOBALS['date'])?$GLOBALS['date']:'');
-		$date = (isset($GLOBALS['HTTP_GET_VARS']['date'])?$GLOBALS['HTTP_GET_VARS']['date']:$date);
-		$date = ($date=='' && isset($GLOBALS['HTTP_POST_VARS']['date'])?$GLOBALS['HTTP_POST_VARS']['date']:$date);
+		$date = (isset(GlobalService::get('date'))?GlobalService::get('date'):'');
+		$date = (isset(GlobalService::get('HTTP_GET_VARS')['date'])?GlobalService::get('HTTP_GET_VARS')['date']:$date);
+		$date = ($date=='' && isset(GlobalService::get('HTTP_POST_VARS')['date'])?GlobalService::get('HTTP_POST_VARS')['date']:$date);
 
-		$base_hidden_vars = '<input type="hidden" name="from" value="'.$GLOBALS['HTTP_GET_VARS']['menuaction'].'">'."\n";
-		if(isset($GLOBALS['HTTP_GET_VARS']['cal_id']) && $GLOBALS['HTTP_GET_VARS']['cal_id'] != 0)
+		$base_hidden_vars = '<input type="hidden" name="from" value="'.GlobalService::get('HTTP_GET_VARS')['menuaction'].'">'."\n";
+		if(isset(GlobalService::get('HTTP_GET_VARS')['cal_id']) && GlobalService::get('HTTP_GET_VARS')['cal_id'] != 0)
 		{
-			$base_hidden_vars .= '    <input type="hidden" name="cal_id" value="'.$GLOBALS['HTTP_GET_VARS']['cal_id'].'">'."\n";
+			$base_hidden_vars .= '    <input type="hidden" name="cal_id" value="'.GlobalService::get('HTTP_GET_VARS')['cal_id'].'">'."\n";
 		}
-		if(isset($GLOBALS['HTTP_POST_VARS']['keywords']) && $GLOBALS['HTTP_POST_VARS']['keywords'])
+		if(isset(GlobalService::get('HTTP_POST_VARS')['keywords']) && GlobalService::get('HTTP_POST_VARS')['keywords'])
 		{
-			$base_hidden_vars .= '    <input type="hidden" name="keywords" value="'.$GLOBALS['HTTP_POST_VARS']['keywords'].'">'."\n";
+			$base_hidden_vars .= '    <input type="hidden" name="keywords" value="'.GlobalService::get('HTTP_POST_VARS')['keywords'].'">'."\n";
 		}
-		if(isset($GLOBALS['HTTP_POST_VARS']['matrixtype']) && $GLOBALS['HTTP_POST_VARS']['matrixtype'])
+		if(isset(GlobalService::get('HTTP_POST_VARS')['matrixtype']) && GlobalService::get('HTTP_POST_VARS')['matrixtype'])
 		{
-			$base_hidden_vars .= '    <input type="hidden" name="matrixtype" value="'.$GLOBALS['HTTP_POST_VARS']['matrixtype'].'">'."\n";
+			$base_hidden_vars .= '    <input type="hidden" name="matrixtype" value="'.GlobalService::get('HTTP_POST_VARS')['matrixtype'].'">'."\n";
 		}
 		if($date)
 		{
@@ -102,11 +104,11 @@
 		$base_hidden_vars .= '    <input type="hidden" name="day" value="'.$this->bo->day.'">'."\n";
 		$base_hidden_vars .= '    <input type="hidden" name="year" value="'.$this->bo->year.'">'."\n";
 		
-		if(isset($GLOBALS['HTTP_POST_VARS']['participants']) && $GLOBALS['HTTP_POST_VARS']['participants'])
+		if(isset(GlobalService::get('HTTP_POST_VARS')['participants']) && GlobalService::get('HTTP_POST_VARS')['participants'])
 		{
-			for ($i=0;$i<count($GLOBALS['HTTP_POST_VARS']['participants']);$i++)
+			for ($i=0;$i<count(GlobalService::get('HTTP_POST_VARS')['participants']);$i++)
 			{
-				$base_hidden_vars .= '    <input type="hidden" name="participants[]" value="'.$GLOBALS['HTTP_POST_VARS']['participants'][$i].'">'."\n";
+				$base_hidden_vars .= '    <input type="hidden" name="participants[]" value="'.GlobalService::get('HTTP_POST_VARS')['participants'][$i].'">'."\n";
 			}
 		}
 
@@ -123,7 +125,7 @@
 		$tpl->set_var('str',$tpl->fp('out','form_button_dropdown'));
 		$tpl->parse('header_column','head_col',True);
 
-		if($GLOBALS['HTTP_GET_VARS']['menuaction'] == 'calendar.uicalendar.planner')
+		if(GlobalService::get('HTTP_GET_VARS')['menuaction'] == 'calendar.uicalendar.planner')
 		{
 			$remainder -= 28;
 			print_debug('Sort By',$this->bo->sortby);
@@ -166,7 +168,7 @@
 		}
 //aqui !!
 
-		if((!isset($GLOBALS['phpgw_info']['server']['deny_user_grants_access']) || !$GLOBALS['phpgw_info']['server']['deny_user_grants_access']) && count($this->bo->grants) > 0)
+		if((!isset(GlobalService::get('phpgw_info')['server']['deny_user_grants_access']) || !GlobalService::get('phpgw_info')['server']['deny_user_grants_access']) && count($this->bo->grants) > 0)
 		{
 			$form_options = '';
 			
@@ -193,10 +195,10 @@
 		}
 	}
 
-	$hidden_vars = '    <input type="hidden" name="from" value="'.$GLOBALS['HTTP_GET_VARS']['menuaction'].'">'."\n";
-	if(isset($GLOBALS['HTTP_GET_VARS']['date']) && $GLOBALS['HTTP_GET_VARS']['date'])
+	$hidden_vars = '    <input type="hidden" name="from" value="'.GlobalService::get('HTTP_GET_VARS')['menuaction'].'">'."\n";
+	if(isset(GlobalService::get('HTTP_GET_VARS')['date']) && GlobalService::get('HTTP_GET_VARS')['date'])
 	{
-		$hidden_vars .= '    <input type="hidden" name="date" value="'.$GLOBALS['HTTP_GET_VARS']['date'].'">'."\n";
+		$hidden_vars .= '    <input type="hidden" name="date" value="'.GlobalService::get('HTTP_GET_VARS')['date'].'">'."\n";
 	}
 	$hidden_vars .= '    <input type="hidden" name="month" value="'.$this->bo->month.'">'."\n";
 	$hidden_vars .= '    <input type="hidden" name="day" value="'.$this->bo->day.'">'."\n";
@@ -213,7 +215,7 @@
 	{
 		$hidden_vars .= '    <input type="hidden" name="num_months" value="'.$this->bo->num_months.'">'."\n";
 	}
-	$hidden_vars .= '    <input name="keywords"'.($GLOBALS['HTTP_POST_VARS']['keywords']?' value="'.$GLOBALS['HTTP_POST_VARS']['keywords'].'"':'').'>';
+	$hidden_vars .= '    <input name="keywords"'.(GlobalService::get('HTTP_POST_VARS')['keywords']?' value="'.GlobalService::get('HTTP_POST_VARS')['keywords'].'"':'').'>';
 
 	$var = Array(
 		'action_url_button'	=> $this->page('search'),

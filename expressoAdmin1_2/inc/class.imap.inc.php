@@ -1,5 +1,5 @@
 <?php
-class ImapException extends Exception
+class ImapException extends \Exception
 {
 	public function __construct( &$imap, $message, $code = 0, $previous = null )
 	{
@@ -89,7 +89,7 @@ class imap
 	
 	/**
 	 * Load capabilities options of server
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return imap
 	 */
 	private function _get_capability()
@@ -108,7 +108,7 @@ class imap
 				if ( strtoupper( substr( $line, 0, 3 ) ) == 'C01' ) break;
 				$this->_capabilities = explode( ' ', preg_filter( array( '/^\* CAPABILITY /','/\\r\\n$/'), '', $line ) );
 			}
-		} catch ( Exception $e ) {}
+		} catch ( \Exception $e ) {}
 		if ( $fp ) fclose( $fp );
 		
 		return $this->_capabilities;
@@ -116,7 +116,7 @@ class imap
 	
 	/**
 	 * Open main connection
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean | resource
 	 */
 	private function _open_connections( $as_user = true )
@@ -130,7 +130,7 @@ class imap
 	
 	/**
 	 * Get main connection
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean | resource
 	 */
 	private function _get_conn( $as_user = true )
@@ -141,7 +141,7 @@ class imap
 	
 	/**
 	 * Get delimiter char from user path
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean | imap
 	 */
 	private function _get_delimiter()
@@ -168,7 +168,7 @@ class imap
 	
 	/**
 	 * Search INBOX user
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean | imap
 	 */
 	private function _get_inbox()
@@ -224,7 +224,7 @@ class imap
 	
 	/**
 	 * Create INBOX
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean
 	 */
 	public function create_inbox()
@@ -240,7 +240,7 @@ class imap
 	
 	/**
 	 * Delete INBOX
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean
 	 */
 	public function delete_inbox()
@@ -258,7 +258,7 @@ class imap
 	
 	/**
 	 * Read the list of mailboxes
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean|array
 	 */
 	public function list_folders()
@@ -277,7 +277,7 @@ class imap
 	/**
 	 * Create mailbox
 	 * @param array $mailbox
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean
 	 */
 	public function create_mailbox( $mailbox )
@@ -308,7 +308,7 @@ class imap
 	/**
 	 * Reopen IMAP stream to new mailbox
 	 * @param array $mailbox
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean
 	 */
 	public function set_mailbox( $mailbox )
@@ -323,7 +323,7 @@ class imap
 	
 	/**
 	 * Get information about the current mailbox
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean|Object->(Date, Driver, Nmsgs, Recent, Unread, Deleted, Size)
 	 */
 	public function get_info()
@@ -337,7 +337,7 @@ class imap
 	
 	/**
 	 * Gets the number of messages in the current mailbox
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return int
 	 */
 	public function get_num_msgs()
@@ -393,7 +393,7 @@ class imap
 	
 	/**
 	 * Retrieve the quota settings per user
-	 * @throws Exception
+	 * @throws \Exception
 	 * @return boolean|int
 	 */
 	public function get_quota()
@@ -435,7 +435,7 @@ class imap
 					break;
 				}
 			}
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			throw $e;
 		}
 		if ( $fp ) fclose( $fp );

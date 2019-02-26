@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Commononly used functions                               *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -27,7 +29,7 @@
 
 	function ldap_rebind($ldap_connection, $ldap_url)
 	{
-		@ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['user_ldap_referral'], $GLOBALS['phpgw_info']['server']['password_ldap_referral']);
+		@ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['user_ldap_referral'], GlobalService::get('phpgw_info')['server']['password_ldap_referral']);
 	}
 	$d1 = strtolower(@substr(PHPGW_API_INC,0,3));
 	$d2 = strtolower(@substr(PHPGW_SERVER_ROOT,0,3));
@@ -157,9 +159,9 @@
 			$s = '';
 			if (!$owner)
 			{
-				$owner = $GLOBALS['phpgw_info']['user']['account_id'];
+				$owner = GlobalService::get('phpgw_info')['user']['account_id'];
 			}
-			$groups = $GLOBALS['phpgw']->accounts->membership((int)$owner);
+			$groups = GlobalService::get('phpgw')->accounts->membership((int)$owner);
 			if(@is_array($groups))
 			{
 				while ($group = each($groups))
@@ -178,10 +180,10 @@
 		*/
 		function getInstalledLanguages()
 		{
-			$GLOBALS['phpgw']->db->query('SELECT DISTINCT lang FROM phpgw_lang');
-			while (@$GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query('SELECT DISTINCT lang FROM phpgw_lang');
+			while (@GlobalService::get('phpgw')->db->next_record())
 			{
-				$installedLanguages[$GLOBALS['phpgw']->db->f('lang')] = $GLOBALS['phpgw']->db->f('lang');
+				$installedLanguages[GlobalService::get('phpgw')->db->f('lang')] = GlobalService::get('phpgw')->db->f('lang');
 			}
 
 			return $installedLanguages;
@@ -251,10 +253,10 @@
 		function ldapConnect($host='', $dn='', $passwd='', $ldapreferral=false) #default: dont follow the referral
 		{
 			
- 			if(!$host || $host == $GLOBALS['phpgw_info']['server']['ldap_host']) {                       
- 				$dn 	= $dn ? $dn : $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-   				$passwd = $passwd ? $passwd : $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-				$host   = $host ? $host : $GLOBALS['phpgw_info']['server']['ldap_host'];
+ 			if(!$host || $host == GlobalService::get('phpgw_info')['server']['ldap_host']) {                       
+ 				$dn 	= $dn ? $dn : GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+   				$passwd = $passwd ? $passwd : GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+				$host   = $host ? $host : GlobalService::get('phpgw_info')['server']['ldap_host'];
 			}
 
 			/*else if(strstr($host, "ldap://")){
@@ -265,10 +267,10 @@
 			if(!function_exists('ldap_connect'))
 			{
 				/* log does not exist in setup(, yet) */
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message('F-Abort, LDAP support unavailable');
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->message('F-Abort, LDAP support unavailable');
+					GlobalService::get('phpgw')->log->commit();
 				}
 
 				printf('<b>Error: LDAP support unavailable</b><br>',$host);
@@ -279,28 +281,28 @@
 			if(!$ds = ldap_connect($host))
 			{
 				/* log does not exist in setup(, yet) */
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message('F-Abort, Failed connecting to LDAP server');
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->message('F-Abort, Failed connecting to LDAP server');
+					GlobalService::get('phpgw')->log->commit();
 				}
 
 				printf("<b>Error: Can't connect to LDAP server %s!</b><br>",$host);
 				return False;
 			}
 
-			if($GLOBALS['phpgw_info']['server']['ldap_version3'])
+			if(GlobalService::get('phpgw_info')['server']['ldap_version3'])
 			{
 				if(!ldap_set_option($ds,LDAP_OPT_PROTOCOL_VERSION,3))
 				{
-					$GLOBALS['phpgw_info']['server']['ldap_version3'] = False;
+					GlobalService::get('phpgw_info')['server']['ldap_version3'] = False;
 				}
 			}
 			
 			ldap_set_option($ds, LDAP_OPT_REFERRALS, $ldapreferral);
 			if($ldapreferral){
-				$GLOBALS['phpgw_info']['server']['user_ldap_referral'] = $dn;
-				$GLOBALS['phpgw_info']['server']['password_ldap_referral'] = $passwd;
+				GlobalService::get('phpgw_info')['server']['user_ldap_referral'] = $dn;
+				GlobalService::get('phpgw_info')['server']['password_ldap_referral'] = $passwd;
 				ldap_set_rebind_proc($ds, ldap_rebind);
 			}
 			// bind as admin
@@ -308,10 +310,10 @@
 			{				
 				// Try rebind for connection problem
 				if(!@ldap_bind($ds,$dn,$passwd)) {
-					if(is_object($GLOBALS['phpgw']->log))
+					if(is_object(GlobalService::get('phpgw')->log))
 					{
-						$GLOBALS['phpgw']->log->message('F-Abort, Failed binding to LDAP server');
-						$GLOBALS['phpgw']->log->commit();
+						GlobalService::get('phpgw')->log->message('F-Abort, Failed binding to LDAP server');
+						GlobalService::get('phpgw')->log->commit();
 					}
 
 					if(function_exists("lang"))
@@ -326,10 +328,10 @@
 			// bind as anonymous
 			if(!$dn && !$passwd && !@ldap_bind($ds))
 			{
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message('F-Abort, Failed  (anonymous bind) to LDAP server');
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->message('F-Abort, Failed  (anonymous bind) to LDAP server');
+					GlobalService::get('phpgw')->log->commit();
 				}
 				if(function_exists("lang"))
 						echo '<div style="border: 2px dashed red; top: 0px; left: 0px; position: absolute; background-color: #EEE; width: 260px;">'.
@@ -371,23 +373,23 @@
 			{
 				define('PHPGW_FINAL',True);
 
-				/*if (is_object($GLOBALS['phpgw']->accounts))
+				/*if (is_object(GlobalService::get('phpgw')->accounts))
 				{
-					$GLOBALS['phpgw']->accounts->save_session_cache();
+					GlobalService::get('phpgw')->accounts->save_session_cache();
 				}*/
 				// call the asyncservice check_run function if it is not explicitly set to cron-only
 				//
-				if (!$GLOBALS['phpgw_info']['server']['asyncservice'])	// is default
+				if (!GlobalService::get('phpgw_info')['server']['asyncservice'])	// is default
 				{
 					ExecMethod('phpgwapi.asyncservice.check_run','fallback');
 				}
 				/* Clean up mcrypt */
-				if (@is_object($GLOBALS['phpgw']->crypto))
+				if (@is_object(GlobalService::get('phpgw')->crypto))
 				{
-					$GLOBALS['phpgw']->crypto->cleanup();
-					unset($GLOBALS['phpgw']->crypto);
+					GlobalService::get('phpgw')->crypto->cleanup();
+					unset(GlobalService::get('phpgw')->crypto);
 				}
-				$GLOBALS['phpgw']->db->disconnect();
+				GlobalService::get('phpgw')->db->disconnect();
 			}
 		}
 
@@ -454,17 +456,17 @@
 		{
 			$this->debug_info[] = 'check_owner() is a depreciated function - use ACL instead';
 			/*
-			$s = '<a href="' . $GLOBALS['phpgw']->link($link,$extravars) . '"> ' . lang($label) . ' </a>';
+			$s = '<a href="' . GlobalService::get('phpgw')->link($link,$extravars) . '"> ' . lang($label) . ' </a>';
 			if (preg_match('/^[0-9]+$/',$record))
 			{
-				if ($record != $GLOBALS['phpgw_info']['user']['account_id'])
+				if ($record != GlobalService::get('phpgw_info')['user']['account_id'])
 				{
 					$s = '&nbsp;';
 				}
 			}
 			else
 			{
-				if ($record != $GLOBALS['phpgw_info']['user']['userid'])
+				if ($record != GlobalService::get('phpgw_info')['user']['userid'])
 				{
 					$s = '&nbsp';
 				}
@@ -485,12 +487,12 @@
 		{
 			if (! $lid && ! $firstname && ! $lastname)
 			{
-				$lid       = $GLOBALS['phpgw_info']['user']['account_lid'];
-				$firstname = $GLOBALS['phpgw_info']['user']['firstname'];
-				$lastname  = $GLOBALS['phpgw_info']['user']['lastname'];
+				$lid       = GlobalService::get('phpgw_info')['user']['account_lid'];
+				$firstname = GlobalService::get('phpgw_info')['user']['firstname'];
+				$lastname  = GlobalService::get('phpgw_info')['user']['lastname'];
 			}
 
-			$display = $GLOBALS['phpgw_info']['user']['preferences']['common']['account_display'];
+			$display = GlobalService::get('phpgw_info')['user']['preferences']['common']['account_display'];
 
 			if ($firstname && $lastname)
 			{
@@ -534,7 +536,7 @@
 		*/
 		function grab_owner_name($accountid = '')
 		{
-			$GLOBALS['phpgw']->accounts->get_account_name($accountid,$lid,$fname,$lname);
+			GlobalService::get('phpgw')->accounts->get_account_name($accountid,$lid,$fname,$lname);
 			if (! $lid && ! $firstname && ! $lastname)
 			{
 				return "( " . lang("not found") . " )";
@@ -644,7 +646,7 @@
 		{
 			if ($appname == '')
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 			if ($appname == 'home' || $appname == 'logout' || $appname == 'login')
 			{
@@ -678,7 +680,7 @@
 		{
 			if (! $appname)
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 			if ($appname == 'home' || $appname == 'logout' || $appname == 'login' || $appname == 'about')
 			{
@@ -777,37 +779,37 @@
 		{
 			if (! $appname)
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 			if ($appname == 'home' || $appname == 'logout' || $appname == 'login')
 			{
 				$appname = 'phpgwapi';
 			}
 
-			if (!isset($GLOBALS['phpgw_info']['server']['template_set']) && isset($GLOBALS['phpgw_info']['user']['preferences']['common']['template_set']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['template_set']) && isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set']))
 			{
-				$GLOBALS['phpgw_info']['server']['template_set'] = $GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'];
+				GlobalService::get('phpgw_info')['server']['template_set'] = GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'];
 			}
 
 			// Setting this for display of template choices in user preferences
-			if ($GLOBALS['phpgw_info']['server']['template_set'] == 'user_choice')
+			if (GlobalService::get('phpgw_info')['server']['template_set'] == 'user_choice')
 			{
-				$GLOBALS['phpgw_info']['server']['usrtplchoice'] = 'user_choice';
+				GlobalService::get('phpgw_info')['server']['usrtplchoice'] = 'user_choice';
 			}
 
-			if (($GLOBALS['phpgw_info']['server']['template_set'] == 'user_choice' ||
-				!isset($GLOBALS['phpgw_info']['server']['template_set'])) &&
-				isset($GLOBALS['phpgw_info']['user']['preferences']['common']['template_set']))
+			if ((GlobalService::get('phpgw_info')['server']['template_set'] == 'user_choice' ||
+				!isset(GlobalService::get('phpgw_info')['server']['template_set'])) &&
+				isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set']))
 			{
-				$GLOBALS['phpgw_info']['server']['template_set'] = $GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'];
+				GlobalService::get('phpgw_info')['server']['template_set'] = GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'];
 			}
-			elseif ($GLOBALS['phpgw_info']['server']['template_set'] == 'user_choice' ||
-				!isset($GLOBALS['phpgw_info']['server']['template_set']))
+			elseif (GlobalService::get('phpgw_info')['server']['template_set'] == 'user_choice' ||
+				!isset(GlobalService::get('phpgw_info')['server']['template_set']))
 			{
-				$GLOBALS['phpgw_info']['server']['template_set'] = 'default';
+				GlobalService::get('phpgw_info')['server']['template_set'] = 'default';
 			}
 
-			$tpldir         = PHPGW_SERVER_ROOT . '/' . $appname . '/templates/' . $GLOBALS['phpgw_info']['server']['template_set'];
+			$tpldir         = PHPGW_SERVER_ROOT . '/' . $appname . '/templates/' . GlobalService::get('phpgw_info')['server']['template_set'];
 			$tpldir_default = PHPGW_SERVER_ROOT . '/' . $appname . '/templates/default';
 
 			if (@is_dir($tpldir))
@@ -859,15 +861,15 @@
 		{
 			if ($appname == '')
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
-			if (empty($GLOBALS['phpgw_info']['server']['template_set']))
+			if (empty(GlobalService::get('phpgw_info')['server']['template_set']))
 			{
-				$GLOBALS['phpgw_info']['server']['template_set'] = 'default';
+				GlobalService::get('phpgw_info')['server']['template_set'] = 'default';
 			}
 
 			$imagedir            = PHPGW_SERVER_ROOT . '/' . $appname . '/templates/'
-				. $GLOBALS['phpgw_info']['server']['template_set'] . '/images';
+				. GlobalService::get('phpgw_info')['server']['template_set'] . '/images';
 			$imagedir_default    = PHPGW_SERVER_ROOT . '/' . $appname . '/templates/default/images';
 			$imagedir_olddefault = PHPGW_SERVER_ROOT . '/' . $appname . '/images';
 
@@ -898,29 +900,29 @@
 		{
 			if ($appname == '')
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 
-			if (empty($GLOBALS['phpgw_info']['server']['template_set']))
+			if (empty(GlobalService::get('phpgw_info')['server']['template_set']))
 			{
-				$GLOBALS['phpgw_info']['server']['template_set'] = 'default';
+				GlobalService::get('phpgw_info')['server']['template_set'] = 'default';
 			}
 
-			$imagedir            = PHPGW_SERVER_ROOT . '/'.$appname.'/templates/'.$GLOBALS['phpgw_info']['server']['template_set'].'/images';
+			$imagedir            = PHPGW_SERVER_ROOT . '/'.$appname.'/templates/'.GlobalService::get('phpgw_info')['server']['template_set'].'/images';
 			$imagedir_default    = PHPGW_SERVER_ROOT . '/'.$appname.'/templates/default/images';
 			$imagedir_olddefault = PHPGW_SERVER_ROOT . '/'.$appname.'/images';
 
 			if ($this->is_image_dir ($imagedir))
 			{
-				return $GLOBALS['phpgw_info']['server']['webserver_url'].'/'.$appname.'/templates/'.$GLOBALS['phpgw_info']['server']['template_set'].'/images';
+				return GlobalService::get('phpgw_info')['server']['webserver_url'].'/'.$appname.'/templates/'.GlobalService::get('phpgw_info')['server']['template_set'].'/images';
 			}
 			elseif ($this->is_image_dir ($imagedir_default))
 			{
-				return $GLOBALS['phpgw_info']['server']['webserver_url'].'/'.$appname.'/templates/default/images';
+				return GlobalService::get('phpgw_info')['server']['webserver_url'].'/'.$appname.'/templates/default/images';
 			}
 			elseif ($this->is_image_dir ($imagedir_olddefault))
 			{
-				return $GLOBALS['phpgw_info']['server']['webserver_url'].'/'.$appname.'/images';
+				return GlobalService::get('phpgw_info')['server']['webserver_url'].'/'.$appname.'/images';
 			}
 			else
 			{
@@ -930,7 +932,7 @@
 
 		function find_image($appname,$image)
 		{
-			$imagedir = '/'.$appname.'/templates/'.$GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'].'/images';
+			$imagedir = '/'.$appname.'/templates/'.GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'].'/images';
 			
 			if (!@is_array($this->found_files[$appname]))
 			{
@@ -977,7 +979,7 @@
 				}
 			}
 			
-			if (!$GLOBALS['phpgw_info']['server']['image_type'])
+			if (!GlobalService::get('phpgw_info')['server']['image_type'])
 			{
 				// priority: GIF->JPG->PNG
 				$img_type=array('.gif','.jpg','.png');
@@ -991,32 +993,32 @@
 			// first look in the selected template dir
 			if(@$this->found_files[$appname][$image.$img_type[0]]==$imagedir)
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[0]].'/'.$image.$img_type[0];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[0]].'/'.$image.$img_type[0];
 			}
 			elseif(@$this->found_files[$appname][$image.$img_type[1]]==$imagedir)
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[1]].'/'.$image.$img_type[1];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[1]].'/'.$image.$img_type[1];
 			}
 			elseif(@$this->found_files[$appname][$image.$img_type[2]]==$imagedir)
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[2]].'/'.$image.$img_type[2];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[2]].'/'.$image.$img_type[2];
 			}
 			// then look everywhere else
 			elseif(isset($this->found_files[$appname][$image.$img_type[0]]))
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[0]].'/'.$image.$img_type[0];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[0]].'/'.$image.$img_type[0];
 			}
 			elseif(isset($this->found_files[$appname][$image.$img_type[1]]))
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[1]].'/'.$image.$img_type[1];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[1]].'/'.$image.$img_type[1];
 			}
 			elseif(isset($this->found_files[$appname][$image.$img_type[2]]))
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[2]].'/'.$image.$img_type[2];
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image.$img_type[2]].'/'.$image.$img_type[2];
 			}
 			elseif(isset($this->found_files[$appname][$image]))
 			{
-				$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$image].'/'.$image;
+				$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$image].'/'.$image;
 			}
 			else
 			{
@@ -1028,19 +1030,19 @@
 
 				if(isset($this->found_files['phpgwapi'][$image.$img_type[0]]))
 				{
-					$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[0]].'/'.$image.$img_type[0];
+					$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[0]].'/'.$image.$img_type[0];
 				}
 				elseif(isset($this->found_files['phpgwapi'][$image.$img_type[1]]))
 				{
-					$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[1]].'/'.$image.$img_type[1];
+					$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[1]].'/'.$image.$img_type[1];
 				}
 				elseif(isset($this->found_files['phpgwapi'][$image.$img_type[2]]))
 				{
-					$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[2]].'/'.$image.$img_type[2];
+					$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files['phpgwapi'][$image.$img_type[2]].'/'.$image.$img_type[2];
 				}
 				elseif(isset($this->found_files['phpgwapi'][$image]))
 				{
-					$imgfile = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files['phpgwapi'][$image].'/'.$image;
+					$imgfile = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files['phpgwapi'][$image].'/'.$image;
 				}
 				else
 				{
@@ -1064,7 +1066,7 @@
 			{
 				while (list(,$img) = each($image))
 				{
-					$lang_images[] = $img . '_' . $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+					$lang_images[] = $img . '_' . GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 					$lang_images[] = $img;
 				}
 				$image = $lang_images;
@@ -1073,7 +1075,7 @@
 			{
 				if(isset($this->found_files[$appname][$img.$ext]))
 				{
-					$image_found = $GLOBALS['phpgw_info']['server']['webserver_url'].$this->found_files[$appname][$img.$ext].'/'.$img.$ext;
+					$image_found = GlobalService::get('phpgw_info')['server']['webserver_url'].$this->found_files[$appname][$img.$ext].'/'.$img.$ext;
 				}
 				else
 				{
@@ -1108,96 +1110,96 @@
 		*/
 		function navbar()
 		{
-			$GLOBALS['phpgw_info']['navbar']['home']['title'] = 'Home';
-			$GLOBALS['phpgw_info']['navbar']['home']['url']   = $GLOBALS['phpgw']->link('/home.php');
-			$GLOBALS['phpgw_info']['navbar']['home']['icon']  = $this->image('phpgwapi',Array('home','nonav'));
-			$GLOBALS['phpgw_info']['navbar']['home']['icon_hover']  = $this->image_on('phpgwapi',Array('home','nonav'),'-over');
+			GlobalService::get('phpgw_info')['navbar']['home']['title'] = 'Home';
+			GlobalService::get('phpgw_info')['navbar']['home']['url']   = GlobalService::get('phpgw')->link('/home.php');
+			GlobalService::get('phpgw_info')['navbar']['home']['icon']  = $this->image('phpgwapi',Array('home','nonav'));
+			GlobalService::get('phpgw_info')['navbar']['home']['icon_hover']  = $this->image_on('phpgwapi',Array('home','nonav'),'-over');
 
-			list($first) = each($GLOBALS['phpgw_info']['user']['apps']);
-			if(is_array($GLOBALS['phpgw_info']['user']['apps']['admin']) && $first != 'admin')
+			list($first) = each(GlobalService::get('phpgw_info')['user']['apps']);
+			if(is_array(GlobalService::get('phpgw_info')['user']['apps']['admin']) && $first != 'admin')
 			{
-				$newarray['admin'] = $GLOBALS['phpgw_info']['user']['apps']['admin'];
-				foreach($GLOBALS['phpgw_info']['user']['apps'] as $index => $value)
+				$newarray['admin'] = GlobalService::get('phpgw_info')['user']['apps']['admin'];
+				foreach(GlobalService::get('phpgw_info')['user']['apps'] as $index => $value)
 				{
 					if($index != 'admin')
 					{
 						$newarray[$index] = $value;
 					}
 				}
-				$GLOBALS['phpgw_info']['user']['apps'] = $newarray;
-				reset($GLOBALS['phpgw_info']['user']['apps']);
+				GlobalService::get('phpgw_info')['user']['apps'] = $newarray;
+				reset(GlobalService::get('phpgw_info')['user']['apps']);
 			}
 			unset($index);
 			unset($value);
 			unset($newarray);
 
-			foreach($GLOBALS['phpgw_info']['user']['apps'] as $app => $data)
+			foreach(GlobalService::get('phpgw_info')['user']['apps'] as $app => $data)
 			{
 				if (is_long($app))
 				{
 					continue;
 				}
 
-				if ($app == 'preferences' || $GLOBALS['phpgw_info']['apps'][$app]['status'] != 2 && $GLOBALS['phpgw_info']['apps'][$app]['status'] != 3)
+				if ($app == 'preferences' || GlobalService::get('phpgw_info')['apps'][$app]['status'] != 2 && GlobalService::get('phpgw_info')['apps'][$app]['status'] != 3)
 				{
-					$GLOBALS['phpgw_info']['navbar'][$app]['title'] = $GLOBALS['phpgw_info']['apps'][$app]['title'];
-					$GLOBALS['phpgw_info']['navbar'][$app]['url']   = $GLOBALS['phpgw']->link('/' . $app . '/index.php',isset($GLOBALS['phpgw_info']['flags']['params'][$app])?$GLOBALS['phpgw_info']['flags']['params'][$app]:'');
-					$GLOBALS['phpgw_info']['navbar'][$app]['name']  = $app;
+					GlobalService::get('phpgw_info')['navbar'][$app]['title'] = GlobalService::get('phpgw_info')['apps'][$app]['title'];
+					GlobalService::get('phpgw_info')['navbar'][$app]['url']   = GlobalService::get('phpgw')->link('/' . $app . '/index.php',isset(GlobalService::get('phpgw_info')['flags']['params'][$app])?GlobalService::get('phpgw_info')['flags']['params'][$app]:'');
+					GlobalService::get('phpgw_info')['navbar'][$app]['name']  = $app;
 
 					// create popup target
 					if ($data['status'] == 4)
 					{
-						$GLOBALS['phpgw_info']['navbar'][$app]['target'] = ' target="'.$app.'" onClick="'."if (this != '') { window.open(this+'".
-							(strstr($GLOBALS['phpgw_info']['navbar'][$app]['url'],'?') || 
-							ini_get('session.use_trans_sid') && $GLOBALS['phpgw_info']['server']['sessions_type'] == 'php4' ?'&':'?').
+						GlobalService::get('phpgw_info')['navbar'][$app]['target'] = ' target="'.$app.'" onClick="'."if (this != '') { window.open(this+'".
+							(strstr(GlobalService::get('phpgw_info')['navbar'][$app]['url'],'?') || 
+							ini_get('session.use_trans_sid') && GlobalService::get('phpgw_info')['server']['sessions_type'] == 'php4' ?'&':'?').
 							"referer='+encodeURI(location),this.target,'width=800,height=600,scrollbars=yes,resizable=yes'); return false; } else { return true; }".'"';
 					}
 
-					if ($app != $GLOBALS['phpgw_info']['flags']['currentapp'])
+					if ($app != GlobalService::get('phpgw_info')['flags']['currentapp'])
 					{
-						$GLOBALS['phpgw_info']['navbar'][$app]['icon']  = $this->image($app,Array('navbar','nonav'));
-						$GLOBALS['phpgw_info']['navbar'][$app]['icon_hover']  = $this->image_on($app,Array('navbar','nonav'),'-over');
+						GlobalService::get('phpgw_info')['navbar'][$app]['icon']  = $this->image($app,Array('navbar','nonav'));
+						GlobalService::get('phpgw_info')['navbar'][$app]['icon_hover']  = $this->image_on($app,Array('navbar','nonav'),'-over');
 					}
 					else
 					{
-						$GLOBALS['phpgw_info']['navbar'][$app]['icon']  = $this->image_on($app,Array('navbar','nonav'),'-over');
-						$GLOBALS['phpgw_info']['navbar'][$app]['icon_hover']  = $this->image($app,Array('navbar','nonav'));
+						GlobalService::get('phpgw_info')['navbar'][$app]['icon']  = $this->image_on($app,Array('navbar','nonav'),'-over');
+						GlobalService::get('phpgw_info')['navbar'][$app]['icon_hover']  = $this->image($app,Array('navbar','nonav'));
 					}
 
-//					if($GLOBALS['phpgw_info']['navbar'][$app]['icon'] == '')
+//					if(GlobalService::get('phpgw_info')['navbar'][$app]['icon'] == '')
 //					{
-//						$GLOBALS['phpgw_info']['navbar'][$app]['icon']  = $this->image('phpgwapi','nonav');
+//						GlobalService::get('phpgw_info')['navbar'][$app]['icon']  = $this->image('phpgwapi','nonav');
 //					}
 				}
 			}
-			if ($GLOBALS['phpgw_info']['flags']['currentapp'] == 'home' || $GLOBALS['phpgw_info']['flags']['currentapp'] == 'about')
+			if (GlobalService::get('phpgw_info')['flags']['currentapp'] == 'home' || GlobalService::get('phpgw_info')['flags']['currentapp'] == 'about')
 			{
 				$app = $app_title = 'eGroupWare';
 			}
 			else
 			{
-				$app = $GLOBALS['phpgw_info']['flags']['currentapp'];
-				$app_title = $GLOBALS['phpgw_info']['apps'][$app]['title'];
+				$app = GlobalService::get('phpgw_info')['flags']['currentapp'];
+				$app_title = GlobalService::get('phpgw_info')['apps'][$app]['title'];
 			}
 
-			if ($GLOBALS['phpgw_info']['user']['apps']['preferences'])	// preferences last
+			if (GlobalService::get('phpgw_info')['user']['apps']['preferences'])	// preferences last
 			{
-				$prefs = $GLOBALS['phpgw_info']['navbar']['preferences'];
-				unset($GLOBALS['phpgw_info']['navbar']['preferences']);
-				$GLOBALS['phpgw_info']['navbar']['preferences'] = $prefs;
+				$prefs = GlobalService::get('phpgw_info')['navbar']['preferences'];
+				unset(GlobalService::get('phpgw_info')['navbar']['preferences']);
+				GlobalService::get('phpgw_info')['navbar']['preferences'] = $prefs;
 			}
 
 			// We handle this here becuase its special
-			$GLOBALS['phpgw_info']['navbar']['about']['title'] = lang('About %1',$app_title);
+			GlobalService::get('phpgw_info')['navbar']['about']['title'] = lang('About %1',$app_title);
 
-			$GLOBALS['phpgw_info']['navbar']['about']['url']   = $GLOBALS['phpgw']->link('/about.php','app='.$app);
-			$GLOBALS['phpgw_info']['navbar']['about']['icon']  = $this->image('phpgwapi',Array('about','nonav'));
-			$GLOBALS['phpgw_info']['navbar']['about']['icon_hover']  = $this->image_on('phpgwapi',Array('about','nonav'),'-over');
+			GlobalService::get('phpgw_info')['navbar']['about']['url']   = GlobalService::get('phpgw')->link('/about.php','app='.$app);
+			GlobalService::get('phpgw_info')['navbar']['about']['icon']  = $this->image('phpgwapi',Array('about','nonav'));
+			GlobalService::get('phpgw_info')['navbar']['about']['icon_hover']  = $this->image_on('phpgwapi',Array('about','nonav'),'-over');
 
-			$GLOBALS['phpgw_info']['navbar']['logout']['title'] = lang('Logout');
-			$GLOBALS['phpgw_info']['navbar']['logout']['url']   = $GLOBALS['phpgw']->link('/logout.php');
-			$GLOBALS['phpgw_info']['navbar']['logout']['icon']  = $this->image('phpgwapi',Array('logout','nonav'));
-			$GLOBALS['phpgw_info']['navbar']['logout']['icon_hover']  = $this->image_on('phpgwapi',Array('logout','nonav'),'-over');
+			GlobalService::get('phpgw_info')['navbar']['logout']['title'] = lang('Logout');
+			GlobalService::get('phpgw_info')['navbar']['logout']['url']   = GlobalService::get('phpgw')->link('/logout.php');
+			GlobalService::get('phpgw_info')['navbar']['logout']['icon']  = $this->image('phpgwapi',Array('logout','nonav'));
+			GlobalService::get('phpgw_info')['navbar']['logout']['icon_hover']  = $this->image_on('phpgwapi',Array('logout','nonav'),'-over');
 		}
 
 		/*!
@@ -1218,13 +1220,13 @@
 		function phpgw_header()
 		{
 			// add a content-type header to overwrite an existing default charset in apache (AddDefaultCharset directiv)
-			header('Content-type: text/html; charset='.$GLOBALS['phpgw']->translation->charset());
-			include(PHPGW_INCLUDE_ROOT . '/phpgwapi/templates/' . $GLOBALS['phpgw_info']['server']['template_set']
+			header('Content-type: text/html; charset='.GlobalService::get('phpgw')->translation->charset());
+			include(PHPGW_INCLUDE_ROOT . '/phpgwapi/templates/' . GlobalService::get('phpgw_info')['server']['template_set']
 				. '/head.inc.php');
 			$this->navbar(False);
-			include(PHPGW_INCLUDE_ROOT . '/phpgwapi/templates/' . $GLOBALS['phpgw_info']['server']['template_set']
+			include(PHPGW_INCLUDE_ROOT . '/phpgwapi/templates/' . GlobalService::get('phpgw_info')['server']['template_set']
 				. '/navbar.inc.php');
-			if (!@$GLOBALS['phpgw_info']['flags']['nonavbar'] && !@$GLOBALS['phpgw_info']['flags']['navbar_target'])
+			if (!@GlobalService::get('phpgw_info')['flags']['nonavbar'] && !@GlobalService::get('phpgw_info')['flags']['navbar_target'])
 			{
 				echo parse_navbar();
 			}
@@ -1235,7 +1237,7 @@
 			if (!defined('PHPGW_FOOTER'))
 			{
 				define('PHPGW_FOOTER',True);
-				if (!isset($GLOBALS['phpgw_info']['flags']['nofooter']) || !$GLOBALS['phpgw_info']['flags']['nofooter'])
+				if (!isset(GlobalService::get('phpgw_info')['flags']['nofooter']) || !GlobalService::get('phpgw_info')['flags']['nofooter'])
 				{
 					include(PHPGW_API_INC . '/footer.inc.php');
 				}
@@ -1255,25 +1257,25 @@ function get_css( )
 		{
 			$tpl = createObject('phpgwapi.Template', $this->get_tpl_dir('phpgwapi'));
 			$tpl->set_file('css', 'css.tpl');
-			$tpl->set_var($GLOBALS['phpgw_info']['theme']);
+			$tpl->set_var(GlobalService::get('phpgw_info')['theme']);
 			$app_css = '';
 			if(@isset($_GET['menuaction']))
 			{
 				list($app,$class,$method) = explode('.',$_GET['menuaction']);
-				if(is_array($GLOBALS[$class]->public_functions) &&
-					$GLOBALS[$class]->public_functions['css'])
+				if(is_array(GlobalService::get($class)->public_functions) &&
+					GlobalService::get($class)->public_functions['css'])
 				{
-					$app_css .= $GLOBALS[$class]->css();
+					$app_css .= GlobalService::get($class)->css();
 				}
 			}
-			if (isset($GLOBALS['phpgw_info']['flags']['css']))
+			if (isset(GlobalService::get('phpgw_info')['flags']['css']))
 			{
-				$app_css .= $GLOBALS['phpgw_info']['flags']['css'];
+				$app_css .= GlobalService::get('phpgw_info')['flags']['css'];
 			}
 			$tpl->set_var('app_css', $app_css);
 
 			// search for app specific css file
-			if ( @ isset( $GLOBALS[ 'phpgw_info' ][ 'flags' ][ 'currentapp' ] ) )
+			if ( @ isset( GlobalService::get( 'phpgw_info' )[ 'flags' ][ 'currentapp' ] ) )
 			{
 				$css = "/%s/templates/%s/%s.css";
 
@@ -1283,10 +1285,10 @@ function get_css( )
 
 				$link = '<LINK href="%s" type="text/css" rel="StyleSheet">';
 				$link = sprintf( $link,
-					"{$GLOBALS[ 'phpgw_info' ][ 'server' ][ 'webserver_url' ]}{$css}"
+					"{GlobalService::get( 'phpgw_info' ][ 'server' ][ 'webserver_url' ]}{$css}"
 				);
 
-				$template = $GLOBALS[ 'phpgw_info' ][ 'server' ][ 'template_set' ];
+				$template = GlobalService::get( 'phpgw_info' )[ 'server' ][ 'template_set' ];
 
 				function _css( $module, $css )
 				{
@@ -1303,10 +1305,10 @@ function get_css( )
 
 				$css = _css( 'phpgwapi', 'css/base' );
                                 $css .= _css( 'phpgwapi', "css/".get_theme());
-				$css .= _css( $GLOBALS[ 'phpgw_info' ][ 'flags' ][ 'currentapp' ], "css/".get_theme());
-				$css .= _css( $GLOBALS[ 'phpgw_info' ][ 'flags' ][ 'currentapp' ], 'app' );
+				$css .= _css( GlobalService::get( 'phpgw_info' )[ 'flags' ][ 'currentapp' ], "css/".get_theme());
+				$css .= _css( GlobalService::get( 'phpgw_info' )[ 'flags' ][ 'currentapp' ], 'app' );
 				
-				if (is_object($GLOBALS['phpgw']->css)) $css .= $GLOBALS['phpgw']->css->get_css();
+				if (is_object(GlobalService::get('phpgw')->css)) $css .= GlobalService::get('phpgw')->css->get_css();
 				
 				if ( $css )
 					$tpl -> set_var( 'css_file', $css );
@@ -1331,28 +1333,28 @@ function get_css( )
 
 			/* this flag is for all javascript code that has to be put before other jscode. 
 			Think of conf vars etc...  (pim@lingewoud.nl) */
-			if (isset($GLOBALS['phpgw_info']['flags']['java_script_thirst']))
+			if (isset(GlobalService::get('phpgw_info')['flags']['java_script_thirst']))
 			{
-				$java_script .= $GLOBALS['phpgw_info']['flags']['java_script_thirst'] . "\n";
+				$java_script .= GlobalService::get('phpgw_info')['flags']['java_script_thirst'] . "\n";
 			}
 			
-			if(@is_object($GLOBALS['phpgw']->js))
+			if(@is_object(GlobalService::get('phpgw')->js))
 			{
-				$java_script .= $GLOBALS['phpgw']->js->get_script_links();
+				$java_script .= GlobalService::get('phpgw')->js->get_script_links();
 			}
 
 			if(@isset($_GET['menuaction']))
 			{
 				list($app,$class,$method) = explode('.',$_GET['menuaction']);
-				if(is_array($GLOBALS[$class]->public_functions) &&
-					$GLOBALS[$class]->public_functions['java_script'])
+				if(is_array(GlobalService::get($class)->public_functions) &&
+					GlobalService::get($class)->public_functions['java_script'])
 				{
-					$java_script .= $GLOBALS[$class]->java_script();
+					$java_script .= GlobalService::get($class)->java_script();
 				}
 			}
-			if (isset($GLOBALS['phpgw_info']['flags']['java_script']))
+			if (isset(GlobalService::get('phpgw_info')['flags']['java_script']))
 			{
-				$java_script .= $GLOBALS['phpgw_info']['flags']['java_script'] . "\n";
+				$java_script .= GlobalService::get('phpgw_info')['flags']['java_script'] . "\n";
 			}
 			return $java_script;
 		}
@@ -1365,9 +1367,9 @@ function get_css( )
 		*/
 		function get_body_attribs()
 		{
-			if(@is_object($GLOBALS['phpgw']->js))
+			if(@is_object(GlobalService::get('phpgw')->js))
 			{
-				return $GLOBALS['phpgw']->js->get_body_attribs();
+				return GlobalService::get('phpgw')->js->get_body_attribs();
 			}
 			else
 			{
@@ -1388,7 +1390,7 @@ function get_css( )
 		*/
 		function encrypt($data)
 		{
-			return $GLOBALS['phpgw']->crypto->encrypt($data);
+			return GlobalService::get('phpgw')->crypto->encrypt($data);
 		}
 
 		/*!
@@ -1398,7 +1400,7 @@ function get_css( )
 		*/
 		function decrypt($data)
 		{
-			return $GLOBALS['phpgw']->crypto->decrypt($data);
+			return GlobalService::get('phpgw')->crypto->decrypt($data);
 		}
 
 		/*!
@@ -1409,11 +1411,11 @@ function get_css( )
 		*/
 		function encrypt_password($password,$sql=False)
 		{
-			if(!@is_object($GLOBALS['phpgw']->auth))
+			if(!@is_object(GlobalService::get('phpgw')->auth))
 			{
-				$GLOBALS['phpgw']->auth = CreateObject('phpgwapi.auth_egw');
+				GlobalService::get('phpgw')->auth = CreateObject('phpgwapi.auth_egw');
 			}
-			return $GLOBALS['phpgw']->auth->encrypt_password($password,$sql);
+			return GlobalService::get('phpgw')->auth->encrypt_password($password,$sql);
 		}
 
 		/*!
@@ -1424,20 +1426,20 @@ function get_css( )
 		*/
 		function find_portal_order($app)
 		{
-			if(!is_array($GLOBALS['phpgw_info']['user']['preferences']['portal_order']))
+			if(!is_array(GlobalService::get('phpgw_info')['user']['preferences']['portal_order']))
 			{
 				return -1;
 			}
-			@reset($GLOBALS['phpgw_info']['user']['preferences']['portal_order']);
-			while(list($seq,$appid) = each($GLOBALS['phpgw_info']['user']['preferences']['portal_order']))
+			@reset(GlobalService::get('phpgw_info')['user']['preferences']['portal_order']);
+			while(list($seq,$appid) = each(GlobalService::get('phpgw_info')['user']['preferences']['portal_order']))
 			{
 				if($appid == $app)
 				{
-					@reset($GLOBALS['phpgw_info']['user']['preferences']['portal_order']);
+					@reset(GlobalService::get('phpgw_info')['user']['preferences']['portal_order']);
 					return $seq;
 				}
 			}
-			@reset($GLOBALS['phpgw_info']['user']['preferences']['portal_order']);
+			@reset(GlobalService::get('phpgw_info')['user']['preferences']['portal_order']);
 			return -1;
 		}
 
@@ -1448,7 +1450,7 @@ function get_css( )
 		function hook($location, $appname = '', $no_permission_check = False)
 		{
 			echo '$'."GLOBALS['phpgw']common->hook()".' has been replaced. Please change to the new $'."GLOBALS['phpgw']hooks->process()".'. For now this will act as a wrapper<br>';
-			return $GLOBALS['phpgw']->hooks->process($location, $order, $no_permission_check);
+			return GlobalService::get('phpgw')->hooks->process($location, $order, $no_permission_check);
 		}
 
 		/*!
@@ -1459,7 +1461,7 @@ function get_css( )
 		function hook_single($location, $appname = '', $no_permission_check = False)
 		{
 			echo '$'."GLOBALS['phpgw']common->hook_single()".' has been replaced. Please change to the new $'."GLOBALS['phpgw']hooks->single()".'. For now this will act as a wrapper<br>';
-			return $GLOBALS['phpgw']->hooks->single($location, $order, $no_permission_check);
+			return GlobalService::get('phpgw')->hooks->single($location, $order, $no_permission_check);
 		}
 
 		/*!
@@ -1469,7 +1471,7 @@ function get_css( )
 		function hook_count($location)
 		{
 			echo '$'."GLOBALS['phpgw']common->hook_count()".' has been replaced. Please change to the new $'."GLOBALS['phpgw']hooks->count()".'. For now this will act as a wrapper<br>';
-			return $GLOBALS['phpgw']->hooks->count($location);
+			return GlobalService::get('phpgw')->hooks->count($location);
 		}
 
 		/* Wrapper to the session->appsession() */
@@ -1478,7 +1480,7 @@ function get_css( )
 			$this->debug_info[] = '$phpgw->common->appsession() is a depreciated function'
 				. ' - use $phpgw->session->appsession() instead';
 
-			return $GLOBALS['phpgw']->session->appsession('default','',$data);
+			return GlobalService::get('phpgw')->session->appsession('default','',$data);
 		}
 
 		/*!
@@ -1489,22 +1491,22 @@ function get_css( )
 		*/
 		function show_date( $t = '', $format = '', $with_seconds = false )
 		{
-			if(!is_object($GLOBALS['phpgw']->datetime))
+			if(!is_object(GlobalService::get('phpgw')->datetime))
 			{
-				$GLOBALS['phpgw']->datetime = createobject('phpgwapi.date_time');
+				GlobalService::get('phpgw')->datetime = createobject('phpgwapi.date_time');
 			}
 
 			if (!$t || (int)$t <= 0)
 			{
-				$t = $GLOBALS['phpgw']->datetime->gmtnow;
+				$t = GlobalService::get('phpgw')->datetime->gmtnow;
 			}
 			//  + (date('I') == 1?3600:0)
-			$t += $GLOBALS['phpgw']->datetime->tz_offset;
+			$t += GlobalService::get('phpgw')->datetime->tz_offset;
 			
 			if (! $format)
 			{
-				$format = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'] . ' - ';
-				if ($GLOBALS['phpgw_info']['user']['preferences']['common']['timeformat'] == '12')
+				$format = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'] . ' - ';
+				if (GlobalService::get('phpgw_info')['user']['preferences']['common']['timeformat'] == '12')
 				{
 					$format .= 'h:i'.($with_seconds?':s':'').' a';
 				}
@@ -1532,8 +1534,8 @@ function get_css( )
 		*/
 		function dateformatorder($yearstr,$monthstr,$daystr,$add_seperator = False)
 		{
-			$dateformat = strtolower($GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']);
-			$sep = substr($GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'],1,1);
+			$dateformat = strtolower(GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']);
+			$sep = substr(GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'],1,1);
 
 			$dlarr[strpos($dateformat,'y')] = $yearstr;
 			$dlarr[strpos($dateformat,'m')] = $monthstr;
@@ -1560,7 +1562,7 @@ function get_css( )
 		function formattime($hour,$min,$sec='')
 		{
 			$h12 = $hour;
-			if ($GLOBALS['phpgw_info']['user']['preferences']['common']['timeformat'] == '12')
+			if (GlobalService::get('phpgw_info')['user']['preferences']['common']['timeformat'] == '12')
 			{
 				if ($hour >= 12)
 				{
@@ -1605,29 +1607,29 @@ function get_css( )
 		function get_email_passwd_ex()
 		{
 			// ----  Create the email Message Class  if needed  -----
-			if (is_object($GLOBALS['phpgw']->msg))
+			if (is_object(GlobalService::get('phpgw')->msg))
 			{
 				$do_free_me = False;
 			}
 			else
 			{
-				$GLOBALS['phpgw']->msg = CreateObject('email.mail_msg');
+				GlobalService::get('phpgw')->msg = CreateObject('email.mail_msg');
 				$do_free_me = True;
 			}
 			// use the Msg class to obtain the appropriate password
-			$tmp_prefs = $GLOBALS['phpgw']->preferences->read();
+			$tmp_prefs = GlobalService::get('phpgw')->preferences->read();
 			if (!isset($tmp_prefs['email']['passwd']))
 			{
-				$email_passwd = $GLOBALS['phpgw_info']['user']['passwd'];
+				$email_passwd = GlobalService::get('phpgw_info')['user']['passwd'];
 			}
 			else
 			{
-				$email_passwd = $GLOBALS['phpgw']->msg->decrypt_email_passwd($tmp_prefs['email']['passwd']);
+				$email_passwd = GlobalService::get('phpgw')->msg->decrypt_email_passwd($tmp_prefs['email']['passwd']);
 			}
 			// cleanup and return
 			if ($do_free_me)
 			{
-				unset ($GLOBALS['phpgw']->msg);
+				unset (GlobalService::get('phpgw')->msg);
 			}
 			return $email_passwd;
 		}
@@ -1643,25 +1645,25 @@ function get_css( )
 		*/
 		function create_emailpreferences($prefs='',$accountid='')
 		{
-			return $GLOBALS['phpgw']->preferences->create_email_preferences($accountid);
+			return GlobalService::get('phpgw')->preferences->create_email_preferences($accountid);
 			// ----  Create the email Message Class  if needed  -----
-			if (is_object($GLOBALS['phpgw']->msg))
+			if (is_object(GlobalService::get('phpgw')->msg))
 			{
 				$do_free_me = False;
 			}
 			else
 			{
-				$GLOBALS['phpgw']->msg = CreateObject('email.mail_msg');
+				GlobalService::get('phpgw')->msg = CreateObject('email.mail_msg');
 				$do_free_me = True;
 			}
 
 			// this sets the preferences into the phpgw_info structure
-			$GLOBALS['phpgw']->msg->create_email_preferences();
+			GlobalService::get('phpgw')->msg->create_email_preferences();
 
 			// cleanup and return
 			if ($do_free_me)
 			{
-				unset ($GLOBALS['phpgw']->msg);
+				unset (GlobalService::get('phpgw')->msg);
 			}
 		}
 
@@ -1676,26 +1678,26 @@ function get_css( )
 			// Add default preferences info
 			if (!isset($prefs['email']['userid']))
 			{
-				if ($GLOBALS['phpgw_info']['server']['mail_login_type'] == 'vmailmgr')
+				if (GlobalService::get('phpgw_info')['server']['mail_login_type'] == 'vmailmgr')
 				{
-					$prefs['email']['userid'] = $GLOBALS['phpgw']->accounts->id2name($account_id)
-						. '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+					$prefs['email']['userid'] = GlobalService::get('phpgw')->accounts->id2name($account_id)
+						. '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 				}
 				else
 				{
-					$prefs['email']['userid'] = $GLOBALS['phpgw']->accounts->id2name($account_id);
+					$prefs['email']['userid'] = GlobalService::get('phpgw')->accounts->id2name($account_id);
 				}
 			}
 			// Set Server Mail Type if not defined
-			if (empty($GLOBALS['phpgw_info']['server']['mail_server_type']))
+			if (empty(GlobalService::get('phpgw_info')['server']['mail_server_type']))
 			{
-				$GLOBALS['phpgw_info']['server']['mail_server_type'] = 'imap';
+				GlobalService::get('phpgw_info')['server']['mail_server_type'] = 'imap';
 			}
 
 			// OLD EMAIL PASSWD METHOD
 			if (!isset($prefs['email']['passwd']))
 			{
-				$prefs['email']['passwd'] = $GLOBALS['phpgw_info']['user']['passwd'];
+				$prefs['email']['passwd'] = GlobalService::get('phpgw_info')['user']['passwd'];
 			}
 			else
 			{
@@ -1705,20 +1707,20 @@ function get_css( )
 
 			if (!isset($prefs['email']['address']))
 			{
-				$prefs['email']['address'] = $GLOBALS['phpgw']->accounts->id2name($account_id)
-					. '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$prefs['email']['address'] = GlobalService::get('phpgw')->accounts->id2name($account_id)
+					. '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
 			if (!isset($prefs['email']['mail_server']))
 			{
-				$prefs['email']['mail_server'] = $GLOBALS['phpgw_info']['server']['mail_server'];
+				$prefs['email']['mail_server'] = GlobalService::get('phpgw_info')['server']['mail_server'];
 			}
 			if (!isset($prefs['email']['mail_server_type']))
 			{
-				$prefs['email']['mail_server_type'] = $GLOBALS['phpgw_info']['server']['mail_server_type'];
+				$prefs['email']['mail_server_type'] = GlobalService::get('phpgw_info')['server']['mail_server_type'];
 			}
 			if (!isset($prefs['email']['imap_server_type']))
 			{
-				$prefs['email']['imap_server_type'] = $GLOBALS['phpgw_info']['server']['imap_server_type'];
+				$prefs['email']['imap_server_type'] = GlobalService::get('phpgw_info')['server']['imap_server_type'];
 			}
 			// These sets the mail_port server variable
 			if ($prefs['email']['mail_server_type']=='imap')
@@ -1739,7 +1741,7 @@ function get_css( )
 			}
 			// This is going to be used to switch to the nntp class
 			if (isset($phpgw_info['flags']['newsmode']) &&
-				$GLOBALS['phpgw_info']['flags']['newsmode'])
+				GlobalService::get('phpgw_info')['flags']['newsmode'])
 			{
 				$prefs['email']['mail_server_type'] = 'nntp';
 			}
@@ -1780,7 +1782,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/users/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/users/');
 					break;
 				case 35:	$s .= lang('Account has been updated') . '<p>'
 						. lang('Error renaming %1 %2 directory',lang('users'),
@@ -1790,7 +1792,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/users/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/users/');
 					break;
 				case 36:	$s .= lang('Account has been created') . '<p>'
 						. lang('Error creating %1 %2 directory',lang('users'),
@@ -1800,7 +1802,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/users/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/users/');
 					break;
 				case 37:	$s .= lang('Group has been added') . '<p>'
 						. lang('Error creating %1 %2 directory',lang('groups'),' ')
@@ -1809,7 +1811,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/groups/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/groups/');
 					break;
 				case 38:	$s .= lang('Group has been deleted') . '<p>'
 						. lang('Error deleting %1 %2 directory',lang('groups'),' ')
@@ -1818,7 +1820,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/groups/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/groups/');
 					break;
 				case 39:	$s .= lang('Group has been updated') . '<p>'
 						. lang('Error renaming %1 %2 directory',lang('groups'),' ')
@@ -1827,7 +1829,7 @@ function get_css( )
 						. lang('To correct this error for the future you will need to properly set the')
 						. '<br>' . lang('permissions to the files/users directory')
 						. '<br>' . lang('On *nix systems please type: %1','chmod 770 '
-						. $GLOBALS['phpgw_info']['server']['files_dir'] . '/groups/');
+						. GlobalService::get('phpgw_info')['server']['files_dir'] . '/groups/');
 					break;
 				case 40: $s .= lang('You have not entered a title').'.';
 					break;
@@ -1989,21 +1991,21 @@ function get_css( )
 				return -1;
 			}
 
-			$GLOBALS['phpgw']->db->query("SELECT id FROM phpgw_nextid WHERE appname='".$appname."'",__LINE__,__FILE__);
-			while( $GLOBALS['phpgw']->db->next_record() )
+			GlobalService::get('phpgw')->db->query("SELECT id FROM phpgw_nextid WHERE appname='".$appname."'",__LINE__,__FILE__);
+			while( GlobalService::get('phpgw')->db->next_record() )
 			{
-				$id = $GLOBALS['phpgw']->db->f('id');
+				$id = GlobalService::get('phpgw')->db->f('id');
 			}
 
 			if (empty($id) || !$id)
 			{
 				$id = 1;
-				$GLOBALS['phpgw']->db->query("INSERT INTO phpgw_nextid (appname,id) VALUES ('".$appname."',".$id.")",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("INSERT INTO phpgw_nextid (appname,id) VALUES ('".$appname."',".$id.")",__LINE__,__FILE__);
 			}
 			elseif($id<$min)
 			{
 				$id = $min;
-				$GLOBALS['phpgw']->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
 			}
 			elseif ($max && ($id > $max))
 			{
@@ -2012,7 +2014,7 @@ function get_css( )
 			else
 			{
 				$id = $id + 1;
-				$GLOBALS['phpgw']->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
 			}
 
 			return (int)$id;
@@ -2031,10 +2033,10 @@ function get_css( )
 				return -1;
 			}
 
-			$GLOBALS['phpgw']->db->query("SELECT id FROM phpgw_nextid WHERE appname='".$appname."'",__LINE__,__FILE__);
-			while( $GLOBALS['phpgw']->db->next_record() )
+			GlobalService::get('phpgw')->db->query("SELECT id FROM phpgw_nextid WHERE appname='".$appname."'",__LINE__,__FILE__);
+			while( GlobalService::get('phpgw')->db->next_record() )
 			{
-				$id = $GLOBALS['phpgw']->db->f('id');
+				$id = GlobalService::get('phpgw')->db->f('id');
 			}
 
 			if (empty($id) || !$id)
@@ -2047,12 +2049,12 @@ function get_css( )
 				{
 					$id = 1;
 				}
-				$GLOBALS['phpgw']->db->query("INSERT INTO phpgw_nextid (appname,id) VALUES ('".$appname."',".$id.")",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("INSERT INTO phpgw_nextid (appname,id) VALUES ('".$appname."',".$id.")",__LINE__,__FILE__);
 			}
 			elseif($id<$min)
 			{
 				$id = $min;
-				$GLOBALS['phpgw']->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("UPDATE phpgw_nextid SET id=".$id." WHERE appname='".$appname."'",__LINE__,__FILE__);
 			}
 			elseif ($max && ($id > $max))
 			{

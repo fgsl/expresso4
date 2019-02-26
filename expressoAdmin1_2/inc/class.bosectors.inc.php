@@ -1,6 +1,8 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /************************************************************************************\
-* Expresso Administração                                                             *
+* Expresso Administraï¿½ï¿½o                                                             *
 * by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)    *
 * -----------------------------------------------------------------------------------*
 *  This program is free software; you can redistribute it and/or modify it           *
@@ -32,8 +34,8 @@ class bosectors
 			'objectClass' => array( 'top', 'organizationalUnit' )
 		);
 		
-		if ( $GLOBALS['phpgw_info']['server']['system_name'] != '' )
-			$sector_info['phpgwSystem'] = strtolower( $GLOBALS['phpgw_info']['server']['system_name'] );
+		if ( GlobalService::get('phpgw_info')['server']['system_name'] != '' )
+			$sector_info['phpgwSystem'] = strtolower( GlobalService::get('phpgw_info')['server']['system_name'] );
 		
 		if ( $hide ) {
 			$sector_info['objectClass'][]       = 'phpgwAccount';
@@ -52,7 +54,7 @@ class bosectors
 	function edit_sector( $context, $hide )
 	{
 		$info     = $this->so->get_context( $context );
-		$has_sys  = ($GLOBALS['phpgw_info']['server']['system_name'] != '') && isset( $info[0]['phpgwSystem'] );
+		$has_sys  = (GlobalService::get('phpgw_info')['server']['system_name'] != '') && isset( $info[0]['phpgwSystem'] );
 		$has_acc  = isset( $info[0]['objectclass'] ) && in_array( 'phpgwAccount', $info[0]['objectclass'] );
 		$entry    = array();
 		

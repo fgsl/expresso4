@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /*
 
 	SOAPx4
@@ -139,7 +141,7 @@
 				. " HTTP/1.0\r\n"
 				. 'User-Agent: phpGroupware/' . $cliversion . '(PHP) ' . "\r\n"
 				. 'X-PHPGW-Server: ' . $this->server . "\r\n"
-				. 'X-PHPGW-Version: ' . $GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] . "\r\n"
+				. 'X-PHPGW-Version: ' . GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] . "\r\n"
 				. 'Host: '.$this->server . "\r\n"
 				. $credentials
 				. "Content-Type: text/xml\r\nContent-Length: " . strlen($soap_data) . "\r\n"
@@ -190,7 +192,7 @@
 				. " HTTP/1.0\r\n"
 				. 'User-Agent: phpGroupware/' . $cliversion . '(PHP) ' . "\r\n"
 				. 'X-PHPGW-Server: ' . $this->server . "\r\n"
-				. 'X-PHPGW-Version: ' . $GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] . "\r\n"
+				. 'X-PHPGW-Version: ' . GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] . "\r\n"
 				. 'Host: ' . $this->server . "\r\n"
 				. $credentials
 				. "Content-Type: text/xml\r\nContent-Length: " . strlen($soap_data) . "\r\n"

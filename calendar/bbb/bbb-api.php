@@ -74,7 +74,7 @@ class BigBlueButton {
 			curl_close( $ch );
 
 			if($data)
-				return (new SimpleXMLElement($data));
+				return (new \SimpleXMLElement($data));
 			else
 				return false;
 		}
@@ -87,10 +87,10 @@ class BigBlueButton {
 			return $param;
 		}
 		elseif (!isset($param)) {
-			throw new Exception('Missing parameter.');
+			throw new \Exception('Missing parameter.');
 		}
 		else {
-			throw new Exception(''.$param.' is required.');
+			throw new \Exception(''.$param.' is required.');
 		}
 	}
 

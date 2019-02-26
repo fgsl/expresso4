@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Preferences                                                 *
 	* http://www.eGroupWare.org                                                *
@@ -8,7 +10,7 @@
 	*  Free Software Foundation; either version 2 of the License, or (at your  *
 	*  option) any later version.                                              *
 	\**************************************************************************/
-	$template = $GLOBALS['phpgw_info']['server']['template_set'];
+	$template = GlobalService::get('phpgw_info')['server']['template_set'];
 	create_section('Preferences for the %1 template set',$template);
 
 	$start_and_logout_icons = array(

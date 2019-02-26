@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - XML-RPC Server using builtin php functions              *
   * This file written by Miles Lott <milos@groupwhere.org>                   *
@@ -61,16 +63,16 @@
 		// translate cat-ids to array with id-name pairs
 		function cats2xmlrpc($cats)
 		{
-			if (!is_object($GLOBALS['phpgw']->categories))
+			if (!is_object(GlobalService::get('phpgw')->categories))
 			{
-				$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+				GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 			}
 			$xcats = array();
 			foreach($cats as $cat)
 			{
 				if ($cat)
 				{
-					$xcats[$cat] = stripslashes($GLOBALS['phpgw']->categories->id2name($cat));
+					$xcats[$cat] = stripslashes(GlobalService::get('phpgw')->categories->id2name($cat));
 				}
 			}
 			return $xcats;
@@ -83,29 +85,29 @@
 			{
 				$xcats = array();
 			}
-			elseif (!is_object($GLOBALS['phpgw']->categories))
+			elseif (!is_object(GlobalService::get('phpgw')->categories))
 			{
-				$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+				GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 			}
 			$cats = array();
 			foreach($xcats as $cat => $name)
 			{
-				if ($id = $GLOBALS['phpgw']->categories->name2id($name))
+				if ($id = GlobalService::get('phpgw')->categories->name2id($name))
 				{
 					// existing cat-name use the id
 					$cat = $id;
 				}
-				elseif (!($org_name = stripslashes($GLOBALS['phpgw']->categories->id2name($cat))) || $org_name == '--')
+				elseif (!($org_name = stripslashes(GlobalService::get('phpgw')->categories->id2name($cat))) || $org_name == '--')
 				{
 					// new cat
-					$cat = $GLOBALS['phpgw']->categories->add(array('name' => $name,'parent' => 0));
+					$cat = GlobalService::get('phpgw')->categories->add(array('name' => $name,'parent' => 0));
 				}
 				elseif ($org_name != $name)
 				{
 					// cat-name edited
-					list($cat_vals) =$GLOBALS['phpgw']->categories->return_single($cat);
+					list($cat_vals) =GlobalService::get('phpgw')->categories->return_single($cat);
 					$cat_vals['name'] = $name;
-					$GLOBALS['phpgw']->categories->edit($cat_vals);
+					GlobalService::get('phpgw')->categories->edit($cat_vals);
 				}
 				$cats[] = (int)$cat;
 			}
@@ -118,15 +120,15 @@
 			if (is_array($complete)) $complete = @$complete[0];
 			if (!$app) list($app) = explode('.',$this->last_method);
 
-			if (!is_object($GLOBALS['phpgw']->categories))
+			if (!is_object(GlobalService::get('phpgw')->categories))
 			{
-				$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+				GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 			}
-			if ($GLOBALS['phpgw']->categories->app_name != $app)
+			if (GlobalService::get('phpgw')->categories->app_name != $app)
 			{
-				$GLOBALS['phpgw']->categories->categories('',$app);
+				GlobalService::get('phpgw')->categories->categories('',$app);
 			}
-			$cats_arr = $GLOBALS['phpgw']->categories->return_sorted_array(0,False,'','','',True);
+			$cats_arr = GlobalService::get('phpgw')->categories->return_sorted_array(0,False,'','','',True);
 			$cats = array();
 			if (is_array($cats_arr))
 			{
@@ -143,8 +145,8 @@
 		}
 	}
 
-	if(empty($GLOBALS['phpgw_info']['server']['xmlrpc_type']))
+	if(empty(GlobalService::get('phpgw_info')['server']['xmlrpc_type']))
 	{
-		$GLOBALS['phpgw_info']['server']['xmlrpc_type'] = 'php';
+		GlobalService::get('phpgw_info')['server']['xmlrpc_type'] = 'php';
 	}
-	include_once(PHPGW_API_INC.SEP.'class.xmlrpc_server_' . $GLOBALS['phpgw_info']['server']['xmlrpc_type'] . '.inc.php');
+	include_once(PHPGW_API_INC.SEP.'class.xmlrpc_server_' . GlobalService::get('phpgw_info')['server']['xmlrpc_type'] . '.inc.php');

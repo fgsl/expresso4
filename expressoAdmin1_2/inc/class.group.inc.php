@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**********************************************************************************\
-	* Expresso Administração                 									      *
+	* Expresso Administraï¿½ï¿½o                 									      *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br) *
 	* --------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it		  *
@@ -82,7 +84,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			
 			if ( $isPhpgwAccount ) {
 				
-				// Leio o ID a ser usado na criação do objecto.
+				// Leio o ID a ser usado na criaï¿½ï¿½o do objecto.
 				$result = $this->db_functions->get_next_id();
 				if ( !( is_numeric( $result['id'] ) && $result['status'] ) )
 					return array( 'status' => false, 'msg' => lang( 'Problems getting  group ID' ).':'.$result['msg'] );
@@ -173,7 +175,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			
 			if ( $isPhpgwAccount && isset( $diff['email'] ) && ( !empty( $new_values['email'] ) &&
 				ldap_count_entries( $this->ldap_functions->ldap,
-					ldap_search( $this->ldap_functions->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], '(mail='.$new_values['email'].')', array() )
+					ldap_search( $this->ldap_functions->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], '(mail='.$new_values['email'].')', array() )
 				) > 0
 			) ) return array( 'status' => false, 'msg' => lang( 'E-mail already in use' ).'.' );
 			

@@ -4,7 +4,7 @@ require_once(PHPGW_SERVER_ROOT.SEP.'workflow'.SEP.'inc'.SEP.'natural'.SEP.'pos_s
 require_once(PHPGW_SERVER_ROOT.SEP.'workflow'.SEP.'inc'.SEP.'natural'.SEP.'nat_types.php');
 
 /**
- * Código ascii do caracter espaço
+ * CÃ³digo ascii do caracter espaï¿½o
  * @name SPACE
  */
 define (SPACE, ' ');
@@ -12,7 +12,7 @@ define (SPACE, ' ');
 /**
  * Reader mainframe data class (PHP NatAPI)
  *
- * @author Everton Flávio Rufino Seára - rufino@celepar.pr.gov.br
+ * @author Everton Flï¿½vio Rufino Seï¿½ra - rufino@celepar.pr.gov.br
  * @version 1.0
  * @package Workflow
  * @subpackage natural
@@ -46,17 +46,17 @@ class Natural
 	 */
 	private $acronym;
 	/**
-	 * @var boolean $isDBGateway Flag utilizado para determinar se será utilizado o protocolo DBGateway ou DBCON
+	 * @var boolean $isDBGateway Flag utilizado para determinar se serï¿½ utilizado o protocolo DBGateway ou DBCON
 	 * @access private
 	 */
 	private $isDBGateway;
 	/**
-	 * @var int $numRows Número de linhas
+	 * @var int $numRows Nï¿½mero de linhas
 	 * @access private
 	 */
 	private $numRows;
 	/**
-	 * @var string $IPAddress Endereço IP do Mainframe e.g:"10.15.60.20"
+	 * @var string $IPAddress Endereï¿½o IP do Mainframe e.g:"10.15.60.20"
 	 * @access private
 	 */
 	private $IPAddress;
@@ -91,7 +91,7 @@ class Natural
 	 */
 	private $logon;
 	/**
-	 * @var string $rc  PA_RC - Código de Retorno (4 bytes)
+	 * @var string $rc  PA_RC - Cï¿½digo de Retorno (4 bytes)
 	 * @access private
 	 */
 	private $rc;
@@ -113,7 +113,7 @@ class Natural
 
 
 	/**
-	 * @var object $obj Objeto de Classe que contém a especificação e estrutura do programa natural acessado
+	 * @var object $obj Objeto de Classe que contï¿½m a especificaï¿½ï¿½o e estrutura do programa natural acessado
 	 * @access protected
 	 */
 	protected $obj;
@@ -247,7 +247,7 @@ class Natural
 				}
 				return $str->mountResult(array_merge($this->obj->input, $this->obj->output), $this->dataParameter);
 				// return true;
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				return false;
 			}
 		} else {
@@ -321,7 +321,7 @@ class Natural
 
 	/**
 	 * Sets the application environment
-	 * @param char $app Defines if the app. is in the production or development environment 'D' (development) or 'P' (production)
+	 * @param $app string char $app Defines if the app. is in the production or development environment 'D' (development) or 'P' (production)
 	 * @access protected
 	 * @return void
 	 */
@@ -332,7 +332,7 @@ class Natural
 
 	/**
 	 * Sets the IP address to access the mainframe
-	 * @param string $ip Endereço Ip do Mainframe e.g 10.15.60.20
+	 * @param string $ip EndereÃ§o Ip do Mainframe e.g 10.15.60.20
 	 * @access protected
 	 * @return void
 	 */
@@ -354,7 +354,7 @@ class Natural
 
 	/**
 	 * Seta o sistema oara acesso
-	 * @param int $system 4 dígitos em caixa alta
+	 * @param int $system 4 dï¿½gitos em caixa alta
 	 * @access protected
 	 * @return void
 	 */
@@ -364,8 +364,8 @@ class Natural
 	}
 
 	/**
-	 * Seta o código de retorno
-	 * @param int $rc código de retorno com 4 dígitos
+	 * Seta o cï¿½digo de retorno
+	 * @param int $rc cï¿½digo de retorno com 4 dï¿½gitos
 	 * @access protected
 	 * @return void
 	 */

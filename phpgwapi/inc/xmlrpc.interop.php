@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare xmlrpc server                                                 *
   * http://www.egroupware.org                                                *
@@ -45,9 +47,9 @@ in an alphabetic order.';
 			// extract the value of the state number
 			$snv=$sno->scalarval();
 			// look it up in our array (zero-based)
-			if (isset($GLOBALS['stateNames'][$snv-1]))
+			if (isset(GlobalService::get('stateNames')[$snv-1]))
 			{
-				$sname=$GLOBALS['stateNames'][$snv-1];
+				$sname=GlobalService::get('stateNames')[$snv-1];
 			}
 			else
 			{
@@ -64,7 +66,7 @@ in an alphabetic order.';
 		// if we generated an error, create an error return response
 		if ($err)
 		{
-			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), $GLOBALS['xmlrpcerruser'], $err);
+			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), GlobalService::get('xmlrpcerruser'), $err);
 		}
 		else
 		{
@@ -171,11 +173,11 @@ in an alphabetic order.';
 		$a = str_replace('-', '', $a);
 		$b = str_replace('-', '', $b);
 
-		if ($GLOBALS['agesorter_arr'][$a]==$agesorter[$b])
+		if (GlobalService::get('agesorter_arr')[$a]==$agesorter[$b])
 		{
 			return 0;
 		}
-		return ($GLOBALS['agesorter_arr'][$a] > $GLOBALS['agesorter_arr'][$b]) ? -1 : 1;
+		return (GlobalService::get('agesorter_arr')[$a] > GlobalService::get('agesorter_arr')[$b]) ? -1 : 1;
 	}
 
 	$agesorter_sig=array(array(xmlrpcArray, xmlrpcArray));
@@ -223,12 +225,12 @@ And the array will be returned with the entries sorted by their numbers.
 				$agar[$n->scalarval()] = $a->scalarval();
 			}
 
-			$GLOBALS['agesorter_arr'] = $agar; 
+			GlobalService::get('agesorter_arr') = $agar; 
 			// hack, must make global as uksort() won't
 			// allow us to pass any other auxilliary information
-			uksort($GLOBALS['agesorter_arr'], agesorter_compare);
+			uksort(GlobalService::get('agesorter_arr'), agesorter_compare);
 			$outAr = array();
-			while (list($key,$val) = each($GLOBALS['agesorter_arr']))
+			while (list($key,$val) = each(GlobalService::get('agesorter_arr')))
 			{
 				// recreate each struct element
 				$outAr[] = CreateObject('phpgwapi.xmlrpcval',array(
@@ -248,7 +250,7 @@ And the array will be returned with the entries sorted by their numbers.
 
 		if ($err)
 		{
-			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), $GLOBALS['xmlrpcerruser'], $err);
+			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), GlobalService::get('xmlrpcerruser'), $err);
 		}
 		else
 		{
@@ -326,7 +328,7 @@ text is a string, it contains the body of the message.
 
 		if ($err)
 		{
-			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), $GLOBALS['xmlrpcerruser'], $err);
+			return CreateObject('phpgwapi.xmlrpcresp',CreateObject('phpgwapi.xmlrpcval'), GlobalService::get('xmlrpcerruser'), $err);
 		}
 		else
 		{
@@ -584,9 +586,9 @@ text is a string, it contains the body of the message.
 	{
 		$ret = array(
 			'toolkitDocsUrl' => 'http://xmlrpc.usefulinc.com/php.html',
-			'toolkitName'    => $GLOBALS['xmlrpcName'],
-			'toolkitVersion' => $GLOBALS['xmlrpcVersion'],
-			'toolkitOperatingSystem' => $GLOBALS['SERVER_SOFTWARE']
+			'toolkitName'    => GlobalService::get('xmlrpcName'),
+			'toolkitVersion' => GlobalService::get('xmlrpcVersion'),
+			'toolkitOperatingSystem' => GlobalService::get('SERVER_SOFTWARE')
 		);
 		return CreateObject('phpgwapi.xmlrpcresp',phpgw_xmlrpc_encode($ret));
 	}

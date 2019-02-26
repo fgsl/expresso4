@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Admin                                                       *
 	* http://www.egroupware.org                                                *
@@ -13,23 +15,23 @@
 
 	/* Check currentapp and API upgrade status */
 
-	if($GLOBALS['phpgw_info']['flags']['currentapp'] != 'home' &&
-		$GLOBALS['phpgw_info']['flags']['currentapp'] != 'welcome' &&
-		(isset($GLOBALS['phpgw_info']['server']['checkappversions']) &&
-		$GLOBALS['phpgw_info']['server']['checkappversions']))
+	if(GlobalService::get('phpgw_info')['flags']['currentapp'] != 'home' &&
+		GlobalService::get('phpgw_info')['flags']['currentapp'] != 'welcome' &&
+		(isset(GlobalService::get('phpgw_info')['server']['checkappversions']) &&
+		GlobalService::get('phpgw_info')['server']['checkappversions']))
 	{
-		if((isset($GLOBALS['phpgw_info']['user']['apps']['admin']) &&
-			$GLOBALS['phpgw_info']['user']['apps']['admin']) ||
-			$GLOBALS['phpgw_info']['server']['checkappversions'] == 'All')
+		if((isset(GlobalService::get('phpgw_info')['user']['apps']['admin']) &&
+			GlobalService::get('phpgw_info')['user']['apps']['admin']) ||
+			GlobalService::get('phpgw_info')['server']['checkappversions'] == 'All')
 		{
 			$_current = False;
-			$app_name = $GLOBALS['phpgw_info']['flags']['currentapp'];
-			$GLOBALS['phpgw']->db->query("SELECT app_name,app_version FROM phpgw_applications WHERE app_name='$app_name' OR app_name='phpgwapi'",__LINE__,__FILE__);
-			while($GLOBALS['phpgw']->db->next_record())
+			$app_name = GlobalService::get('phpgw_info')['flags']['currentapp'];
+			GlobalService::get('phpgw')->db->query("SELECT app_name,app_version FROM phpgw_applications WHERE app_name='$app_name' OR app_name='phpgwapi'",__LINE__,__FILE__);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$_db_version  = $GLOBALS['phpgw']->db->f('app_version');
-				$app_name     = $GLOBALS['phpgw']->db->f('app_name');
-				$_versionfile = $GLOBALS['phpgw']->common->get_app_dir($app_name) . '/setup/setup.inc.php';
+				$_db_version  = GlobalService::get('phpgw')->db->f('app_version');
+				$app_name     = GlobalService::get('phpgw')->db->f('app_name');
+				$_versionfile = GlobalService::get('phpgw')->common->get_app_dir($app_name) . '/setup/setup.inc.php';
 				if(file_exists($_versionfile))
 				{
 					include($_versionfile);
@@ -43,7 +45,7 @@
 						$api_str = '<br>' . lang('The API requires an upgrade');
 					}
 					/* echo $app_name . ',' . $_db_version . ',' . $_file_version; */
-					if(!$GLOBALS['phpgw']->common->cmp_version_long($_db_version,$_file_version))
+					if(!GlobalService::get('phpgw')->common->cmp_version_long($_db_version,$_file_version))
 					{
 						$_current = True;
 						if($app_name == 'phpgwapi')

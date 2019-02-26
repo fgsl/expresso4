@@ -2,12 +2,12 @@
 /**
  * Listagem
  *
- * Implementa�ao de Listagens padroes do sistema.
+ * Implementação de Listagens padroes do sistema.
  */
 /**
  * Listagem
  *
- * Implementa�ao de Listagens padroes do sistema.
+ * Implementação de Listagens padroes do sistema.
  *
  *
  * @author Jair Pereira <pereira.jair@gmail.com>
@@ -293,57 +293,57 @@ class Listagem {
     }
 
     /**
-     * Fun��o Interna para Alterar a Var�avel de Conex�o com o Banco de Dados.
+     * Função Interna para Alterar a Var�avel de Conex�o com o Banco de Dados.
      *
      * @param $conexao
-     * @return unknown_type
+     * @return string unknown_type
      */
     protected function setConexao($conexao) {  $this->conexao = $conexao;  }
 
     /**
-     * Fun��o Interna para Alterar O SQL que ser� executado na listagem.
+     * Função Interna para Alterar O SQL que ser� executado na listagem.
      *
      * @param $sql
-     * @return unknown_type
+     * @return string unknown_type
      */
     protected function setSQL($sql) {  $this->sql = $sql;  }
 
     /**
-     * Fun��o Interna para Recuperar o SQL que ser� executado na listagem.
+     * Função Interna para Recuperar o SQL que ser� executado na listagem.
      *
-     * @return unknown_type
+     * @return string unknown_type
      */
     public function getSQL() {  return $this->sql;  }
 
     /**
-     * Fun��o para Alterar o T�tulo da Listagem.
+     * Função para Alterar o T�tulo da Listagem.
      *
      * @param $titulo
-     * @return unknown_type
+     * @return string unknown_type
      */
     public function setTitulo($titulo) {  $this->titulo = $titulo;  }
 
     /**
-     * Fun��o para Alterar a forma de Exibi��o da Listagem
+     * Função para Alterar a forma de Exibi��o da Listagem
      *
      * @param $exiberesultados
-     * @return unknown_type
+     * @return string unknown_type
      */
     public function setExibirResultadosTela($exiberesultados) {  $this->_exiberesultados = $exiberesultados;  }
 
     /**
-     * Fun��o para Alterar a exibi��o de linhas que n�o exibem nenhum resultado, (linhas vazias)
+     * Função para Alterar a exibi��o de linhas que n�o exibem nenhum resultado, (linhas vazias)
      *
      * @param $exiberesultados
-     * @return unknown_type
+     * @return string unknown_type
      */
     public function setExibirLinhasVazias($valor) {  $this->_exibelinhasvazias = $valor;  }
 
     /**
-     * Fun��o para Alterar o Resultado da SQL executada.
+     * Função para Alterar o Resultado da SQL executada.
      *
      * @param $dados
-     * @return unknown_type
+     * @return mixed unknown_type
      */
     public function setDados($dados) {
         $this->dados = &$dados;
@@ -381,12 +381,12 @@ class Listagem {
                 $res  = pg_query($this->conexao,"begin;");
                 $resu = pg_query($this->conexao,$this->sql);
                 $res  = pg_query($this->conexao,"rollback;");
-                if (!$resu) { throw new Exception($this->sql); }
+                if (!$resu) { throw new \Exception($this->sql); }
                 $this->setDados($resu);
 
                 return $resu;
 
-        } catch (exception $e) {
+        } catch (\Exception $e) {
              $msg = $e->getMessage();
              $this->adicionarErro("Erro ao Executar a consulta: $msg",true);
         }
@@ -394,9 +394,9 @@ class Listagem {
     }
 
     /**
-     * Fun��o utilizada para Executar o SQL e Carregar os dados a serem listados.
+     * Função utilizada para Executar o SQL e Carregar os dados a serem listados.
      * @param $sql
-     * @return unknown_type
+     * @return mixed unknown_type
      */
     public function carregarIDListagem($idlistagem,$previsualizacao = false) {
 
@@ -830,7 +830,7 @@ class Listagem {
      * @param $nowrap
      * @param $valign
      * @param $visivel
-     * @return unknown_type
+     * @return string unknown_type
      */
     function adicionarColuna($idcoluna,$titulo,$html,$tipo = "text",$align = "",$width = "",$nowrap = false,$visivel = true) {
         $erro = false;
@@ -876,7 +876,7 @@ class Listagem {
      * @param $width
      * @param $nowrap
      * @param $valign
-     * @return unknown_type
+     * @return string unknown_type
      */
     function adicionarColunaCheckBox($idcoluna,$titulo,$value,$condicao = "",$width = "1%",$nowrap = false,$valign = "center") {
         $tipo = "check";
@@ -888,10 +888,10 @@ class Listagem {
     }
 
     /**
-     * Fun��o utilizada Internamente para verificar se o idcoluna passado j� foi adicionado a listagem.
+     * Função utilizada Internamente para verificar se o idcoluna passado j� foi adicionado a listagem.
      *
      * @param $idcoluna
-     * @return unknown_type
+     * @return string unknown_type
      */
     protected function isColuna($idcoluna) {
         $ret = false;
@@ -907,9 +907,9 @@ class Listagem {
      * Adiciona um Link para uma ou mais Colunas.
      *
      * @param $idcolunas (Ids das colunas separados por v�rgula)
-     * @param $link Link para ser redirecionado.
+     * @param $link string Link para ser redirecionado.
      * @param $target
-     * @return unknown_type
+     * @return string unknown_type
      */
     public function adicionarLink($idcolunas,$link,$condicao = "1",$targetblank = false,$popup = false) {
         $colunas = explode(",",$idcolunas);
@@ -968,14 +968,14 @@ class Listagem {
     }
 
     /**
-     * Fun��o para Adicionar um Indicador (Legenda).
+     * Função para Adicionar um Indicador (Legenda).
      *
-     * @param $idindicador C�digo Interno de Identifica��o do Identificador
-     * @param $condicao Condi��o em PHP para Exibir o Indicador.
-     * @param $tipo R,Q,T (REDONDO,QUADRADO,TRIANGULO)
-     * @param $codigoimagem (1 a 19).
-     * @param $legenda Legenda
-     * @return unknown_type
+     * @param $idindicador string Código Interno de Identifica��o do Identificador
+     * @param $condicao string Condição em PHP para Exibir o Indicador.
+     * @param $tipo integer R,Q,T (REDONDO,QUADRADO,TRIANGULO)
+     * @param $codigoimagem integer (1 a 19).
+     * @param $legenda string Legenda
+     * @return mixed unknown_type
      */
     function adicionarIndicador($idindicador,$condicao,$tipo = "R",$codigoimagem = "1",$legenda = "",$tamanho = "1") {
         $Indicador = new ListagemIndicador($idindicador,$condicao,$tipo,$codigoimagem,$legenda,$tamanho);

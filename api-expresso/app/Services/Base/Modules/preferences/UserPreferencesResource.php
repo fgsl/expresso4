@@ -8,11 +8,11 @@ use App\Services\Base\Commons\Errors;
 class UserPreferencesResource extends PreferencesAdapter
 {
 	public function setDocumentation() {
-		$this->setResource("Preferences","Preferences/UserPreferences","Retorna as preferências do usuário.",array("POST"));
+		$this->setResource("Preferences","Preferences/UserPreferences","Retorna as preferï¿½ncias do usuï¿½rio.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
-		$this->addResourceParam("module","string",false,"Módulo da Preferência (Default = mail).",false,"mail");
-		$this->addResourceParam("preference","string",false,"ID da preferência.");
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
+		$this->addResourceParam("module","string",false,"Mï¿½dulo da Preferï¿½ncia (Default = mail).",false,"mail");
+		$this->addResourceParam("preference","string",false,"ID da preferï¿½ncia.");
 	}
 
 	public function post($request)
@@ -30,9 +30,9 @@ class UserPreferencesResource extends PreferencesAdapter
 		if( array_key_exists( $appName, $apps ) )
 		{
 			$appName = $apps[$appName];
-			$prefs_forced = (isset($GLOBALS['phpgw']->preferences->forced[$appName]) ? $GLOBALS['phpgw']->preferences->forced[$appName] : array());
-			$prefs_default = (isset($GLOBALS['phpgw']->preferences->default[$appName]) ? $GLOBALS['phpgw']->preferences->default[$appName] : array());
-			$prefs_user = (isset($GLOBALS['phpgw']->preferences->user[$appName]) ? $GLOBALS['phpgw']->preferences->user[$appName] : array());
+			$prefs_forced = (isset(GlobalService::get('phpgw')->preferences->forced[$appName]) ? GlobalService::get('phpgw')->preferences->forced[$appName] : array());
+			$prefs_default = (isset(GlobalService::get('phpgw')->preferences->default[$appName]) ? GlobalService::get('phpgw')->preferences->default[$appName] : array());
+			$prefs_user = (isset(GlobalService::get('phpgw')->preferences->user[$appName]) ? GlobalService::get('phpgw')->preferences->user[$appName] : array());
 
 			$prefs = array_merge( $prefs_default, $prefs_user);
 

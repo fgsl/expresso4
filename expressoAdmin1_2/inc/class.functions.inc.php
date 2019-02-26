@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**********************************************************************************\
-	* Expresso Administração                 									      *
+	* Expresso Administraï¿½ï¿½o                 									      *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br) *
 	* --------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it		  *
@@ -31,7 +33,7 @@
 		function functions()
 		{
 			$this->db_functions = new db_functions;
-			$GLOBALS['phpgw']->db = $this->db_functions->db;
+			GlobalService::get('phpgw')->db = $this->db_functions->db;
 
 			//$c = CreateObject('phpgwapi.config','expressoAdmin1_2');
 			$c = new config;
@@ -139,9 +141,9 @@
 
 		function get_list($type, $query, $contexts)
 		{
-			$dn			= $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-			$passwd		= $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-			$ldap_conn	= ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$dn			= GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+			$passwd		= GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+			$ldap_conn	= ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
 			ldap_bind($ldap_conn,$dn,$passwd);
@@ -362,9 +364,9 @@
 		{
 			$a_sectors = array();
 
-			$dn			= $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-			$passwd		= $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-			$ldap_conn	= ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$dn			= GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+			$passwd		= GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+			$ldap_conn	= ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 
 			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
@@ -373,7 +375,7 @@
 			$justthese = array("dn");
 			$filter = "(objectClass=organizationalUnit)";
 
-			$systemName = strtolower($GLOBALS['phpgw_info']['server']['system_name']);
+			$systemName = strtolower(GlobalService::get('phpgw_info')['server']['system_name']);
 			if ($systemName != '')
 				$filter = "(&$filter(phpgwSystem=$systemName))";
 
@@ -388,7 +390,7 @@
 			}
 			ldap_close($ldap_conn);
 
-			// Retiro o count do array info e inverto o array para ordenação.
+			// Retiro o count do array info e inverto o array para ordenaï¿½ï¿½o.
 	        foreach ($a_sectors as $context)
     	    {
 				$array_dn = ldap_explode_dn ( $context, 1 );
@@ -401,10 +403,10 @@
 				$inverted_dn[$context] = implode ( "#", $array_dn_reverse );
 			}
 
-			// Ordenação
+			// Ordenaï¿½ï¿½o
 			natcasesort($inverted_dn);
 
-			// Construção do select
+			// Construï¿½ï¿½o do select
 			$level = 0;
 			$options = array();
 			foreach ($inverted_dn as $dn=>$invert_ufn)
@@ -414,7 +416,7 @@
                 $array_dn_reverse = explode ( "#", $invert_ufn );
                 $array_dn  = array_reverse ( $array_dn_reverse, true );
 
-                $level = count( $array_dn ) - (int)(count(explode(",", $GLOBALS['phpgw_info']['server']['ldap_context'])) + 1);
+                $level = count( $array_dn ) - (int)(count(explode(",", GlobalService::get('phpgw_info')['server']['ldap_context'])) + 1);
 
                 if ($level == 0)
                         $display .= '+';
@@ -435,16 +437,16 @@
 
 		function exist_account_lid($account_lid)
 		{
-			$conection = $GLOBALS['phpgw']->common->ldapConnect();
-			$sri = ldap_search($conection, $GLOBALS['phpgw_info']['server']['ldap_context'], "uid=" . $account_lid);
+			$conection = GlobalService::get('phpgw')->common->ldapConnect();
+			$sri = ldap_search($conection, GlobalService::get('phpgw_info')['server']['ldap_context'], "uid=" . $account_lid);
 			$result = ldap_get_entries($conection, $sri);
 			return $result['count'];
 		}
 
 		function exist_email($mail)
 		{
-			$conection = $GLOBALS['phpgw']->common->ldapConnect();
-			$sri = ldap_search($conection, $GLOBALS['phpgw_info']['server']['ldap_context'], "mail=" . $mail);
+			$conection = GlobalService::get('phpgw')->common->ldapConnect();
+			$sri = ldap_search($conection, GlobalService::get('phpgw_info')['server']['ldap_context'], "mail=" . $mail);
 			$result = ldap_get_entries($conection, $sri);
 			ldap_close($conection);
 
@@ -465,14 +467,14 @@
 		function make_list_app($account_lid, $user_applications='', $disabled='')
 		{
 			// create list of ALL available apps
-			$availableAppsGLOBALS = $GLOBALS['phpgw_info']['apps'];
+			$availableAppsGLOBALS = GlobalService::get('phpgw_info')['apps'];
 
 			// create list of available apps for the user
 			$query = "SELECT * FROM phpgw_expressoadmin_apps WHERE manager_lid = '".$account_lid."'";
-			$GLOBALS['phpgw']->db->query($query);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query($query);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$availableApps[] = $GLOBALS['phpgw']->db->row();
+				$availableApps[] = GlobalService::get('phpgw')->db->row();
 			}
 
 			// Retira alguns modulos
@@ -543,7 +545,7 @@
 
 		function exist_attribute_in_ldap($dn, $attribute, $value)
 		{
-			$connection = $GLOBALS['phpgw']->common->ldapConnect();
+			$connection = GlobalService::get('phpgw')->common->ldapConnect();
 			$search = ldap_search($connection, $dn, $attribute. "=" . $value);
 			$result = ldap_get_entries($connection, $search);
 			ldap_close($connection);
@@ -590,7 +592,7 @@
 			if( in_array($cpf, $nulos) )
     			return false;
 
-			/*Calcula o penúltimo dígito verificador*/
+			/*Calcula o penï¿½ltimo dï¿½gito verificador*/
 			$acum=0;
 			for($i=0; $i<9; $i++)
 			{
@@ -603,7 +605,7 @@
 			if ($acum != $cpf[9]){
   				return false;
 			}
-			/*Calcula o último dígito verificador*/
+			/*Calcula o ï¿½ltimo dï¿½gito verificador*/
 			$acum=0;
 			for ($i=0; $i<10; $i++)
 			{
@@ -674,7 +676,7 @@
 		
 		function isMembership( $groups )
 		{
-			$memberships = array_map(create_function('$a', 'return $a[\'account_id\'];'), $GLOBALS['phpgw']->accounts->memberships);
+			$memberships = array_map(create_function('$a', 'return $a[\'account_id\'];'), GlobalService::get('phpgw')->accounts->memberships);
 			foreach ( (array)$groups as $grp ) if ( in_array((int)$grp, $memberships) ) return true;
 			return false;
 		}

@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - Administration                                              *
 * http://www.egroupware.org                                                *
@@ -17,7 +19,7 @@ class bocurrentsessions
 	
 	public function bocurrentsessions()
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 	}
 	
 	public function get_total_itens( $filter = false )
@@ -60,7 +62,7 @@ class bocurrentsessions
 			FROM phpgw_access_log
 			WHERE lo = 0 '.
 				( $filter? ' AND loginid LIKE \'%'.pg_escape_string( $filter ).'%\' ': '' ).
-				( $except_current? ' AND trim(sessionid) != \''.pg_escape_string( $GLOBALS['phpgw_info']['user']['sessionid'] ).'\' ': '' ).
+				( $except_current? ' AND trim(sessionid) != \''.pg_escape_string( GlobalService::get('phpgw_info')['user']['sessionid'] ).'\' ': '' ).
 			'LIMIT '.(int)$limit
 		);
 		$records = array();
@@ -95,9 +97,9 @@ class bocurrentsessions
 	
 	public function get_sessions( $id )
 	{
-		$can_kill        = !$GLOBALS['phpgw']->acl->check( 'current_sessions_access', 8, 'admin' );
-		$can_view_ip     = !$GLOBALS['phpgw']->acl->check( 'current_sessions_access', 4, 'admin' );
-		$can_view_action = !$GLOBALS['phpgw']->acl->check( 'current_sessions_access', 2, 'admin' );
+		$can_kill        = !GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 8, 'admin' );
+		$can_view_ip     = !GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 4, 'admin' );
+		$can_view_action = !GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 2, 'admin' );
 		
 		$id = trim( $id );
 		
@@ -105,7 +107,7 @@ class bocurrentsessions
 		if ( !count( $records ) ) return array( 'error' => lang( 'sessions not found' ) );
 		
 		foreach ( $records as $key => $rec ) {
-			$data = $GLOBALS['phpgw']->session->get_session_info( $rec['session'] );
+			$data = GlobalService::get('phpgw')->session->get_session_info( $rec['session'] );
 			if (
 				is_array( $data ) &&
 				trim( $rec['session'] ) === trim( $data['session_id'] ) &&
@@ -121,10 +123,10 @@ class bocurrentsessions
 		
 		$ldap = CreateObject( 'admin.ldap_functions' );
 		if ( !$ldap->check_user( $id, $records[0]['uidnumber'] ) ) {
-			$GLOBALS['phpgw']->session->logout_access( $id );
+			GlobalService::get('phpgw')->session->logout_access( $id );
 			foreach ( $records as $key => $rec )
 				if ( $rec['isvalid'] )
-					$GLOBALS['phpgw']->session->destroy( $rec['session'], null, $id );
+					GlobalService::get('phpgw')->session->destroy( $rec['session'], null, $id );
 			return array( 'error' => lang( 'user not found' ) );
 		}
 		
@@ -138,7 +140,7 @@ class bocurrentsessions
 				$diff = date_diff( date_create( '@'.$rec['idle'] ), date_create() );
 				$records[$key]['idle'] = $diff->format( '%a %h:%i:%s' );
 			}
-			if ( !$rec['isvalid'] ) $GLOBALS['phpgw']->session->logout_access( $id, $rec['session'] );
+			if ( !$rec['isvalid'] ) GlobalService::get('phpgw')->session->logout_access( $id, $rec['session'] );
 		}
 		
 		return $records;
@@ -146,14 +148,14 @@ class bocurrentsessions
 	
 	public function kill_session( $id, $sid )
 	{
-		$data = $GLOBALS['phpgw']->session->get_session_info( $sid );
+		$data = GlobalService::get('phpgw')->session->get_session_info( $sid );
 		
 		if ( !( is_array( $data ) && $sid === $data['session_id'] && $id === $data['session_lid'] ) ) {
-			$GLOBALS['phpgw']->session->logout_access( $id, $sid );
+			GlobalService::get('phpgw')->session->logout_access( $id, $sid );
 			return false;
 		}
 		
-		$GLOBALS['phpgw']->session->destroy( $sid, null, $id );
+		GlobalService::get('phpgw')->session->destroy( $sid, null, $id );
 		
 		return true;
 	}

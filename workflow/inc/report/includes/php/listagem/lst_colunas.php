@@ -10,7 +10,7 @@ $lslcoid = (isset($_POST['lslcoid'])) ? $_POST['lslcoid'] : $_GET['lslcoid'];
 if ($acao == "excluir") {
 	$sql = "delete from listagem.listagem_coluna where lslcoid = $lslcoid ";
     pg_query($conn,$sql);
-    $msg = "Coluna Excluída com sucesso!";
+    $msg = "Coluna Excluï¿½da com sucesso!";
 }
 
 if ($form->isSubmit("atualizar_coluna",true)) {
@@ -98,12 +98,12 @@ if ($form->isSubmit("atualizar_coluna",true)) {
                 $res = pg_query($conn,$sql);
                 
                 //atualizarVersao($conn,$lstoid);
-                if (!$res) { throw new Exception("Incluindo nova coluna."); }
+                if (!$res) { throw new \Exception("Incluindo nova coluna."); }
                 
                 $msg=  "Coluna adicionada com Sucesso!";
                 
             } else {
-                $msg = "Identificador de Coluna já está adicionado a essa listagem.";
+                $msg = "Identificador de Coluna jï¿½ estï¿½ adicionado a essa listagem.";
             }
             
         } else {
@@ -128,7 +128,7 @@ if ($form->isSubmit("atualizar_coluna",true)) {
     
      ";
            $res = pg_query($conn,$sql);
-           if (!$res) { throw new Exception("Atualizando informações da coluna."); }
+           if (!$res) { throw new \Exception("Atualizando informaï¿½ï¿½es da coluna."); }
            
            //atualizarVersao($conn,$lstoid);
            
@@ -139,7 +139,7 @@ if ($form->isSubmit("atualizar_coluna",true)) {
         
         pg_query($conn,"COMMIT;");
     
-     } catch (exception $e) {
+     } catch (Exception $e) {
                 $msg = "ERRO: " . $e->getMessage();
                 pg_query($conn,"ROLLBACK;");
      }
@@ -229,7 +229,7 @@ if(isset($lstoid{0})){
     $arrTipoColunas = array ( 
                               ''      => '---' ,
                               'text'      => 'Texto' ,
-                              'int'       => 'Número' ,
+                              'int'       => 'Nï¿½mero' ,
                               'data'      => 'Data' ,
                               'hora'      => 'Hora' ,
                               'moeda'     => 'Moeda' 
@@ -237,7 +237,7 @@ if(isset($lstoid{0})){
     $form->adicionarSelect("lslctipo","Tipo:","Tipo da Coluna",$lslctipo,$arrTipoColunas,true);
     $form->adicionarCampoAcao("lslctipo","onchange","xajax_selecionarTipoColuna(this.value);");
     
-    $form->adicionarCampo("lslchtml","lslchtml","Html da Listagem:","Html da Listagem",$lslchtml,true,"","","campo que será exibido entre chaves. Ex: {nomedocampo}");
+    $form->adicionarCampo("lslchtml","lslchtml","Html da Listagem:","Html da Listagem",$lslchtml,true,"","","campo que serï¿½ exibido entre chaves. Ex: {nomedocampo}");
 
     $arrTipoAlign = array ( 
                             ''      => '---' ,
@@ -247,33 +247,33 @@ if(isset($lstoid{0})){
     $form->adicionarSelect("lslcalign","Alinhamento (align):","Alinhamento da Coluna",$lslcalign,$arrTipoAlign,true);
 
     $form->adicionarCampo("lslcwidth","lslcwidth","Tamanho (width):","Tamanho da Coluna",$lslcwidth,false,"10","","Ex: (100px ou 50%)");
-    $form->adicionarCampo("lslcordem","lslcordem","Ordem:","Ordem da Coluna",$lslcordem,true,"10","","Ordem que a coluna irá aparecer.");
+    $form->adicionarCampo("lslcordem","lslcordem","Ordem:","Ordem da Coluna",$lslcordem,true,"10","","Ordem que a coluna irï¿½ aparecer.");
     
     $form->adicionarSubTitulo("Coluna com Link");
     $form->adicionarCampo("lslclink","lslclink","URL:","URL",$lslclink,false,"40","","Ex.: arquivo.php?acao=editar&codigo={codigo} OU javascript:editar({codigo});");
 
-    $form->adicionarCampo("lslclink_condicao","lslclink_condicao","Link Condição:","Link Condição",$lslclink_condicao,false,"","","Condição para exibir o link. Ex: (({meustatus} == 1) && ({tipo} > 200)) OU 1 para sempre exibir.");
+    $form->adicionarCampo("lslclink_condicao","lslclink_condicao","Link Condiï¿½ï¿½o:","Link Condiï¿½ï¿½o",$lslclink_condicao,false,"","","Condiï¿½ï¿½o para exibir o link. Ex: (({meustatus} == 1) && ({tipo} > 200)) OU 1 para sempre exibir.");
     
     $arrCheckBlank[] = array('t', ' Abrir em uma nova janela.', $lslclink_blank);
     $form->adicionarCheckBox("lslclink_blank","",$arrCheckBlank,false);
 
     //$form->agruparCampos("lslclink,lslclink_blank",true);
     
-    $form->adicionarSubTitulo("Outras Opções");
-    $arrCheckNowRap[] = array('t', ' Não habilitar quebra de linha (nowrap)', $lslcnowrap);
+    $form->adicionarSubTitulo("Outras Opï¿½ï¿½es");
+    $arrCheckNowRap[] = array('t', ' Nï¿½o habilitar quebra de linha (nowrap)', $lslcnowrap);
     $form->adicionarCheckBox("lslcnowrap","",$arrCheckNowRap,false);
     $form->adicionarCampoAcao("lslcnowrap","onchange","nowrapCheck(this.checked);");
 
-    $arrCheckVisivel[] = array('t', ' Coluna é Visível ', $lslcvisivel);
+    $arrCheckVisivel[] = array('t', ' Coluna ï¿½ Visï¿½vel ', $lslcvisivel);
     $form->adicionarCheckBox("lslcvisivel","",$arrCheckVisivel,false);
 
     $arrCheckCSV[] = array('t', ' Exibir coluna no arquivo CSV:', $lslcexibe_csv);
     $form->adicionarCheckBox("lslcexibe_csv","",$arrCheckCSV,false);
 
-    $arrCheckCalculada[] = array('t', ' Coluna é calculada, com Totalizador e Sub-Totalizador', $lslccalculada);
+    $arrCheckCalculada[] = array('t', ' Coluna ï¿½ calculada, com Totalizador e Sub-Totalizador', $lslccalculada);
     $form->adicionarCheckBox("lslccalculada","",$arrCheckCalculada,false);
 
-    $arrCheckCheck[] = array('t', ' Possui Checkbox para seleção de itens.', $lslccheckbox);
+    $arrCheckCheck[] = array('t', ' Possui Checkbox para seleï¿½ï¿½o de itens.', $lslccheckbox);
     $form->adicionarCheckBox("lslccheckbox","",$arrCheckCheck,false);
    
     
@@ -310,7 +310,7 @@ if(isset($lstoid{0})){
                 lslctotalizador_condicao,
                 lslcsubtotalizador_condicao,
                 lslccheckbox_condicao, 
-                case when lslctipo = 'int' then 'Número' when lslctipo = 'hora' then 'Hora' when lslctipo = 'text' then 'Texto' when lslctipo = 'data' then 'Data' when lslctipo = 'moeda' then 'Moeda' end as novo_tipo  
+                case when lslctipo = 'int' then 'Nï¿½mero' when lslctipo = 'hora' then 'Hora' when lslctipo = 'text' then 'Texto' when lslctipo = 'data' then 'Data' when lslctipo = 'moeda' then 'Moeda' end as novo_tipo  
             FROM 
                 listagem.listagem_coluna 
             WHERE 
@@ -318,9 +318,9 @@ if(isset($lstoid{0})){
             order by lslcordem";
     $listagem->carregar($sql);
     
-    $listagem->adicionarIndicador("indvisivel","({lslcvisivel} == 't')","I","v","Coluna Visível");
+    $listagem->adicionarIndicador("indvisivel","({lslcvisivel} == 't')","I","v","Coluna Visï¿½vel");
     $listagem->adicionarIndicador("indcsv","({lslcexibe_csv} == 't')","I","v","Exibir no CSV");
-    $listagem->adicionarIndicador("indnowrap","({lslcnowrap} == 't')","I","v","Não habilitar quebra de Linha");
+    $listagem->adicionarIndicador("indnowrap","({lslcnowrap} == 't')","I","v","Nï¿½o habilitar quebra de Linha");
     $listagem->adicionarIndicador("indcalculada","({lslccalculada} == 't')","I","v","Coluna Calculada");
     
     $listagem->adicionarColuna("lslcidcoluna","Coluna","{lslcidcoluna}","text","left","100px");
@@ -328,7 +328,7 @@ if(isset($lstoid{0})){
     $listagem->adicionarColuna("lslchtml","Html","{lslchtml}","text","left","100px");
     $listagem->adicionarColuna("lslctipo","Tipo","{novo_tipo}","text","left","50px");
     $listagem->adicionarColuna("lslcwidth","Tamanho","{lslcwidth}","text","left","50px");
-    $listagem->adicionarColuna("lslcvisivel","Visível","{indvisivel}","text","center","10px");
+    $listagem->adicionarColuna("lslcvisivel","Visï¿½vel","{indvisivel}","text","center","10px");
     $listagem->adicionarColuna("lslcexibe_csv","CSV","{indcsv}","text","center","10px");
     $listagem->adicionarColuna("lslcnowrap","Nowrap","{indnowrap}","text","center","10px");
     $listagem->adicionarColuna("lslccalculada","Calculada","{indcalculada}","text","center","10px");

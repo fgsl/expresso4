@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare                                                               *
 	* http://www.egroupware.org                                                *
@@ -10,7 +12,7 @@
 	\**************************************************************************/
 
 
-	$GLOBALS['acl_manager']['admin']['site_config_access'] = array(
+	GlobalService::get('acl_manager')['admin']['site_config_access'] = array(
 		'name' => 'Deny access to site configuration',
 		'rights' => array(
 			'List config settings'   => 1,
@@ -18,7 +20,7 @@
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['account_access'] = array(
+	GlobalService::get('acl_manager')['admin']['account_access'] = array(
 		'name' => 'Deny access to user accounts',
 		'rights' => array(
 			'Account list'    => 1,
@@ -31,7 +33,7 @@
 		)
 	);	// was already there and seems to work ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['group_access'] = array(
+	GlobalService::get('acl_manager')['admin']['group_access'] = array(
 		'name' => 'Deny access to groups',
 		'rights' => array(
 			'Group list'    => 1,
@@ -44,7 +46,7 @@
 	);	// was already there and seems to work ralfbecker
 
 /* not usable at the moment
-	$GLOBALS['acl_manager']['admin']['peer_server_access'] = array(
+	GlobalService::get('acl_manager')['admin']['peer_server_access'] = array(
 		'name' => 'Deny access to peer servers',
 		'rights' => array(
 			'Peer server list'    => 1,
@@ -56,7 +58,7 @@
 		)
 	);
 */
-	$GLOBALS['acl_manager']['admin']['applications_access'] = array(
+	GlobalService::get('acl_manager')['admin']['applications_access'] = array(
 		'name' => 'Deny access to applications',
 		'rights' => array(
 			'Applications list' => 1,
@@ -67,7 +69,7 @@
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['global_categories_access'] = array(
+	GlobalService::get('acl_manager')['admin']['global_categories_access'] = array(
 		'name' => 'Deny access to global categories',
 		'rights' => array(
 			'Categories list'   => 1,
@@ -80,7 +82,7 @@
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['mainscreen_message_access'] = array(
+	GlobalService::get('acl_manager')['admin']['mainscreen_message_access'] = array(
 		'name' => 'Deny access to mainscreen message',
 		'rights' => array(
 			'Main screen message' => 1,
@@ -88,7 +90,7 @@
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['current_sessions_access'] = array(
+	GlobalService::get('acl_manager')['admin']['current_sessions_access'] = array(
 		'name' => 'Deny access to current sessions',
 		'rights' => array(
 			'List current sessions'   => 1,
@@ -98,28 +100,28 @@
 		)
 	);	// checked and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['access_log_access'] = array(
+	GlobalService::get('acl_manager')['admin']['access_log_access'] = array(
 		'name' => 'Deny access to access log',
 		'rights' => array(
 			'Show access log' => 1
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['error_log_access'] = array(
+	GlobalService::get('acl_manager')['admin']['error_log_access'] = array(
 		'name' => 'Deny access to error log',
 		'rights' => array(
 			'Show error log' => 1
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['asyncservice_access'] = array(
+	GlobalService::get('acl_manager')['admin']['asyncservice_access'] = array(
 		'name' => 'Deny access to asynchronous timed services',
 		'rights' => array(
 			'Asynchronous timed services' => 1
 		)
 	);	// added and working ralfbecker
 
-	$GLOBALS['acl_manager']['admin']['info_access'] = array(
+	GlobalService::get('acl_manager')['admin']['info_access'] = array(
 		'name' => 'Deny access to phpinfo',
 		'rights' => array(
 			'Show phpinfo()' => 1

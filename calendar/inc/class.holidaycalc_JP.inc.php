@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - holidaycalc_JP                                              *
   * http://www.egroupware.org                                              *
@@ -22,7 +24,7 @@
 
 			if ($holiday['day'] == 0 && $holiday['dow'] != 0 && $holiday['occurence'] != 0)
 			{
-				$dow = $GLOBALS['phpgw']->datetime->day_of_week($year, $holiday['month'], 1);
+				$dow = GlobalService::get('phpgw')->datetime->day_of_week($year, $holiday['month'], 1);
 				$dayshift = (($holiday['dow'] + 7) - $dow) % 7;
 				$day = ($holiday['occurence'] - 1) * 7 + $dayshift + 1;
 
@@ -96,7 +98,7 @@
 
 			if ($year >= 1985 && $holiday['month'] == $cached_month && $day == $cached_day + 2 && $cached_observance_rule == True && $holiday['observance_rule'] == True)
 			{
-				$pdow = $GLOBALS['phpgw']->datetime->day_of_week($year,$holiday['month'],$day-1);
+				$pdow = GlobalService::get('phpgw')->datetime->day_of_week($year,$holiday['month'],$day-1);
 				if ($pdow != 0)
 				{
 					$addcnt = count($holidays) + 1;
@@ -128,7 +130,7 @@
 			}
 			elseif ($holiday['observance_rule'] == True)
 			{
-				$dow = $GLOBALS['phpgw']->datetime->day_of_week($year,$holiday['month'],$day);
+				$dow = GlobalService::get('phpgw')->datetime->day_of_week($year,$holiday['month'],$day);
 				// This now calulates Observed holidays and creates a new entry for them.
 				if($dow == 0)
 				{

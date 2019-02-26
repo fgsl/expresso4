@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Webpage News Admin                                          *
 	* http://www.egroupware.org                                                *
@@ -16,7 +18,7 @@
 // Only Modify the $file and $title variables.....
 	$title = $appname;
 	$file = array(
-		'Preferences'     => $GLOBALS['phpgw']->link('/preferences/preferences.php','appname='.$appname),
+		'Preferences'     => GlobalService::get('phpgw')->link('/preferences/preferences.php','appname='.$appname),
 	);
 //Do not modify below this line
 	display_section($appname,$title,$file);

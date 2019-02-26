@@ -1,4 +1,6 @@
 <?php
+    use Expresso\Core\GlobalService;
+
     /**************************************************************************\
     * eGroupWare - ExpressoMail Preferences                                    *
     * http://www.expressolivre.org                                             *    
@@ -9,8 +11,8 @@
     *  Free Software Foundation; either version 2 of the License, or (at your  *
     *  option) any later version.                                              *
     \**************************************************************************/
-if(!isset($GLOBALS['phpgw_info'])){
-	$GLOBALS['phpgw_info']['flags'] = array(
+if(!isset(GlobalService::get('phpgw_info'))){
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'expressoMail1_2',
 		'nonavbar'   => true,
 		'noheader'   => true
@@ -19,7 +21,7 @@ if(!isset($GLOBALS['phpgw_info'])){
 require_once '../header.inc.php';
 include_once("../prototype/library/fckeditor/fckeditor.php");
 include_once("class.functions.inc.php");
-$type = isset($_GET['type']) ? $_GET['type']:$GLOBALS['type']; // FIX ME
+$type = isset($_GET['type']) ? $_GET['type']:GlobalService::get('type'); // FIX ME
 
 //if ($type == 'user' || $type == ''){
 create_script('function exibir_ocultar()
@@ -38,7 +40,7 @@ create_script('function exibir_ocultar()
         use_signature_digital_cripto = document.getElementsByName(type+"[use_signature_digital_cripto]")[0];
     }
 
-    var default_signature_digital_cripto = "'.$GLOBALS['phpgw_info']['default']['preferences']['expressoMail']['use_signature_digital_cripto'].'";
+    var default_signature_digital_cripto = "'.GlobalService::get('phpgw_info')['default']['preferences']['expressoMail']['use_signature_digital_cripto'].'";
 
     if (use_signature_digital_cripto)
     {
@@ -125,7 +127,7 @@ create_check_box('Do you want to use SpellChecker in email editor?','use_SpellCh
 
 require_once('class.imap_functions.inc.php');
 $_SESSION['phpgw_info']['expressomail']['email_server'] = CreateObject('emailadmin.bo')->getProfile();
-$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
+$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];
 $e_server = $_SESSION['phpgw_info']['expressomail']['email_server'];
 $imap = CreateObject('expressoMail1_2.imap_functions');
 
@@ -145,7 +147,7 @@ if ($type != "" && $type != "user"){
 }
 else
 {
-$save_in_folder_selected = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'];
+$save_in_folder_selected = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['save_in_folder'];
 
 // Load Special Folders (Sent, Trash, Draft, Spam) from EmailAdmin (if exists, else get_lang)
 $specialFolders = array ("Trash" => lang("Trash"), "Drafts" => lang("Drafts"), "Spam" => lang("Spam"), "Sent" => lang("Sent"));
@@ -258,10 +260,10 @@ if ( $im->enabled ) {
 	create_check_box( 'Start the Expresso Messenger automatically', 'messenger_auto_start', '' );
 }
 
-if($GLOBALS['phpgw_info']['server']['use_assinar_criptografar'])
+if(GlobalService::get('phpgw_info')['server']['use_assinar_criptografar'])
 {
     create_check_box('Enable digitally sign/cipher the message?','use_signature_digital_cripto','','',True,'onchange="javascript:exibir_ocultar();"');
-    if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital_cripto'])
+    if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_digital_cripto'])
     {
         create_check_box('Always sign message digitally?','use_signature_digital','');
         create_check_box('Always cipher message digitally?','use_signature_cripto','');
@@ -287,7 +289,7 @@ if ($type == 'user' || $type == ''){
 	$oFCKeditor->BasePath   = '../prototype/library/fckeditor/';
 	$oFCKeditor->ToolbarSet = 'ExpressoLivre';
 
-	$vars = $GLOBALS['phpgw']->preferences->user[$appname];
+	$vars = GlobalService::get('phpgw')->preferences->user[$appname];
 
 	create_html_code("signature","<div id='text_signature'>
 		<textarea rows='5' cols='50' id='user_signature' name='user[signature]'>","</textarea></div>
@@ -483,12 +485,12 @@ document.getElementById('user_signature').value=html_entity_decode(document.getE
 
 function setDefaultTypeSignature() {
 	if(getTypeSignature()){
-		getTypeSignature().options[0].value = '".$GLOBALS['phpgw']->preferences->default['expressoMail']['type_signature']."d';
+		getTypeSignature().options[0].value = '".GlobalService::get('phpgw')->preferences->default['expressoMail']['type_signature']."d';
 		if(getTypeSignature().value.indexOf('html')!=-1){
 		   changeType(getTypeSignature().value);
 	    }
 	}else{
-		 changeType('".$GLOBALS['phpgw']->preferences->forced['expressoMail']['type_signature']."');
+		 changeType('".GlobalService::get('phpgw')->preferences->forced['expressoMail']['type_signature']."');
 	}
 }
 

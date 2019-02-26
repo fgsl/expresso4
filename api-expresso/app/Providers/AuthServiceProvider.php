@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Base\Adapters\ExpressoAdapter;
 use App\Services\Auth\ExpressoUser;
 use Illuminate\Support\ServiceProvider;
+use Expresso\Core\GlobalService;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -28,8 +29,8 @@ class AuthServiceProvider extends ServiceProvider
 				$result = $this->adapter->isLoggedIn();
 
 				if( $result ){
-					$attributes['id']   = $GLOBALS['phpgw']->accounts->data['account_id'];
-					$attributes['name'] = $GLOBALS['phpgw']->accounts->data['fullname'];
+					$attributes['id']   = GlobalService::get('phpgw')->accounts->data['account_id'];
+					$attributes['name'] = GlobalService::get('phpgw')->accounts->data['fullname'];
 					return new ExpressoUser( $attributes );
 				}
 			});

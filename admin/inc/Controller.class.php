@@ -23,9 +23,9 @@ class Controller
 		{
 			$controler_xml = dirname(__FILE__) . '/controller.xml';
 			if ( !file_exists($controler_xml) )
-				throw new Exception(__CLASS__ . ' [ ERROR ] :: the configuration file does not exist');
+				throw new \Exception(__CLASS__ . ' [ ERROR ] :: the configuration file does not exist');
 
-			$this->dom = new DOMDocument;
+			$this->dom = new \DOMDocument();
 			$this->dom->preserveWhiteSpace = FALSE;
 			$this->dom->load($controler_xml);
 
@@ -33,39 +33,39 @@ class Controller
 
 			$this->controller_security = $this->dom->getElementsByTagName(self::__CONTROLLER_SECURITY__);
 			if ( $this->controller_security->length === (int)0 )
-				throw new Exception(__CLASS__ . ' [ ERROR #0 ] :: the tag "' . self::__CONTROLLER_SECURITY__ . '" does not exist');
+				throw new \Exception(__CLASS__ . ' [ ERROR #0 ] :: the tag "' . self::__CONTROLLER_SECURITY__ . '" does not exist');
 			if ( $this->controller_security->length !== (int)1 )
-				throw new Exception(__CLASS__ . ' [ ERROR #1 ] :: exists more of a tag "' . self::__CONTROLLER_SECURITY__ . '"');
+				throw new \Exception(__CLASS__ . ' [ ERROR #1 ] :: exists more of a tag "' . self::__CONTROLLER_SECURITY__ . '"');
 
 			$this->controller_contentes = $this->dom->getElementsByTagName(self::__CONTROLLER_CONTENTES__);
 			if ( $this->controller_contentes->length === (int)0 )
-				throw new Exception(__CLASS__ . ' [ ERROR #2 ] :: the tag "' . self::__CONTROLLER_CONTENTES__ . '" does not exist');
+				throw new \Exception(__CLASS__ . ' [ ERROR #2 ] :: the tag "' . self::__CONTROLLER_CONTENTES__ . '" does not exist');
 			if ( $this->controller_contentes->length !== (int)1 )
-				throw new Exception(__CLASS__ . ' [ ERROR #3 ] :: exists more of a tag "' . self::__CONTROLLER_CONTENTES__ . '"');
+				throw new \Exception(__CLASS__ . ' [ ERROR #3 ] :: exists more of a tag "' . self::__CONTROLLER_CONTENTES__ . '"');
 			$this->controller_contentes = $this->controller_contentes->item(0);
 
 			$this->controller_sections = $this->dom->getElementsByTagName("controller-sections");
 			if ( $this->controller_sections->length === (int)0 )
-				throw new Exception(__CLASS__ . ' [ ERROR #4 ] :: the tag "' . self::__CONTROLLER_SECTIONS__ . '" does not exist');
+				throw new \Exception(__CLASS__ . ' [ ERROR #4 ] :: the tag "' . self::__CONTROLLER_SECTIONS__ . '" does not exist');
 			if ( $this->controller_sections->length !== (int)1 )
-				throw new Exception(__CLASS__ . ' [ ERROR #5 ] :: exists more of a tag "' . self::__CONTROLLER_SECTIONS__ . '"');
+				throw new \Exception(__CLASS__ . ' [ ERROR #5 ] :: exists more of a tag "' . self::__CONTROLLER_SECTIONS__ . '"');
 			$this->controller_sections = $this->controller_sections->item(0);
 
 			$this->string_access = $this->controller_security->item(0)->getElementsByTagName(self::__STRING_ACCESS__);
 			if ( $this->string_access->length === (int)0 )
-				throw new Exception(__CLASS__ . ' [ ERROR #6 ] :: the tag "' . self::__STRING_ACCESS__ . '" does not exist');
+				throw new \Exception(__CLASS__ . ' [ ERROR #6 ] :: the tag "' . self::__STRING_ACCESS__ . '" does not exist');
 			if ( $this->string_access->length !== (int)1 )
-				throw new Exception(__CLASS__ . ' [ ERROR #7 ] :: exists more of a tag "' . self::__STRING_ACCESS__ . '"');
+				throw new \Exception(__CLASS__ . ' [ ERROR #7 ] :: exists more of a tag "' . self::__STRING_ACCESS__ . '"');
 			$this->string_access = $this->string_access->item(0)->nodeValue;
 
 			$this->string_delimiter = $this->controller_security->item(0)->getElementsByTagName(self::__STRING_DELIMITER__);
 			( $this->string_delimiter->length === (int)0 )
 				and die(__CLASS__ . ' [ ERROR #8 ] :: the tag "' . self::__STRING_DELIMITER__ . '" does not exist');
 			if ( $this->string_delimiter->length !== (int)1 )
-				throw new Exception(__CLASS__ . ' [ ERROR #9 ] :: exists more of a tag "' . self::__STRING_DELIMITER__ . '"');
+				throw new \Exception(__CLASS__ . ' [ ERROR #9 ] :: exists more of a tag "' . self::__STRING_DELIMITER__ . '"');
 			$this->string_delimiter = $this->string_delimiter->item(0)->nodeValue;
 		}
-		catch(Exception $e)
+		catch(\Exception $e)
 		{
 			$this->fatalError = true;
 			return $e->getMessage();
@@ -152,7 +152,7 @@ class Controller
 
 		require_once $file;
 
-		$obj = new ReflectionClass($class);
+		$obj = new \ReflectionClass($class);
 
 		if ( $pRequest['classCostructor'] )
 		{
@@ -162,7 +162,7 @@ class Controller
 		else
 			$obj = $obj->newInstance();
 
-		$method = new ReflectionMethod($class, $method);
+		$method = new \ReflectionMethod($class, $method);
 		$result = $method->invoke($obj, $pRequest);
 
 		#$obj = new $class;

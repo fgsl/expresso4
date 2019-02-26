@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.eGroupWare.org                                                *
@@ -71,16 +73,16 @@
 
 		function uipublicview()
 		{ 
-			$GLOBALS['phpgw']->nextmatchs = CreateObject('phpgwapi.nextmatchs');
+			GlobalService::get('phpgw')->nextmatchs = CreateObject('phpgwapi.nextmatchs');
 
-			$this->theme = $GLOBALS['phpgw_info']['theme'];
+			$this->theme = GlobalService::get('phpgw_info')['theme'];
 
 			$this->bo = CreateObject('calendar.bocalendar',1);
 			$this->cat = &$this->bo->cat;
 			print_debug('BO Owner',$this->bo->owner);
 
-			$this->template = $GLOBALS['phpgw']->template;
-			$this->template_dir = $GLOBALS['phpgw']->common->get_tpl_dir('calendar');
+			$this->template = GlobalService::get('phpgw')->template;
+			$this->template_dir = GlobalService::get('phpgw')->common->get_tpl_dir('calendar');
 			$this->holiday_color = (substr($this->theme['bg06'],0,1)=='#'?'':'#').$this->theme['bg06'];
 
 			$this->cat_id   = $this->bo->cat_id;
@@ -115,11 +117,11 @@
 			
 			print_debug('UI',$this->_debug_sqsof());
 
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
-			$this->html = &$GLOBALS['phpgw']->html;
+			$this->html = &GlobalService::get('phpgw')->html;
 		}
 
 		/* Public functions */
@@ -136,7 +138,7 @@
 					}
 				}
 			}
-			$GLOBALS['phpgw']->redirect($this->page('',$params));
+			GlobalService::get('phpgw')->redirect($this->page('',$params));
 		}
 
 		/* Private functions */
@@ -163,7 +165,7 @@
 			}
 			if (!isset($var['tr_color']))
 			{
-				$var['tr_color'] = $GLOBALS['phpgw']->nextmatchs->alternate_row_color();
+				$var['tr_color'] = GlobalService::get('phpgw')->nextmatchs->alternate_row_color();
 			}
 			$p->set_var($var);
 			$p->parse($row,$list,True);
@@ -183,19 +185,19 @@
 				elseif ($_page=='index' || ($_page != 'day' && $_page != 'week' && $_page != 'month' && $_page != 'year' && $_page != 'planner'))
 				{
 					$_page = 'month';
-					$GLOBALS['phpgw']->preferences->add('calendar','defaultcalendar','month');
-					$GLOBALS['phpgw']->preferences->save_repository();
+					GlobalService::get('phpgw')->preferences->add('calendar','defaultcalendar','month');
+					GlobalService::get('phpgw')->preferences->save_repository();
 				}
 			}
 			
-			if($GLOBALS['phpgw_info']['flags']['currentapp'] == 'home' ||
-				strstr($GLOBALS['phpgw_info']['flags']['currentapp'],'mail'))	// email, felamimail, ...
+			if(GlobalService::get('phpgw_info')['flags']['currentapp'] == 'home' ||
+				strstr(GlobalService::get('phpgw_info')['flags']['currentapp'],'mail'))	// email, felamimail, ...
 			{	
 				$page_app = 'calendar';
 			}
 			else
 			{	
-				$page_app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$page_app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 			$page_app = 'calendar.uipublicview.publicView';
 			
@@ -207,7 +209,7 @@
 			{
 				$params = 'menuaction='.$page_app.$params;
 			}
-			return $GLOBALS['phpgw']->link('/index.php',$params);
+			return GlobalService::get('phpgw')->link('/index.php',$params);
 		}
 
 		function header()
@@ -218,7 +220,7 @@
 				$cols++;
 			}
 
-			$tpl = $GLOBALS['phpgw']->template;
+			$tpl = GlobalService::get('phpgw')->template;
 			$tpl->set_unknowns('remove');
 
 			if (!file_exists($file = $this->template_dir.'/header.inc.php'))
@@ -246,7 +248,7 @@
 				return;
 			}
 
-			$p = $GLOBALS['phpgw']->template;
+			$p = GlobalService::get('phpgw')->template;
 			
 			$p->set_file(
 				Array(
@@ -295,17 +297,17 @@
 		   if($menuaction == 'calendar.uipublicview.week' || $menuaction == 'calendar.uipublicview.publicView')
 		   {
 				unset($thisdate);
-				$thisdate = mktime(0,0,0,$this->bo->month,$this->bo->day,$this->bo->year) - $GLOBALS['phpgw']->datetime->tz_offset;
-				$sun = $GLOBALS['phpgw']->datetime->get_weekday_start($this->bo->year,$this->bo->month,$this->bo->day) - $GLOBALS['phpgw']->datetime->tz_offset;
+				$thisdate = mktime(0,0,0,$this->bo->month,$this->bo->day,$this->bo->year) - GlobalService::get('phpgw')->datetime->tz_offset;
+				$sun = GlobalService::get('phpgw')->datetime->get_weekday_start($this->bo->year,$this->bo->month,$this->bo->day) - GlobalService::get('phpgw')->datetime->tz_offset;
 
 				$str = '';
 				for ($i = -7; $i <= 7; $i++)
 				{
 					$begin = $sun + (7*24*60*60 * $i) + 12*60*60;	// we use midday, that changes in daylight-saveing does not effect us
 					$end = $begin + 6*24*60*60;
-                    $str .= '<option value="' . $GLOBALS['phpgw']->common->show_date($begin,'Ymd') . '"'.($begin <= $thisdate+12*60*60 && $end >= $thisdate+12*60*60 ? ' selected':'').'>'                    
-						. $GLOBALS['phpgw']->common->show_date($begin,$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']) . ' - '
-                        . $GLOBALS['phpgw']->common->show_date($end,$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'])
+                    $str .= '<option value="' . GlobalService::get('phpgw')->common->show_date($begin,'Ymd') . '"'.($begin <= $thisdate+12*60*60 && $end >= $thisdate+12*60*60 ? ' selected':'').'>'                    
+						. GlobalService::get('phpgw')->common->show_date($begin,GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']) . ' - '
+                        . GlobalService::get('phpgw')->common->show_date($end,GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'])
                         . '</option>' . "\n";                        
 				}
 
@@ -387,37 +389,37 @@
 			$is_private = !$event['public'] && !$this->bo->check_perms(PHPGW_ACL_READ,$event);
 			$viewable = !$this->bo->printer_friendly && $this->bo->check_perms(PHPGW_ACL_READ,$event);
 
-			$starttime = $this->bo->maketime($event['start']) - $GLOBALS['phpgw']->datetime->tz_offset;
-			$endtime = $this->bo->maketime($event['end']) - $GLOBALS['phpgw']->datetime->tz_offset;
+			$starttime = $this->bo->maketime($event['start']) - GlobalService::get('phpgw')->datetime->tz_offset;
+			$endtime = $this->bo->maketime($event['end']) - GlobalService::get('phpgw')->datetime->tz_offset;
 			$rawdate = mktime(0,0,0,$month,$day,$year);
-			$rawdate_offset = $rawdate - $GLOBALS['phpgw']->datetime->tz_offset;
-			$nextday = mktime(0,0,0,$month,$day + 1,$year) - $GLOBALS['phpgw']->datetime->tz_offset;
-			if ((int)$GLOBALS['phpgw']->common->show_date($starttime,'Hi') && $starttime == $endtime)
+			$rawdate_offset = $rawdate - GlobalService::get('phpgw')->datetime->tz_offset;
+			$nextday = mktime(0,0,0,$month,$day + 1,$year) - GlobalService::get('phpgw')->datetime->tz_offset;
+			if ((int)GlobalService::get('phpgw')->common->show_date($starttime,'Hi') && $starttime == $endtime)
 			{
-				$time = $GLOBALS['phpgw']->common->show_date($starttime,$this->bo->users_timeformat);
+				$time = GlobalService::get('phpgw')->common->show_date($starttime,$this->bo->users_timeformat);
 			}
 			elseif ($starttime <= $rawdate_offset && $endtime >= $nextday - 60)
 			{
 				$time = '[ '.lang('All Day').' ]';
 			}
-			elseif ((int)$GLOBALS['phpgw']->common->show_date($starttime,'Hi') || $starttime != $endtime)
+			elseif ((int)GlobalService::get('phpgw')->common->show_date($starttime,'Hi') || $starttime != $endtime)
 			{
 				if($starttime < $rawdate_offset && $event['recur_type'] == MCAL_RECUR_NONE)
 				{
-					$start_time = $GLOBALS['phpgw']->common->show_date($rawdate_offset,$this->bo->users_timeformat);
+					$start_time = GlobalService::get('phpgw')->common->show_date($rawdate_offset,$this->bo->users_timeformat);
 				}
 				else
 				{
-					$start_time = $GLOBALS['phpgw']->common->show_date($starttime,$this->bo->users_timeformat);
+					$start_time = GlobalService::get('phpgw')->common->show_date($starttime,$this->bo->users_timeformat);
 				}
 
 				if($endtime >= ($rawdate_offset + 86400))
 				{
-					$end_time = $GLOBALS['phpgw']->common->show_date(mktime(23,59,59,$month,$day,$year) - $GLOBALS['phpgw']->datetime->tz_offset,$this->bo->users_timeformat);
+					$end_time = GlobalService::get('phpgw')->common->show_date(mktime(23,59,59,$month,$day,$year) - GlobalService::get('phpgw')->datetime->tz_offset,$this->bo->users_timeformat);
 				}
 				else
 				{
-					$end_time = $GLOBALS['phpgw']->common->show_date($endtime,$this->bo->users_timeformat);
+					$end_time = GlobalService::get('phpgw')->common->show_date($endtime,$this->bo->users_timeformat);
 				}
 				$time = $start_time.'-'.$end_time;
 			}
@@ -449,7 +451,7 @@
 				if($event['priority'] == 3)
 				{
 					$picture[] = Array(
-						'pict'	=> $GLOBALS['phpgw']->common->image('calendar','high'),
+						'pict'	=> GlobalService::get('phpgw')->common->image('calendar','high'),
 						'width'	=> 16,
 						'height'=> 16,
 						'title' => lang('high priority')
@@ -458,7 +460,7 @@
 				if($event['recur_type'] == MCAL_RECUR_NONE)
 				{
 					$picture[] = Array(
-						'pict'	=> $GLOBALS['phpgw']->common->image('calendar','circle'),
+						'pict'	=> GlobalService::get('phpgw')->common->image('calendar','circle'),
 						'width'	=> 9,
 						'height'=> 9,
 						'title' => lang('single event')
@@ -467,7 +469,7 @@
 				else
 				{
 					$picture[] = Array(
-						'pict'	=> $GLOBALS['phpgw']->common->image('calendar','recur'),
+						'pict'	=> GlobalService::get('phpgw')->common->image('calendar','recur'),
 						'width'	=> 12,
 						'height'=> 12,
 						'title' => lang('recurring event')
@@ -478,7 +480,7 @@
 			if(count($event['participants']) > 1)
 			{
 				$picture[] = Array(
-					'pict'	=> $GLOBALS['phpgw']->common->image('calendar','multi_3'),
+					'pict'	=> GlobalService::get('phpgw')->common->image('calendar','multi_3'),
 					'width'	=> 14,
 					'height'=> 14,
 					'title' => $participants
@@ -487,7 +489,7 @@
 			else
 			{
 				$picture[] = Array(
-					'pict'	=>  $GLOBALS['phpgw']->common->image('calendar','single'),
+					'pict'	=>  GlobalService::get('phpgw')->common->image('calendar','single'),
 					'width'	=> 14,
 					'height'=> 14,
 					'title' => $participants
@@ -496,7 +498,7 @@
 			if($event['public'] == 0)
 			{
 				$picture[] = Array(
-					'pict'	=> $GLOBALS['phpgw']->common->image('calendar','private'),
+					'pict'	=> GlobalService::get('phpgw')->common->image('calendar','private'),
 					'width'	=> 13,
 					'height'=> 13,
 					'title' => lang('private')
@@ -510,7 +512,7 @@
 				if($this->bo->alarm_today($event,$rawdate_offset,$starttime))
 				{
 					$picture[] = Array(
-						'pict'  => $GLOBALS['phpgw']->common->image('calendar','alarm'),
+						'pict'  => GlobalService::get('phpgw')->common->image('calendar','alarm'),
 						'width' => 13,
 						'height'=> 13,
 						'title' => lang('alarm')
@@ -564,7 +566,7 @@
 
 				if (!isset($id2lid[$id]))
 				{
-					$id2lid[$id] = $GLOBALS['phpgw']->common->grab_owner_name($id);
+					$id2lid[$id] = GlobalService::get('phpgw')->common->grab_owner_name($id);
 				}
 				if (strlen($names))
 				{
@@ -582,7 +584,7 @@
 
 		function week_header($month,$year,$display_name = False)
 		{
-			$this->weekstarttime = $GLOBALS['phpgw']->datetime->get_weekday_start($year,$month,1);
+			$this->weekstarttime = GlobalService::get('phpgw')->datetime->get_weekday_start($year,$month,1);
 
 			$p = CreateObject('phpgwapi.Template',$this->template_dir);
 			$p->set_unknowns('remove');
@@ -617,7 +619,7 @@
 
 			for($i=0;$i<7;$i++)
 			{
-				$p->set_var('col_title',lang($GLOBALS['phpgw']->datetime->days[$i]));
+				$p->set_var('col_title',lang(GlobalService::get('phpgw')->datetime->days[$i]));
 				$p->parse('column_header','column_title',True);
 			}
 			return $p->fp('out','monthly_header');
@@ -627,7 +629,7 @@
 		{	
 			if($owner == 0)
 			{
-				$owner = $GLOBALS['phpgw_info']['user']['account_id'];
+				$owner = GlobalService::get('phpgw_info')['user']['account_id'];
 			}
 
 			$temp_owner = $this->bo->owner;
@@ -653,12 +655,12 @@
 			$p->set_var('col_width','14');
 			if($display_name)
 			{
-				$p->set_var('column_data',$GLOBALS['phpgw']->common->grab_owner_name($owner));
+				$p->set_var('column_data',GlobalService::get('phpgw')->common->grab_owner_name($owner));
 				$p->parse('column_header','month_column',True);
 				$p->set_var('col_width','12');
 			}
-			$today = date('Ymd',$GLOBALS['phpgw']->datetime->users_localtime);
-			$daily = $this->set_week_array($startdate - $GLOBALS['phpgw']->datetime->tz_offset,$cellcolor,$weekly);
+			$today = date('Ymd',GlobalService::get('phpgw')->datetime->users_localtime);
+			$daily = $this->set_week_array($startdate - GlobalService::get('phpgw')->datetime->tz_offset,$cellcolor,$weekly);
 			foreach($daily as $date => $day_params)
 			{
 				$year  = (int)substr($date,0,4);
@@ -674,7 +676,7 @@
 					if ($day_params['new_event'] && !$publicView)
 					{
 						$new_event_link = ' <a href="'.$this->page('add','&date='.$date).'">'
-							. '<img src="'.$GLOBALS['phpgw']->common->image('calendar','new3').'" width="10" height="10" title="'.lang('New Entry').'" border="0" align="center">'
+							. '<img src="'.GlobalService::get('phpgw')->common->image('calendar','new3').'" width="10" height="10" title="'.lang('New Entry').'" border="0" align="center">'
 							. '</a>';
 						$day_number = '<a href="'.$this->page('day','&date='.$date).'">'.$day.'</a>';
 					}
@@ -737,7 +739,7 @@
 		{
 			if($this->debug)
 			{
-				echo '<!-- datetime:gmtdate = '.$GLOBALS['phpgw']->datetime->cv_gmtdate.' -->'."\n";
+				echo '<!-- datetime:gmtdate = '.GlobalService::get('phpgw')->datetime->cv_gmtdate.' -->'."\n";
 			}
 
 			$this->bo->store_to_cache(
@@ -751,7 +753,7 @@
 			$monthstart = (int)(date('Ymd',mktime(0,0,0,$month    ,1,$year)));
 			$monthend   = (int)(date('Ymd',mktime(0,0,0,$month + 1,0,$year)));
 
-			$start = $GLOBALS['phpgw']->datetime->get_weekday_start($year, $month, 1);
+			$start = GlobalService::get('phpgw')->datetime->get_weekday_start($year, $month, 1);
 
 			if($this->debug)
 			{
@@ -778,9 +780,9 @@
 
 			$cellcolor = $this->theme['row_on'];
 
-			for($i = (int)($start + $GLOBALS['phpgw']->datetime->tz_offset);(int)(date('Ymd',$i)) <= $monthend;$i += 604800)
+			for($i = (int)($start + GlobalService::get('phpgw')->datetime->tz_offset);(int)(date('Ymd',$i)) <= $monthend;$i += 604800)
 			{
-				$cellcolor = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($cellcolor);
+				$cellcolor = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($cellcolor);
 				$var = Array(
 					'day_events' => $this->display_week($i,False,$cellcolor,False,$owner,$monthstart,$monthend)
 				);
@@ -814,7 +816,7 @@
 			$p->set_block('week','m_w_table','m_w_table');
 			$p->set_block('week','event','event');
 
-			$start = $GLOBALS['phpgw']->datetime->get_weekday_start($year, $month, $day) + $GLOBALS['phpgw']->datetime->tz_offset;
+			$start = GlobalService::get('phpgw')->datetime->get_weekday_start($year, $month, $day) + GlobalService::get('phpgw')->datetime->tz_offset;
 
 			$cellcolor = $this->theme['row_off'];
 
@@ -840,7 +842,7 @@
 			);
 			$this->output_template_array($p,'row','event',$var);
 
-			$tstart = $start - $GLOBALS['phpgw']->datetime->tz_offset;
+			$tstart = $start - GlobalService::get('phpgw')->datetime->tz_offset;
 			$tstop = $tstart + 604800;
 			$original_owner = $this->bo->so->owner;
 
@@ -903,7 +905,7 @@
 				$holidays = $this->bo->cached_holidays[$date];
 				if($weekly)
 				{
-					$cellcolor = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($cellcolor);
+					$cellcolor = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($cellcolor);
 				}
 
 				$day_image = '';
@@ -913,7 +915,7 @@
 					$class = ($appts?'b':'').'minicalhol';
 					if ($date == $this->bo->today)
 					{
-						$day_image = ' background="'.$GLOBALS['phpgw']->common->image('calendar','mini_day_block').'"';
+						$day_image = ' background="'.GlobalService::get('phpgw')->common->image('calendar','mini_day_block').'"';
 					}
 				}
 				elseif ($date != $this->bo->today)
@@ -923,9 +925,9 @@
 				}
 				else
 				{
-					$extra = ' bgcolor="'.$GLOBALS['phpgw_info']['theme']['cal_today'].'"';
+					$extra = ' bgcolor="'.GlobalService::get('phpgw_info')['theme']['cal_today'].'"';
 					$class = ($appts?'b':'').'minicalendar';
-					$day_image = ' background="'.$GLOBALS['phpgw']->common->image('calendar','mini_day_block').'"';
+					$day_image = ' background="'.GlobalService::get('phpgw')->common->image('calendar','mini_day_block').'"';
 				}
 
 				if($this->bo->printer_friendly && @$this->bo->prefs['calendar']['print_black_white'])
@@ -981,7 +983,7 @@
 							($_GET['account_name'] ?
 							 $_GET['account_name'] : '');
 
-			$theme_css = $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/templates/'.$GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'].'/css/'.$GLOBALS['phpgw_info']['user']['preferences']['common']['theme'].'.css';
+			$theme_css = GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/templates/'.GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'].'/css/'.GlobalService::get('phpgw_info')['user']['preferences']['common']['theme'].'.css';
 		
 			echo '<html>'."\n"
 				.'<head>'."\n"
@@ -1028,8 +1030,8 @@
 			$this -> publicView = True;
 			$this->bo->read_holidays();
 
-			$next = $GLOBALS['phpgw']->datetime->makegmttime(0,0,0,$this->bo->month,$this->bo->day + 7,$this->bo->year);
-			$prev = $GLOBALS['phpgw']->datetime->makegmttime(0,0,0,$this->bo->month,$this->bo->day - 7,$this->bo->year);
+			$next = GlobalService::get('phpgw')->datetime->makegmttime(0,0,0,$this->bo->month,$this->bo->day + 7,$this->bo->year);
+			$prev = GlobalService::get('phpgw')->datetime->makegmttime(0,0,0,$this->bo->month,$this->bo->day - 7,$this->bo->year);
 
 			$var = Array(
 				'week_display'		=>	$this->display_weekly(
@@ -1054,10 +1056,10 @@
 		
 		function printer_publicView($body)
 		{				
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			unset($GLOBALS['phpgw_info']['flags']['noappheader']);
-			unset($GLOBALS['phpgw_info']['flags']['noappfooter']);
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			unset(GlobalService::get('phpgw_info')['flags']['noappheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['noappfooter']);
 			
 			$new_body .= $this->bo->debug_string.$body;
 			return $new_body;

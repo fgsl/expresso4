@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Administration                                              *
 	* http://www.egroupware.org                                                *
@@ -16,7 +18,7 @@
 
 		function soaccess_history()
 		{
-			$this->db       = $GLOBALS['phpgw']->db;
+			$this->db       = GlobalService::get('phpgw')->db;
 		}
 
 		function test_account_id($account_id)

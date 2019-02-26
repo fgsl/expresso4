@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Administration                                              *
 	* http://www.egroupware.org                                                *
@@ -26,21 +28,21 @@
 
 		function submit()
 		{
-			if ($GLOBALS['cancel'])
+			if (GlobalService::get('cancel'))
 			{
 				$this->ui->list_apps();
 				return False;
 			}
 
-			$location = base64_decode($GLOBALS['location']);
+			$location = base64_decode(GlobalService::get('location'));
 
 			$total_rights = 0;
-			while (is_array($GLOBALS['acl_rights']) && list(,$rights) = each($GLOBALS['acl_rights']))
+			while (is_array(GlobalService::get('acl_rights')) && list(,$rights) = each(GlobalService::get('acl_rights')))
 			{
 				$total_rights += $rights;
 			}
 
-			$GLOBALS['phpgw']->acl->add_repository($GLOBALS['acl_app'], $location, $GLOBALS['account_id'], $total_rights);
+			GlobalService::get('phpgw')->acl->add_repository(GlobalService::get('acl_app'), $location, GlobalService::get('account_id'), $total_rights);
 
 			$this->ui->list_apps();
 		}

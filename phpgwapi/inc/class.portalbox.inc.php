@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Portal Box manager                                      *
   * This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -71,7 +73,7 @@
 			if ($var=='' || !isset($this->$var))
 			{
 				echo 'Programming Error: '.$this->getvar('classname').'->getvar('.$var.')!<br>'."\n";
-				$GLOBALS['phpgw']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 			//echo "Var = ".$var."<br>\n";
 			//echo $var." = ".$this->$var."<br>\n";
@@ -92,7 +94,7 @@
 
 		function start_template()
 		{
-			$this->p = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('home'));
+			$this->p = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('home'));
 			$this->p->set_file(
 				array(
 					'PORTAL'	=> 'portal.tpl'
@@ -126,7 +128,7 @@
 		{
 			if($control != '' && $control_param != '')
 			{
-				$this->setvar($control,$GLOBALS['phpgw']->link($control_param['url'],'app='.$control_param['app'].'&control='.$control));
+				$this->setvar($control,GlobalService::get('phpgw')->link($control_param['url'],'app='.$control_param['app'].'&control='.$control));
 			}
 		}
 
@@ -162,7 +164,7 @@
 						{
 							$image_width = 30;
 						}
-						$this->p->set_var('link_field_data','<a href="'.$this->$param.'"><img src="'.$GLOBALS['phpgw']->common->image('phpgwapi',$param.'.button').'" border="0" width="'.$image_width.'" height="15" alt="'.lang($param).'"></a>');
+						$this->p->set_var('link_field_data','<a href="'.$this->$param.'"><img src="'.GlobalService::get('phpgw')->common->image('phpgwapi',$param.'.button').'" border="0" width="'.$image_width.'" height="15" alt="'.lang($param).'"></a>');
 						$this->p->parse('control_link','link_field',True);
 					}
 				}

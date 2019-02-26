@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* EGroupWare - EMailAdmin                                                   *
 	* http://www.egroupware.org                                                 *
@@ -18,7 +20,7 @@ class so
 
 	public function __construct()
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 		
 		include(PHPGW_INCLUDE_ROOT.'/emailadmin/setup/tables_current.inc.php');
 		
@@ -129,7 +131,7 @@ class so
 		require_once PHPGW_SERVER_ROOT.'/workflow/inc/local/classes/class.wf_orgchart.php';
 		require_once PHPGW_SERVER_ROOT.'/workflow/inc/class.so_orgchart.inc.php';
 
-		$GLOBALS['ajax']->acl = &Factory::getInstance( 'so_adminaccess', Factory::getInstance('WorkflowObjects')->getDBGalaxia()->Link_ID );
+		GlobalService::get('ajax')->acl = &Factory::getInstance( 'so_adminaccess', Factory::getInstance('WorkflowObjects')->getDBGalaxia()->Link_ID );
 		$orgchart = new wf_orgchart();
 		if ( ( $employeeInfo = $orgchart->getEmployee( $this->getCurrentAccount() ) ) === false ) return false;
 
@@ -154,8 +156,8 @@ class so
 	{
 		if ( $this->current_account !== false ) return $this->current_account;
 		return $this->current_account= (
-			isset( $GLOBALS['phpgw_info']['user']['account_id']                  )? $GLOBALS['phpgw_info']['user']['account_id'] :
-			isset( $GLOBALS['phpgw']->accounts->data['account_id']               )? $GLOBALS['phpgw']->accounts->data['account_id'] :
+			isset( GlobalService::get('phpgw_info')['user']['account_id']                  )? GlobalService::get('phpgw_info')['user']['account_id'] :
+			isset( GlobalService::get('phpgw')->accounts->data['account_id']               )? GlobalService::get('phpgw')->accounts->data['account_id'] :
 			isset( $_SESSION['phpgw_info']['expresso']['user']['account_id']     )? $_SESSION['phpgw_info']['expresso']['user']['account_id'] :
 			isset( $_SESSION['phpgw_info']['expressomail']['user']['account_id'] )? $_SESSION['phpgw_info']['expressomail']['user']['account_id'] :
 			isset( $_SESSION['phpgw_session']['account_id']                      )? $_SESSION['phpgw_session']['account_id'] :

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - iCalendar Parser                                            *
   * http://www.egroupware.org                                                *
@@ -1250,9 +1252,9 @@
 					)
 				)
 			);
-			if(!is_object($GLOBALS['phpgw']->datetime))
+			if(!is_object(GlobalService::get('phpgw')->datetime))
 			{
-				$GLOBALS['phpgw']->datetime = createobject('phpgwapi.date_time');
+				GlobalService::get('phpgw')->datetime = createobject('phpgwapi.date_time');
 			}
 		}
 
@@ -2001,17 +2003,17 @@
 					$dateUTC = date("Y-m-d H:i:s", strtotime( $string_utc ) );
 
 					// create a $dt object with the UTC timezone
-					$dtBR = new DateTime( $dateUTC, new DateTimeZone('UTC'));
+					$dtBR = new \DateTime( $dateUTC, new \DateTimeZone('UTC'));
 
 					// change the timezone of the object without changing it's time
 					$timeZoneUser = 'America/Sao_Paulo';
 
-					if( isset($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['timezone']) )
+					if( isset(GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['timezone']) )
 					{
-						$timeZoneUser = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['timezone'];
+						$timeZoneUser = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['timezone'];
 					}
 					
-					$dtBR->setTimezone( new DateTimeZone( $timeZoneUser ) );
+					$dtBR->setTimezone( new \DateTimeZone( $timeZoneUser ) );
 
 					// format the datetime
 					$var = $dtBR->format("Ymd\THis");
@@ -2031,7 +2033,7 @@
 						{
 							if($this->api)
 							{
-								$dtime['hour'] -= $GLOBALS['phpgw_info']['users']['common']['tz_offset'];
+								$dtime['hour'] -= GlobalService::get('phpgw_info')['users']['common']['tz_offset'];
 								if($dtime['hour'] < 0)
 								{
 									$dtime['mday'] -= 1;
@@ -2053,7 +2055,7 @@
 					$this->set_var($dtime,'sec',0);
 					if($this->api)
 					{
-						$dtime['hour'] -= $GLOBALS['phpgw_info']['users']['common']['tz_offset'];
+						$dtime['hour'] -= GlobalService::get('phpgw_info')['users']['common']['tz_offset'];
 						if($dtime['hour'] < 0)
 						{
 							$dtime['mday'] -= 1;
@@ -2862,8 +2864,8 @@
 
 		function is_owner($part_record)
 		{
-			if(($part_record['user'].'@'.$part_record['host'] == $GLOBALS['phpgw_info']['user']['preferences']['email']['address']) ||
-				($part_record['cn'] == $GLOBALS['phpgw_info']['user']['account_lid']))
+			if(($part_record['user'].'@'.$part_record['host'] == GlobalService::get('phpgw_info')['user']['preferences']['email']['address']) ||
+				($part_record['cn'] == GlobalService::get('phpgw_info')['user']['account_lid']))
 			{
 				return True;
 			}
@@ -2875,14 +2877,14 @@
 
 		function check_owner(&$event,$ical,$so_event)
 		{
-			if(!isset($event['participant'][$GLOBALS['phpgw_info']['user']['account_id']]))
+			if(!isset($event['participant'][GlobalService::get('phpgw_info')['user']['account_id']]))
 			{
 				if(isset($ical['organizer']))
 				{
 					if($this->is_owner($ical['organizer']))
 					{
-						$so_event->add_attribute('owner',$GLOBALS['phpgw_info']['user']['account_id']);
-						$so_event->add_attribute('participants',$this->switch_to_phpgw_status($ical['organizer']['partstat']),$GLOBALS['phpgw_info']['user']['account_id']);
+						$so_event->add_attribute('owner',GlobalService::get('phpgw_info')['user']['account_id']);
+						$so_event->add_attribute('participants',$this->switch_to_phpgw_status($ical['organizer']['partstat']),GlobalService::get('phpgw_info')['user']['account_id']);
 					}
 				}
 				elseif(isset($ical['attendee']))
@@ -2893,14 +2895,14 @@
 					{
 						if($this->is_owner($ical['attendee'][$j]))
 						{
-							$so_event->add_attribute('participants',$this->switch_to_phpgw_status($ical['attendee'][$j]['partstat']),(int)$GLOBALS['phpgw_info']['user']['account_id']);
+							$so_event->add_attribute('participants',$this->switch_to_phpgw_status($ical['attendee'][$j]['partstat']),(int)GlobalService::get('phpgw_info')['user']['account_id']);
 						}
 					}
 				}
 				else
 				{
-					$so_event->add_attribute('owner',$GLOBALS['phpgw_info']['user']['account_id']);
-					$so_event->add_attribute('participants','A',$GLOBALS['phpgw_info']['user']['account_id']);
+					$so_event->add_attribute('owner',GlobalService::get('phpgw_info')['user']['account_id']);
+					$so_event->add_attribute('participants','A',GlobalService::get('phpgw_info')['user']['account_id']);
 				}
 			}
 		}
@@ -2909,16 +2911,16 @@
 		{
 			if($_FILES['uploadedfile']['tmp_name'] == 'none' || $_FILES['uploadedfile']['tmp_name'] == '')
 			{
-				Header('Location: ' . $GLOBALS['phpgw']->link('/index.php',
+				Header('Location: ' . GlobalService::get('phpgw')->link('/index.php',
 						Array(
 							'menuaction'	=> 'calendar.uiicalendar.import',
 							'action'	=> 'GetFile'
 						)
 					)
 				);
-				$GLOBALS['phpwg']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
-			$uploaddir = $GLOBALS['phpgw_info']['server']['temp_dir'] . SEP;
+			$uploaddir = GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP;
 
 			srand((double)microtime()*1000000);
 			$random_number = rand(100000000,999999999);
@@ -2946,17 +2948,17 @@
 			}
 			elseif(!$mime_msg)
 			{
-				Header('Location: ' . $GLOBALS['phpgw']->link('/index.php',
+				Header('Location: ' . GlobalService::get('phpgw')->link('/index.php',
 						Array(
 							'menuaction'	=> 'calendar.uiicalendar.import',
 							'action'	=> 'GetFile'
 						)
 					)
 				);
-				$GLOBALS['phpwg']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 
-			if(!is_object($GLOBALS['uicalendar']))
+			if(!is_object(GlobalService::get('uicalendar')))
 			{
 				$so_event = createobject('calendar.socalendar',
 					Array(
@@ -2968,7 +2970,7 @@
 			}
 			else
 			{
-				$so_event = $GLOBALS['uicalendar']->bo->so;
+				$so_event = GlobalService::get('uicalendar')->bo->so;
 			}
 
 			$datetime_vars = Array(
@@ -2990,8 +2992,8 @@
 			// time limit should be controlled elsewhere
 			@set_time_limit(0);
 
-			$GLOBALS['phpgw_info']['user']['preferences'] = $GLOBALS['phpgw']->preferences->create_email_preferences();
-			$users_email = $GLOBALS['phpgw_info']['user']['preferences']['email']['address'];
+			GlobalService::get('phpgw_info')['user']['preferences'] = GlobalService::get('phpgw')->preferences->create_email_preferences();
+			$users_email = GlobalService::get('phpgw_info')['user']['preferences']['email']['address'];
 			$cats = CreateObject('phpgwapi.categories');
 			
 			$ical = $this->parse($mime_msg);
@@ -3019,14 +3021,14 @@
 				}
 				if($uid_exists)
 				{
-					Header('Location: ' . $GLOBALS['phpgw']->link('/index.php',
+					Header('Location: ' . GlobalService::get('phpgw')->link('/index.php',
 							Array(
 								'menuaction'	=> 'calendar.uiicalendar.import',
 								'error_number'	=> 1
 							)
 						)
 					);
-					$GLOBALS['phpwg']->common->phpgw_exit();
+					GlobalService::get('phpgw')->common->phpgw_exit();
 
 				}
 				else
@@ -3098,12 +3100,12 @@
 					{
 						if(isset($ical['event'][$i][$i_datevar]))
 						{
-							$temp_time = $so_event->maketime($ical['event'][$i][$i_datevar]) + $GLOBALS['phpgw']->datetime->tz_offset;
+							$temp_time = $so_event->maketime($ical['event'][$i][$i_datevar]) + GlobalService::get('phpgw')->datetime->tz_offset;
 							
 							//verifica se o vcard importado tem a referência do timezone
 							if( $ical['event'][$i][$i_datevar]['tzid'] ){
-								$dateTimeZone = new DateTimeZone( $ical['event'][$i][$i_datevar]['tzid'] );
-								$dateTime = new DateTime("now", $dateTimeZone);
+								$dateTimeZone = new \DateTimeZone( $ical['event'][$i][$i_datevar]['tzid'] );
+								$dateTime = new \DateTime("now", $dateTimeZone);
 								$timeOffset = $dateTimeZone->getOffset($dateTime);	
 								
 								//tira o time zone do vcard para só ficar o time zone do sistema
@@ -3321,12 +3323,12 @@
 // Owner
 					if(!isset($ical['event'][$i]['organizer']) || (isset($ical['event'][$i]['organizer']) && $this->is_owner($ical['event'][$i]['organizer'])))
 					{
-						$so_event->add_attribute('owner',$GLOBALS['phpgw_info']['user']['account_id']);
-						$so_event->add_attribute('participants','A',(int)$GLOBALS['phpgw_info']['user']['account_id']);
+						$so_event->add_attribute('owner',GlobalService::get('phpgw_info')['user']['account_id']);
+						$so_event->add_attribute('participants','A',(int)GlobalService::get('phpgw_info')['user']['account_id']);
 					}
 					else
 					{
-						$so_event->add_attribute('participants','A',(int)$GLOBALS['phpgw_info']['user']['account_id']);
+						$so_event->add_attribute('participants','A',(int)GlobalService::get('phpgw_info')['user']['account_id']);
 					}
 
 					$event = $so_event->get_cached_event();
@@ -3335,14 +3337,14 @@
 				}
 			}
 			if(!$from_ajax) {
-				Header('Location: '.$GLOBALS['phpgw']->link('/index.php',
+				Header('Location: '.GlobalService::get('phpgw')->link('/index.php',
 					Array(
 						'menuaction'	=> 'calendar.uicalendar.view',
 						'cal_id'	=> $event['id']
 						)
 					)
 				);
-				$GLOBALS['phpgw']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 			else 
 				return true;
@@ -3376,13 +3378,13 @@
 
 			$ical = $this->new_ical();
 
-			$this->set_var($ical['prodid'],'value','-//eGroupWare//eGroupWare '.$setup_info['calendar']['version'].' MIMEDIR//'.strtoupper($GLOBALS['phpgw_info']['user']['preferences']['common']['lang']));
+			$this->set_var($ical['prodid'],'value','-//eGroupWare//eGroupWare '.$setup_info['calendar']['version'].' MIMEDIR//'.strtoupper(GlobalService::get('phpgw_info')['user']['preferences']['common']['lang']));
 			$this->set_var($ical['version'],'value','2.0');
 			$this->set_var($ical['method'],'value',strtoupper($method));
 
-			if(!$GLOBALS['phpgw_info']['flags']['included_classes']['uicalendar'])
+			if(!GlobalService::get('phpgw_info')['flags']['included_classes']['uicalendar'])
 			{
-				if(!$GLOBALS['phpgw_info']['flags']['included_classes']['bocalendar'])
+				if(!GlobalService::get('phpgw_info')['flags']['included_classes']['bocalendar'])
 				{
 					$so_event = createobject('calendar.socalendar',
 						Array(
@@ -3394,12 +3396,12 @@
 				}
 				else
 				{
-					$so_event = $GLOBALS['bocalendar']->so;
+					$so_event = GlobalService::get('bocalendar')->so;
 				}
 			}
 			else
 			{
-				$so_event = $GLOBALS['uicalendar']->bo->so;
+				$so_event = GlobalService::get('uicalendar')->bo->so;
 			}
 
 			foreach($ids as $event)
@@ -3423,7 +3425,7 @@
 
 				// use system's date info for caluculating local timezone's offset in minutes
 				//
-				$gmt_offset = date('O',$GLOBALS['phpgw']->datetime->users_localtime);  // offset to GMT
+				$gmt_offset = date('O',GlobalService::get('phpgw')->datetime->users_localtime);  // offset to GMT
 				$offset = (int)(substr($gmt_offset, 0, 3)) * 60 + (int)(substr($gmt_offset, 3, 2));
 				$event['start']['min']   -= $offset;
 				$event['end']['min']     -= $offset;
@@ -3461,16 +3463,16 @@
 				{
 					if(!is_object($db))
 					{
-						$db = $GLOBALS['phpgw']->db;
+						$db = GlobalService::get('phpgw')->db;
 					}
 					foreach($event['participants'] as $part => $status)
 					{
-						$GLOBALS['phpgw']->accounts->get_account_name($part,$lid,$fname,$lname);
+						GlobalService::get('phpgw')->accounts->get_account_name($part,$lid,$fname,$lname);
 						$name = $fname.' '.$lname;
 
 						$owner_status = $this->switch_partstat((int)$this->switch_phpgw_status($event['participants'][$part]));
 
-						$mail_prefs = $GLOBALS['phpgw']->preferences->create_email_preferences($part);
+						$mail_prefs = GlobalService::get('phpgw')->preferences->create_email_preferences($part);
 						$mailto = $mail_prefs['email']['address'];
 
 						$str = 'CN="'.$name.'";PARTSTAT='.$owner_status.':'.$mailto;
@@ -3482,7 +3484,7 @@
 						{
 							$str = 'ROLE=REQ-PARTICIPANT;'.$str;
 						}
-						if ($method != 'reply' || $part == $GLOBALS['phpgw_info']['user']['account_id'])
+						if ($method != 'reply' || $part == GlobalService::get('phpgw_info')['user']['account_id'])
 						{
 							$this->parse_value($ical_event,'attendee',$str,'vevent');
 						}
@@ -3552,7 +3554,7 @@
 					}
 					if($event['recur_enddate']['month'] != 0 && $event['recur_enddate']['mday'] != 0 && $event['recur_enddate']['year'] != 0)
 					{
-						$recur_mktime = $so_event->maketime($event['recur_enddate']) - $GLOBALS['phpgw']->datetime->tz_offset;
+						$recur_mktime = $so_event->maketime($event['recur_enddate']) - GlobalService::get('phpgw')->datetime->tz_offset;
 						$str .= ';UNTIL='.date('Ymd\THis\Z',$recur_mktime);
 					}
 					$this->parse_value($ical_event,'rrule',$str,'vevent');
@@ -3572,13 +3574,13 @@
 			$ical[$vtype] = $ical_events;
 
 			// iCals are by default utf-8
-			return $GLOBALS['phpgw']->translation->convert($this->build_ical($ical),$GLOBALS['phpgw']->translation->charset(),'utf-8');
+			return GlobalService::get('phpgw')->translation->convert($this->build_ical($ical),GlobalService::get('phpgw')->translation->charset(),'utf-8');
 		}
 
 		function freebusy($params=False)
 		{
 			if (!$params) $params = $_GET;
-			$user  = is_numeric($params['user']) ? (int) $params['user'] : $GLOBALS['phpgw']->accounts->name2id($params['user']);
+			$user  = is_numeric($params['user']) ? (int) $params['user'] : GlobalService::get('phpgw')->accounts->name2id($params['user']);
 			$start = isset($params['start']) ? $params['start'] : date('Ymd');
 			$end   = isset($params['end']) ? $params['end'] : (date('Y')+1).date('md');
 
@@ -3603,7 +3605,7 @@
 				}
 			}
 			
-			$fn 		= $GLOBALS['phpgw']->accounts->id2name($user).'.ifb';
+			$fn 		= GlobalService::get('phpgw')->accounts->id2name($user).'.ifb';
 			$mime 		= 'text/calendar';
 
 			$userAgent = ( isset($_SERVER['HTTP_USER_AGENT']) )? $_SERVER['HTTP_USER_AGENT'] : "";

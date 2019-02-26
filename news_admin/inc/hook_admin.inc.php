@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare                                                               *
   * http://www.egroupware.org                                              *
@@ -12,9 +14,9 @@
 	{
 		$file = Array
 		(
-			'Global Categories'	=> $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uicategories.index&appname=' . $appname),
-			'Configure Access Permissions' => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uiacl.acllist'),
-			'Configure RSS exports' => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uiexport.exportlist'),
+			'Global Categories'	=> GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uicategories.index&appname=' . $appname),
+			'Configure Access Permissions' => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uiacl.acllist'),
+			'Configure RSS exports' => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uiexport.exportlist'),
 		);
 		display_section($appname,$appname,$file);
 	}

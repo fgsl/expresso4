@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -17,7 +19,7 @@
 
 		function soexport()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 		}
 
 		function readconfig($cat_id)

@@ -1,6 +1,8 @@
 <?php
-if(!isset($GLOBALS['phpgw_info'])){
-        $GLOBALS['phpgw_info']['flags'] = array(
+use Expresso\Core\GlobalService;
+
+if(!isset(GlobalService::get('phpgw_info'))){
+        GlobalService::get('phpgw_info')['flags'] = array(
                 'currentapp' => 'expressoMail1_2',
                 'nonavbar'   => true,
                 'noheader'   => true

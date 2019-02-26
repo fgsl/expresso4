@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Auth from NIS	                                   *
 	* Authentication based on NIS maps                                         *
@@ -27,15 +29,15 @@
 		function authenticate($username, $passwd)
 		{
 			$domain = yp_get_default_domain();
-			if( !empty($GLOBALS['phpgw_info']['server']['nis_domain']) )
+			if( !empty(GlobalService::get('phpgw_info')['server']['nis_domain']) )
 			{
-				$domain = $GLOBALS['phpgw_info']['server']['nis_domain'];
+				$domain = GlobalService::get('phpgw_info')['server']['nis_domain'];
 			}
 
 			$map = "passwd.byname";
-			if( !empty($GLOBALS['phpgw_info']['server']['nis_map']) )
+			if( !empty(GlobalService::get('phpgw_info')['server']['nis_map']) )
 			{
-				$map = $GLOBALS['phpgw_info']['server']['nis_map'];
+				$map = GlobalService::get('phpgw_info')['server']['nis_map'];
 			}
 			$entry = yp_match( $domain, $map, $username );
 
@@ -61,7 +63,7 @@
 		{
 			$account_id = get_account_id($account_id);
 
-			$GLOBALS['phpgw']->db->query("update phpgw_accounts set account_lastloginfrom='"
+			GlobalService::get('phpgw')->db->query("update phpgw_accounts set account_lastloginfrom='"
 				. "$ip', account_lastlogin='" . time()
 				. "' where account_id='$account_id'",__LINE__,__FILE__);
 		}

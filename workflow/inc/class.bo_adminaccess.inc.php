@@ -13,7 +13,7 @@ require_once('class.bo_ajaxinterface.inc.php');
 require_once(PHPGW_API_INC . SEP . 'common_functions.inc.php');
 
 /**
- * Implementa métodos para administração do controle de acesso ao workflow.
+ * Implementa mÃ©todos para administraï¿½ï¿½o do controle de acesso ao workflow.
  * Controla administradores de processos e administradores de organograma
  *
  * @package Workflow
@@ -24,7 +24,7 @@ require_once(PHPGW_API_INC . SEP . 'common_functions.inc.php');
 class bo_adminaccess extends bo_ajaxinterface
 {
 	/**
-	* @var object $so Objeto para acesso à camada de dados
+	* @var object $so Objeto para acesso ï¿½ camada de dados
 	* @access public
 	*/
 	var $so;
@@ -40,13 +40,13 @@ class bo_adminaccess extends bo_ajaxinterface
 		parent::bo_ajaxinterface();
 
 		if (!Factory::getInstance('workflow_acl')->checkWorkflowAdmin($_SESSION['phpgw_info']['workflow']['account_id']))
-			exit(serialize(array('error' => 'Você não tem permissão para executar esta operação.')));
+			exit(serialize(array('error' => 'Vocï¿½ nï¿½o tem permissï¿½o para executar esta operaï¿½ï¿½o.')));
 
 		$this->so = &Factory::getInstance('so_adminaccess', Factory::getInstance('WorkflowObjects')->getDBGalaxia()->Link_ID);
 	}
 
 	/**
-	* Obtém a lista de processos (consulta ao engine)
+	* Obtï¿½m a lista de processos (consulta ao engine)
 	*
 	* @return array process data
 	* @access public
@@ -73,7 +73,7 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Obtém a lista de administradores de um organograma
+	* Obtï¿½m a lista de administradores de um organograma
 	*
 	* @param array $p processo
 	* @return array ids dos admins do organograma
@@ -98,7 +98,7 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Obtém a lista de administradores de um processo
+	* Obtï¿½m a lista de administradores de um processo
 	*
 	* @param array $p processo
 	* @return array lista de administradores de um processo
@@ -216,7 +216,7 @@ class bo_adminaccess extends bo_ajaxinterface
 	* Seta o nivel administrativo do monitor
 	*
 	* @param array $p processo
-	* @return arraym
+	* @return array
 	* @access public
 	*/
 	function set_monitor_admin_level($p)
@@ -237,7 +237,7 @@ class bo_adminaccess extends bo_ajaxinterface
 	* Seta o nivel administrativo do organograma
 	*
 	* @param array $p processo
-	* @return arraym
+	* @return array
 	* @access public
 	*/
 	function set_organogram_admin_level($p)
@@ -254,15 +254,15 @@ class bo_adminaccess extends bo_ajaxinterface
 		$result = $this->so->setAdminLevel('ORG', $p['uid'], $p['pid'], $levels);
 		
 		if (!$result) {
-			return "Não atualizou as permissões.";
+			return "Nï¿½o atualizou as permissï¿½es.";
 		}
 		
 	}
 
 	/**
-	* Busca os usuários/grupos que possuem acesso a uma determinada aplicação externa
+	* Busca os usuï¿½rios/grupos que possuem acesso a uma determinada aplicaï¿½ï¿½o externa
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array lista dos usuarios com direito de accesso
 	* @access public
 	*/
@@ -273,9 +273,9 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Remove o acesso de um usuário/grupo a uma aplicação externa
+	* Remove o acesso de um usuï¿½rio/grupo a uma aplicaï¿½ï¿½o externa
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array lista de administradores de uma aplicacao externa
 	* @access public
 	*/
@@ -286,9 +286,9 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Dá acesso para um usuário/grupo a uma aplicação externa
+	* Dï¿½ acesso para um usuï¿½rio/grupo a uma aplicaï¿½ï¿½o externa
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array lista de administradores de uma aplicacao externa
 	* @access public
 	*/
@@ -300,10 +300,10 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Busca os usuários/grupos que podem administrar o módulo Workflow
+	* Busca os usuï¿½rios/grupos que podem administrar o mï¿½dulo Workflow
 	*
-	* @param array $params Lista de parâmetros advindos do Ajax
-	* @return array Lista dos usuários com direito de administrar o módulo Workflow
+	* @param array $params Lista de parï¿½metros advindos do Ajax
+	* @return array Lista dos usuï¿½rios com direito de administrar o mï¿½dulo Workflow
 	* @access public
 	*/
 	function getWorkflowAdministrators()
@@ -313,10 +313,10 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Dá privilégio de administrar o módulo Workflow para um usuário/grupo
+	* Dï¿½ privilï¿½gio de administrar o mï¿½dulo Workflow para um usuï¿½rio/grupo
 	*
-	* @param array $params Lista de parâmetros advindos do Ajax
-	* @return array Lista dos usuários com direito de administrar o módulo Workflow
+	* @param array $params Lista de parï¿½metros advindos do Ajax
+	* @return array Lista dos usuï¿½rios com direito de administrar o mï¿½dulo Workflow
 	* @access public
 	*/
 	function addWorkflowAdministrators($params)
@@ -327,10 +327,10 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Remove o privilégio de administrar o módulo Workflow de um usuário/grupo
+	* Remove o privilï¿½gio de administrar o mï¿½dulo Workflow de um usuï¿½rio/grupo
 	*
-	* @param array $params Lista de parâmetros advindos do Ajax
-	* @return array Lista dos usuários com direito de administrar o módulo Workflow
+	* @param array $params Lista de parï¿½metros advindos do Ajax
+	* @return array Lista dos usuï¿½rios com direito de administrar o mï¿½dulo Workflow
 	* @access public
 	*/
 	function deleteWorkflowAdministrators($params)
@@ -340,9 +340,9 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Busca os usuários/grupos que podem criar/administrar processos de Workflow
+	* Busca os usuï¿½rios/grupos que podem criar/administrar processos de Workflow
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array Lista dos usuarios com direito de criar/administrar processos
 	* @access public
 	*/
@@ -356,9 +356,9 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Dá privilégio de criar/administrar processos de Workflow para um usuário/grupo
+	* Dï¿½ privilï¿½gio de criar/administrar processos de Workflow para um usuï¿½rio/grupo
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array lista dos usuarios com direito de criar/administrar processos
 	* @access public
 	*/
@@ -375,9 +375,9 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Remove o privilégio de criar/administrar processos de Workflow de um usuário/grupo
+	* Remove o privilï¿½gio de criar/administrar processos de Workflow de um usuï¿½rio/grupo
 	*
-	* @param array $params Lista de parâmetros vindas do Ajax
+	* @param array $params Lista de parï¿½metros vindas do Ajax
 	* @return array Lista dos usuarios com direito de criar/administrar processos
 	* @access public
 	*/
@@ -418,10 +418,10 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Verifica se o usuário tem direito de acesso a um recurso
+	* Verifica se o usuï¿½rio tem direito de acesso a um recurso
 	*
 	* @param string $type tipo de recurso
-	* @param integer $uid id do usuário
+	* @param integer $uid id do usuï¿½rio
 	* @param integer $rid id do recurso
 	* @return bool true accesso permitido false nao
 	* @access public
@@ -432,10 +432,10 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Retorna as permissoes do usúario
+	* Retorna as permissoes do usï¿½ario
 	*
 	* @param string $type tipo do usuario
-	* @param integer $uid id do usuário
+	* @param integer $uid id do usuï¿½rio
 	* @param integer $rid id do recurso
 	* @return array array com as permissoes do usuario
 	* @access public
@@ -446,11 +446,11 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Informa o nível de administração do usuário
+	* Informa o nï¿½vel de administraï¿½ï¿½o do usuï¿½rio
 	* @param string $type O tipo do recurso
-	* @param int $uid O ID do usuário
+	* @param int $uid O ID do usuï¿½rio
 	* @param int $numvalue O ID do recurso
-	* @return array As permissões do usuário (em forma de número e de bits)
+	* @return array As permissï¿½es do usuï¿½rio (em forma de nï¿½mero e de bits)
 	* @access public
 	*/
 	function getUserAdminLevel($type, $uid, $rid)
@@ -459,11 +459,11 @@ class bo_adminaccess extends bo_ajaxinterface
 	}
 
 	/**
-	* Informa o nível de administração do usuário (incluindo herança por grupo)
+	* Informa o nï¿½vel de administraï¿½ï¿½o do usuï¿½rio (incluindo heranï¿½a por grupo)
 	* @param string $type O tipo do recurso
-	* @param int $uid O ID do usuário
+	* @param int $uid O ID do usuï¿½rio
 	* @param int $numvalue O ID do recurso
-	* @return array As permissões do usuário, inclusive herança por grupo. As permissões são retornadas em forma de número e de bits
+	* @return array As permissï¿½es do usuï¿½rio, inclusive heranï¿½a por grupo. As permissï¿½es sï¿½o retornadas em forma de nï¿½mero e de bits
 	* @access public
 	*/
 	function getUserGroupAdminLevel($type, $uid, $numvalue)

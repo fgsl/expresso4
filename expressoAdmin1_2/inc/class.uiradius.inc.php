@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 class uiradius
 {
 	var $public_functions = array(
@@ -14,17 +16,17 @@ class uiradius
 	{
 		$this->_so = CreateObject('expressoAdmin1_2.soradius');
 		$this->_radius_schema = $this->_so->getRadiusSchema();
-		if ( !@is_object($GLOBALS['phpgw']->js) ) $GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+		if ( !@is_object(GlobalService::get('phpgw')->js) ) GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 	}
 	
 	function save()
 	{
 		if ( !( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ) ) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			return false;
 		}
 		
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
 		
 		$result = $this->_so->setRadiusConf( $_POST );
 		if ( $result === true ) $this->_setResponse( utf8_encode(lang('Configuration saved successfully')) );
@@ -34,11 +36,11 @@ class uiradius
 	function config()
 	{
 		if ( !( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ) ) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			return false;
 		}
 		
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
 		
 		$result = $this->_so->getRadiusConf();
 		$result->schema = $this->_so->getRadiusSchema();
@@ -57,18 +59,18 @@ class uiradius
 	
 	function edit()
 	{
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 		
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
-		$GLOBALS['phpgw']->js->validate_file('jscode','connector','expressoAdmin1_2');
-		$GLOBALS['phpgw']->js->validate_file('jscode','lang','expressoAdmin1_2');
-		$GLOBALS['phpgw']->js->validate_file('jscode','radius_config','expressoAdmin1_2');
-		$GLOBALS['phpgw']->css->validate_file('./prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
+		GlobalService::get('phpgw')->js->validate_file('jscode','connector','expressoAdmin1_2');
+		GlobalService::get('phpgw')->js->validate_file('jscode','lang','expressoAdmin1_2');
+		GlobalService::get('phpgw')->js->validate_file('jscode','radius_config','expressoAdmin1_2');
+		GlobalService::get('phpgw')->css->validate_file('./prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
 		
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Radius Config');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Radius Config');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		$conf = $this->_so->getRadiusConf();
 		

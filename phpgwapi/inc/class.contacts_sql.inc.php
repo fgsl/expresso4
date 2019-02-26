@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Contacts manager for SQL                                *
 	* This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -143,13 +145,13 @@
 
 		function contacts_($useacl=True)
 		{
-//			$this->db = $GLOBALS['phpgw']->db;
-			copyobj($GLOBALS['phpgw']->db,$this->db);
+//			$this->db = GlobalService::get('phpgw')->db;
+			copyobj(GlobalService::get('phpgw')->db,$this->db);
 			if($useacl)
 			{
-				$this->grants = $GLOBALS['phpgw']->acl->get_grants('addressbook');
+				$this->grants = GlobalService::get('phpgw')->acl->get_grants('addressbook');
 			}
-			$this->account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$this->account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			/* Used to flag an address as being:
 			   domestic AND/OR international(default)
@@ -348,11 +350,11 @@
 							if (!(int)$value) continue;	// nothing to filter
 
 							//$filterlist[] = "(" . $name . " LIKE '%," . (int)$value . ",%' OR " . $name."='".(int)$value."')";
-							if (!is_object($GLOBALS['phpgw']->categories))
+							if (!is_object(GlobalService::get('phpgw')->categories))
 							{
-								$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+								GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 							}
-							$cats = $GLOBALS['phpgw']->categories->return_all_children((int)$value);
+							$cats = GlobalService::get('phpgw')->categories->return_all_children((int)$value);
 							$cat_filter = '(cat_id IN ('.implode(',',$cats).')';
 							foreach($cats as $cat)
 							{
@@ -644,7 +646,7 @@
 
 			//this is added here so it is never tainted
 			$this->stock_contact_fields['last_mod'] = 'last_mod';
-			$stock_fields['last_mod'] = $GLOBALS['phpgw']->datetime->gmtnow;
+			$stock_fields['last_mod'] = GlobalService::get('phpgw')->datetime->gmtnow;
 
 			$sql = 'INSERT INTO ' . $this->std_table . " (owner,access,cat_id,tid," . $lid[0]
 				. implode(',',$this->stock_contact_fields)
@@ -718,7 +720,7 @@
 				{
 					$ta[] = $name . "='" . $this->db->db_addslashes($value) . "'";
 				}
-				$ta[] = 'last_mod=' . $GLOBALS['phpgw']->datetime->gmtnow;
+				$ta[] = 'last_mod=' . GlobalService::get('phpgw')->datetime->gmtnow;
 				$fields_s = implode(',',$ta);
 				if ($field_s == ',')
 				{

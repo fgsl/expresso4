@@ -344,7 +344,7 @@ class shared_accounts
 
 				$_imap->empty_inbox();
 			}
-			catch( Exception $e )
+			catch( \Exception $e )
 			{
                 $_result['msg'] = $e->getMessage();
 			}

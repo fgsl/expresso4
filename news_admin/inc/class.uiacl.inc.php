@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -28,7 +30,7 @@
 		function uiacl()
 		{
 			$this->bo = createobject('news_admin.boacl',True);
-			$this->accounts = $GLOBALS['phpgw']->accounts->get_list('groups');
+			$this->accounts = GlobalService::get('phpgw')->accounts->get_list('groups');
 			$this->nextmatchs = createobject('phpgwapi.nextmatchs');
 			$this->start = $this->bo->start;
 			$this->query = $this->bo->query;
@@ -39,17 +41,17 @@
 		
 		function acllist()
 		{
-			if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 			{
 				$this->deny();
 			}
 
 			if ($_POST['btnDone'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+				GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 			}
 
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
 			if ($_POST['btnSave'])
@@ -60,10 +62,10 @@
 				}
 			}
 
-			$GLOBALS['phpgw']->template->set_file('acl', 'acl.tpl');
-			$GLOBALS['phpgw']->template->set_block('acl','cat_list','Cblock');
-			$GLOBALS['phpgw']->template->set_var(array(
-				'title' => $GLOBALS['phpgw_info']['apps']['news_admin']['title'] . ' - ' . lang('Configure Access Permissions'),
+			GlobalService::get('phpgw')->template->set_file('acl', 'acl.tpl');
+			GlobalService::get('phpgw')->template->set_block('acl','cat_list','Cblock');
+			GlobalService::get('phpgw')->template->set_var(array(
+				'title' => GlobalService::get('phpgw_info')['apps']['news_admin']['title'] . ' - ' . lang('Configure Access Permissions'),
 				'lang_search' => lang('Search'),
 				'lang_save' => lang('Save'),
 				'lang_done' => lang('Done'),
@@ -75,11 +77,11 @@
 			$left  = $this->nextmatchs->left('/index.php',$this->start,$this->bo->catbo->total_records,'menuaction=news_admin.uiacl.acllist');
 			$right = $this->nextmatchs->right('/index.php',$this->start,$this->bo->catbo->total_records,'menuaction=news_admin.uiacl.acllist');
 			
-			$GLOBALS['phpgw']->template->set_var(array(
+			GlobalService::get('phpgw')->template->set_var(array(
 				'left' => $left,
 				'right' => $right,
 				'lang_showing' => $this->nextmatchs->show_hits($this->bo->catbo->total_records,$this->start),
-				'th_bg' => $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg' => GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'sort_cat' => $this->nextmatchs->show_sort_order(
 					$this->sort,'cat_name','cat_name','/index.php',lang('Category'),'&menuaction=news_admin.uiacl.acllist'
 				),
@@ -92,16 +94,16 @@
 				$this->rights = $this->bo->get_rights($cat['id']);
 
 				$tr_color = $this->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var(array(
+				GlobalService::get('phpgw')->template->set_var(array(
 					'tr_color' => $tr_color,
 					'catname' => $cat['name'],
 					'catid' => $cat['id'],
 					'read' => $this->selectlist(PHPGW_ACL_READ),
 					'write' => $this->selectlist(PHPGW_ACL_ADD)
 				));
-				$GLOBALS['phpgw']->template->parse('Cblock','cat_list',True);
+				GlobalService::get('phpgw')->template->parse('Cblock','cat_list',True);
 			}
-			$GLOBALS['phpgw']->template->pfp('out','acl',True);
+			GlobalService::get('phpgw')->template->pfp('out','acl',True);
 		}
 
 		function selectlist($right)
@@ -123,7 +125,7 @@
 		function deny()
 		{
 			echo '<p><center><b>'.lang('Access not permitted').'</b></center>';
-			$GLOBALS['phpgw']->common->phpgw_exit(True);
+			GlobalService::get('phpgw')->common->phpgw_exit(True);
 		}
 	}
 ?>

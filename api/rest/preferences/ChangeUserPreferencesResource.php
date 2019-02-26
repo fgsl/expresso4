@@ -5,13 +5,13 @@ class ChangeUserPreferencesResource extends PreferencesAdapter
 	
 	public function setDocumentation() {
 
-		$this->setResource("Preferences","Preferences/ChangeUserPreferences","Altera as preferências do usuário.",array("POST"));
+		$this->setResource("Preferences","Preferences/ChangeUserPreferences","Altera as preferï¿½ncias do usuï¿½rio.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
 
-		$this->addResourceParam("module","string",true,"Módulo da Preferência.");
-		$this->addResourceParam("preference","string",true,"ID da preferência.");
-		$this->addResourceParam("value","string",true,"Novo valor da preferência.");
+		$this->addResourceParam("module","string",true,"Mï¿½dulo da Preferï¿½ncia.");
+		$this->addResourceParam("preference","string",true,"ID da preferï¿½ncia.");
+		$this->addResourceParam("value","string",true,"Novo valor da preferï¿½ncia.");
 
 
 	}
@@ -31,9 +31,9 @@ class ChangeUserPreferencesResource extends PreferencesAdapter
 			if ($preference == "") { $preference = ""; }
 			if (($appName == "mail") || ($appName == "")) { $appName = "expressoMail"; }
 
-			$GLOBALS['phpgw']->preferences->user[$appName][$preference] = $value;
+			GlobalService::get('phpgw')->preferences->user[$appName][$preference] = $value;
 
-			$GLOBALS['phpgw']->preferences->save_repository(True,"user");
+			GlobalService::get('phpgw')->preferences->save_repository(True,"user");
 
 			$this->setResult(true);
 			

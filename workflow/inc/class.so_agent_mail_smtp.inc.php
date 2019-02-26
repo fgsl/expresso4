@@ -57,7 +57,7 @@ class so_agent_mail_smtp extends so_agent
 	/**
 	 * @abstract save all agent datas to the database
 	 * @param $agent_id int id of the entry to save
-	 * @param $datas is an array containing columns => value pairs which will be saved for this agent
+	 * @param $datas boolean is an array containing columns => value pairs which will be saved for this agent
 	 * @return bool true if everything was ok, false else
 	 */
 	function save($agent_id, &$datas)

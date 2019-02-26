@@ -1,6 +1,8 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /************************************************************************************\
-* Expresso Administração                 										     *
+* Expresso Administraï¿½ï¿½o                 										     *
 * by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	 *
 * -----------------------------------------------------------------------------------*
 *  This program is free software; you can redistribute it and/or modify it		 	 *
@@ -27,18 +29,18 @@ class uilogs
 	
 	function list_logs()
 	{
-		if ( !$this->functions->check_acl( $GLOBALS['phpgw']->accounts->data['account_lid'], ACL_Managers::ACL_VW_LOGS ) )
-			$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw']->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
+		if ( !$this->functions->check_acl( GlobalService::get('phpgw')->accounts->data['account_lid'], ACL_Managers::ACL_VW_LOGS ) )
+			GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw')->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
 		
-		unset( $GLOBALS['phpgw_info']['flags']['noheader'] );
-		unset( $GLOBALS['phpgw_info']['flags']['nonavbar'] );
+		unset( GlobalService::get('phpgw_info')['flags']['noheader'] );
+		unset( GlobalService::get('phpgw_info')['flags']['nonavbar'] );
 		
-		if ( !( isset( $GLOBALS['phpgw']->js ) && is_object( $GLOBALS['phpgw']->js ) ) ) $GLOBALS['phpgw']->js = CreateObject( 'phpgwapi.javascript' );
+		if ( !( isset( GlobalService::get('phpgw')->js ) && is_object( GlobalService::get('phpgw')->js ) ) ) GlobalService::get('phpgw')->js = CreateObject( 'phpgwapi.javascript' );
 		
-		$GLOBALS['phpgw']->css->validate_file( 'expressoAdmin1_2/templates/default/css/custom.css' );
-		$GLOBALS['phpgw']->js->add( 'src', './prototype/plugins/jquery/jquery-latest.min.js' );
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang( 'Logs' );
-		$GLOBALS['phpgw']->common->phpgw_header();
+		GlobalService::get('phpgw')->css->validate_file( 'expressoAdmin1_2/templates/default/css/custom.css' );
+		GlobalService::get('phpgw')->js->add( 'src', './prototype/plugins/jquery/jquery-latest.min.js' );
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang( 'Logs' );
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		$p = CreateObject( 'phpgwapi.Template', PHPGW_APP_TPL );
 		$p->set_file( array( 'logs' => 'logs.tpl' ) );
@@ -74,8 +76,8 @@ class uilogs
 		$logs           = $this->_list_itens( $where, $itens_per_page, $offset );
 		
 		$p->set_var( array(
-			'back_url'           => $GLOBALS['phpgw']->link( '/expressoAdmin1_2/index.php' ),
-			'search_action'      => $GLOBALS['phpgw']->link( '/index.php','menuaction=expressoAdmin1_2.uilogs.list_logs' ),
+			'back_url'           => GlobalService::get('phpgw')->link( '/expressoAdmin1_2/index.php' ),
+			'search_action'      => GlobalService::get('phpgw')->link( '/index.php','menuaction=expressoAdmin1_2.uilogs.list_logs' ),
 			'query_manager_lid'  => $_POST['query_manager_lid'],
 			'query_action'       => $_POST['query_action'],
 			'query_date'         => $_POST['query_date'],
@@ -120,7 +122,7 @@ class uilogs
 	
 	private function _row_action( $action, $type, $date )
 	{
-		return '<a href="'.$GLOBALS['phpgw']->link( '/index.php', array(
+		return '<a href="'.GlobalService::get('phpgw')->link( '/index.php', array(
 			'menuaction' => 'expressoAdmin1_2.uilogs.'.$action.'_'.$type,
 			'date'       => $date,
 		) ).'"> '.lang( $action ).' </a>';
@@ -128,17 +130,17 @@ class uilogs
 	
 	private function _get_total_itens( $where ) {
 		if ( count( (array)$where ) == 0 ) return 0;
-		$GLOBALS['phpgw']->db->query( '
+		GlobalService::get('phpgw')->db->query( '
 			SELECT count(*) AS count
 			FROM phpgw_expressoadmin_log
 			WHERE '.implode( ' AND ', $where )
 		);
-		return $GLOBALS['phpgw']->db->next_record()? $GLOBALS['phpgw']->db->f( 'count' ) : 0;
+		return GlobalService::get('phpgw')->db->next_record()? GlobalService::get('phpgw')->db->f( 'count' ) : 0;
 	}
 	
 	private function _list_itens( $where, $limit, $offset ) {
 		if ( count( (array)$where ) == 0 ) return array();
-		$GLOBALS['phpgw']->db->query( '
+		GlobalService::get('phpgw')->db->query( '
 			SELECT manager, date, userinfo, action
 			FROM phpgw_expressoadmin_log
 			WHERE '.implode( ' AND ', $where ).'
@@ -147,7 +149,7 @@ class uilogs
 			OFFSET '.(int)$offset
 		);
 		$records = array();
-		while ( $GLOBALS['phpgw']->db->next_record() ) $records[] = $GLOBALS['phpgw']->db->row();
+		while ( GlobalService::get('phpgw')->db->next_record() ) $records[] = GlobalService::get('phpgw')->db->row();
 		return $records;
 	}
 }

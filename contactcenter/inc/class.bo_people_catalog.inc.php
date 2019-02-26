@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -83,7 +85,7 @@
 					array_push($rules, array(
 						'field' => 'contact.id_owner',
 						'type'  => '=',
-						'value' => $GLOBALS['phpgw_info']['user']['account_id']
+						'value' => GlobalService::get('phpgw_info')['user']['account_id']
 					));
 				}
 				else
@@ -92,7 +94,7 @@
 						0 => array(
 							'field' => 'contact.id_owner',
 							'type'  => '=',
-							'value' => $GLOBALS['phpgw_info']['user']['account_id']
+							'value' => GlobalService::get('phpgw_info')['user']['account_id']
 						)
 					);
 				}
@@ -116,14 +118,14 @@
 		{	
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{
@@ -256,14 +258,14 @@
 		{
 			if (!is_array($id_contacts) or !is_array($fields) or ($other_data != false and !is_array($other_data)))
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_multiple_entry parameter type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else {
 					exit('Argument Error on: <br>File:'.__FILE__.'<br>Line:'.__LINE__.'<br>');
@@ -940,7 +942,7 @@
 				$contact->set_field( $field , $value );	
 			}
 
-			$contact->set_field('id_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+			$contact->set_field('id_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 			
 			$contact->commit();
 
@@ -974,7 +976,7 @@
 						$company = CreateObject('contactcenter.so_company');
 						$company->reset_values();
 						$company->set_company_name( $company_fields['company_name'] );
-						$company->set_field('id_company_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+						$company->set_field('id_company_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 						$company_fields['id_company'] = $company->commit();
 					}
 				}
@@ -1453,7 +1455,7 @@
 									$company = CreateObject('contactcenter.so_company');
 									$company->reset_values();
 									$company->set_company_name($company_fields['company_name']);
-									$company->set_field('id_company_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+									$company->set_field('id_company_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 									$company_fields['id_company'] = $company->commit();
 								}
 							}

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/*******************************************************************\
 	* phpGroupWare API - Arrayfunctions                                 *
 	* Written by Lars Kneschke <lkneschke@phpgw.de>                     *
@@ -37,7 +39,7 @@
 		
 		function arfsort( $a, $fl, $_sort='ASC' )
 		{
-			$GLOBALS['__ARFSORT_LIST__'] = $fl;
+			GlobalService::set('__ARFSORT_LIST__', $fl);
 			
 			$this->sort=$_sort;
 
@@ -54,7 +56,7 @@
 		*/
 		function arfsort_func( $a, $b )
 		{
-			foreach( $GLOBALS['__ARFSORT_LIST__'] as $f )
+			foreach( GlobalService::get('__ARFSORT_LIST__') as $f )
 			{
 				if($this->sort == 'ASC')
 				{

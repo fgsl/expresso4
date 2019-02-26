@@ -7,7 +7,7 @@ class SqlParser {
         "insert",
         "update",
         "delete",
-        //" into [temp]", //DESSA FORMA A EXPRESSÃO INTO É BLOQUEADA MAS SE FOR ACOMPANHADA DA PALAVRA TEMP ENTÃO SERÁ LIBERADA.
+        //" into [temp]", //DESSA FORMA A EXPRESSï¿½O INTO ï¿½ BLOQUEADA MAS SE FOR ACOMPANHADA DA PALAVRA TEMP ENTï¿½O SERï¿½ LIBERADA.
         "drop ",
         "alter ",
         "database",
@@ -66,7 +66,7 @@ class SqlParser {
         	$achou = stristr(strtolower(str_replace(" ","",$texto)),$palavra);
         }
         if ($achou!="") {
-            throw new Exception($msgerro);
+            throw new \Exception($msgerro);
         }
     }
     
@@ -91,12 +91,12 @@ class SqlParser {
             foreach ($this->_bloqueios as $palavra) {
             	$arr = explode("[",$palavra);
             	$palavrabloqueada = $arr[0];
-            	$this->procuraPalavra($select,$palavra,"Por questões de segurança, a palavra: '" . trim(strtoupper($palavrabloqueada)) . "' não é permitida.");
+            	$this->procuraPalavra($select,$palavra,"Por questï¿½es de seguranï¿½a, a palavra: '" . trim(strtoupper($palavrabloqueada)) . "' nï¿½o ï¿½ permitida.");
             }
            
             $ret = true;
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_erro = $e->getMessage();
             $ret = false;
         }
@@ -175,7 +175,7 @@ class SqlParser {
               //  echo $fcondicao . "<br>";
             
                 if ($this->verificaSintaxe($fcondicao) === false) {
-                    throw new Exception("Impossível validar condição: ( $condeval )");
+                    throw new \Exception("Impossï¿½vel validar condiï¿½ï¿½o: ( $condeval )");
                 }
                 
                 
@@ -192,7 +192,7 @@ class SqlParser {
                 $ret = $novotexto;
             }
         
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->_erro = $e->getMessage();
             $ret = false;
         }

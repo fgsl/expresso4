@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**********************************************************************************\
-	* Expresso Administração                 									      *
+	* Expresso Administraï¿½ï¿½o                 									      *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br) *
 	* --------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it		  *
@@ -50,10 +52,10 @@
 			{
 				$profile = CreateObject('emailadmin.bo')->getProfile('mail', $params['mail']);
 				
-				// Adiciona a organização na frente do uid.
+				// Adiciona a organizaï¿½ï¿½o na frente do uid.
 				if ($this->current_config['expressoAdmin_prefix_org'] == 'true')
 				{
-					$context_dn = ldap_explode_dn(strtolower($GLOBALS['phpgw_info']['server']['ldap_context']), 1);
+					$context_dn = ldap_explode_dn(strtolower(GlobalService::get('phpgw_info')['server']['ldap_context']), 1);
 				
 					$explode_dn = ldap_explode_dn(strtolower($params['context']), 1);
 					$explode_dn = array_reverse($explode_dn);
@@ -61,7 +63,7 @@
 					$params['uid'] = $explode_dn[$context_dn['count']] . '-' . $params['uid'];
 				}
 			
-				// Leio o ID a ser usado na criação do objecto. Esta função já incrementa o ID no BD.
+				// Leio o ID a ser usado na criaï¿½ï¿½o do objecto. Esta funï¿½ï¿½o jï¿½ incrementa o ID no BD.
 				$next_id = $this->db_functions->get_next_id();
 				if ((!is_numeric($next_id['id'])) || (!$next_id['status']))
 				{
@@ -118,7 +120,7 @@
 				if ($params['telephonenumber'] != '')
 					$user_info['telephoneNumber']	= $params['telephonenumber'];
 				
-				//Ocultar da pesquisa e do catálogo
+				//Ocultar da pesquisa e do catï¿½logo
 				if ($params['phpgwaccountvisible'])
 					$user_info['phpgwAccountVisible'] = '-1';
 				
@@ -153,7 +155,7 @@
 				if (($this->current_config['expressoAdmin_samba_support'] == 'true') && ($params['use_attrs_samba'] == 'on'))
 				{
 					
-					// Qualquer um que crie um usuário, deve ter permissão para adicionar a senha samba.
+					// Qualquer um que crie um usuï¿½rio, deve ter permissï¿½o para adicionar a senha samba.
 					// Verifica o acesso do gerente aos atributos samba
 					//if ($this->functions->check_acl( $_SESSION['phpgw_session']['session_lid'], ACL_Managers::ACL_MOD_USERS_SAMBA_ATTRIBUTES ))
 					//{
@@ -194,7 +196,7 @@
 				// Verifica o acesso do gerente aos atributos corporativos
 				if ($this->functions->check_acl( $_SESSION['phpgw_session']['session_lid'], ACL_Managers::ACL_MOD_USERS_CORPORATIVE ))
 				{
-					//retira caracteres que não são números.
+					//retira caracteres que nï¿½o sï¿½o nï¿½meros.
 					$params['corporative_information_cpf'] = preg_replace("/[^0-9]/", "", $params['corporative_information_cpf']);
 					//description
 					$params['corporative_information_description'] = utf8_encode($params['corporative_information_description']);
@@ -300,7 +302,7 @@
 					}
 				}
 			
-				// Inclusao do Mail do usuário nas listas de email selecionadas.
+				// Inclusao do Mail do usuï¿½rio nas listas de email selecionadas.
 				if ($params['maillists'])
 				{
 					foreach($params['maillists'] as $uid)
@@ -390,7 +392,7 @@
 			
 			$dn = 'uid=' . $old_values['uid'] . ',' . strtolower($old_values['context']);
 
-			//retira caracteres que não são números.
+			//retira caracteres que nï¿½o sï¿½o nï¿½meros.
 			$new_values['corporative_information_cpf'] = preg_replace("/[^0-9]/", "", $new_values['corporative_information_cpf']);
 
 			$diff = array_diff($new_values, $old_values);
@@ -533,10 +535,10 @@
 					require_once( PHPGW_API_INC . '/class.activedirectory.inc.php' );
 					ActiveDirectory::getInstance()->passwd( $old_values['uid'], $new_values['password1'] );
 					
-					$GLOBALS['hook_values']['uid']        = $old_values['uid'];
-					$GLOBALS['hook_values']['account_id'] = $old_values['uidnumber'];
-					$GLOBALS['hook_values']['new_passwd'] = $new_values['password1'];
-					$GLOBALS['phpgw']->hooks->process('changepassword');
+					GlobalService::get('hook_values']['uid']        = $old_values['uid'];
+					GlobalService::get('hook_values']['account_id'] = $old_values['uidnumber'];
+					GlobalService::get('hook_values']['new_passwd'] = $new_values['password1'];
+					GlobalService::get('phpgw')->hooks->process('changepassword');
 				}
 				
 				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -610,7 +612,7 @@
 			{
 
 				// CENTRAL DE SEGURANCA
-				// Verifica se o campo é protegido 
+				// Verifica se o campo ï¿½ protegido 
 				$fields_protected = array();
 
 				$fields_protected = explode( ",", $new_values['protected_fields'] );
@@ -1225,7 +1227,7 @@
 				}
 				if (count($remove_apps)>0)
 				{
-					//Verifica se o gerente tem acesso a aplicação antes de remove-la do usuario.
+					//Verifica se o gerente tem acesso a aplicaï¿½ï¿½o antes de remove-la do usuario.
 					$manager_apps = $this->db_functions->get_apps($_SESSION['phpgw_session']['session_lid']);
 					
 					foreach ($remove_apps as $app => $app_index)
@@ -1429,7 +1431,7 @@
 			if( count($migrateMB) && strtolower($migrateMB['uid']) == strtolower($uid) )
 				return array( 'status' => false, 'msg' => $this->functions->lang('The mailbox is being migrated wait').'.' );
 			
-			// Verifica acesso do gerente (OU) ao tentar renomear um usuário.
+			// Verifica acesso do gerente (OU) ao tentar renomear um usuï¿½rio.
 			if ( !$this->ldap_functions->check_access_to_renamed($uid) )
 				return array( 'status' => false, 'msg' => $this->functions->lang('You do not have access to delete user').'.' );
 			

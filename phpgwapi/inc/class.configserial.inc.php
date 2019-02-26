@@ -11,7 +11,7 @@ class ConfigSerial extends Singleton
 	
 	function __construct()
 	{
-		$this->_ref = new ReflectionClass( $this );
+		$this->_ref = new \ReflectionClass( $this );
 		$this->_config = CreateObject('phpgwapi.config','phpgwapi');
 		$this->_config->read_repository();
 		$this->_data = isset( $this->_config->config_data[$this->_ref->getShortName()] )?
@@ -62,7 +62,7 @@ class ConfigSerial extends Singleton
 	{
 		if ( !( is_string( $type ) && !empty( $type ) ) ) return false;
 		$result = array();
-		foreach ( $this->_ref->getMethods( ReflectionMethod::IS_PRIVATE ) as $obj )
+		foreach ( $this->_ref->getMethods( \ReflectionMethod::IS_PRIVATE ) as $obj )
 			if ( preg_match( '/^_conf'.preg_quote( $type ).'_(.+)$/', $obj->name, $matches ) )
 				$result[$matches[1]] = $obj;
 		return $result;
@@ -71,7 +71,7 @@ class ConfigSerial extends Singleton
 	/**
 	 * Commit data to persistent storage
 	 * 
-	 * @return unknown
+	 * @return mixed
 	 */
 	public function commit()
 	{

@@ -23,13 +23,13 @@ class ProcessManager extends BaseManager {
 	var $tree;
 
 	/**
-	 * @var $current current element
+	 * @var $current object current element
 	 * @access public
 	 */
 	var $current;
 
 	/**
-	 * @var $buffer buffer for data
+	 * @var $buffer string buffer for data
 	 * @access public
 	 */
 	var $buffer;

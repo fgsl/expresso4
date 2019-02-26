@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Categories                                              *
 	* This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -49,14 +51,14 @@
 
 			if (! $app_name)
 			{
-				$app_name = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$app_name = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 
 			$this->account_id	= $account_id;
-			$this->app_name		= $GLOBALS['phpgw']->db->db_addslashes($app_name);
-			$this->db			= $GLOBALS['phpgw']->db;
+			$this->app_name		= GlobalService::get('phpgw')->db->db_addslashes($app_name);
+			$this->db			= GlobalService::get('phpgw')->db;
 			$this->db2			= $this->db;			
-			$this->grants		= $GLOBALS['phpgw']->acl->get_grants($app_name);
+			$this->grants		= GlobalService::get('phpgw')->acl->get_grants($app_name);
 		}
 
 		/*!
@@ -194,7 +196,7 @@
 			}
 			else if ($this->account_id != '-1'){
 				$grants = $this->grants;
-				$groups = $GLOBALS['phpgw']->accounts->membership();
+				$groups = GlobalService::get('phpgw')->accounts->membership();
 			
 				if (is_array($this->grants))
 				{
@@ -388,7 +390,7 @@
 		{
 			if (!IsSet($id))
 				return "";
-			return array("id" => $id, "name" => $GLOBALS['phpgw']->accounts->id2name($id));
+			return array("id" => $id, "name" => GlobalService::get('phpgw')->accounts->id2name($id));
 		}
 
 		function formated_list($format,$type='',$selected = '',$globals = False,$site_link = 'site')
@@ -445,7 +447,7 @@
 					{
 						$s .= '&nbsp;';
 					}
-					$s .= $GLOBALS['phpgw']->strip_html($cat['name']);
+					$s .= GlobalService::get('phpgw')->strip_html($cat['name']);
 					if ($cat['app_name'] == 'phpgw')
 					{
 						$s .= '&nbsp;&lt;' . lang('Global') . '&gt;';
@@ -485,8 +487,8 @@
 
 						$s .= '<tr>' . "\n";
 						$s .= '<td width="8">' . $image_set . '</td>' . "\n";
-						$s .= '<td>' . $space_set . '<a href="' . $GLOBALS['phpgw']->link($site_link,'cat_id=' . $cats[$i]['id']) . '">'
-							. $GLOBALS['phpgw']->strip_html($cats[$i]['name'])
+						$s .= '<td>' . $space_set . '<a href="' . GlobalService::get('phpgw')->link($site_link,'cat_id=' . $cats[$i]['id']) . '">'
+							. GlobalService::get('phpgw')->strip_html($cats[$i]['name'])
 							. '</a></td>' . "\n"
 							. '</tr>' . "\n";
 					}

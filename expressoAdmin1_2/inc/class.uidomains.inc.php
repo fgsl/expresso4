@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/************************************************************************************\
-	* Expresso Administração                 										     *
+	* Expresso Administraï¿½ï¿½o                 										     *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	 *
 	* -----------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			 *
@@ -36,7 +38,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function list_domains()
 		{
-			$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$tmp = $this->functions->read_acl($account_lid);
 			$manager_context = $tmp[0]['context'];
 			$context_display = $tmp[0]['context_display'];
@@ -44,14 +46,14 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Verifica se o administrador tem acesso.
 			if (!$this->functions->check_acl( $account_lid, ACL_Managers::ACL_MOD_SAMBA_DOMAINS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Samba Domains');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Samba Domains');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(array('domains' => 'domains.tpl'));
@@ -63,8 +65,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			//_debug_array($sambadomains_info);
 			
 			$var = Array(
-				'th_bg'					=> $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'back_url'				=> $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php')
+				'th_bg'					=> GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'back_url'				=> GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php')
 			);
 			$p->set_var($var);
 			$p->set_var($this->functions->make_dinamic_lang($p, 'list'));
@@ -91,7 +93,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 			
 			$var = Array(
-				'action'	=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uidomains.add'),
+				'action'	=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uidomains.add'),
 				'input_add' => '<input type="submit" value="' . lang('Add Samba Domains') . '">'
 			);
 			$p->set_var($var);
@@ -102,7 +104,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function add()
 		{
-			$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$acl = $this->functions->read_acl($account_lid);
 			$manager_context = $acl[0]['context'];
 			
@@ -111,16 +113,16 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $account_lid, ACL_Managers::ACL_MOD_SAMBA_DOMAINS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 
-			// Pega combo das organizações e seleciona, caso seja um post, o setor que o usuario selecionou.
+			// Pega combo das organizaï¿½ï¿½es e seleciona, caso seja um post, o setor que o usuario selecionou.
 			$organizations = $this->functions->get_sectors($_POST['context'], false, false);
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Add Samba Domain');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Add Samba Domain');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			
 			// Set o template
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -129,8 +131,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 						
 			// Seta variaveis utilizadas pelo tpl.
 			$var = Array(
-				'action'		=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uidomains.validate_data'),
-				'back_url'		=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uidomains.list_domains'),
+				'action'		=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uidomains.validate_data'),
+				'back_url'		=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uidomains.list_domains'),
 				'row_on'		=> "#DDDDDD",
 				'row_off'		=> "#EEEEEE",
 				'color_bg1'		=> "#E8F0F0",
@@ -162,7 +164,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				return;
 			}
 
-			// Verifica se o name do dominio está sendo usado.
+			// Verifica se o name do dominio estï¿½ sendo usado.
 			if ($this->db->exist_domain_name_sid($_POST['sambadomainname'], $_POST['sambasid']))
 			{
 				$_POST['error_messages'] = lang('Samba domain name or SID already exist') . '.';
@@ -202,7 +204,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		{
 			// Check edit/delete domain acl
 			if ( !$this->functions->check_acl( $_SESSION['phpgw_session']['session_lid'], ACL_Managers::ACL_MOD_SAMBA_DOMAINS ) )
-				$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw']->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
+				GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw')->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
 			
 			// Remove LDAP samba domain
 			$result_ldap = $this->ldap_functions->delete_sambadomain( $sambadomainname );
@@ -216,7 +218,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function row_action($action,$sambadomainname)
 		{
-			return '<a href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+			return '<a href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 				'menuaction'		=> 'expressoAdmin1_2.uidomains.'.$action,
 				'sambadomainname'	=> $sambadomainname
 			)).'"> '.lang($action).' </a>';

@@ -294,7 +294,7 @@ function spellCheck($string, $varName, $language, $browser)
  *
  * This function adds a word to the custom dictionary
  *
- * @param $str The word to be added
+ * @param $str string The word to be added
  *************************************************************/
 function addWord($str)
 {

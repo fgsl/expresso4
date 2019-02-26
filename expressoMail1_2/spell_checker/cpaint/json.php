@@ -350,7 +350,7 @@
     */
     function obj() {
       $k = '';
-      $o = new stdClass();
+      $o = new \stdClass();
 
       if ($this->ch == '{') {
         $this->next();

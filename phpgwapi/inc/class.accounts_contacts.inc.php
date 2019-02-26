@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Accounts manager for the contacts class                 *
   * This file written by Miles Lott <milosch@groupwhere.org>                 *
@@ -27,7 +29,7 @@
 	THIS NEEDS WORK!!!!!!!!! - Milosch
 	But it is a lot closer now...
 	*/
-	$GLOBALS['phpgw_info']['server']['global_denied_users'] = array(
+	GlobalService::get('phpgw_info')['server']['global_denied_users'] = array(
 		'root'     => True, 'bin'      => True, 'daemon'   => True,
 		'adm'      => True, 'lp'       => True, 'sync'     => True,
 		'shutdown' => True, 'halt'     => True, 'ldap'     => True,
@@ -46,7 +48,7 @@
 		'backup'   => True
 	);
 
-	$GLOBALS['phpgw_info']['server']['global_denied_groups'] = array(
+	GlobalService::get('phpgw_info')['server']['global_denied_groups'] = array(
 		'root'      => True, 'bin'       => True, 'daemon'    => True,
 		'sys'       => True, 'adm'       => True, 'tty'       => True,
 		'disk'      => True, 'lp'        => True, 'mem'       => True,
@@ -83,7 +85,7 @@
 
 		function accounts_()
 		{
-			$this->db       = $GLOBALS['phpgw']->db;
+			$this->db       = GlobalService::get('phpgw')->db;
 			$this->contacts = CreateObject('phpgwapi.contacts',0);
 		}
 
@@ -267,7 +269,7 @@
 			{
 				$account_info['account_id'] = $this->get_nextid();
 			}
-			$owner = $GLOBALS['phpgw_info']['user']['account_id'];
+			$owner = GlobalService::get('phpgw_info')['user']['account_id'];
 			$entry['id']       = $account_info['account_id'];
 			$entry['lid']      = $account_info['account_lid'];
 			$entry['n_given']  = $account_info['account_firstname'];

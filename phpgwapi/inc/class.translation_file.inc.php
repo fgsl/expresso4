@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Translation class for phpgw lang files                  *
   * This file written by Miles Lott <milosch@phpgroupware.org>               *
@@ -24,7 +26,7 @@
 	// This should be considered experimental.  It works, at the app level.
 	// But, for admin and prefs it really slows things down.  See the note
 	// in the translate() function.
-	// To use, set $GLOBALS['phpgw_info']['server']['translation_system'] = 'file'; in
+	// To use, set GlobalService::get('phpgw_info')['server']['translation_system'] = 'file'; in
 	// class.translation.inc.php
 	class translation
 	{
@@ -46,41 +48,41 @@
 			}
 			$this->add_app($appname,$lang);
 
-			if(!isset($GLOBALS['phpgw_setup']))
+			if(!isset(GlobalService::get('phpgw_setup')))
 			{
-				$this->system_charset = $GLOBALS['phpgw_info']['server']['system_charset'];
+				$this->system_charset = GlobalService::get('phpgw_info')['server']['system_charset'];
 			}
 			else
 			{
-				$GLOBALS['phpgw']->db->query("SELECT config_value FROM phpgw_config WHERE config_app='phpgwapi' AND config_name='system_charset'",__LINE__,__FILE__);
-				if($GLOBALS['phpgw']->db->next_record())
+				GlobalService::get('phpgw')->db->query("SELECT config_value FROM phpgw_config WHERE config_app='phpgwapi' AND config_name='system_charset'",__LINE__,__FILE__);
+				if(GlobalService::get('phpgw')->db->next_record())
 				{
-					$this->system_charset = $GLOBALS['phpgw']->db->f(0);
+					$this->system_charset = GlobalService::get('phpgw')->db->f(0);
 				}
 			}
 		}
 
 		function init()
 		{
-			// post-nuke and php-nuke are using $GLOBALS['lang'] too
+			// post-nuke and php-nuke are using GlobalService::get('lang') too
 			// but not as array!
 			// this produces very strange results
-			if (!is_array($GLOBALS['lang']))
+			if (!is_array(GlobalService::get('lang')))
 			{
-				$GLOBALS['lang'] = array();
+				GlobalService::get('lang') = array();
 			}
 
-			if ($GLOBALS['phpgw_info']['user']['preferences']['common']['lang'])
+			if (GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'])
 			{
-				$this->userlang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+				$this->userlang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 			}
 			$this->add_app('common');
-			if (!count($GLOBALS['lang']))
+			if (!count(GlobalService::get('lang')))
 			{
 				$this->userlang = 'en';
 				$this->add_app('common');
 			}
-			$this->add_app($GLOBALS['phpgw_info']['flags']['currentapp']);
+			$this->add_app(GlobalService::get('phpgw_info')['flags']['currentapp']);
 		}
 		/*
 		@function charset
@@ -92,8 +94,8 @@
 			{
 				if(!isset($this->charsets[$lang]))
 				{
-					$GLOBALS['phpgw']->db->query("SELECT content FROM phpgw_lang WHERE lang='$lang' AND message_id='charset' AND app_name='common'",__LINE__,__FILE__);
-					$this->charsets[$lang] = $GLOBALS['phpgw']->db->next_record() ? strtolower($GLOBALS['phpgw']->db->f(0)) : 'iso-8859-1';
+					GlobalService::get('phpgw')->db->query("SELECT content FROM phpgw_lang WHERE lang='$lang' AND message_id='charset' AND app_name='common'",__LINE__,__FILE__);
+					$this->charsets[$lang] = GlobalService::get('phpgw')->db->next_record() ? strtolower(GlobalService::get('phpgw')->db->f(0)) : 'iso-8859-1';
 				}
 				return $this->charsets[$lang];
 			}
@@ -102,7 +104,7 @@
 				return $this->system_charset;
 			}
 			// if no translations are loaded (system-startup) use a default, else lang('charset')
-			return !is_array($GLOBALS['lang']) ? 'iso-8859-1' : strtolower($this->translate('charset'));
+			return !is_array(GlobalService::get('lang')) ? 'iso-8859-1' : strtolower($this->translate('charset'));
 		}
 
 		function isin_array($needle,$haystack)
@@ -119,25 +121,25 @@
 
 		function translate($key, $vars=False) 
 		{
-			if(!$this->isin_array($GLOBALS['phpgw_info']['flags']['currentapp'],$this->loaded_apps) &&
-				$GLOBALS['phpgw_info']['flags']['currentapp'] != 'home')
+			if(!$this->isin_array(GlobalService::get('phpgw_info')['flags']['currentapp'],$this->loaded_apps) &&
+				GlobalService::get('phpgw_info')['flags']['currentapp'] != 'home')
 			{
-				//echo '<br>loading app "' . $GLOBALS['phpgw_info']['flags']['currentapp'] . '" for the first time.';
-				$this->add_app($GLOBALS['phpgw_info']['flags']['currentapp'],$GLOBALS['lang']);
+				//echo '<br>loading app "' . GlobalService::get('phpgw_info')['flags']['currentapp'] . '" for the first time.';
+				$this->add_app(GlobalService::get('phpgw_info')['flags']['currentapp'],GlobalService::get('lang'));
 			}
-			elseif($GLOBALS['phpgw_info']['flags']['currentapp'] == 'admin' ||
-				$GLOBALS['phpgw_info']['flags']['currentapp'] == 'preferences')
+			elseif(GlobalService::get('phpgw_info')['flags']['currentapp'] == 'admin' ||
+				GlobalService::get('phpgw_info')['flags']['currentapp'] == 'preferences')
 			{
 				// This is done because for these two apps, all langs must be loaded.
 				// Note we cannot load for navbar, since it would slow down EVERY page.
 				// This is true until all common/admin/prefs langs are in the api file only.
-				@ksort($GLOBALS['phpgw_info']['apps']);
-				while(list($x,$app) = @each($GLOBALS['phpgw_info']['apps']))
+				@ksort(GlobalService::get('phpgw_info')['apps']);
+				while(list($x,$app) = @each(GlobalService::get('phpgw_info')['apps']))
 				{
 					if(!$this->isin_array($app['name'],$this->loaded_apps))
 					{
 						//echo '<br>loading app "' . $app['name'] . '" for the first time.';
-						$this->add_app($app['name'],$GLOBALS['lang']);
+						$this->add_app($app['name'],GlobalService::get('lang'));
 					}
 				}
 			}
@@ -200,10 +202,10 @@
 			//echo '<br>add_app(): called with app="' . $app . '", lang="' . $userlang . '"';
 			if(!isset($lang) || !$lang)
 			{
-				if(isset($GLOBALS['phpgw_info']['user']['preferences']['common']['lang']) &&
-					$GLOBALS['phpgw_info']['user']['preferences']['common']['lang'])
+				if(isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['lang']) &&
+					GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'])
 				{
-					$userlang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+					$userlang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 				}
 				else
 				{

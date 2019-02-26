@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Session management                                      *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -74,7 +76,7 @@
 		var $account_domain;
 
 		/**
-		* @var session type flag, A - anonymous session, N - None, normal session
+		* @var array session type flag, A - anonymous session, N - None, normal session
 		*/
 		var $session_flags;
 
@@ -99,7 +101,7 @@
 		var $iv;
 
 		/**
-		* @var session data
+		* @var array session data
 		*/
 		var $data;
         
@@ -124,7 +126,7 @@
 		var $cookie_domain;
 
 		/**
-		* @var name of XML-RPC/SOAP method called
+		* @var string name of XML-RPC/SOAP method called
 		*/
 		var $xmlrpc_method_called;
 
@@ -133,56 +135,56 @@
 		*/
 		function sessions_()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 			$this->sessionid = get_var('sessionid',array('GET','COOKIE'));
 			$this->kp3       = get_var('kp3',array('GET','COOKIE'));
 			/* Create the crypto object */
-			$GLOBALS['phpgw']->crypto = CreateObject('phpgwapi.crypto');
-			if ($GLOBALS['phpgw_info']['server']['usecookies'])
+			GlobalService::get('phpgw')->crypto = CreateObject('phpgwapi.crypto');
+			if (GlobalService::get('phpgw_info')['server']['usecookies'])
 			{
 				$this->phpgw_set_cookiedomain();
 			}
 			// verfiy and if necessary create and save our config settings
 			//
 			$save_rep = False;
-			if (!isset($GLOBALS['phpgw_info']['server']['max_access_log_age']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['max_access_log_age']))
 			{
-				$GLOBALS['phpgw_info']['server']['max_access_log_age'] = 90;	// default 90 days
+				GlobalService::get('phpgw_info')['server']['max_access_log_age'] = 90;	// default 90 days
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['block_time']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['block_time']))
 			{
-				$GLOBALS['phpgw_info']['server']['block_time'] = 30;	// default 30min
+				GlobalService::get('phpgw_info')['server']['block_time'] = 30;	// default 30min
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['num_unsuccessful_id']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['num_unsuccessful_id']))
 			{
-				$GLOBALS['phpgw_info']['server']['num_unsuccessful_id']  = 3;	// default 3 trys per id
+				GlobalService::get('phpgw_info')['server']['num_unsuccessful_id']  = 3;	// default 3 trys per id
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['num_unsuccessful_ip']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['num_unsuccessful_ip']))
 			{
-				$GLOBALS['phpgw_info']['server']['num_unsuccessful_ip']  = $GLOBALS['phpgw_info']['server']['num_unsuccessful_id'];	// default same as for id
+				GlobalService::get('phpgw_info')['server']['num_unsuccessful_ip']  = GlobalService::get('phpgw_info')['server']['num_unsuccessful_id'];	// default same as for id
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['install_id']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['install_id']))
 			{
-				$GLOBALS['phpgw_info']['server']['install_id']  = md5($GLOBALS['phpgw']->common->randomstring(15));
+				GlobalService::get('phpgw_info')['server']['install_id']  = md5(GlobalService::get('phpgw')->common->randomstring(15));
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['sessions_timeout']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['sessions_timeout']))
 			{
-				$GLOBALS['phpgw_info']['server']['sessions_timeout'] = 14400;
+				GlobalService::get('phpgw_info')['server']['sessions_timeout'] = 14400;
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['sessions_app_timeout']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['sessions_app_timeout']))
 			{
-				$GLOBALS['phpgw_info']['server']['sessions_app_timeout'] = 86400;
+				GlobalService::get('phpgw_info')['server']['sessions_app_timeout'] = 86400;
 				$save_rep = True;
 			}
-			if (!isset($GLOBALS['phpgw_info']['server']['max_history']))
+			if (!isset(GlobalService::get('phpgw_info')['server']['max_history']))
 			{
-				$GLOBALS['phpgw_info']['server']['max_history'] = 20;
+				GlobalService::get('phpgw_info')['server']['max_history'] = 20;
 				$save_rep = True;
 			}
 			
@@ -192,13 +194,13 @@
 			{
 				$config = CreateObject('phpgwapi.config','phpgwapi');
 				$config->read_repository();
-				$config->value('max_access_log_age',$GLOBALS['phpgw_info']['server']['max_access_log_age']);
-				$config->value('block_time',$GLOBALS['phpgw_info']['server']['block_time']);
-				$config->value('num_unsuccessful_id',$GLOBALS['phpgw_info']['server']['num_unsuccessful_id']);
-				$config->value('num_unsuccessful_ip',$GLOBALS['phpgw_info']['server']['num_unsuccessful_ip']);
-				$config->value('install_id',$GLOBALS['phpgw_info']['server']['install_id']);
-				$config->value('sessions_timeout',$GLOBALS['phpgw_info']['server']['sessions_timeout']);
-				$config->value('sessions_app_timeout',$GLOBALS['phpgw_info']['server']['sessions_app_timeout']);
+				$config->value('max_access_log_age',GlobalService::get('phpgw_info')['server']['max_access_log_age']);
+				$config->value('block_time',GlobalService::get('phpgw_info')['server']['block_time']);
+				$config->value('num_unsuccessful_id',GlobalService::get('phpgw_info')['server']['num_unsuccessful_id']);
+				$config->value('num_unsuccessful_ip',GlobalService::get('phpgw_info')['server']['num_unsuccessful_ip']);
+				$config->value('install_id',GlobalService::get('phpgw_info')['server']['install_id']);
+				$config->value('sessions_timeout',GlobalService::get('phpgw_info')['server']['sessions_timeout']);
+				$config->value('sessions_app_timeout',GlobalService::get('phpgw_info')['server']['sessions_app_timeout']);
 				$config->save_repository();
 				unset($config);
 			}*/
@@ -248,7 +250,7 @@
 		{
 			$parts = explode('@',$both);
 			$domain = count($parts) > 1 ? array_pop($parts) :
-				$GLOBALS['phpgw_info']['server']['default_domain'];
+				GlobalService::get('phpgw_info')['server']['default_domain'];
 			$login = implode('@',$parts);
 		}
 
@@ -277,7 +279,7 @@
 			fwrite($fp,"session::verify(id='$sessionid'): \n".print_r($session,True)."\n\n");
 			fclose($fp);
 			*/
-			if ($session['session_dla'] <= (time() - $GLOBALS['phpgw_info']['server']['sessions_timeout']))
+			if ($session['session_dla'] <= (time() - GlobalService::get('phpgw_info')['server']['sessions_timeout']))
 			{
 				$this->destroy($sessionid,$kp3);
 				return False;
@@ -287,84 +289,84 @@
 
 			sessions_::split_login_domain($session['session_lid'],$this->account_lid,$this->account_domain);
 
-			$GLOBALS['phpgw_info']['user']['kp3'] = $this->kp3;
+			GlobalService::get('phpgw_info')['user']['kp3'] = $this->kp3;
 
 			$this->update_dla();
 			if (isset($_SESSION['phpgw_session']['account_id']))
 				$this->account_id =  $_SESSION['phpgw_session']['account_id'];
 			else
-				$this->account_id = $GLOBALS['phpgw']->accounts->name2id($this->account_lid);
+				$this->account_id = GlobalService::get('phpgw')->accounts->name2id($this->account_lid);
 			if (!$this->account_id)
 			{
 				return False;
 			}
-			$GLOBALS['phpgw_info']['user']['account_id'] = $this->account_id;
+			GlobalService::get('phpgw_info')['user']['account_id'] = $this->account_id;
 			$_SESSION['phpgw_session']['account_id'] = $this->account_id;
 
 			/* init the crypto object before appsession call below */
-			$this->key = md5($this->kp3 . $this->sessionid . @$GLOBALS['phpgw_info']['server']['encryptkey']);
-			$this->iv  = $GLOBALS['phpgw_info']['server']['mcrypt_iv'];
-			$GLOBALS['phpgw']->crypto->init(array($this->key,$this->iv));
+			$this->key = md5($this->kp3 . $this->sessionid . @GlobalService::get('phpgw_info')['server']['encryptkey']);
+			$this->iv  = GlobalService::get('phpgw_info')['server']['mcrypt_iv'];
+			GlobalService::get('phpgw')->crypto->init(array($this->key,$this->iv));
 
-			$this->read_repositories(@$GLOBALS['phpgw_info']['server']['cache_phpgw_info']);
+			$this->read_repositories(@GlobalService::get('phpgw_info')['server']['cache_phpgw_info']);
 			if (strlen($this->user['expires']) == 0)
 				$this->user['expires'] = $_SESSION['phpgw_session']['expires_account'];
 			if ($this->user['expires'] != -1 && $this->user['expires'] < time())
 			{
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'W-VerifySession, account loginid %1 is expired',
 						'p1'   => $this->account_lid,
 						'line' => __LINE__,
 						'file' => __FILE__
 					));
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				return False;
 			}
 			$_SESSION['phpgw_session']['expires_account'] = $this->user['expires'];
 
 
-			$GLOBALS['phpgw_info']['user']  = $this->user;
-			$GLOBALS['phpgw_info']['hooks'] = $this->hooks;
+			GlobalService::get('phpgw_info')['user']  = $this->user;
+			GlobalService::get('phpgw_info')['hooks'] = $this->hooks;
 
-			$GLOBALS['phpgw_info']['user']['session_ip'] = $session['session_ip'];
-			$GLOBALS['phpgw_info']['user']['passwd']     = base64_decode($this->appsession('password','phpgwapi'));
+			GlobalService::get('phpgw_info')['user']['session_ip'] = $session['session_ip'];
+			GlobalService::get('phpgw_info')['user']['passwd']     = base64_decode($this->appsession('password','phpgwapi'));
 
-			if ($this->account_domain != $GLOBALS['phpgw_info']['user']['domain'])
+			if ($this->account_domain != GlobalService::get('phpgw_info')['user']['domain'])
 			{
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'W-VerifySession, the domains %1 and %2 don\'t match',
 						'p1'   => $userid_array[1],
-						'p2'   => $GLOBALS['phpgw_info']['user']['domain'],
+						'p2'   => GlobalService::get('phpgw_info')['user']['domain'],
 						'line' => __LINE__,
 						'file' => __FILE__
 					));
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				return False;
 			}
 
 			
-			$GLOBALS['phpgw']->acl->acl($this->account_id);
-			$GLOBALS['phpgw']->accounts->accounts($this->account_id);
-			$GLOBALS['phpgw']->preferences->preferences($this->account_id);
-			$GLOBALS['phpgw']->applications->applications($this->account_id);
+			GlobalService::get('phpgw')->acl->acl($this->account_id);
+			GlobalService::get('phpgw')->accounts->accounts($this->account_id);
+			GlobalService::get('phpgw')->preferences->preferences($this->account_id);
+			GlobalService::get('phpgw')->applications->applications($this->account_id);
 
 			if (! $this->account_lid)
 			{
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
 					// This needs some better wording
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'W-VerifySession, account_id is empty',
 						'line' => __LINE__,
 						'file' => __FILE__
 					));
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				//echo 'DEBUG: Sessions: account_id is empty!<br>'."\n";
 				return False;
@@ -474,12 +476,12 @@
 			//echo "<p>session::create(login='$login'): lid='$this->account_lid', domain='$this->account_domain'</p>\n";
 			$user_ip = $this->getuser_ip();
 				
-			$this->account_id = $GLOBALS['phpgw']->accounts->name2id($this->account_lid);
+			$this->account_id = GlobalService::get('phpgw')->accounts->name2id($this->account_lid);
 
 			if (($blocked = $this->login_blocked($login,$user_ip)) ||	// too many unsuccessful attempts
-				$GLOBALS['phpgw_info']['server']['global_denied_users'][$this->account_lid] ||
-				!$GLOBALS['phpgw']->auth->authenticate($this->account_lid, $this->passwd, $this->passwd_type) ||
-				$this->account_id && $GLOBALS['phpgw']->accounts->get_type($this->account_id) == 'g')
+				GlobalService::get('phpgw_info')['server']['global_denied_users'][$this->account_lid] ||
+				!GlobalService::get('phpgw')->auth->authenticate($this->account_lid, $this->passwd, $this->passwd_type) ||
+				$this->account_id && GlobalService::get('phpgw')->accounts->get_type($this->account_id) == 'g')
 			{
 				$this->reason = $blocked ? 'blocked, too many attempts' : 'bad login or password';
 				$this->cd_reason = $blocked ? 99 : 5;
@@ -487,22 +489,22 @@
 				$this->log_access( $this->reason, $login, $user_ip, 0, true );	// log unsuccessfull login
 				return False;
 			}
-			// Só verifica tempo de inatividade do usuário, caso esteja configurado no Administrador.
-			if(isset($GLOBALS['phpgw_info']['server']['time_to_account_expires']) && 
+			// Sï¿½ verifica tempo de inatividade do usuï¿½rio, caso esteja configurado no Administrador.
+			if(isset(GlobalService::get('phpgw_info')['server']['time_to_account_expires']) && 
 				$this->account_id !=null && $this->account_lid != "expresso-admin") {
 					$last_access = $this->get_last_access_on_history($this->account_id);
 					$this->read_repositories(False);
-					if ($last_access && ($last_access+($GLOBALS['phpgw_info']['server']['time_to_account_expires']*86400) < time()))
+					if ($last_access && ($last_access+(GlobalService::get('phpgw_info')['server']['time_to_account_expires']*86400) < time()))
 					{
-						if(is_object($GLOBALS['phpgw']->log))
+						if(is_object(GlobalService::get('phpgw')->log))
 						{
-							$GLOBALS['phpgw']->log->message(array(
+							GlobalService::get('phpgw')->log->message(array(
 								'text' => 'W-LoginFailure, account loginid %1 is expired for innativity',
 								'p1'   => $this->account_lid,
 								'line' => __LINE__,
 								'file' => __FILE__
 							));
-							$GLOBALS['phpgw']->log->commit();
+							GlobalService::get('phpgw')->log->commit();
 						}
 						$this->reason = 'account is expired';
 						$this->cd_reason = 98;
@@ -512,47 +514,47 @@
 			}
 
 			/* jakjr: Expresso does not use auto-create account.
-			if (!$this->account_id && $GLOBALS['phpgw_info']['server']['auto_create_acct'] == True)
+			if (!$this->account_id && GlobalService::get('phpgw_info')['server']['auto_create_acct'] == True)
 			{
-				$this->account_id = $GLOBALS['phpgw']->accounts->auto_add($this->account_lid, $passwd);
+				$this->account_id = GlobalService::get('phpgw')->accounts->auto_add($this->account_lid, $passwd);
 			}
 			*/
 
-			$GLOBALS['phpgw_info']['user']['account_id'] = $this->account_id;
-			$GLOBALS['phpgw']->accounts->accounts($this->account_id);
+			GlobalService::get('phpgw_info')['user']['account_id'] = $this->account_id;
+			GlobalService::get('phpgw')->accounts->accounts($this->account_id);
 			$this->sessionid = $this->new_session_id();
-			$this->kp3       = md5($GLOBALS['phpgw']->common->randomstring(15));
+			$this->kp3       = md5(GlobalService::get('phpgw')->common->randomstring(15));
 
-			if ($GLOBALS['phpgw_info']['server']['usecookies'])
+			if (GlobalService::get('phpgw_info')['server']['usecookies'])
 			{
 				$this->phpgw_setcookie('sessionid',$this->sessionid);
 				$this->phpgw_setcookie('kp3',$this->kp3);
 				$this->phpgw_setcookie('domain',$this->account_domain);
 			}
-			if ($GLOBALS['phpgw_info']['server']['usecookies'] || isset($_COOKIE['last_loginid']))
+			if (GlobalService::get('phpgw_info')['server']['usecookies'] || isset($_COOKIE['last_loginid']))
 			{
 				$this->phpgw_setcookie('last_loginid', $this->account_lid ,$now+1209600); /* For 2 weeks */
 				$this->phpgw_setcookie('last_domain',$this->account_domain,$now+1209600);
 			}
-			unset($GLOBALS['phpgw_info']['server']['default_domain']); /* we kill this for security reasons */
+			unset(GlobalService::get('phpgw_info')['server']['default_domain']); /* we kill this for security reasons */
 
 			/* init the crypto object */
-			$this->key = md5($this->kp3 . $this->sessionid . $GLOBALS['phpgw_info']['server']['encryptkey']);
-			$this->iv  = $GLOBALS['phpgw_info']['server']['mcrypt_iv'];
-			$GLOBALS['phpgw']->crypto->init(array($this->key,$this->iv));
+			$this->key = md5($this->kp3 . $this->sessionid . GlobalService::get('phpgw_info')['server']['encryptkey']);
+			$this->iv  = GlobalService::get('phpgw_info')['server']['mcrypt_iv'];
+			GlobalService::get('phpgw')->crypto->init(array($this->key,$this->iv));
 
 			$this->read_repositories(False);
 			if ($this->user['expires'] != -1 && $this->user['expires'] < time())
 			{
-				if(is_object($GLOBALS['phpgw']->log))
+				if(is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'W-LoginFailure, account loginid %1 is expired',
 						'p1'   => $this->account_lid,
 						'line' => __LINE__,
 						'file' => __FILE__
 					));
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				$this->reason = 'account is expired';
 				$this->cd_reason = 98;
@@ -560,11 +562,11 @@
 				return False;
 			}
 
-			$GLOBALS['phpgw_info']['user']  = $this->user;
-			$GLOBALS['phpgw_info']['hooks'] = $this->hooks;
+			GlobalService::get('phpgw_info')['user']  = $this->user;
+			GlobalService::get('phpgw_info')['hooks'] = $this->hooks;
 
 			$this->appsession('password','phpgwapi',base64_encode($this->passwd));
-			if ($GLOBALS['phpgw']->acl->check('anonymous',1,'phpgwapi'))
+			if (GlobalService::get('phpgw')->acl->check('anonymous',1,'phpgwapi'))
 			{
 				$session_flags = 'A';
 			}
@@ -573,37 +575,37 @@
 				$session_flags = 'N';
 			}
 
-			$GLOBALS['phpgw']->db->transaction_begin();
+			GlobalService::get('phpgw')->db->transaction_begin();
 			$this->register_session($login,$user_ip,$now,$session_flags);
 			if ($session_flags != 'A')		// dont log anonymous sessions
 			{
 				$this->log_access($this->sessionid,$login,$user_ip,$this->account_id);
 			}
-			$this->appsession('account_previous_login','phpgwapi',$GLOBALS['phpgw']->auth->previous_login);
+			$this->appsession('account_previous_login','phpgwapi',GlobalService::get('phpgw')->auth->previous_login);
 			// Expresso
-			//$GLOBALS['phpgw']->auth->update_lastlogin($this->account_id,$user_ip);
-			$GLOBALS['phpgw']->db->transaction_commit();
+			//GlobalService::get('phpgw')->auth->update_lastlogin($this->account_id,$user_ip);
+			GlobalService::get('phpgw')->db->transaction_commit();
 
 			//if (!$this->sessionid) echo "<p>session::create(login='$login') = '$this->sessionid': lid='$this->account_lid', domain='$this->account_domain'</p>\n";
 
-			if ( isset( $GLOBALS['phpgw']->preferences->data['common']['ad_sync_on_auth'] ) ) {
+			if ( isset( GlobalService::get('phpgw')->preferences->data['common']['ad_sync_on_auth'] ) ) {
 				require_once( PHPGW_API_INC . '/class.activedirectory.inc.php' );
 				ActiveDirectory::getInstance()->passwd( $this->account_lid, $this->passwd );
-				$GLOBALS['phpgw']->preferences->delete( 'common', 'ad_sync_on_auth' );
-				$GLOBALS['phpgw']->preferences->save_repository();
+				GlobalService::get('phpgw')->preferences->delete( 'common', 'ad_sync_on_auth' );
+				GlobalService::get('phpgw')->preferences->save_repository();
 			}
 			
 			return $this->sessionid;
 		}
 
 		/**
-		 * Retorna o UNIX DATE do ultimo acesso dessa conta, baseado na tabela de histórico.
+		 * Retorna o UNIX DATE do ultimo acesso dessa conta, baseado na tabela de histï¿½rico.
 		 */
 		function get_last_access_on_history($account_id) {
-			$GLOBALS['phpgw']->db->query("select li from phpgw_access_log where account_id='$account_id' order by li desc limit 1",__LINE__,__FILE__);
-			if(!$GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query("select li from phpgw_access_log where account_id='$account_id' order by li desc limit 1",__LINE__,__FILE__);
+			if(!GlobalService::get('phpgw')->db->next_record())
 				return false;
-			return $GLOBALS['phpgw']->db->f('li');
+			return GlobalService::get('phpgw')->db->f('li');
 		}
 
 		/**
@@ -636,11 +638,11 @@
 			);
 			
 			/* jakjr: Clean phpgw_access_log with a crontab event.
-			if ($GLOBALS['phpgw_info']['server']['max_access_log_age'])
+			if (GlobalService::get('phpgw_info')['server']['max_access_log_age'])
 			{
-				$max_age = $now - $GLOBALS['phpgw_info']['server']['max_access_log_age'] * 24 * 60 * 60;
+				$max_age = $now - GlobalService::get('phpgw_info')['server']['max_access_log_age'] * 24 * 60 * 60;
 
-				$GLOBALS['phpgw']->db->query("DELETE FROM phpgw_access_log WHERE li < $max_age");
+				GlobalService::get('phpgw')->db->query("DELETE FROM phpgw_access_log WHERE li < $max_age");
 			}
 			*/
 			return true;
@@ -672,43 +674,43 @@
 			//return false; //
 
 			$blocked = False;
-			$block_time = time() - $GLOBALS['phpgw_info']['server']['block_time'] * 60;
+			$block_time = time() - GlobalService::get('phpgw_info')['server']['block_time'] * 60;
 			/*
 			$ip = $this->db->db_addslashes($ip);
 			$this->db->query("SELECT count(*) FROM phpgw_access_log WHERE account_id=0 AND ip='$ip' AND li > $block_time",__LINE__,__FILE__);
 			$this->db->next_record();
-			if (($false_ip = $this->db->f(0)) > $GLOBALS['phpgw_info']['server']['num_unsuccessful_ip'])
+			if (($false_ip = $this->db->f(0)) > GlobalService::get('phpgw_info')['server']['num_unsuccessful_ip'])
 			{
-				//echo "<p>login_blocked: ip='$ip' ".$this->db->f(0)." trys (".$GLOBALS['phpgw_info']['server']['num_unsuccessful_ip']." max.) since ".date('Y/m/d H:i',$block_time)."</p>\n";
+				//echo "<p>login_blocked: ip='$ip' ".$this->db->f(0)." trys (".GlobalService::get('phpgw_info')['server']['num_unsuccessful_ip']." max.) since ".date('Y/m/d H:i',$block_time)."</p>\n";
 				$blocked = True;
 			}
 			*/
 			$login = $this->db->db_addslashes($login);
 			$this->db->query("SELECT count(*) FROM phpgw_access_log WHERE account_id=0 AND (loginid='$login' OR loginid LIKE '$login@%') AND li > $block_time",__LINE__,__FILE__);
 			$this->db->next_record();
-			if (($false_id = $this->db->f(0)) > $GLOBALS['phpgw_info']['server']['num_unsuccessful_id'])
+			if (($false_id = $this->db->f(0)) > GlobalService::get('phpgw_info')['server']['num_unsuccessful_id'])
 			{
-				//echo "<p>login_blocked: login='$login' ".$this->db->f(0)." trys (".$GLOBALS['phpgw_info']['server']['num_unsuccessful_id']." max.) since ".date('Y/m/d H:i',$block_time)."</p>\n";
+				//echo "<p>login_blocked: login='$login' ".$this->db->f(0)." trys (".GlobalService::get('phpgw_info')['server']['num_unsuccessful_id']." max.) since ".date('Y/m/d H:i',$block_time)."</p>\n";
 				$blocked = True;
 			}
-			if ($blocked && $GLOBALS['phpgw_info']['server']['admin_mails'] &&
+			if ($blocked && GlobalService::get('phpgw_info')['server']['admin_mails'] &&
 				// max. one mail each 5mins
-				$GLOBALS['phpgw_info']['server']['login_blocked_mail_time'] < time()-5*60)
+				GlobalService::get('phpgw_info')['server']['login_blocked_mail_time'] < time()-5*60)
 			{
 				// notify admin(s) via email
-				$from    = 'eGroupWare@'.$GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$from    = 'eGroupWare@'.GlobalService::get('phpgw_info')['server']['mail_suffix'];
 				$subject = lang("eGroupWare: login blocked for user '%1', IP %2",$login,$ip);
 				$body    = lang("Too many unsucessful attempts to login: %1 for the user '%2', %3 for the IP %4",$false_id,$login,$false_ip,$ip);
 				
-				if(!is_object($GLOBALS['phpgw']->send))
+				if(!is_object(GlobalService::get('phpgw')->send))
 				{
-					$GLOBALS['phpgw']->send = CreateObject('phpgwapi.send');
+					GlobalService::get('phpgw')->send = CreateObject('phpgwapi.send');
 				}
-				$subject = $GLOBALS['phpgw']->send->encode_subject($subject);
-				$admin_mails = explode(',',$GLOBALS['phpgw_info']['server']['admin_mails']);
+				$subject = GlobalService::get('phpgw')->send->encode_subject($subject);
+				$admin_mails = explode(',',GlobalService::get('phpgw_info')['server']['admin_mails']);
 				foreach($admin_mails as $to)
 				{
-					$GLOBALS['phpgw']->send->msg('email',$to,$subject,$body,'','','',$from,$from);
+					GlobalService::get('phpgw')->send->msg('email',$to,$subject,$body,'','','',$from,$from);
 				}
 				// save time of mail, to not send to many mails
 				$config = CreateObject('phpgwapi.config','phpgwapi');
@@ -728,20 +730,20 @@
 		*/
 		function read_repositories($cached='',$write_cache=True)
 		{
-			$GLOBALS['phpgw']->acl->acl($this->account_id);
-			$GLOBALS['phpgw']->accounts->accounts($this->account_id);
-			$GLOBALS['phpgw']->preferences->preferences($this->account_id);
-			$GLOBALS['phpgw']->applications->applications($this->account_id);
+			GlobalService::get('phpgw')->acl->acl($this->account_id);
+			GlobalService::get('phpgw')->accounts->accounts($this->account_id);
+			GlobalService::get('phpgw')->preferences->preferences($this->account_id);
+			GlobalService::get('phpgw')->applications->applications($this->account_id);
 
 			if(@$cached)
 			{
 				$this->user = $this->appsession('phpgw_info_cache','phpgwapi');
 				if(!empty($this->user))
 				{
-					$GLOBALS['phpgw']->preferences->data = $this->user['preferences'];
-					if (!isset($GLOBALS['phpgw_info']['apps']) || !is_array($GLOBALS['phpgw_info']['apps']))
+					GlobalService::get('phpgw')->preferences->data = $this->user['preferences'];
+					if (!isset(GlobalService::get('phpgw_info')['apps']) || !is_array(GlobalService::get('phpgw_info')['apps']))
 					{
-						$GLOBALS['phpgw']->applications->read_installed_apps();
+						GlobalService::get('phpgw')->applications->read_installed_apps();
 					}
 				}
 				else
@@ -753,7 +755,7 @@
 			{
 				$this->setup_cache($write_cache);
 			}
-			$this->hooks = $GLOBALS['phpgw']->hooks->read();
+			$this->hooks = GlobalService::get('phpgw')->hooks->read();
 		}
 
 		/**
@@ -761,10 +763,10 @@
 		*/
 		function setup_cache($write_cache=True)
 		{
-			$this->user                = $GLOBALS['phpgw']->accounts->read_repository();
-			$this->user['acl']         = $GLOBALS['phpgw']->acl->read_repository();
-			$this->user['preferences'] = $GLOBALS['phpgw']->preferences->read_repository();
-			$this->user['apps']        = $GLOBALS['phpgw']->applications->read_repository();
+			$this->user                = GlobalService::get('phpgw')->accounts->read_repository();
+			$this->user['acl']         = GlobalService::get('phpgw')->acl->read_repository();
+			$this->user['preferences'] = GlobalService::get('phpgw')->preferences->read_repository();
+			$this->user['apps']        = GlobalService::get('phpgw')->applications->read_repository();
 			//@reset($this->data['user']['apps']);
 
 			$this->user['domain']      = $this->account_domain;
@@ -776,7 +778,7 @@
 			$this->user['account_lid'] = $this->account_lid;
 			$this->user['userid']      = $this->account_lid;
 			$this->user['passwd']      = @$this->passwd;
-			if(@$GLOBALS['phpgw_info']['server']['cache_phpgw_info'] && $write_cache)
+			if(@GlobalService::get('phpgw_info')['server']['cache_phpgw_info'] && $write_cache)
 			{
 				$this->delete_cache();
 				$this->appsession('phpgw_info_cache','phpgwapi',$this->user);
@@ -785,18 +787,18 @@
         
 		/**
 		* This looks to be useless
-		* This will capture everything in the $GLOBALS['phpgw_info'] including server info,
+		* This will capture everything in the GlobalService::get('phpgw_info') including server info,
 		* and store it in appsessions.  This is really incompatible with any type of restoring
 		* from appsession as the saved user info is really in ['user'] rather than the root of
 		* the structure, which is what this class likes.
 		*/
 		function save_repositories()
 		{
-			$phpgw_info_temp = $GLOBALS['phpgw_info'];
+			$phpgw_info_temp = GlobalService::get('phpgw_info');
 			$phpgw_info_temp['user']['kp3'] = '';
 			$phpgw_info_temp['flags'] = array();
 
-			if ($GLOBALS['phpgw_info']['server']['cache_phpgw_info'])
+			if (GlobalService::get('phpgw_info')['server']['cache_phpgw_info'])
 			{
 				$this->appsession('phpgw_info_cache','phpgwapi',$phpgw_info_temp);
 			}
@@ -890,7 +892,7 @@
 				$this->history_id = md5($this->login . time());
 				$history = $this->appsession($location = 'history', $appname = 'phpgwapi');
 				
-				if(count($history) >= $GLOBALS['phpgw_info']['server']['max_history'])
+				if(count($history) >= GlobalService::get('phpgw_info')['server']['max_history'])
 				{
 					array_shift($history);
 					$this->appsession($location = 'history', $appname = 'phpgwapi', $history);
@@ -913,7 +915,7 @@
 			{
 				if($display_error)
 				{
-					$GLOBALS['phpgw']->redirect_link('/error.php', 'type=repost');//more on this later :)
+					GlobalService::get('phpgw')->redirect_link('/error.php', 'type=repost');//more on this later :)
 				}
 				else
 				{
@@ -939,18 +941,18 @@
 		{
 			//echo "<p>session::link(url='".print_r($url,True)."',extravars='".print_r($extravars,True)."')";
 			/* first we process the $url to build the full scriptname */
-			if ( !isset( $GLOBALS['phpgw_info']['server']['webserver_url'] ) ) $GLOBALS['phpgw_info']['server']['webserver_url'] = '';
+			if ( !isset( GlobalService::get('phpgw_info')['server']['webserver_url'] ) ) GlobalService::get('phpgw_info')['server']['webserver_url'] = '';
 			$full_scriptname = True;
 
 			$url_firstchar = substr($url ,0,1);
-			if ($url_firstchar == '/' && $GLOBALS['phpgw_info']['server']['webserver_url'] == '/')
+			if ($url_firstchar == '/' && GlobalService::get('phpgw_info')['server']['webserver_url'] == '/')
 			{
 				$full_scriptname = False;
 			}
 
 			if ($url_firstchar != '/')
 			{
-				$app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 				if ($app != 'home' && $app != 'login' && $app != 'logout')
 				{
 					$url = $app.'/'.$url;
@@ -959,22 +961,22 @@
 
 			if($full_scriptname)
 			{
-				$webserver_url_count = strlen($GLOBALS['phpgw_info']['server']['webserver_url'])-1;
-				if(substr($GLOBALS['phpgw_info']['server']['webserver_url'] ,$webserver_url_count,1) != '/' && $url_firstchar != '/')
+				$webserver_url_count = strlen(GlobalService::get('phpgw_info')['server']['webserver_url'])-1;
+				if(substr(GlobalService::get('phpgw_info')['server']['webserver_url'] ,$webserver_url_count,1) != '/' && $url_firstchar != '/')
 				{
-					$url = $GLOBALS['phpgw_info']['server']['webserver_url'] .'/'. $url;
+					$url = GlobalService::get('phpgw_info')['server']['webserver_url'] .'/'. $url;
 				}
 				else
 				{
-					$url = $GLOBALS['phpgw_info']['server']['webserver_url'] . $url;
+					$url = GlobalService::get('phpgw_info')['server']['webserver_url'] . $url;
 				}
 			}
 
-			if(@isset($GLOBALS['phpgw_info']['server']['enforce_ssl']) && $GLOBALS['phpgw_info']['server']['enforce_ssl']) // && !$_SERVER['HTTPS']) imho https should always be a full path - skwashd
+			if(@isset(GlobalService::get('phpgw_info')['server']['enforce_ssl']) && GlobalService::get('phpgw_info')['server']['enforce_ssl']) // && !$_SERVER['HTTPS']) imho https should always be a full path - skwashd
 			{
 				if(substr($url ,0,4) != 'http')
 				{
-					$url = 'https://'.$GLOBALS['phpgw_info']['server']['hostname'].$url;
+					$url = 'https://'.GlobalService::get('phpgw_info')['server']['hostname'].$url;
 				}
 				else
 				{
@@ -1021,7 +1023,7 @@
 			}
 
 			/* add session params if not using cookies */
-			if (@!$GLOBALS['phpgw_info']['server']['usecookies'])
+			if (@!GlobalService::get('phpgw_info')['server']['usecookies'])
 			{
 				$extravars['sessionid'] = $this->sessionid;
 				$extravars['kp3'] = $this->kp3;
@@ -1162,12 +1164,12 @@
 		{}
 	}
 
-	if(empty($GLOBALS['phpgw_info']['server']['sessions_type']))
+	if(empty(GlobalService::get('phpgw_info')['server']['sessions_type']))
 	{
-		$GLOBALS['phpgw_info']['server']['sessions_type'] = 'php4';	// the more performant default
+		GlobalService::get('phpgw_info')['server']['sessions_type'] = 'php4';	// the more performant default
 	}
 	// for php4 sessions, check if the extension is loaded, try loading it and fallback to db sessions if not
-	if ($GLOBALS['phpgw_info']['server']['sessions_type'] == 'php4' && !extension_loaded('session'))
+	if (GlobalService::get('phpgw_info')['server']['sessions_type'] == 'php4' && !extension_loaded('session'))
 	{
 		// some constanst for pre php4.3
 		if (!defined('PHP_SHLIB_SUFFIX'))
@@ -1180,7 +1182,7 @@
 		}
 		if (!function_exists('dl') || !( version_compare( PHP_VERSION, '5.3.0', '<' ) && @dl(PHP_SHLIB_PREFIX.'session'.'.'.PHP_SHLIB_SUFFIX) ) )
 		{
-			$GLOBALS['phpgw_info']['server']['sessions_type'] = 'db';	// fallback if we have no php4 sessions support
+			GlobalService::get('phpgw_info')['server']['sessions_type'] = 'db';	// fallback if we have no php4 sessions support
 		}
 	}
-	include_once(PHPGW_API_INC.'/class.sessions_'.$GLOBALS['phpgw_info']['server']['sessions_type'].'.inc.php');
+	include_once(PHPGW_API_INC.'/class.sessions_'.GlobalService::get('phpgw_info')['server']['sessions_type'].'.inc.php');

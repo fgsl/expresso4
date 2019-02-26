@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Administration                                              *
 	* http://www.egroupware.org                                                *
@@ -41,12 +43,12 @@
 
 				if ($record['li'])
 				{
-					$record['li'] = $GLOBALS['phpgw']->common->show_date($record['li']);
+					$record['li'] = GlobalService::get('phpgw')->common->show_date($record['li']);
 				}
 
 				if ($record['lo'])
 				{
-					$record['lo'] = $GLOBALS['phpgw']->common->show_date($record['lo']);
+					$record['lo'] = GlobalService::get('phpgw')->common->show_date($record['lo']);
 				}
 				else
 				{

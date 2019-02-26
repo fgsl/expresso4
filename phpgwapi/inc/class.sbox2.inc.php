@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Select Box 2                                            *
   * Written by Ralf Becker <RalfBecker@outdoor-training.de>                  *
@@ -22,10 +24,10 @@
   \**************************************************************************/
 
 
-	if(!isset($GLOBALS['phpgw_info']['flags']['included_classes']['sbox']))
+	if(!isset(GlobalService::get('phpgw_info')['flags']['included_classes']['sbox']))
 	{
 		include(PHPGW_API_INC . '/class.sbox.inc.php');
-		$GLOBALS['phpgw_info']['flags']['included_classes']['sbox'] = True;
+		GlobalService::get('phpgw_info')['flags']['included_classes']['sbox'] = True;
 	}
 
 	class sbox2 extends sbox
@@ -101,7 +103,7 @@
 					}
 					while (list( $id,$text ) = each( $content ))
 					{
-						$ret[$name] .= "<option value=\"$id\">" . $GLOBALS['phpgw']->strip_html($text) . "\n";
+						$ret[$name] .= "<option value=\"$id\">" . GlobalService::get('phpgw')->strip_html($text) . "\n";
 					}
 					$ret[$name] .= '<option value="0">'.lang('none')."\n";
 					$ret[$name] .= '</select>';
@@ -142,11 +144,11 @@
 			{
 				return 'not an event !!!';
 			}
-			$name = $GLOBALS['phpgw']->common->show_date($this->bocal->maketime($event['start']) - $this->bocal->datetime->tz_offset);
-			$name .= ' -- ' . $GLOBALS['phpgw']->common->show_date($this->bocal->maketime($event['end']) - $this->bocal->datetime->tz_offset);
+			$name = GlobalService::get('phpgw')->common->show_date($this->bocal->maketime($event['start']) - $this->bocal->datetime->tz_offset);
+			$name .= ' -- ' . GlobalService::get('phpgw')->common->show_date($this->bocal->maketime($event['end']) - $this->bocal->datetime->tz_offset);
 			$name .= ': ' . $event['title'];
 
-			return $GLOBALS['phpgw']->strip_html($name);
+			return GlobalService::get('phpgw')->strip_html($name);
 		}
 
 		/*
@@ -166,7 +168,7 @@
 			// echo "<p>getEvent('$name',$id_name,'$query_name','$title')</p>";
 
 			// fallback if calendar is not installed or not enabled for user
-			if (!file_exists(PHPGW_SERVER_ROOT.'/calendar') || !$GLOBALS['phpgw_info']['user']['apps']['calendar']['enabled'])
+			if (!file_exists(PHPGW_SERVER_ROOT.'/calendar') || !GlobalService::get('phpgw_info')['user']['apps']['calendar']['enabled'])
 			{
 				return array(
 					$name => "<input type=\"hidden\" name=\"id_$name\" value=\"$id_name\">\n",
@@ -223,7 +225,7 @@
 			{
 				$name = $addr['org_name'].': '.$name;
 			}
-			return $GLOBALS['phpgw']->strip_html($name);
+			return GlobalService::get('phpgw')->strip_html($name);
 		}
 
 		/*
@@ -356,7 +358,7 @@
 			// echo "<p>getProject('$name',$id_name,'$query_name','$title')</p>";
 
 			// fallback if projects is not installed or not enabled for user
-			if (!file_exists(PHPGW_SERVER_ROOT.'/projects') || !$GLOBALS['phpgw_info']['user']['apps']['projects']['enabled'])
+			if (!file_exists(PHPGW_SERVER_ROOT.'/projects') || !GlobalService::get('phpgw_info')['user']['apps']['projects']['enabled'])
 			{
 				return array(
 					$name => "<input type=\"hidden\" name=\"id_$name\" value=\"$id_name\">\n",
@@ -499,7 +501,7 @@
 			if (!is_array($account_data))
 			{
 				$accounts = createobject('phpgwapi.accounts',$id);
-				$accounts->db = $GLOBALS['phpgw']->db;
+				$accounts->db = GlobalService::get('phpgw')->db;
 				$accounts->read_repository();
 				$account_data = $accounts->data;
 			}
@@ -522,7 +524,7 @@
 		 */
 		function getAccount($name,$id,$longnames=-1,$type='accounts',$multiple=0,$options='')
 		{
-			$accs = $GLOBALS['phpgw']->accounts->get_list($type);
+			$accs = GlobalService::get('phpgw')->accounts->get_list($type);
 
 			if ($multiple < 0)
 			{
@@ -531,7 +533,7 @@
 			while ($a = current($accs))
 			{
 				$aarr[$a['account_id']] = $longnames == -1 ?
-					$GLOBALS['phpgw']->common->display_fullname($a['account_lid'],$a['account_firstname'],$a['account_lastname']) :
+					GlobalService::get('phpgw')->common->display_fullname($a['account_lid'],$a['account_firstname'],$a['account_lastname']) :
 					$this->accountInfo($a['account_id'],$a,$longnames,$type=='both');
 
 				next($accs);
@@ -555,7 +557,7 @@
 				$month = date('m',$date);
 				$year = date('Y',$date);
 			}
-			return $GLOBALS['phpgw']->common->dateformatorder(
+			return GlobalService::get('phpgw')->common->dateformatorder(
 				$this->getYears($n_year,$year),
 				$this->getMonthText($n_month,$month),
 				$this->getDays($n_day,$day)

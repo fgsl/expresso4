@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 // Copyright (c) 1999,2000,2001 Edd Dumbill.
 // All rights reserved.
 //
@@ -125,8 +127,8 @@
 				$r = CreateObject(
 					'phpgwapi.xmlrpcresp',
 					'',
-					$GLOBALS['xmlrpcerr']['http_error'],
-					$GLOBALS['xmlrpcstr']['http_error']
+					GlobalService::get('xmlrpcerr')['http_error'],
+					GlobalService::get('xmlrpcstr')['http_error']
 				);
 				return $r;
 			}
@@ -147,7 +149,7 @@
 			$op = 'POST ' . $this->path . " HTTP/1.0\r\nUser-Agent: PHP XMLRPC 1.0\r\n"
 				. 'Host: '. $this->server . "\r\n"
 				. 'X-PHPGW-Server: '  . $this->server . ' ' . "\r\n"
-				. 'X-PHPGW-Version: ' . $GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] . "\r\n"
+				. 'X-PHPGW-Version: ' . GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] . "\r\n"
 				. $credentials
 				. "Content-Type: text/xml\r\nContent-Length: "
 				. strlen($msg->payload) . "\r\n\r\n"
@@ -159,8 +161,8 @@
 				return CreateObject(
 					'phpgwapi.xmlrpcresp',
 					'',
-					$GLOBALS['xmlrpcerr']['http_error'],
-					$GLOBALS['xmlrpcstr']['http_error']
+					GlobalService::get('xmlrpcerr')['http_error'],
+					GlobalService::get('xmlrpcstr')['http_error']
 				);
 			}
 			$resp = $msg->parseResponseFile($fp);
@@ -176,8 +178,8 @@
 				return CreateObject(
 					'phpgwapi.xmlrpcresp',
 					'',
-					$GLOBALS['xmlrpcerr']['no_ssl'],
-					$GLOBALS['xmlrpcstr']['no_ssl']
+					GlobalService::get('xmlrpcerr')['no_ssl'],
+					GlobalService::get('xmlrpcstr')['no_ssl']
 				);
 			}
 
@@ -209,7 +211,7 @@
 			// return the header too
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
 				'X-PHPGW-Server: '  . $this->server,
-				'X-PHPGW-Version: ' . $GLOBALS['phpgw_info']['server']['versions']['phpgwapi'],
+				'X-PHPGW-Version: ' . GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'],
 				'Content-Type: text/xml'
 			));
 			if ($timeout)
@@ -238,8 +240,8 @@
 				$resp = CreateObject(
 					'phpgwapi.xmlrpcresp',
 					'',
-					$GLOBALS['xmlrpcerr']['curl_fail'],
-					$GLOBALS['xmlrpcstr']['curl_fail'] . ': ' . curl_error($curl)
+					GlobalService::get('xmlrpcerr')['curl_fail'],
+					GlobalService::get('xmlrpcstr')['curl_fail'] . ': ' . curl_error($curl)
 				);
 			}
 			else

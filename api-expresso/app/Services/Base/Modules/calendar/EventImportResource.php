@@ -78,7 +78,7 @@ class EventImportResource {
 					$y    = date('Y', strtotime($dateEnd));//get date year
 					$now = date('Y-m-d G:i:s');//current date and time
 					$eventdate = date('Y-m-d G:i:s', strtotime($dateEnd));//user friendly date
-					$dtEnd = new DateTime( $eventdate );
+					$dtEnd = new \DateTime( $eventdate );
 					$dtEnd->sub(new \DateInterval('PT3H'));
 				} else {
 					$dateEnd = str_replace('T', '', $dateEnd);//remove T

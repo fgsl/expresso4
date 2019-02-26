@@ -1,5 +1,7 @@
 <?php
 
+ use Expresso\Core\GlobalService;
+
  /**************************************************************************\
   * Expresso Livre - Grant Group Access - administration                     *
   *															                 *
@@ -32,40 +34,40 @@ class uigroup_access
 
 	function index(){
 		
-		if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+		if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 		{
-		      $GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+		      GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 		}
 
-		$GLOBALS['phpgw_info']['flags'] = array(
+		GlobalService::get('phpgw_info')['flags'] = array(
 					'currentapp' => 'calendar',
 					'nonavbar'   => false,
 					'app_header' => lang('Grant Access by Group'),
 					'noheader'   => false
 					);
 		
-		$GLOBALS['phpgw']->common->phpgw_header();
-		$this->template_dir = 'calendar/templates/'.$GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'];
+		GlobalService::get('phpgw')->common->phpgw_header();
+		$this->template_dir = 'calendar/templates/'.GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'];
 		$this->template = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);		
-		if (!is_object($GLOBALS['phpgw']->html)){
-			$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+		if (!is_object(GlobalService::get('phpgw')->html)){
+			GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 		}
 		
-		$this->html = &$GLOBALS['phpgw']->html;
-		$this->theme = $GLOBALS['phpgw_info']['theme'];
+		$this->html = &GlobalService::get('phpgw')->html;
+		$this->theme = GlobalService::get('phpgw_info')['theme'];
 				
-		$_SESSION['phpgw_info']['server'] = $GLOBALS['phpgw_info']['server'];
+		$_SESSION['phpgw_info']['server'] = GlobalService::get('phpgw_info')['server'];
 		$this->template->set_file(Array('main'	=> 'grant_group_access.tpl'	));	
 		$this->template->set_block('main','list','list_t');			
 		
 		// if ExpressoMail 1.2 has been installed and enabled, show the plugin using AJAX. 
-		if($GLOBALS['phpgw_info']['server']['cal_expressoMail']) {							
-			$module_name = 'expressoMail'.(str_replace("1.","1_",$GLOBALS['phpgw_info']['server']['cal_expressoMail']));
-			if($GLOBALS['phpgw_info']['user']['apps'][$module_name]){								
+		if(GlobalService::get('phpgw_info')['server']['cal_expressoMail']) {							
+			$module_name = 'expressoMail'.(str_replace("1.","1_",GlobalService::get('phpgw_info')['server']['cal_expressoMail']));
+			if(GlobalService::get('phpgw_info')['user']['apps'][$module_name]){								
 				$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
-				$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];				
-				$_SESSION['phpgw_info']['expressomail']['user']['owner'] = $GLOBALS['phpgw_info']['user']['account_id'];
-				$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+				$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];				
+				$_SESSION['phpgw_info']['expressomail']['user']['owner'] = GlobalService::get('phpgw_info')['user']['account_id'];
+				$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 				$_SESSION['phpgw_info']['expressomail']['ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
 				// Carrega todos scripts necessarios				
 				$scripts =	"<script src='".$module_name."/js/connector.js' type='text/javascript'></script>".
@@ -118,8 +120,8 @@ class uigroup_access
 		$data = array();
 		if($grants) {		
 			foreach($grants as $key => $acl) {				
-				$GLOBALS['phpgw']->accounts->get_account_name($acl['userID'], &$lid, &$fuser, &$luser);
-				$GLOBALS['phpgw']->accounts->get_account_name($acl['groupID'], &$lid, &$groupname, &$lname);			
+				GlobalService::get('phpgw')->accounts->get_account_name($acl['userID'], &$lid, &$fuser, &$luser);
+				GlobalService::get('phpgw')->accounts->get_account_name($acl['groupID'], &$lid, &$groupname, &$lname);			
 				$rights = $acl['rights'] & PHPGW_ACL_READ ? "L" : "";
 				$rights.= $acl['rights'] & PHPGW_ACL_ADD ? "A" : "";
 				$rights.= $acl['rights'] & PHPGW_ACL_EDIT ? "E" : "";

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - html                                                        *
 	* http://www.egroupware.org                                                *
@@ -29,14 +31,14 @@
 				else
 				{
 					#$html .= '<form method="post" action="'
-					#	 . $GLOBALS['phpgw']->link('/index.php')
+					#	 . GlobalService::get('phpgw')->link('/index.php')
 					#	 . '">' . "\n";
 					$bo = CreateObject('admin.bolog',True);
 					if(!isset($start))
 					{
 						$start = 0;
 					}
-					$num_rows = $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'];
+					$num_rows = GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'];
 					$stop = $start + $num_rows;
 					if($stop > count($rows))
 					{
@@ -51,7 +53,7 @@
 					$html .= '<table width="98%"><tr>';
 					$html .= $left;
 					$html .= '<td align="right"> ' . $hits . ' </td>';
-					$html .= '<td align="left"> <a href=' . $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uilog.list_log&editable=true') .'> ' . lang('Edit Table format') . '</a></td>';
+					$html .= '<td align="left"> <a href=' . GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uilog.list_log&editable=true') .'> ' . lang('Edit Table format') . '</a></td>';
 					$html .= $right;
 					$html .= '</tr></table>';
 				}
@@ -250,7 +252,7 @@
 
 			$html = '';
 			$html .= '<form method="post" action="'
-				 . $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uilog.list_log&editable=true')
+				 . GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uilog.list_log&editable=true')
 				 . '">' . "\n";
 
 			$params = $head['_table_parms'];

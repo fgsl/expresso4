@@ -1,5 +1,7 @@
 <?php
 
+ use Expresso\Core\GlobalService;
+
  /**************************************************************************\
   * Expresso Livre - Voip - administration                                   *
   *															                 *
@@ -102,7 +104,7 @@ class sovoip
 
 	public final function setConfDB($pConf)
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 		if( $this->db )
 		{
 			foreach($pConf as $key => $tmp )
@@ -127,7 +129,7 @@ class sovoip
 
 	public final function getConfDB()
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 
 		if( $this->db )
 		{

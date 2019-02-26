@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - XML-RPC Server                                          *
   * This file written by Miles Lott <milos@groupwhere.org>                   *
@@ -68,9 +70,9 @@
 			{
 				$fp = fopen($this->log,'a+');
 				fwrite($fp,"\n\n" . date('Y-m-d H:i:s') . " authorized="
-					. ($this->authed ? $GLOBALS['phpgw_info']['user']['account_lid'] : 'False')
+					. ($this->authed ? GlobalService::get('phpgw_info')['user']['account_lid'] : 'False')
 					. ", method='$this->last_method'\n");
-				fwrite($fp,"==== GOT ============================\n" . $GLOBALS['HTTP_RAW_POST_DATA']
+				fwrite($fp,"==== GOT ============================\n" . GlobalService::get('HTTP_RAW_POST_DATA')
 					. "\n==== RETURNED =======================\n");
 				fputs($fp,$payload);
 				fclose($fp);
@@ -164,7 +166,7 @@
 			/* Setup dispatch map based on the function, if this is a system call */
 			if(preg_match('/^system\./', $methName))
 			{
-				foreach($GLOBALS['_xmlrpcs_dmap'] as $meth => $dat)
+				foreach(GlobalService::get('_xmlrpcs_dmap') as $meth => $dat)
 				{
 					$this->add_to_map($meth,$dat['function'],$dat['signature'],$dat['docstring']);
 				}
@@ -188,8 +190,8 @@
 					/* Bad or non-existent system call, return error */
 					$r = CreateObject('phpgwapi.xmlrpcresp',
 						'',
-						$GLOBALS['xmlrpcerr']['unknown_method'],
-						$GLOBALS['xmlrpcstr']['unknown_method'] . ': ' . $methName
+						GlobalService::get('xmlrpcerr')['unknown_method'],
+						GlobalService::get('xmlrpcstr')['unknown_method'] . ': ' . $methName
 					);
 					return $r;
 				}
@@ -203,7 +205,7 @@
 						case 'server':
 						case 'phpgwapi':
 							/* Server role functions only - api access */
-							if($GLOBALS['phpgw']->acl->get_role() >= PHPGW_ACL_SERVER)
+							if(GlobalService::get('phpgw')->acl->get_role() >= PHPGW_ACL_SERVER)
 							{
 								$dmap = ExecMethod(sprintf('%s.%s.%s','phpgwapi',$class,'list_methods'),'xmlrpc');
 							}
@@ -215,7 +217,7 @@
 							break;
 						default:
 							/* User-level application access */
-							if($GLOBALS['phpgw']->acl->check('run',PHPGW_ACL_READ,$app))
+							if(GlobalService::get('phpgw')->acl->check('run',PHPGW_ACL_READ,$app))
 							{
 								$dmap = ExecMethod(sprintf('',$app,$class,'list_methods'),'xmlrpc');
 							}
@@ -223,8 +225,8 @@
 							{
 								$r = CreateObject('phpgwapi.xmlrpcresp',
 									'',
-									$GLOBALS['xmlrpcerr']['no_access'],
-									$GLOBALS['xmlrpcstr']['no_access']
+									GlobalService::get('xmlrpcerr')['no_access'],
+									GlobalService::get('xmlrpcstr')['no_access']
 								);
 								return $r;
 							}
@@ -257,8 +259,8 @@
 				{
 					$r = CreateObject('phpgwapi.xmlrpcresp',
 						'',
-						$GLOBALS['xmlrpcerr']['incorrect_params'],
-						$GLOBALS['xmlrpcstr']['incorrect_params'] . ': ' . $sr[1]
+						GlobalService::get('xmlrpcerr')['incorrect_params'],
+						GlobalService::get('xmlrpcstr')['incorrect_params'] . ': ' . $sr[1]
 					);
 				}
 			}
@@ -280,8 +282,8 @@
 				{
 					$r = CreateObject('phpgwapi.xmlrpcresp',
 						'',
-						$GLOBALS['xmlrpcerr']['unknown_method'],
-						$GLOBALS['xmlrpcstr']['unknown_method'] . ': ' . $methName
+						GlobalService::get('xmlrpcerr')['unknown_method'],
+						GlobalService::get('xmlrpcstr')['unknown_method'] . ': ' . $methName
 					);
 				}
 			}
@@ -320,7 +322,7 @@
 
 			echo xmlrpc_encode_request(NULL,$values);
 
-			xmlrpc_server_destroy($GLOBALS['xmlrpc_server']);
+			xmlrpc_server_destroy(GlobalService::get('xmlrpc_server']);
 			exit;
 		}
 */
@@ -332,7 +334,7 @@
 				$error_string . ': ' . $this->last_method
 			);
 			$this->service($r);
-			xmlrpc_server_destroy($GLOBALS['xmlrpc_server']);
+			xmlrpc_server_destroy(GlobalService::get('xmlrpc_server'));
 			exit;
 		}
 	}

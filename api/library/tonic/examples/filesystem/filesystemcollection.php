@@ -9,7 +9,7 @@ class FilesystemCollection extends FilesystemResource {
     
     /**
      * Path to the collections files
-     * @var str
+     * @var string
      */
     var $collection;
     

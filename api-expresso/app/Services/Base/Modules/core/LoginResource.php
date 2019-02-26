@@ -8,25 +8,25 @@ use App\Services\Base\Commons\Errors;
 class LoginResource extends ExpressoAdapter {
 
 	public function setDocumentation() {
-		$this->setResource("Expresso","Login","Realiza a autenticação do usuário.",array("POST"));
+		$this->setResource("Expresso","Login","Realiza a autenticaï¿½ï¿½o do usuï¿½rio.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
-		$this->addResourceParam("user","string",true,"Login do Usuário");
-		$this->addResourceParam("password","string",true,"Senha do Usuário",true,"","password");
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
+		$this->addResourceParam("user","string",true,"Login do Usuï¿½rio");
+		$this->addResourceParam("password","string",true,"Senha do Usuï¿½rio",true,"","password");
 	}
 
 	private function getUserProfile(){
 		if($this->getExpressoVersion() != "2.2") {
-			$_SESSION['wallet']['user']['uidNumber'] = $GLOBALS['phpgw_info']['user']['account_id'];
+			$_SESSION['wallet']['user']['uidNumber'] = GlobalService::get('phpgw_info')['user']['account_id'];
 		}
 	
 		return array(
-			'contactID'				=> $GLOBALS['phpgw_info']['user']['account_dn'],
-			'contactMails' 			=> array($GLOBALS['phpgw_info']['user']['email']),
-			'contactPhones' 		=> array($GLOBALS['phpgw_info']['user']['telephonenumber']),
-			'contactFullName'		=> $GLOBALS['phpgw_info']['user']['fullname'],
-			'contactLID'			=> $GLOBALS['phpgw_info']['user']['account_lid'],
-			'contactUIDNumber'		=> $GLOBALS['phpgw_info']['user']['account_id'],
+			'contactID'				=> GlobalService::get('phpgw_info')['user']['account_dn'],
+			'contactMails' 			=> array(GlobalService::get('phpgw_info')['user']['email']),
+			'contactPhones' 		=> array(GlobalService::get('phpgw_info')['user']['telephonenumber']),
+			'contactFullName'		=> GlobalService::get('phpgw_info')['user']['fullname'],
+			'contactLID'			=> GlobalService::get('phpgw_info')['user']['account_lid'],
+			'contactUIDNumber'		=> GlobalService::get('phpgw_info')['user']['account_id'],
 			'contactApps'			=> $this->getUserApps(),
 			'contactServices'		=> $this->getServices()
 		);
@@ -36,17 +36,17 @@ class LoginResource extends ExpressoAdapter {
 
 		$this->setParams( $request );
 
-		if($sessionid = $GLOBALS['phpgw']->session->create($this->getParam('user'), $this->getParam('password')))
+		if($sessionid = GlobalService::get('phpgw')->session->create($this->getParam('user'), $this->getParam('password')))
 		{
 			$result = array(
-				'auth' 			=> $sessionid.":".$GLOBALS['phpgw']->session->kp3,
+				'auth' 			=> $sessionid.":".GlobalService::get('phpgw')->session->kp3,
 				'profile' 		=> array($this->getUserProfile())
 			);
 			$this->setResult($result);
 		}
 		else
 		{
-			return Errors::runException($GLOBALS['phpgw']->session->cd_reason);
+			return Errors::runException(GlobalService::get('phpgw')->session->cd_reason);
 		}
 		return $this->getResponse();
 	}	

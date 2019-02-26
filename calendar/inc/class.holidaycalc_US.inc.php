@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - holidaycalc_US                                              *
   * http://www.egroupware.org                                                *
@@ -21,7 +23,7 @@
 			{
 				if($holiday['occurence'] != 99)
 				{
-					$dow = $GLOBALS['phpgw']->datetime->day_of_week($year,$holiday['month'],1);
+					$dow = GlobalService::get('phpgw')->datetime->day_of_week($year,$holiday['month'],1);
 					$day = (((7 * $holiday['occurence']) - 6) + ((($holiday['dow'] + 7) - $dow) % 7));
 					$day += ($day < 1 ? 7 : 0);
 					// What is the point of this?
@@ -30,7 +32,7 @@
 
 					// Sometimes the 5th occurance of a weekday (ie the 5th monday)
 					// can spill over to the next month.  This prevents that.
-					$ld = $GLOBALS['phpgw']->datetime->days_in_month($holiday['month'],$year);
+					$ld = GlobalService::get('phpgw')->datetime->days_in_month($holiday['month'],$year);
 					if ($day > $ld)
 					{
 						return;
@@ -38,8 +40,8 @@
 				}
 				else
 				{
-					$ld = $GLOBALS['phpgw']->datetime->days_in_month($holiday['month'],$year);
-					$dow = $GLOBALS['phpgw']->datetime->day_of_week($year,$holiday['month'],$ld);
+					$ld = GlobalService::get('phpgw')->datetime->days_in_month($holiday['month'],$year);
+					$dow = GlobalService::get('phpgw')->datetime->day_of_week($year,$holiday['month'],$ld);
 					$day = $ld - (($dow + 7) - $holiday['dow']) % 7 ;
 				}
 			}
@@ -48,7 +50,7 @@
 				$day = $holiday['day'];
 				if($holiday['observance_rule'] == True)
 				{
-					$dow = $GLOBALS['phpgw']->datetime->day_of_week($year,$holiday['month'],$day);
+					$dow = GlobalService::get('phpgw')->datetime->day_of_week($year,$holiday['month'],$day);
 					// This now calulates Observed holidays and creates a new entry for them.
 					if($dow == 0)
 					{

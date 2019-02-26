@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/************************************************************************************\
-	* Expresso Administração                 										     *
+	* Expresso Administraï¿½ï¿½o                 										     *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	 *
 	* -----------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			 *
@@ -20,17 +22,17 @@
 			$this->functions = CreateObject('expressoAdmin1_2.functions');
 			$this->db_functions = CreateObject('expressoAdmin1_2.db_functions');
 			
-			if ( (!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-				 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-				 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw'])) )
+			if ( (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+				 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+				 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw'])) )
 			{
-				$this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect($GLOBALS['phpgw_info']['server']['ldap_master_host'],
-												   $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-												   $GLOBALS['phpgw_info']['server']['ldap_master_root_pw']);
+				$this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect(GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+												   GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+												   GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']);
 			}
 			else
 			{
-				$this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect();
+				$this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect();
 			}
 		}
 
@@ -56,7 +58,7 @@
 			ldap_set_option( $this->ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option( $this->ldap_connection, LDAP_OPT_REFERRALS, true);
 
-			$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 			$search = ldap_search($this->ldap_connection, $context, "(uid={$computer_cn}$)" );
 			$result = ldap_get_entries($this->ldap_connection, $search);
 
@@ -88,7 +90,7 @@
 					//Recupera a flag SAMBA
 					$computer_data['sambaAcctFlags'] = $result[0]['sambaacctflags'][0];
 			
-					// Recupera a descrição
+					// Recupera a descriï¿½ï¿½o
 					$computer_data['computer_description'] = utf8_decode($result[0]['description'][0]);
 			
 					// Recupera o contexto do email_list

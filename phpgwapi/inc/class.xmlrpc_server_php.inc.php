@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 // Copyright (c) 1999,2000,2001 Edd Dumbill.
 // All rights reserved.
 //
@@ -64,9 +66,9 @@
 
 		function serializeDebug()
 		{
-			if ($GLOBALS['_xmlrpc_debuginfo'] != '')
+			if (GlobalService::get('_xmlrpc_debuginfo') != '')
 			{
-				return "<!-- DEBUG INFO:\n\n" . $GLOBALS['_xmlrpc_debuginfo'] . "\n-->\n";
+				return "<!-- DEBUG INFO:\n\n" . GlobalService::get('_xmlrpc_debuginfo') . "\n-->\n";
 			}
 			else
 			{
@@ -93,14 +95,14 @@
 			{
 				$payload = "<?xml version=\"1.0\"?>\n" . $this->serializeDebug() . $r->serialize();
 				Header("Content-type: text/xml\r\nContent-length: " . strlen($payload));
-				echo $GLOBALS['phpgw']->translation->convert($payload,$GLOBALS['phpgw']->translation->charset(),'utf-8');
+				echo GlobalService::get('phpgw')->translation->convert($payload,GlobalService::get('phpgw')->translation->charset(),'utf-8');
 			}
 
 			if ($this->log)
 			{
 				$fp = fopen($this->log,'a+');
 				fwrite($fp,"\n\n".date('Y-m-d H:i:s')." authorized=".
-					($this->authed?$GLOBALS['phpgw_info']['user']['account_lid']:'False').
+					($this->authed?GlobalService::get('phpgw_info')['user']['account_lid']:'False').
 					", method='$this->last_method'\n");
 				fwrite($fp,"==== GOT ============================\n".$HTTP_RAW_POST_DATA.
 					"\n==== RETURNED =======================\n");
@@ -259,14 +261,14 @@
 			{
 				$data = $HTTP_RAW_POST_DATA;
 			}
-			$parser = xml_parser_create($GLOBALS['xmlrpc_defencoding']);
+			$parser = xml_parser_create(GlobalService::get('xmlrpc_defencoding'));
 
-			$GLOBALS['_xh'][$parser] = array();
-			$GLOBALS['_xh'][$parser]['st']     = '';
-			$GLOBALS['_xh'][$parser]['cm']     = 0;
-			$GLOBALS['_xh'][$parser]['isf']    = 0;
-			$GLOBALS['_xh'][$parser]['params'] = array();
-			$GLOBALS['_xh'][$parser]['method'] = '';
+			GlobalService::get('_xh')[$parser] = array();
+			GlobalService::get('_xh')[$parser]['st']     = '';
+			GlobalService::get('_xh')[$parser]['cm']     = 0;
+			GlobalService::get('_xh')[$parser]['isf']    = 0;
+			GlobalService::get('_xh')[$parser]['params'] = array();
+			GlobalService::get('_xh')[$parser]['method'] = '';
 
 			// decompose incoming XML into request structure
 			xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
@@ -277,7 +279,7 @@
 			{
 				// return XML error as a faultCode
 				$r = CreateObject('phpgwapi.xmlrpcresp','',
-					$GLOBALS['xmlrpcerrxml'] + xml_get_error_code($parser),
+					GlobalService::get('xmlrpcerrxml') + xml_get_error_code($parser),
 					sprintf('XML error: %s at line %d',
 					xml_error_string(xml_get_error_code($parser)),
 					xml_get_current_line_number($parser))
@@ -287,27 +289,27 @@
 			else
 			{
 				xml_parser_free($parser);
-				$m = CreateObject('phpgwapi.xmlrpcmsg',$GLOBALS['_xh'][$parser]['method']);
+				$m = CreateObject('phpgwapi.xmlrpcmsg',GlobalService::get('_xh')[$parser]['method']);
 				// now add parameters in
 				$plist = '';
-				for($i=0; $i<sizeof($GLOBALS['_xh'][$parser]['params']); $i++)
+				for($i=0; $i<sizeof(GlobalService::get('_xh')[$parser]['params']); $i++)
 				{
-					//print "<!-- " . $GLOBALS['_xh'][$parser]['params'][$i]. "-->\n";
-					$plist .= "$i - " . $GLOBALS['_xh'][$parser]['params'][$i]. " \n";
-					$code = '$m->addParam(' . $GLOBALS['_xh'][$parser]['params'][$i] . ');';
+					//print "<!-- " . GlobalService::get('_xh')[$parser]['params'][$i]. "-->\n";
+					$plist .= "$i - " . GlobalService::get('_xh')[$parser]['params'][$i]. " \n";
+					$code = '$m->addParam(' . GlobalService::get('_xh')[$parser]['params'][$i] . ');';
 					$code = str_replace(',,',",'',",$code);
 					eval($code);
 				}
 				// uncomment this to really see what the server's getting!
 				// xmlrpc_debugmsg($plist);
 				// now to deal with the method
-				$methName  = $GLOBALS['_xh'][$parser]['method'];
-				$_methName = $GLOBALS['_xh'][$parser]['method'];
+				$methName  = GlobalService::get('_xh')[$parser]['method'];
+				$_methName = GlobalService::get('_xh')[$parser]['method'];
 				$this->last_method = $methName;
 
 				if (preg_match("/^system\./", $methName))
 				{
-					$dmap = $GLOBALS['_xmlrpcs_dmap'];
+					$dmap = GlobalService::get('_xmlrpcs_dmap');
 					$sysCall=1;
 				}
 				else
@@ -322,8 +324,8 @@
 					{
 						$r = CreateObject('phpgwapi.xmlrpcresp',
 							'',
-							$GLOBALS['xmlrpcerr']['unknown_method'],
-							$GLOBALS['xmlrpcstr']['unknown_method'] . ': ' . $methName
+							GlobalService::get('xmlrpcerr')['unknown_method'],
+							GlobalService::get('xmlrpcstr')['unknown_method'] . ': ' . $methName
 						);
 						return $r;
 					}
@@ -344,7 +346,7 @@
 							$t = 'phpgwapi.' . $class . '.exec';
 							$dmap = ExecMethod($t,array($service,'list_methods','xmlrpc'));
 						}
-						elseif($GLOBALS['phpgw']->acl->check('run',1,$class))
+						elseif(GlobalService::get('phpgw')->acl->check('run',1,$class))
 						{
 							/* This only happens if they have app access.  If not, we will
 							 * return a fault below.
@@ -356,8 +358,8 @@
 						{
 							$r = CreateObject('phpgwapi.xmlrpcresp',
 								'',
-								$GLOBALS['xmlrpcerr']['no_access'],
-								$GLOBALS['xmlrpcstr']['no_access']
+								GlobalService::get('xmlrpcerr')['no_access'],
+								GlobalService::get('xmlrpcstr')['no_access']
 							);
 							return $r;
 						}
@@ -394,7 +396,7 @@
 							else
 							{
 								/* phpgw mod - finally, execute the function call and return the values */
-								$params = $GLOBALS['_xh'][$parser]['params'][0];
+								$params = GlobalService::get('_xh')[$parser]['params'][0];
 								$code = '$p = '  . $params . ';';
 								if (count($params) != 0)
 								{
@@ -405,7 +407,7 @@
 								// _debug_array($params);
 								$this->reqtoarray($params);
 								// decode from utf-8 to our charset
-								$this->req_array = $GLOBALS['phpgw']->translation->convert($this->req_array,'utf-8');
+								$this->req_array = GlobalService::get('phpgw')->translation->convert($this->req_array,'utf-8');
 								//_debug_array($this->req_array);
 								if (preg_match('/^service/',$method))
 								{
@@ -429,8 +431,8 @@
 					{
 						$r = CreateObject('phpgwapi.xmlrpcresp',
 							'',
-							$GLOBALS['xmlrpcerr']['incorrect_params'],
-							$GLOBALS['xmlrpcstr']['incorrect_params'] . ': ' . $sr[1]
+							GlobalService::get('xmlrpcerr')['incorrect_params'],
+							GlobalService::get('xmlrpcstr')['incorrect_params'] . ': ' . $sr[1]
 						);
 					}
 				}
@@ -451,8 +453,8 @@
 					{
 						$r = CreateObject('phpgwapi.xmlrpcresp',
 							'',
-							$GLOBALS['xmlrpcerr']['unknown_method'],
-							$GLOBALS['xmlrpcstr']['unknown_method'] . ': ' . $methName
+							GlobalService::get('xmlrpcerr')['unknown_method'],
+							GlobalService::get('xmlrpcstr')['unknown_method'] . ': ' . $methName
 						);
 					}
 				}

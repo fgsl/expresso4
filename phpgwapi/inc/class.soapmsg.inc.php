@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /*
 
 	SOAPx4
@@ -39,8 +41,8 @@
 		function soapmsg($method,$params,$method_namespace='http://testuri.org',$new_namespaces=False)
 		{
 			// globalize method namespace
-			$GLOBALS['methodNamespace'] = $method_namespace;
-			$namespaces = $GLOBALS['namespaces'];
+			GlobalService::set('methodNamespace',$method_namespace);
+			$namespaces = GlobalService::get('namespaces');
 
 			// make method struct
 			$this->value = CreateObject('phpgwapi.soapval',$method,"struct",$params,$method_namespace);
@@ -62,7 +64,7 @@
 
 		function make_envelope($payload)
 		{
-			$namespaces = $GLOBALS['namespaces'];
+			$namespaces = GlobalService::get('namespaces');
 			@reset($namespaces);
 			while(list($k,$v) = @each($namespaces))
 			/* foreach($namespaces as $k => $v) */

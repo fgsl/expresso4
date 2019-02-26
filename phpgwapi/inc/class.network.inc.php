@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Network                                                 *
   * This file written by Mark Peters <skeeter@phpgroupware.org>              *
@@ -66,11 +68,11 @@
 			{
 				case 80:
 				case 443:
-					if((isset($GLOBALS['phpgw_info']['server']['httpproxy_server']) && $GLOBALS['phpgw_info']['server']['httpproxy_server']) &&
-						(isset($GLOBALS['phpgw_info']['server']['httpproxy_port']) && $GLOBALS['phpgw_info']['server']['httpproxy_port']))
+					if((isset(GlobalService::get('phpgw_info')['server']['httpproxy_server']) && GlobalService::get('phpgw_info')['server']['httpproxy_server']) &&
+						(isset(GlobalService::get('phpgw_info')['server']['httpproxy_port']) && GlobalService::get('phpgw_info')['server']['httpproxy_port']))
 					{
-						$server = $GLOBALS['phpgw_info']['server']['httpproxy_server'];
-						$port   = (int)$GLOBALS['phpgw_info']['server']['httpproxy_port'];
+						$server = GlobalService::get('phpgw_info')['server']['httpproxy_server'];
+						$port   = (int)GlobalService::get('phpgw_info')['server']['httpproxy_port'];
 					}
 					break;
 			}
@@ -197,13 +199,13 @@
 				$auth = '';
 			}
 
-			if($GLOBALS['phpgw_info']['server']['httpproxy_server'])
+			if(GlobalService::get('phpgw_info')['server']['httpproxy_server'])
 			{
 				$proxyAuth = '';
-				if(!empty($GLOBALS['phpgw_info']['server']['httpproxy_server_username']))
+				if(!empty(GlobalService::get('phpgw_info')['server']['httpproxy_server_username']))
 				{
-					$proxyUsername = $GLOBALS['phpgw_info']['server']['httpproxy_server_username'];
-					$proxyPassword = $GLOBALS['phpgw_info']['server']['httpproxy_server_password'];
+					$proxyUsername = GlobalService::get('phpgw_info')['server']['httpproxy_server_username'];
+					$proxyPassword = GlobalService::get('phpgw_info')['server']['httpproxy_server_password'];
 					$proxyAuth = 'Proxy-Authorization: Basic '.base64_encode("$proxyUsername:$proxyPassword")."\n";
 				}
 				if($this->open_port($server,80, 15))

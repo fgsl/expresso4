@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.eGroupWare.org                                                *
@@ -14,12 +16,12 @@
   \**************************************************************************/
 
 
-	if (@$GLOBALS['phpgw_info']['flags']['included_classes']['socalendar_'])
+	if (@GlobalService::get('phpgw_info')['flags']['included_classes']['socalendar_'])
 	{
 		return;
 	}
 
-	$GLOBALS['phpgw_info']['flags']['included_classes']['socalendar_'] = True;
+	GlobalService::get('phpgw_info')['flags']['included_classes']['socalendar_'] = True;
 
 	class socalendar_ extends socalendar__
 	{
@@ -33,11 +35,11 @@
 		{
 			$this->socalendar__();
 
-			if (!is_object($GLOBALS['phpgw']->asyncservice))
+			if (!is_object(GlobalService::get('phpgw')->asyncservice))
 			{
-				$GLOBALS['phpgw']->asyncservice = CreateObject('phpgwapi.asyncservice');
+				GlobalService::get('phpgw')->asyncservice = CreateObject('phpgwapi.asyncservice');
 			}
-			$this->async = &$GLOBALS['phpgw']->asyncservice;
+			$this->async = &GlobalService::get('phpgw')->asyncservice;
 		}
 
 		function open($calendar='',$user='',$passwd='',$options='')
@@ -45,7 +47,7 @@
 			if($user=='')
 			{
 	//			settype($user,'integer');
-				$this->user = $GLOBALS['phpgw_info']['user']['account_id'];
+				$this->user = GlobalService::get('phpgw_info')['user']['account_id'];
 			}
 			elseif(is_int($user))
 			{
@@ -53,10 +55,10 @@
 			}
 			elseif(is_string($user))
 			{
-				$this->user = $GLOBALS['phpgw']->accounts->name2id($user);
+				$this->user = GlobalService::get('phpgw')->accounts->name2id($user);
 			}
 
-			$this->stream = $GLOBALS['phpgw']->db;
+			$this->stream = GlobalService::get('phpgw')->db;
 			return $this->stream;
 		}
 
@@ -175,7 +177,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 
 			if (!($id = $alarm['id']))
 			{
-				$alarm['time'] -= $GLOBALS['phpgw']->datetime->tz_offset;	// time should be stored in server timezone
+				$alarm['time'] -= GlobalService::get('phpgw')->datetime->tz_offset;	// time should be stored in server timezone
 				$alarms = $this->read_alarms($cal_id);	// find a free alarm#
 
 				if($alarm['repeat'] == 1) // repeticao do tipo "Diariamente";
@@ -407,7 +409,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 										{
 											return False;
 										}
-											$alarm['time'] = $nova_data - $alarm['offset'] - $GLOBALS['phpgw']->datetime->tz_offset; 
+											$alarm['time'] = $nova_data - $alarm['offset'] - GlobalService::get('phpgw')->datetime->tz_offset; 
 									}
 								}
 								$y++;
@@ -496,7 +498,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 					}
 
 				}else {
-					$alarm['time'] -= $GLOBALS['phpgw']->datetime->tz_offset;	// time should be stored in server timezone
+					$alarm['time'] -= GlobalService::get('phpgw')->datetime->tz_offset;	// time should be stored in server timezone
 					$n = count($alarms);
 					while(@isset($alarms[$id]));
 					{
@@ -523,7 +525,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 			{
 				$this->async->cancel_timer($id);
 			}
-			$alarm['time'] -= $GLOBALS['phpgw']->datetime->tz_offset;	// time should be stored in server timezone
+			$alarm['time'] -= GlobalService::get('phpgw')->datetime->tz_offset;	// time should be stored in server timezone
 			return $id;
 		}
 
@@ -578,11 +580,11 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 				$this->add_attribute('type',$this->stream->f('cal_type'));
 				$this->set_class((int)$this->stream->f('is_public'));
 				$this->set_category($this->stream->f('category'));
-				$this->set_title(stripslashes($GLOBALS['phpgw']->strip_html($this->stream->f('title'))));
-				$this->set_description(stripslashes($GLOBALS['phpgw']->strip_html($this->stream->f('description'))));
-				$this->set_ex_participants(stripslashes($GLOBALS['phpgw']->strip_html($this->stream->f('ex_participants'))));
-				$this->add_attribute('uid',$GLOBALS['phpgw']->strip_html($this->stream->f('uid')));
-				$this->add_attribute('location',stripslashes($GLOBALS['phpgw']->strip_html($this->stream->f('location'))));
+				$this->set_title(stripslashes(GlobalService::get('phpgw')->strip_html($this->stream->f('title'))));
+				$this->set_description(stripslashes(GlobalService::get('phpgw')->strip_html($this->stream->f('description'))));
+				$this->set_ex_participants(stripslashes(GlobalService::get('phpgw')->strip_html($this->stream->f('ex_participants'))));
+				$this->add_attribute('uid',GlobalService::get('phpgw')->strip_html($this->stream->f('uid')));
+				$this->add_attribute('location',stripslashes(GlobalService::get('phpgw')->strip_html($this->stream->f('location'))));
 				$this->add_attribute('reference',(int)$this->stream->f('reference'));
 
 				// This is the preferred method once everything is normalized...
@@ -590,13 +592,13 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 				// But until then, do it this way...
 				//Legacy Support (New)
 
-				$datetime = $GLOBALS['phpgw']->datetime->localdates($this->stream->f('datetime'));
+				$datetime = GlobalService::get('phpgw')->datetime->localdates($this->stream->f('datetime'));
 				$this->set_start($datetime['year'],$datetime['month'],$datetime['day'],$datetime['hour'],$datetime['minute'],$datetime['second']);
 
-				$datetime = $GLOBALS['phpgw']->datetime->localdates($this->stream->f('mdatetime'));
+				$datetime = GlobalService::get('phpgw')->datetime->localdates($this->stream->f('mdatetime'));
 				$this->set_date('modtime',$datetime['year'],$datetime['month'],$datetime['day'],$datetime['hour'],$datetime['minute'],$datetime['second']);
 
-				$datetime = $GLOBALS['phpgw']->datetime->localdates($this->stream->f('edatetime'));
+				$datetime = GlobalService::get('phpgw')->datetime->localdates($this->stream->f('edatetime'));
 				$this->set_end($datetime['year'],$datetime['month'],$datetime['day'],$datetime['hour'],$datetime['minute'],$datetime['second']);
 
 			//Legacy Support
@@ -620,7 +622,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 					$enddate = $this->stream->f('recur_enddate');
 					if($enddate != 0 && $enddate != Null)
 					{
-						$datetime = $GLOBALS['phpgw']->datetime->localdates($enddate);
+						$datetime = GlobalService::get('phpgw')->datetime->localdates($enddate);
 						$this->add_attribute('recur_enddate',$datetime['year'],'year');
 						$this->add_attribute('recur_enddate',$datetime['month'],'month');
 						$this->add_attribute('recur_enddate',$datetime['day'],'mday');
@@ -747,7 +749,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 				//$user_where .= $this->user;
                                 $user_where .= $this->user . ') OR (phpgw_cal.owner=' . $this->user;
 			}
-			$member_groups = $GLOBALS['phpgw']->accounts->membership($this->user);
+			$member_groups = GlobalService::get('phpgw')->accounts->membership($this->user);
 			@reset($member_groups);
 			while($member_groups != False && list($key,$group_info) = each($member_groups))
 			{
@@ -924,13 +926,13 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 			{
 				if(!$event['uid'])
 				{
-					if ($GLOBALS['phpgw_info']['server']['hostname'] != '')
+					if (GlobalService::get('phpgw_info')['server']['hostname'] != '')
 					{
-						$id_suffix = $GLOBALS['phpgw_info']['server']['hostname'];
+						$id_suffix = GlobalService::get('phpgw_info')['server']['hostname'];
 					}
 					else
 					{
-						$id_suffix = $GLOBALS['phpgw']->common->randomstring(3).'local';
+						$id_suffix = GlobalService::get('phpgw')->common->randomstring(3).'local';
 					}
 					$parts = Array(
 						0 => 'title',
@@ -940,8 +942,8 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 					@reset($parts);
 					while(list($key,$field) = each($parts))
 					{
-						$part[$key] = substr($GLOBALS['phpgw']->crypto->encrypt($event[$field]),0,20);
-						if(!$GLOBALS['phpgw']->crypto->enabled)
+						$part[$key] = substr(GlobalService::get('phpgw')->crypto->encrypt($event[$field]),0,20);
+						if(!GlobalService::get('phpgw')->crypto->enabled)
 						{
 							$part[$key] = bin2hex(unserialize($part[$key]));
 						}
@@ -956,9 +958,9 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 				$last_status = true;
 			}
 
-			$date = $this->maketime($event['start']) - $GLOBALS['phpgw']->datetime->tz_offset;
-			$enddate = $this->maketime($event['end']) - $GLOBALS['phpgw']->datetime->tz_offset;
-			$today = time() - $GLOBALS['phpgw']->datetime->tz_offset;
+			$date = $this->maketime($event['start']) - GlobalService::get('phpgw')->datetime->tz_offset;
+			$enddate = $this->maketime($event['end']) - GlobalService::get('phpgw')->datetime->tz_offset;
+			$today = time() - GlobalService::get('phpgw')->datetime->tz_offset;
 
 			if( $event['type'] == 'hourAppointment'){ $type = 'H'; }
 			else if($event['type'] == 'privateHiddenFields'){ $type = 'P'; }
@@ -1001,7 +1003,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 			{
 				if($event['recur_enddate']['month'] != 0 && $event['recur_enddate']['mday'] != 0 && $event['recur_enddate']['year'] != 0)
 				{
-					$end = $this->maketime($event['recur_enddate']) - $GLOBALS['phpgw']->datetime->tz_offset;
+					$end = $this->maketime($event['recur_enddate']) - GlobalService::get('phpgw')->datetime->tz_offset;
 				}
 				else
 				{
@@ -1078,7 +1080,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 					$this->save_alarm($event['id'],$alarm);
 				}
 			}
-			$GLOBALS['phpgw_info']['cal_new_event_id'] = $event['id'];
+			GlobalService::get('phpgw_info')['cal_new_event_id'] = $event['id'];
 			$this->event = $event;
 			return True;
 		}
@@ -1137,8 +1139,8 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 
 		function group_search($owner=0)
 		{
-			$owner = ($owner==$GLOBALS['phpgw_info']['user']['account_id']?0:$owner);
-			$groups = substr($GLOBALS['phpgw']->common->sql_search('phpgw_cal.groups',(int)$owner),4);
+			$owner = ($owner==GlobalService::get('phpgw_info')['user']['account_id']?0:$owner);
+			$groups = substr(GlobalService::get('phpgw')->common->sql_search('phpgw_cal.groups',(int)$owner),4);
 			if (!$groups)
 			{
 				return '';
@@ -1180,7 +1182,7 @@ de repeticao escolhido pelo usuario (diario, semanal, mensal, anual) e insere al
 
 			$user_where = " AND phpgw_cal_user.cal_login = $this->user";
 
-			$member_groups = $GLOBALS['phpgw']->accounts->membership($this->user);
+			$member_groups = GlobalService::get('phpgw')->accounts->membership($this->user);
 			@reset($member_groups);
 			while($member_groups != False && list($key,$group_info) = each($member_groups))
 			{

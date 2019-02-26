@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**
 * CPAINT - Cross-Platform Asynchronous INterface Toolkit
 *
@@ -26,7 +28,7 @@
   require_once("cpaint2.config.php");
 
 //---- variables ---------------------------------------------------------------
-  $GLOBALS['__cpaint_json'] = new JSON();
+  GlobalService::set('__cpaint_json',new JSON());
 
 //---- error reporting ---------------------------------------------------------
 	error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
@@ -201,7 +203,7 @@
           } // end: if
 
           // convert from JSON string
-          $arguments[$key] = $GLOBALS['__cpaint_json']->parse($value);
+          $arguments[$key] = GlobalService::get('__cpaint_json']->parse($value);
         } // end: foreach
 
         $arguments = cpaint_transformer::decode_array($arguments, $this->basenode->get_encoding());
@@ -799,7 +801,7 @@
     */
     function toJSON($node) {
       $return_value = '';
-      $JSON_node    = new stdClass();
+      $JSON_node    = new \stdClass();
 
       // handle attributes
       $JSON_node->attributes = $node->attributes;
@@ -812,13 +814,13 @@
         } // end: if
 
         // we need to parse the JSON object again to avoid multiple encoding
-        $JSON_node->{$composite->nodename}[] = $GLOBALS['__cpaint_json']->parse(cpaint_transformer::toJSON($composite));
+        $JSON_node->{$composite->nodename}[] = GlobalService::get('__cpaint_json')->parse(cpaint_transformer::toJSON($composite));
       }
 
       // handle data
       $JSON_node->data = $node->data;
 
-      return $GLOBALS['__cpaint_json']->stringify($JSON_node);
+      return GlobalService::get('__cpaint_json')->stringify($JSON_node);
     }
 
     /**

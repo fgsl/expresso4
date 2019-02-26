@@ -34,7 +34,7 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $request_data
+     * @param mixed unknown_type $request_data
      */
     public function __construct( $class_path, $class_suffix, $class_preffix )
     {
@@ -46,7 +46,7 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $request_data
+     * @param mixed unknown_type $request_data
      */
     public function setRequestData($request_data)
     {
@@ -60,7 +60,7 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @return unknown
+     * @return mixed unknown
      */
     public function executeRequest()
     {
@@ -79,8 +79,8 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $data
-     * @return unknown
+     * @param mixed unknown_type $data
+     * @return mixed unknown
      */
     private function _isRequestDataValid( $data )
     {
@@ -118,7 +118,7 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $classname
+     * @param mixed unknown_type $classname
      */
     protected function _loadUserDefinedClass( $classname )
     {
@@ -131,8 +131,8 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $classname
-     * @return unknown
+     * @param mixed unknown_type $classname
+     * @return mixed unknown
      */
     protected function _initializeUserClass( $classname )
     {
@@ -144,10 +144,10 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $userclass
-     * @param unknown_type $usermethod
-     * @param unknown_type $userdata
-     * @return unknown
+     * @param mixed unknown_type $userclass
+     * @param mixed unknown_type $usermethod
+     * @param mixed unknown_type $userdata
+     * @return mixed unknown
      */
     protected function _callUserMethod( $userclass, $usermethod, $userdata )
     {
@@ -162,11 +162,11 @@ class NanoRequest
     /**
      * Enter description here...
      *
-     * @param unknown_type $msg
+     * @param mixed unknown_type $msg
      */
     private function _throwException( $msg )
     {
-        throw new Exception($msg);
+        throw new \Exception($msg);
     }
 }
 

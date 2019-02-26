@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * phpGroupWare API - Timed Asynchron Services for eGroupWare               *
 * Written by Ralf Becker <RalfBecker@outdoor-training.de>                  *
@@ -44,9 +46,9 @@ class asyncservice
 	 */
 	function asyncservice()
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 		
-		$this->cronline = PHPGW_SERVER_ROOT . '/phpgwapi/cron/asyncservices.php '.$GLOBALS['phpgw_info']['user']['domain'];
+		$this->cronline = PHPGW_SERVER_ROOT . '/phpgwapi/cron/asyncservices.php '.GlobalService::get('phpgw_info')['user']['domain'];
 		
 		$this->only_fallback = substr(php_uname(), 0, 7) == "Windows";	// atm cron-jobs dont work on win
 	}
@@ -90,7 +92,7 @@ class asyncservice
 			'times'			=> $times,
 			'method'		=> $method,
 			'data'			=> $data,
-			'account_id'	=> ($account_id === false)? $GLOBALS['phpgw_info']['user']['account_id'] : $account_id,
+			'account_id'	=> ($account_id === false)? GlobalService::get('phpgw_info')['user']['account_id'] : $account_id,
 			'priority'		=> $priority,
 		));
 	}
@@ -158,11 +160,11 @@ class asyncservice
 				
 				$count_exec++;
 				
-			} catch(Exception $e) {
+			} catch(\Exception $e) {
 				
-				if ( !empty($GLOBALS['phpgw_info']['server']['sugestoes_email_to']) ) {
+				if ( !empty(GlobalService::get('phpgw_info')['server']['sugestoes_email_to']) ) {
 					mail(
-						$GLOBALS['phpgw_info']['server']['sugestoes_email_to'],
+						GlobalService::get('phpgw_info')['server']['sugestoes_email_to'],
 						'Expresso asyncservices warning',
 						'Throw exception on async services class:'."\n".$e->getMessage()."\n".print_r($job,true),
 						'From: asyncservices'
@@ -222,7 +224,7 @@ class asyncservice
 	private function _check_running( )
 	{
 		// Initialize counter report
-		$report = new stdClass;
+		$report = new \stdClass;
 		$report->elder = 0;
 		$report->stopped = 0;
 		
@@ -260,9 +262,9 @@ class asyncservice
 			}
 		}
 		
-		if (($report->elder || $report->stopped) && ( !empty($GLOBALS['phpgw_info']['server']['sugestoes_email_to']) )) {
+		if (($report->elder || $report->stopped) && ( !empty(GlobalService::get('phpgw_info')['server']['sugestoes_email_to']) )) {
 			mail(
-				$GLOBALS['phpgw_info']['server']['sugestoes_email_to'],
+				GlobalService::get('phpgw_info')['server']['sugestoes_email_to'],
 				'Expresso asyncservices warning',
 				'Problem detected on async services class:'."\n".print_r($report,true),
 				'From: asyncservices'
@@ -307,7 +309,7 @@ class asyncservice
 	 */
 	private function _get_next_job()
 	{
-		$tz_offset = (int)(60*60*$GLOBALS['phpgw_info']['user']['preferences']['common']['tz_offset']);
+		$tz_offset = (int)(60*60*GlobalService::get('phpgw_info')['user']['preferences']['common']['tz_offset']);
 		$time = time() - $tz_offset;
 		
 		$sql = 'UPDATE '.$this->db_table.' '.
@@ -347,30 +349,30 @@ class asyncservice
 	 */
 	private function _set_globals( $account_id, $method )
 	{
-		if ( $GLOBALS['phpgw_info']['user']['account_id'] != $account_id ) {
+		if ( GlobalService::get('phpgw_info')['user']['account_id'] != $account_id ) {
 			
-			$domain	= $GLOBALS['phpgw_info']['user']['domain'];
-			$lang	= $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
-			unset($GLOBALS['phpgw_info']['user']);
+			$domain	= GlobalService::get('phpgw_info')['user']['domain'];
+			$lang	= GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
+			unset(GlobalService::get('phpgw_info')['user']);
 			
-			if ($GLOBALS['phpgw']->session->account_id = $account_id) {
+			if (GlobalService::get('phpgw')->session->account_id = $account_id) {
 				
-				$GLOBALS['phpgw']->session->account_lid = $GLOBALS['phpgw']->accounts->id2name( $account_id );
-				$GLOBALS['phpgw']->session->account_domain = $domain;
-				$GLOBALS['phpgw']->session->read_repositories(false,false);
-				$GLOBALS['phpgw_info']['user']  = $GLOBALS['phpgw']->session->user;
+				GlobalService::get('phpgw')->session->account_lid = GlobalService::get('phpgw')->accounts->id2name( $account_id );
+				GlobalService::get('phpgw')->session->account_domain = $domain;
+				GlobalService::get('phpgw')->session->read_repositories(false,false);
+				GlobalService::get('phpgw_info')['user']  = GlobalService::get('phpgw')->session->user;
 				
-				if ( $lang != $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'] ) {
+				if ( $lang != GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'] ) {
 					
-					unset($GLOBALS['lang']);
-					$GLOBALS['phpgw']->translation->add_app('common');
+					unset(GlobalService::get('lang'));
+					GlobalService::get('phpgw')->translation->add_app('common');
 				}
 			
-			} else $GLOBALS['phpgw_info']['user']['domain'] = $domain;
+			} else GlobalService::get('phpgw_info')['user']['domain'] = $domain;
 		}
 		
 		list($app) = explode('.',$method);
-		$GLOBALS['phpgw']->translation->add_app($app);
+		GlobalService::get('phpgw')->translation->add_app($app);
 	}
 	
 	/**
@@ -542,7 +544,7 @@ class asyncservice
 	*/
 	function read( $id = 0 )
 	{
-		$tz_offset = (int)(60*60*$GLOBALS['phpgw_info']['user']['preferences']['common']['tz_offset']);
+		$tz_offset = (int)(60*60*GlobalService::get('phpgw_info')['user']['preferences']['common']['tz_offset']);
 		$time = time() - $tz_offset;
 		$id = $this->db->db_addslashes($id);
 		

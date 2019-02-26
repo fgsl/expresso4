@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 class soradius
 {
 	var $functions;
@@ -17,18 +19,18 @@ class soradius
 		
 		$this->functions = CreateObject('expressoAdmin1_2.functions');
 		if (
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw']))
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']))
 		) {
-			$this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect(
-				$GLOBALS['phpgw_info']['server']['ldap_master_host'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_pw']
+			$this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect(
+				GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']
 			);
-		} else $this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect();
-		$this->_tmp = empty($GLOBALS['phpgw_info']['server']['temp_dir'])? '/tmp' : $GLOBALS['phpgw_info']['server']['temp_dir'];
-		$this->_radius_dn = 'dc=radius,'.$GLOBALS['phpgw_info']['server']['ldap_context'];
+		} else $this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect();
+		$this->_tmp = empty(GlobalService::get('phpgw_info')['server']['temp_dir'])? '/tmp' : GlobalService::get('phpgw_info')['server']['temp_dir'];
+		$this->_radius_dn = 'dc=radius,'.GlobalService::get('phpgw_info')['server']['ldap_context'];
 	}
 	
 	private function _getShemaDn()
@@ -302,7 +304,7 @@ class soradius
 		if ( $test ) {
 			$entries = ldap_get_entries(
 				$this->ldap_connection,
-				@ldap_search( $this->ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_context'], '('.$this->_getGroupAttr().'='.$cn.')', array('dn'), 0, 1 )
+				@ldap_search( $this->ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_context'], '('.$this->_getGroupAttr().'='.$cn.')', array('dn'), 0, 1 )
 			);
 			if ( $entries['count'] > 0 ) return $cn.': '.lang('Profile in use');
 		} else {
@@ -377,7 +379,7 @@ class soradius
 			$this->ldap_connection,
 			@ldap_list(
 				$this->ldap_connection,
-				$GLOBALS['phpgw_info']['server']['ldap_context'],
+				GlobalService::get('phpgw_info')['server']['ldap_context'],
 				'(phpgwAccountType=g)',
 				array('cn','gidnumber')
 			)
@@ -394,11 +396,11 @@ class soradius
 		$new = $this->_data['groupname_attribute']['new'];
 		$fname = $this->_tmp.'/radius_groupname_attribute.ldif';
 		$srv = 
-			'-H \''.$GLOBALS['phpgw_info']['server']['ldap_host'].'\' '.
-			'-D \''.$GLOBALS['phpgw_info']['server']['ldap_root_dn'].'\' '.
-			'-w \''.$GLOBALS['phpgw_info']['server']['ldap_root_pw'].'\' ';
+			'-H \''.GlobalService::get('phpgw_info')['server']['ldap_host'].'\' '.
+			'-D \''.GlobalService::get('phpgw_info')['server']['ldap_root_dn'].'\' '.
+			'-w \''.GlobalService::get('phpgw_info')['server']['ldap_root_pw'].'\' ';
 		$cmd = 'touch '.$fname.' && '.
-			'ldapsearch -LLLx -o nettimeout=none -s sub -a always '.$srv.' -b \''.$GLOBALS['phpgw_info']['server']['ldap_context'].'\' '.
+			'ldapsearch -LLLx -o nettimeout=none -s sub -a always '.$srv.' -b \''.GlobalService::get('phpgw_info')['server']['ldap_context'].'\' '.
 			'\'(&('.$old.'=*)(!('.$old.'=\00)))\' \'dn\' \''.$old.'\' | '.
 			'perl -p0e \'s/\n //g\' | '.
 			'sed \'/^dn: /achangetype: modify\' | '.

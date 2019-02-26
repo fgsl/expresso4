@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /********************************************************************\
   * eGroupWare - eGroupWare API - mime magic                           *
   * http://www.egroupware.org                                          *
@@ -213,14 +215,14 @@
 		*/
 		function analyze_data($data)
 		{
-			if(!is_writeable(@$GLOBALS['phpgw_info']['server']['temp_dir']))
+			if(!is_writeable(@GlobalService::get('phpgw_info')['server']['temp_dir']))
 			{
 				//nothing we can do but bail out
 				return false;
 			}
 
 			mt_srand(time());
-			$filename = $GLOBALS['phpgw_info']['server']['temp_dir'] . SEP
+			$filename = GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP
 				. md5( time() + mt_rand() ) . '.tmp';
 
 			$fp = @fopen($filename, 'ab');

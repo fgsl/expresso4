@@ -67,8 +67,8 @@ global $ADODB_Last_PEAR_Error;
 	
 	$class = ADODB_PEAR_ERROR_CLASS;
 	$ADODB_Last_PEAR_Error = new $class($s, $errno,
-		$GLOBALS['_PEAR_default_error_mode'],
-		$GLOBALS['_PEAR_default_error_options'], 
+		GlobalService::get('_PEAR_default_error_mode'],
+		GlobalService::get('_PEAR_default_error_options'], 
 		$errmsg);
 		
 	//print "<p>!$s</p>";

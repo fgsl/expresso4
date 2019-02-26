@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* phpGroupWare API - SOAP functions                                        *
 	* This file written by dietrich@ganx4.com                                  *
@@ -18,17 +20,17 @@
 	\**************************************************************************/
 
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'hello',
 		array('string'),
 		array('string')
 	);
 	function hello($serverid)
 	{
-		return CreateObject('soap.soapval','return','string',$GLOBALS['phpgw_info']['server']['site_title']);
+		return CreateObject('soap.soapval','return','string',GlobalService::get('phpgw_info')['server']['site_title']);
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoString',
 		array('string'),
 		array('string')
@@ -38,7 +40,7 @@
 		return CreateObject('soap.soapval','return','string',$inputString);
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoStringArray',
 		array('array'),
 		array('array')
@@ -48,7 +50,7 @@
 		return $inputStringArray;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoInteger',
 		array('int'),
 		array('int')
@@ -58,7 +60,7 @@
 		return $inputInteger;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoIntegerArray',
 		array('array'),
 		array('array')
@@ -68,7 +70,7 @@
 		return $inputIntegerArray;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoFloat',
 		array('float'),
 		array('float')
@@ -78,7 +80,7 @@
 		return $inputFloat;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoFloatArray',
 		array('array'),
 		array('array')
@@ -88,7 +90,7 @@
 		return $inputFloatArray;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoStruct',
 		array('SOAPStruct'),
 		array('SOAPStruct')
@@ -98,7 +100,7 @@
 		return $inputStruct;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoStructArray',
 		array('array'),
 		array('array')
@@ -108,7 +110,7 @@
 		return $inputStructArray;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoVoid',
 		array(),
 		array()
@@ -117,7 +119,7 @@
 	{
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoBase64',
 		array('base64'),
 		array('base64')
@@ -127,7 +129,7 @@
 		return base64_encode(base64_decode($b_encoded));
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'echoDate',
 		array('timeInstant'),
 		array('timeInstant')
@@ -137,13 +139,13 @@
 		return $timeInstant;
 	}
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'system_auth',
 		array('string','string','string'),
 		array('array')
 	);
 
-	$GLOBALS['server']->add_to_map(
+	GlobalService::get('server')->add_to_map(
 		'system_auth_verify',
 		array('string','string','string'),
 		array('array')

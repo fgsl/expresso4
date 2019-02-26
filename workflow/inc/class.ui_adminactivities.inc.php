@@ -674,8 +674,8 @@ class ui_adminactivities extends WorkflowUtils
 
 	/**
 	 *  Add a role to the process
-	 *  @param $rolename is the role name
-	 *  @param $roledescription is the role description
+	 *  @param $rolename string is the role name
+	 *  @param $roledescription string is the role description
 	 *  @return int new role id
 	 */
 	function add_process_role($rolename, $roledescription)
@@ -703,8 +703,8 @@ class ui_adminactivities extends WorkflowUtils
 	}
 	/**
 	 *  Show process activities data
-	 *  @param $rolename is the role name
-	 *  @param $roledescription is the role description
+	 *  @param $rolename string is the role name
+	 *  @param $roledescription string is the role description
 	 *  @return int new role id
 	 */
 	function show_process_activities($process_activities_data)

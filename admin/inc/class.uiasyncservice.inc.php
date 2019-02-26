@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare Admin - Timed Asynchron Services for eGroupWare               *
 	* Written by Ralf Becker <RalfBecker@outdoor-training.de>                  *
@@ -28,28 +30,28 @@
 		);
 		function uiasyncservice()
 		{
-			if (!is_object($GLOBALS['phpgw']->asyncservice))
+			if (!is_object(GlobalService::get('phpgw')->asyncservice))
 			{
-				$GLOBALS['phpgw']->asyncservice = CreateObject('phpgwapi.asyncservice');
+				GlobalService::get('phpgw')->asyncservice = CreateObject('phpgwapi.asyncservice');
 			}
 		}
 
 		function index()
 		{
-			if ($GLOBALS['phpgw']->acl->check('asyncservice_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('asyncservice_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('Asynchronous timed services');
-			if(!@is_object($GLOBALS['phpgw']->js))
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('Asynchronous timed services');
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
-			$async = $GLOBALS['phpgw']->asyncservice;	// use an own instance, as we might set debug=True
+			$async = GlobalService::get('phpgw')->asyncservice;	// use an own instance, as we might set debug=True
 
 			$async->debug = !!$_POST['debug'];
 
@@ -75,7 +77,7 @@
 
 				if ($_POST['test'])
 				{
-					$prefs = $GLOBALS['phpgw']->preferences->create_email_preferences();
+					$prefs = GlobalService::get('phpgw')->preferences->create_email_preferences();
 					if (!$async->set_timer($times,'test','admin.uiasyncservice.test',$prefs['email']['address']))
 					{
 						echo '<p><b>'.lang("Error setting timer, wrong syntax or maybe there's one already running !!!")."</b></p>\n";
@@ -102,21 +104,21 @@
 			{
 				$times = array('min' => '*/5');		// set some default
 			}
-			echo '<form action="'.$GLOBALS['phpgw']->link('/index.php',array('menuaction'=>'admin.uiasyncservice.index')).'" method="POST">'."\n<p>";
+			echo '<form action="'.GlobalService::get('phpgw')->link('/index.php',array('menuaction'=>'admin.uiasyncservice.index')).'" method="POST">'."\n<p>";
 			echo '<div style="text-align: left; margin: 10px;">'."\n";
 
 			$last_run = $async->last_check_run();
 			// Bug Fix - Nilton Neto - 19/10/2008			
-			$format = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'] . ' - H:i';
-			$tz_offset = (60*60*$GLOBALS['phpgw_info']['user']['preferences']['common']['tz_offset']);
+			$format = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'] . ' - H:i';
+			$tz_offset = (60*60*GlobalService::get('phpgw_info')['user']['preferences']['common']['tz_offset']);
 			$lr_date = $last_run['end'] ? date($format,$last_run['end']+$tz_offset) : lang('never');
 			echo '<p><b>'.lang('Async services last executed').'</b>: '.$lr_date.' ('.$last_run['run_by'].")</p>\n<hr>\n";
 
-			if (isset($_POST['asyncservice']) && $_POST['asyncservice'] != $GLOBALS['phpgw_info']['server']['asyncservice'])
+			if (isset($_POST['asyncservice']) && $_POST['asyncservice'] != GlobalService::get('phpgw_info')['server']['asyncservice'])
 			{
 				$config = CreateObject('phpgwapi.config','phpgwapi');
 				$config->read_repository();
-				$config->value('asyncservice',$GLOBALS['phpgw_info']['server']['asyncservice']=$_POST['asyncservice']);
+				$config->value('asyncservice',GlobalService::get('phpgw_info')['server']['asyncservice']=$_POST['asyncservice']);
 				$config->save_repository();
 				unset($config);
 			}
@@ -134,7 +136,7 @@
 				' <select name="asyncservice" onChange="this.form.submit();">';
 			foreach ($async_use as $key => $label)
 			{
-				$selected = $key == $GLOBALS['phpgw_info']['server']['asyncservice'] ? ' selected' : ''; 
+				$selected = $key == GlobalService::get('phpgw_info')['server']['asyncservice'] ? ' selected' : ''; 
 				echo "<option value=\"$key\"$selected>$label</option>\n";
 			}
 			echo "</select>\n";
@@ -183,7 +185,7 @@
 			{
 				$next = $async->next_run($times,True);
 
-				echo "<p>asyncservice::next_run(";print_r($times);echo")=".($next === False ? 'False':"'$next'=".$GLOBALS['phpgw']->common->show_date($next))."</p>\n";
+				echo "<p>asyncservice::next_run(";print_r($times);echo")=".($next === False ? 'False':"'$next'=".GlobalService::get('phpgw')->common->show_date($next))."</p>\n";
 			}
 			echo '<hr><p><input type="submit" name="cancel" value="'.lang('Cancel TestJob!')."\"> &nbsp;\n";
 			echo '<input type="submit" name="test" value="'.lang('Start TestJob!')."\">\n";
@@ -196,13 +198,13 @@
 				echo "<table border=1>\n<tr>\n<th>Id</th><th>".lang('Next run').'</th><th>'.lang('Times').'</th><th>'.lang('Method').'</th><th>'.lang('Data')."</th><th>".lang('LoginID')."</th></tr>\n";
 				foreach($jobs as $job)
 				{
-					//echo "<tr>\n<td>$job[id]</td><td>".$GLOBALS['phpgw']->common->show_date($job['next'])."</td><td>";
+					//echo "<tr>\n<td>$job[id]</td><td>".GlobalService::get('phpgw')->common->show_date($job['next'])."</td><td>";
 					echo "<tr>\n<td>$job[id]</td><td>".date("d/m/Y H:i", $job['next'])."</td><td>";
-					//print_r($GLOBALS['phpgw']->common->show_date($job['times']));
+					//print_r(GlobalService::get('phpgw')->common->show_date($job['times']));
 					print_r(date("d/m/Y H:i", $job['times']));
 					echo "</td><td>$job[method]</td><td>"; 
 					print_r($job['data']); 
-					echo "</td><td align=\"center\">".$GLOBALS['phpgw']->accounts->id2name($job[account_id])."</td></tr>\n"; 
+					echo "</td><td align=\"center\">".GlobalService::get('phpgw')->accounts->id2name($job[account_id])."</td></tr>\n"; 
 				}
 				echo "</table>\n";
 			}
@@ -217,17 +219,17 @@
 		
 		function test($to)
 		{
-			if (!is_object($GLOBALS['phpgw']->send))
+			if (!is_object(GlobalService::get('phpgw')->send))
 			{
-				$GLOBALS['phpgw']->send = CreateObject('phpgwapi.send');
+				GlobalService::get('phpgw')->send = CreateObject('phpgwapi.send');
 			}
-			$returncode = $GLOBALS['phpgw']->send->msg('email',$to,$subject='Asynchronous timed services','Greatings from cron ;-)');
+			$returncode = GlobalService::get('phpgw')->send->msg('email',$to,$subject='Asynchronous timed services','Greatings from cron ;-)');
 
 			if (!$returncode)	// not nice, but better than failing silently
 			{
 				echo "<p>bocalendar::send_update: sending message to '$to' subject='$subject' failed !!!<br>\n"; 
-				echo $GLOBALS['phpgw']->send->err['desc']."</p>\n";
+				echo GlobalService::get('phpgw')->send->err['desc']."</p>\n";
 			}
-			//print_r($GLOBALS['phpgw_info']['user']);
+			//print_r(GlobalService::get('phpgw_info')['user']);
 		}
 	}

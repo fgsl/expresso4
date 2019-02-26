@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare                                                               *
 	* http://www.egroupware.org                                                *
@@ -13,7 +15,7 @@
 // Only Modify the $file and $title variables.....
 	$title = $appname;
 	$file = Array(
-		'Site Configuration'	=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listConfigurations')
+		'Site Configuration'	=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listConfigurations')
 	);
 
 //Do not modify below this line

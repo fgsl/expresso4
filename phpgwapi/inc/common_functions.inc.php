@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 	 /**************************************************************************\
 	 * eGroupWare API - phpgwapi loader                                         *
 	 * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -286,7 +288,7 @@
 	*/
 
 	/*
-	$GLOBALS['phpgw_info']['server']['sanitize_types']['number'] = Array('type' => 'preg_match', 'string' => '/^[0-9]+$/i');
+	GlobalService::get('phpgw_info')['server']['sanitize_types']['number'] = Array('type' => 'preg_match', 'string' => '/^[0-9]+$/i');
 	*/
 
 	function sanitize($string,$type)
@@ -369,16 +371,16 @@
 				$password_numbers = Array('0','1','2','3','4','5','6','7','8','9');
 				$password_special_chars = Array(' ','~','`','!','@','#','$','%','^','&','*','(',')','_','+','-','=','{','}','|','[',']',"\\",':','"',';',"'",'<','>','?',',','.','/');
 
-				if(@isset($GLOBALS['phpgw_info']['server']['pass_min_length']) && is_int($GLOBALS['phpgw_info']['server']['pass_min_length']) && $GLOBALS['phpgw_info']['server']['pass_min_length'] > 1)
+				if(@isset(GlobalService::get('phpgw_info')['server']['pass_min_length']) && is_int(GlobalService::get('phpgw_info')['server']['pass_min_length']) && GlobalService::get('phpgw_info')['server']['pass_min_length'] > 1)
 				{
-					$min_length = $GLOBALS['phpgw_info']['server']['pass_min_length'];
+					$min_length = GlobalService::get('phpgw_info')['server']['pass_min_length'];
 				}
 				else
 				{
 					$min_length = 1;
 				}
 
-				if(@isset($GLOBALS['phpgw_info']['server']['pass_require_non_alpha']) && $GLOBALS['phpgw_info']['server']['pass_require_non_alpha'] == True)
+				if(@isset(GlobalService::get('phpgw_info')['server']['pass_require_non_alpha']) && GlobalService::get('phpgw_info')['server']['pass_require_non_alpha'] == True)
 				{
 					$pass_verify_non_alpha = False;
 				}
@@ -387,7 +389,7 @@
 					$pass_verify_non_alpha = True;
 				}
 				
-				if(@isset($GLOBALS['phpgw_info']['server']['pass_require_numbers']) && $GLOBALS['phpgw_info']['server']['pass_require_numbers'] == True)
+				if(@isset(GlobalService::get('phpgw_info')['server']['pass_require_numbers']) && GlobalService::get('phpgw_info')['server']['pass_require_numbers'] == True)
 				{
 					$pass_verify_num = False;
 				}
@@ -396,7 +398,7 @@
 					$pass_verify_num = True;
 				}
 
-				if(@isset($GLOBALS['phpgw_info']['server']['pass_require_special_char']) && $GLOBALS['phpgw_info']['server']['pass_require_special_char'] == True)
+				if(@isset(GlobalService::get('phpgw_info')['server']['pass_require_special_char']) && GlobalService::get('phpgw_info')['server']['pass_require_special_char'] == True)
 				{
 					$pass_verify_special_char = False;
 				}
@@ -426,17 +428,17 @@
 
 					if ($pass_verify_num == False)
 					{
-						$GLOBALS['phpgw_info']['flags']['msgbox_data']['Password requires at least one non-alpha character']=False;
+						GlobalService::get('phpgw_info')['flags']['msgbox_data']['Password requires at least one non-alpha character']=False;
 					}
 
 					if ($pass_verify_num == False)
 					{
-						$GLOBALS['phpgw_info']['flags']['msgbox_data']['Password requires at least one numeric character']=False;
+						GlobalService::get('phpgw_info')['flags']['msgbox_data']['Password requires at least one numeric character']=False;
 					}
 
 					if ($pass_verify_special_char == False)
 					{
-						$GLOBALS['phpgw_info']['flags']['msgbox_data']['Password requires at least one special character (non-letter and non-number)']=False;
+						GlobalService::get('phpgw_info')['flags']['msgbox_data']['Password requires at least one special character (non-letter and non-number)']=False;
 					}
 					
 					if ($pass_verify_num == True && $pass_verify_special_char == True)
@@ -445,16 +447,16 @@
 					}
 					return False;
 				}
-				$GLOBALS['phpgw_info']['flags']['msgbox_data']['Password must be at least '.$min_length.' characters']=False;
+				GlobalService::get('phpgw_info')['flags']['msgbox_data']['Password must be at least '.$min_length.' characters']=False;
 				return False;
 				break;
 			case 'any':
 				return True;
 				break;
 			default :
-				if (isset($GLOBALS['phpgw_info']['server']['sanitize_types'][$type]['type']))
+				if (isset(GlobalService::get('phpgw_info')['server']['sanitize_types'][$type]['type']))
 				{
-					if ($GLOBALS['phpgw_info']['server']['sanitize_types'][$type]['type']($GLOBALS['phpgw_info']['server']['sanitize_types'][$type]['string'], $string))
+					if (GlobalService::get('phpgw_info')['server']['sanitize_types'][$type]['type'](GlobalService::get('phpgw_info')['server']['sanitize_types'][$type]['string'], $string))
 					{
 						return True;
 					}
@@ -486,9 +488,9 @@
 					}
 					break;
 				case 'GLOBAL':
-					if(@isset($GLOBALS[$varname]))
+					if(@(GlobalService::isset($varname)))
 					{
-						$value = $GLOBALS[$varname];
+						$value = GlobalService::get($varname);
 						$i = $cnt+1;
 					}
 					break;
@@ -504,9 +506,9 @@
 					{
 						$meth = 'HTTP_'.strtoupper($method[$i]).'_VARS';
 					}
-					if(@isset($GLOBALS[$meth][$varname]))
+					if(@isset(GlobalService::get($meth)[$varname]))
 					{
-						$value = $GLOBALS[$meth][$varname];
+						$value = GlobalService::get($meth)[$varname];
 						$i = $cnt+1;
 					}
 					if(get_magic_quotes_gpc() && isset($value))
@@ -560,16 +562,16 @@
 					{
 						$meth = 'HTTP_POST_FILES';
 					}
-					if(@isset($GLOBALS[$meth][$varname]))
+					if(@isset(GlobalService::get($meth)[$varname]))
 					{
-						$value = $GLOBALS[$meth][$varname];
+						$value = GlobalService::get($meth)[$varname];
 						$i = $cnt+1;
 					}
 					break;
 				default:
-					if(@isset($GLOBALS[strtoupper($method[$i])][$varname]))
+					if(@isset(GlobalService::get(strtoupper($method[$i]))[$varname]))
 					{
-						$value = $GLOBALS[strtoupper($method[$i])][$varname];
+						$value = GlobalService::get(strtoupper($method[$i]))[$varname];
 						$i = $cnt+1;
 					}
 					break;
@@ -639,7 +641,7 @@
 		}
 		if($register)
 		{
-			$GLOBALS['phpgw_info'][$GLOBALS['phpgw_info']['flags']['currentapp']][$varname] = $result;
+			GlobalService::get('phpgw_info')[GlobalService::get('phpgw_info')['flags']['currentapp']][$varname] = $result;
 		}
 		return $result;
 	}
@@ -675,10 +677,10 @@
 	*/
 	function include_class($included_class)
 	{
-		if (!isset($GLOBALS['phpgw_info']['flags']['included_classes'][$included_class]) ||
-			!$GLOBALS['phpgw_info']['flags']['included_classes'][$included_class])
+		if (!isset(GlobalService::get('phpgw_info')['flags']['included_classes'][$included_class]) ||
+			!GlobalService::get('phpgw_info')['flags']['included_classes'][$included_class])
 		{
-			$GLOBALS['phpgw_info']['flags']['included_classes'][$included_class] = True;   
+			GlobalService::get('phpgw_info')['flags']['included_classes'][$included_class] = True;   
 			include(PHPGW_SERVER_ROOT.'/phpgwapi/inc/class.'.$included_class.'.inc.php');
 		}
 	}
@@ -697,7 +699,7 @@
          */
         function personalize_include_path($app,$prefix)
         {
-                $file_include = PHPGW_SERVER_ROOT . '/' . $app . '/templates/' . $GLOBALS['phpgw_info']['login_template_set'] . '/' . $prefix . '_' . $GLOBALS['phpgw_info']['login_template_set'] . '.php';
+                $file_include = PHPGW_SERVER_ROOT . '/' . $app . '/templates/' . GlobalService::get('phpgw_info')['login_template_set'] . '/' . $prefix . '_' . GlobalService::get('phpgw_info')['login_template_set'] . '.php';
                 if(!$file_include || !file_exists($file_include))
                 {
                         $file_include = PHPGW_SERVER_ROOT . '/' . $app . '/templates/default/' . $prefix .'_default.php';
@@ -764,9 +766,9 @@
 		global $phpgw_info, $phpgw;
 
 		/*
-		if(is_object(@$GLOBALS['phpgw']->log) && $class != 'phpgwapi.error' && $class != 'phpgwapi.errorlog')
+		if(is_object(@GlobalService::get('phpgw')->log) && $class != 'phpgwapi.error' && $class != 'phpgwapi.errorlog')
 		{
-			$GLOBALS['phpgw']->log->write(array('text'=>'D-Debug, dbg: %1','p1'=>'This class was run: '.$class,'file'=>__FILE__,'line'=>__LINE__));
+			GlobalService::get('phpgw')->log->write(array('text'=>'D-Debug, dbg: %1','p1'=>'This class was run: '.$class,'file'=>__FILE__,'line'=>__LINE__));
 		}
 		*/
 
@@ -842,53 +844,53 @@
 		if ($partscount == 2)
 		{
 			list($appname,$classname,$functionname) = explode(".", $method);
-			if (!is_object($GLOBALS[$classname]))
+			if (!is_object(GlobalService::get($classname)))
 			{
 				if ($classparams != '_UNDEF_' && ($classparams || $classparams != 'True'))
 				{
-					$GLOBALS[$classname] = CreateObject($appname.'.'.$classname, $classparams);
+					GlobalService::set($classname,CreateObject($appname.'.'.$classname, $classparams));
 				}
 				else
 				{
-					$GLOBALS[$classname] = CreateObject($appname.'.'.$classname);
+					GlobalService::set($classname,CreateObject($appname.'.'.$classname));
 				}
 			}
 
-			if (!method_exists($GLOBALS[$classname],$functionname))
+			if (!method_exists(GlobalService::get($classname),$functionname))
 			{
 				echo "<p><b>".function_backtrace()."</b>: no methode '$functionname' in class '$classname'</p>\n";
 				return False;
 			}
 			if ((is_array($functionparams) || $functionparams != '_UNDEF_') && ($functionparams || $functionparams != 'True'))
 			{
-				return $GLOBALS[$classname]->$functionname($functionparams);
+				return GlobalService::get($classname)->$functionname($functionparams);
 			}
 			else
 			{
-				return $GLOBALS[$classname]->$functionname();
+				return GlobalService::get($classname)->$functionname();
 			}
 		}
 		/* if the $method includes a parent class (multi-dimensional) then we have to work from it */
 		elseif ($partscount >= 3)
 		{
-			$GLOBALS['methodparts'] = explode(".", $method);
+			GlobalService::set('methodparts',explode(".", $method));
 			$classpartnum = $partscount - 1;
-			$appname = $GLOBALS['methodparts'][0];
-			$classname = $GLOBALS['methodparts'][$classpartnum];
-			$functionname = $GLOBALS['methodparts'][$partscount];
+			$appname = GlobalService::get('methodparts')[0];
+			$classname = GlobalService::get('methodparts')[$classpartnum];
+			$functionname = GlobalService::get('methodparts')[$partscount];
 			/* Now we clear these out of the array so that we can do a proper */
 			/* loop and build the $parentobject */
-			unset ($GLOBALS['methodparts'][0]);
-			unset ($GLOBALS['methodparts'][$classpartnum]);
-			unset ($GLOBALS['methodparts'][$partscount]);
-			reset ($GLOBALS['methodparts']);
+			unset (GlobalService::get('methodparts')[0]);
+			unset (GlobalService::get('methodparts')[$classpartnum]);
+			unset (GlobalService::get('methodparts')[$partscount]);
+			reset (GlobalService::get('methodparts'));
 			$firstparent = 'True';
-//			while (list ($key, $val) = each ($GLOBALS['methodparts']))
-			foreach($GLOBALS['methodparts'] as $val)
+//			while (list ($key, $val) = each (GlobalService::get('methodparts')))
+			foreach(GlobalService::get('methodparts') as $val)
 			{
 				if ($firstparent == 'True')
 				{
-					$parentobject = '$GLOBALS["'.$val.'"]';
+					$parentobject = 'GlobalService::get("'.$val.'"]';
 					$firstparent = False;
 				}
 				else
@@ -896,7 +898,7 @@
 					$parentobject .= '->'.$val;
 				}
 			}
-			unset($GLOBALS['methodparts']);
+			GlobalService::unset('methodparts');
 			$code = '$isobject = is_object('.$parentobject.'->'.$classname.');';
 			eval ($code);
 			if (!$isobject)
@@ -963,7 +965,7 @@
 	 @author milosch
 	 @discussion This is critical when looping on db object output and updating or inserting to the database using a copy of the db object.  This was first added to GroupWhere
 	 @syntax copyobj($source_object,$target_object);
-	 @example copyobj($GLOBALS['phpgw']->db,$mydb);
+	 @example copyobj(GlobalService::get('phpgw')->db,$mydb);
 	 @param $a   - Source Object
 	 @param $b   - Target Object (copy)
 	*/
@@ -1000,23 +1002,23 @@
 		{
 			if ($default_id == '')
 			{
-				return (isset($GLOBALS['phpgw_info']['user']['account_id'])?$GLOBALS['phpgw_info']['user']['account_id']:0);
+				return (isset(GlobalService::get('phpgw_info')['user']['account_id'])?GlobalService::get('phpgw_info')['user']['account_id']:0);
 			}
 			elseif (is_string($default_id))
 			{
-				return $GLOBALS['phpgw']->accounts->name2id($default_id);
+				return GlobalService::get('phpgw')->accounts->name2id($default_id);
 			}
 			return (int)$default_id;
 		}
 		elseif (is_string($account_id))
 		{
-			if($GLOBALS['phpgw']->accounts->exists((int)$account_id) == True)
+			if(GlobalService::get('phpgw')->accounts->exists((int)$account_id) == True)
 			{
 				return (int)$account_id;
 			}
 			else
 			{
-				return $GLOBALS['phpgw']->accounts->name2id($account_id);
+				return GlobalService::get('phpgw')->accounts->name2id($account_id);
 			}
 		}
 	}
@@ -1300,7 +1302,7 @@
 		}
 	}
 	
-	if( !isset($GLOBALS['phpgw_info']['flags']['disable_modify_request']) || !$GLOBALS['phpgw_info']['flags']['disable_modify_request'] == True )
+	if( !isset(GlobalService::get('phpgw_info')['flags']['disable_modify_request']) || !GlobalService::get('phpgw_info')['flags']['disable_modify_request'] == True )
 	{
 		foreach(array('_GET','_POST','_REQUEST','HTTP_GET_VARS','HTTP_POST_VARS','HTTP_REQUEST_VARS') as $where)
 		{
@@ -1310,14 +1312,14 @@
 			);
 			foreach(array('order','sort') as $name)
 			{
-				if (isset($GLOBALS[$where][$name]) && !is_array($GLOBALS[$where][$name]) && !preg_match($pregs[$name],$GLOBALS[$where][$name]))
+				if (isset(GlobalService::get($where)[$name]) && !is_array(GlobalService::get($where)[$name]) && !preg_match($pregs[$name],GlobalService::get($where)[$name]))
 				{
-					$GLOBALS[$where][$name] = '';
+					GlobalService::get($where)[$name] = '';
 				}
 			}
-			if (is_array($GLOBALS[$where]))
+			if (is_array(GlobalService::get($where)))
 			{
-				_check_script_tag($GLOBALS[$where],$where);
+				_check_script_tag(GlobalService::get($where),$where);
 			}
 		}
 	}

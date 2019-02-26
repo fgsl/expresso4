@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**
  * SMSAdapter
  *
@@ -21,9 +23,9 @@ class SMSAdapter extends ExpressoAdapter
 	{
 		parent::__construct( $id );
 		try {
-			if(!@is_object($GLOBALS['phpgw']->sms)) $GLOBALS['phpgw']->sms = CreateObject('phpgwapi.sms');
-			$this->_sms = $GLOBALS['phpgw']->sms;
-		} catch (Exception $e) {}
+			if(!@is_object(GlobalService::get('phpgw')->sms)) GlobalService::get('phpgw')->sms = CreateObject('phpgwapi.sms');
+			$this->_sms = GlobalService::get('phpgw')->sms;
+		} catch (\Exception $e) {}
 	}
 	
 	/**

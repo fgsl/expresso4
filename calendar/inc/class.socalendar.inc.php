@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.eGroupWare.org                                                *
@@ -29,13 +31,13 @@
 		
 		function socalendar($param)
 		{
-			$this->db = $GLOBALS['phpgw']->db;
-			if(!is_object($GLOBALS['phpgw']->datetime))
+			$this->db = GlobalService::get('phpgw')->db;
+			if(!is_object(GlobalService::get('phpgw')->datetime))
 			{
-				$GLOBALS['phpgw']->datetime = createobject('phpgwapi.date_time');
+				GlobalService::get('phpgw')->datetime = createobject('phpgwapi.date_time');
 			}
 
-			$this->owner = (!isset($param['owner']) || $param['owner'] == 0?$GLOBALS['phpgw_info']['user']['account_id']:$param['owner']);
+			$this->owner = (!isset($param['owner']) || $param['owner'] == 0?GlobalService::get('phpgw_info')['user']['account_id']:$param['owner']);
 			$this->filter = (isset($param['filter']) && $param['filter'] != ''?$param['filter']:$this->filter);
 			$this->cat_id = (isset($param['category']) && $param['category'] != ''?$param['category']:$this->cat_id);
 			if(isset($param['g_owner']) && is_array($param['g_owner']))
@@ -55,9 +57,9 @@
 		// It returns uidNumber and cn ( Retorna o uidNumber e o cn )
 		function search_uidNumber($mail)
 		{
-			$connection = $GLOBALS['phpgw']->common->ldapConnect();
+			$connection = GlobalService::get('phpgw')->common->ldapConnect();
 			$justthese = array("uidNumber","cn","mail");
-			$search = ldap_search($connection, $GLOBALS['phpgw_info']['server']['ldap_context'], "mail=" . $mail, $justthese);
+			$search = ldap_search($connection, GlobalService::get('phpgw_info')['server']['ldap_context'], "mail=" . $mail, $justthese);
 			$result = ldap_get_entries($connection, $search);
 			ldap_close($connection);
 			return $result;
@@ -85,11 +87,11 @@
 			//$extra .= ($this->cat_id?"AND phpgw_cal.category like '%".$this->cat_id."%' ":'');
 			if ($this->cat_id)
 			{
-				if (!is_object($GLOBALS['phpgw']->categories))
+				if (!is_object(GlobalService::get('phpgw')->categories))
 				{
-					$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+					GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 				}
-				$cats = $GLOBALS['phpgw']->categories->return_all_children($this->cat_id);
+				$cats = GlobalService::get('phpgw')->categories->return_all_children($this->cat_id);
 				$extra .= "AND (phpgw_cal.category".(count($cats) > 1 ? " IN ('".implode("','",$cats)."')" : '=\''.(int)$this->cat_id."'");
 				foreach($cats as $cat)
 				{
@@ -99,11 +101,11 @@
 			}
 			if($owner_id)
 			{
-				return $this->cal->list_events($startYear,$startMonth,$startDay,$endYear,$endMonth,$endDay,$extra,$GLOBALS['phpgw']->datetime->tz_offset,$owner_id);
+				return $this->cal->list_events($startYear,$startMonth,$startDay,$endYear,$endMonth,$endDay,$extra,GlobalService::get('phpgw')->datetime->tz_offset,$owner_id);
 			}
 			else
 			{
-				return $this->cal->list_events($startYear,$startMonth,$startDay,$endYear,$endMonth,$endDay,$extra,$GLOBALS['phpgw']->datetime->tz_offset);
+				return $this->cal->list_events($startYear,$startMonth,$startDay,$endYear,$endMonth,$endDay,$extra,GlobalService::get('phpgw')->datetime->tz_offset);
 			}
 		}
 
@@ -113,18 +115,18 @@
 			{
 				$owner_id = $this->is_group ? $this->g_owner : $this->owner;
 			}
-			if($GLOBALS['phpgw_info']['server']['calendar_type'] != 'sql' ||
+			if(GlobalService::get('phpgw_info')['server']['calendar_type'] != 'sql' ||
 				!count($owner_id))	// happens with empty groups
 			{
 				return Array();
 			}
 
-			$starttime = mktime(0,0,0,$smonth,$sday,$syear) - $GLOBALS['phpgw']->datetime->tz_offset;
-			$endtime = mktime(23,59,59,$emonth,$eday,$eyear) - $GLOBALS['phpgw']->datetime->tz_offset;
+			$starttime = mktime(0,0,0,$smonth,$sday,$syear) - GlobalService::get('phpgw')->datetime->tz_offset;
+			$endtime = mktime(23,59,59,$emonth,$eday,$eyear) - GlobalService::get('phpgw')->datetime->tz_offset;
 			$sql = "AND phpgw_cal_user.cal_login IN (".
 				(is_array($owner_id) ? implode(',',$owner_id) : $owner_id).')';
 
-//			$member_groups = $GLOBALS['phpgw']->accounts->membership($this->user);
+//			$member_groups = GlobalService::get('phpgw')->accounts->membership($this->user);
 //			@reset($member_groups);
 //			while(list($key,$group_info) = each($member_groups))
 //			{
@@ -246,7 +248,7 @@
 
 		function change_owner($account_id,$new_owner)
 		{
-			if($GLOBALS['phpgw_info']['server']['calendar_type'] == 'sql')
+			if(GlobalService::get('phpgw_info')['server']['calendar_type'] == 'sql')
 			{
 				$db2 = $this->cal->stream;
 				$this->cal->stream->query('SELECT cal_id FROM phpgw_cal_user WHERE cal_login='.$account_id,__LINE__,__FILE__);
@@ -302,7 +304,7 @@
 
 		function find_recur_exceptions($event_id)
 		{
-			if($GLOBALS['phpgw_info']['server']['calendar_type'] == 'sql')
+			if(GlobalService::get('phpgw_info')['server']['calendar_type'] == 'sql')
 			{
 				$arr = Array();
 				$this->cal->query('SELECT datetime FROM phpgw_cal WHERE reference='.$event_id,__LINE__,__FILE__);

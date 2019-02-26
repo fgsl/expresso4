@@ -151,7 +151,7 @@ class Log_syslog extends Log
      *
      * @param int $priority     PEAR_LOG_* value to convert to LOG_* value.
      *
-     * @return  The LOG_* representation of $priority.
+     * @return array The LOG_* representation of $priority.
      *
      * @access private
      */

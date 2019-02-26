@@ -2,7 +2,7 @@
 require_once('class.utils.php');
 /**
  * Contains useful methods for URL building and handling
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @author Marcos Pont
  * @version 1.0
  * @link http://workflow.celepar.parana/doc-workflow/classes/urlutils Complete reference
@@ -183,7 +183,7 @@ class UrlUtils extends Utils
 	/**
 	 * Get file
 	 * @access public
-	 * @return sting
+	 * @return string
 	 */
 	function getFile() {
 		return (isset($this->file) && !empty($this->file) ? $this->file : NULL);
@@ -214,8 +214,8 @@ class UrlUtils extends Utils
 	
 	/**
 	 * Add a parameter 
-	 * @param $name parameter name
-	 * @param $value parameter value
+	 * @param $name string parameter name
+	 * @param $value mixed parameter value
 	 * @access public
 	 * @return void
 	 */

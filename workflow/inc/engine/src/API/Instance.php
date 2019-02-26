@@ -778,7 +778,7 @@ class Instance extends Base {
   /**
    * Sets the instance status
    *
-   * @param string_type $status it can be: 'completed', 'active', 'aborted' or 'exception'
+   * @param string $status it can be: 'completed', 'active', 'aborted' or 'exception'
    * @return bool
    * @access public
    */
@@ -1171,7 +1171,7 @@ class Instance extends Base {
     //$this->db->
     $result = $this->query("SELECT 1 FROM " . GALAXIA_TABLE_PREFIX . "instances i, " . GALAXIA_TABLE_PREFIX . "interinstance_relations ir WHERE (ir.wf_child_instance_id = i.wf_instance_id) AND (i.wf_status IN ('active', 'exception')) AND (ir.wf_parent_lock = 1) AND (ir.wf_parent_instance_id = ?)", array($this->instanceId));
     if ($result->numRows() > 0)
-      die("Esta instância está aguardando que outras instâncias, das quais depende, sejam finalizadas.");
+      die("Esta instï¿½ncia estï¿½ aguardando que outras instï¿½ncias, das quais depende, sejam finalizadas.");
     //ensure it's false at first
     $this->setActivityCompleted(false);
 

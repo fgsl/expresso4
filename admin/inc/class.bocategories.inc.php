@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Admin - Global categories                                   *
 	* http://www.egroupware.org                                                *
@@ -32,7 +34,7 @@
 			}
 			else
 			{
-				$this->cats = CreateObject('phpgwapi.categories',$GLOBALS['phpgw_info']['user']['account_id'],'phpgw');
+				$this->cats = CreateObject('phpgwapi.categories',GlobalService::get('phpgw_info')['user']['account_id'],'phpgw');
 			}
 
 			$this->read_sessiondata();
@@ -77,12 +79,12 @@
 		function save_sessiondata($data)
 		{
 			if($this->debug) { echo '<br>Save:'; _debug_array($data); }
-			$GLOBALS['phpgw']->session->appsession('session_data','admin_cats',$data);
+			GlobalService::get('phpgw')->session->appsession('session_data','admin_cats',$data);
 		}
 
 		function read_sessiondata()
 		{
-			$data = $GLOBALS['phpgw']->session->appsession('session_data','admin_cats');
+			$data = GlobalService::get('phpgw')->session->appsession('session_data','admin_cats');
 			if($this->debug) { echo '<br>Read:'; _debug_array($data); }
 
 			$this->start  = $data['start'];

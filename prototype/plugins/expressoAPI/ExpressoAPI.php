@@ -140,13 +140,13 @@ class ExpressoAPI
 			$resource = new $class();
 			
 			// Pass arguments to request format
-			$request = new stdClass();
+			$request = new \stdClass();
 			$request->data = (is_null($arguments[0])? array() : $arguments[0]);
 			
 			// Call method to execute
 			$resource->post($request);
 			
-			$self->_last_response = new stdClass();
+			$self->_last_response = new \stdClass();
 			$self->_last_response->result = (object)$resource->getResult();
 			$self->_last_result = true;
 			

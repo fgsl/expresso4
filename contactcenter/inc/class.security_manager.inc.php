@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -41,15 +43,15 @@
 							$id_entry = (int)$id_entry;
 							
 							$sql  = 'SELECT COUNT(id_contact) AS nfields FROM phpgw_cc_contact WHERE id_contact=\''.$id_entry;
-							$sql .= '\' AND id_owner=\''.$GLOBALS['phpgw_info']['user']['account_id'].'\'';
+							$sql .= '\' AND id_owner=\''.GlobalService::get('phpgw_info')['user']['account_id'].'\'';
 
-							$result = $GLOBALS['phpgw']->db->query($sql);
+							$result = GlobalService::get('phpgw')->db->query($sql);
 
 							if ($result)
 							{
-								if ($GLOBALS['phpgw']->db->next_record())
+								if (GlobalService::get('phpgw')->db->next_record())
 								{
-									$result = $GLOBALS['phpgw']->db->f('nfields');
+									$result = GlobalService::get('phpgw')->db->f('nfields');
 
 									if ($result)
 									{

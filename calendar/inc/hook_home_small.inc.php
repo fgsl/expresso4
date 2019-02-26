@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -17,11 +19,11 @@
 	if($d1 == 'htt' || $d1 == 'ftp' )
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>'."\n";
-		$GLOBALS['phpgw']->common->phpgw_exit();
+		GlobalService::get('phpgw')->common->phpgw_exit();
 	}
 	unset($d1);
 
-	$today = $GLOBALS['phpgw']->datetime->users_localtime;
+	$today = GlobalService::get('phpgw')->datetime->users_localtime;
 	$dates = array($today);
 	$wday = date('w',$today);
 	if($wday=='5') // if it's Friday, show the weekend, plus Monday
@@ -35,7 +37,7 @@
 	}
 	$dates[] = $dates[count($dates)-1] + 86400; // the next business day
 
-	$extra_data = $GLOBALS['css']."\n"
+	$extra_data = GlobalService::get('css')."\n"
 			. '<table border="0" width="100%" cellspacing="0" cellpadding="1">'
 			. '<tr><td valign="top" width="100%">';
 	foreach($dates as $id=>$day)
@@ -50,7 +52,7 @@
 	}
 	$extra_data .= '</td></tr></table>'."\n";
 
-	$GLOBALS['extra_data'] = $extra_data;
+	GlobalService::set('extra_data', $extra_data);
 
 	unset($dates);
 	unset($today);

@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /****************************************************************************\
  * Expresso Livre - SMS - administration									*
  * 																			*
@@ -21,32 +23,32 @@ class uisms
 	{
 		if(!isset($_SESSION['admin']['ldap_host']))
 		{
-			$_SESSION['admin']['server']['ldap_host'] = $GLOBALS['phpgw_info']['server']['ldap_host'];
-			$_SESSION['admin']['server']['ldap_root_dn'] = $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-			$_SESSION['admin']['server']['ldap_host_pw'] = $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-			$_SESSION['admin']['server']['ldap_context'] = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			$_SESSION['admin']['server']['ldap_host'] = GlobalService::get('phpgw_info')['server']['ldap_host'];
+			$_SESSION['admin']['server']['ldap_root_dn'] = GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+			$_SESSION['admin']['server']['ldap_host_pw'] = GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+			$_SESSION['admin']['server']['ldap_context'] = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		}
 		$this->bo = CreateObject('admin.bosms');
 	}
 
 	final function edit_conf()
 	{
-		if($GLOBALS['phpgw']->acl->check('applications_access',1,'admin'))
+		if(GlobalService::get('phpgw')->acl->check('applications_access',1,'admin'))
 		{
-			$GLOBALS['phpgw']->redirect_link('/index.php');
+			GlobalService::get('phpgw')->redirect_link('/index.php');
 		}
 
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin') .' - ' . lang('SMS settings');
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin') .' - ' . lang('SMS settings');
 
-		if(!@is_object($GLOBALS['phpgw']->js))
+		if(!@is_object(GlobalService::get('phpgw')->js))
 		{
-			$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+			GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 		}
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
-		$GLOBALS['phpgw']->css->validate_file('prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
+		GlobalService::get('phpgw')->css->validate_file('prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
 
-		$webserver_url = $GLOBALS['phpgw_info']['server']['webserver_url'];
+		$webserver_url = GlobalService::get('phpgw_info')['server']['webserver_url'];
 		$webserver_url = ( !empty($webserver_url) ) ? $webserver_url : '/';
 
 		if(strrpos($webserver_url,'/') === false || strrpos($webserver_url,'/') != (strlen($webserver_url)-1))
@@ -55,9 +57,9 @@ class uisms
 		$js = array('connector','xtools','functions');
 		
 		foreach( $js as $tmp )
-			$GLOBALS['phpgw']->js->validate_file('ldap',$tmp,'admin');
+			GlobalService::get('phpgw')->js->validate_file('ldap',$tmp,'admin');
 
-		$GLOBALS['phpgw']->common->phpgw_header();
+		GlobalService::get('phpgw')->common->phpgw_header();
 		echo parse_navbar();
 		echo '<script type="text/javascript">var path_adm="'.$webserver_url .'"</script>';
 
@@ -68,7 +70,7 @@ class uisms
 				$ous .= "<option value='".$tmp."'>".$tmp."</option>";
 		}
 
-		$groups_sms = $GLOBALS['phpgw_info']['server']['sms_groups'];
+		$groups_sms = GlobalService::get('phpgw_info')['server']['sms_groups'];
 
 		$lang_user = lang('user');
 		$lang_passwd = lang('password');
@@ -103,10 +105,10 @@ class uisms
 			}
 		}
 		
-		$GLOBALS['phpgw']->template->set_file(array('sms' => 'sms.tpl'));
-		$GLOBALS['phpgw']->template->set_block('sms','sms_page','sms_page');
-		$GLOBALS['phpgw']->template->set_var(array(
-			'action_url'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uisms.add'),
+		GlobalService::get('phpgw')->template->set_file(array('sms' => 'sms.tpl'));
+		GlobalService::get('phpgw')->template->set_block('sms','sms_page','sms_page');
+		GlobalService::get('phpgw')->template->set_var(array(
+			'action_url'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uisms.add'),
 			'lang_title'				=> lang('SMS settings'),
 			'lang_save'					=> lang('Save'),
 			'lang_cancel'				=> lang('Cancel'),
@@ -121,38 +123,38 @@ class uisms
 			'lang_sms_user'				=> lang('username sms system'),
 			'lang_sms_passwd'			=> lang('password sms system'),
 			'lang_credentials'			=> lang('credentials'),
-			'value_sms_enabled_true'	=> ($GLOBALS['phpgw_info']['server']['sms_enabled']) ? ' selected="selected"' : '',
-			'value_sms_enabled_false'	=> ($GLOBALS['phpgw_info']['server']['sms_enabled']) ? '' : ' selected="selected"',
-			'value_sms_wsdl'			=> ($GLOBALS['phpgw_info']['server']['sms_wsdl'   ]) ? $GLOBALS['phpgw_info']['server']['sms_wsdl'] : '',
-			'value_sms_user'			=> ($GLOBALS['phpgw_info']['server']['sms_user'   ]) ? $GLOBALS['phpgw_info']['server']['sms_user'] : '',
+			'value_sms_enabled_true'	=> (GlobalService::get('phpgw_info')['server']['sms_enabled']) ? ' selected="selected"' : '',
+			'value_sms_enabled_false'	=> (GlobalService::get('phpgw_info')['server']['sms_enabled']) ? '' : ' selected="selected"',
+			'value_sms_wsdl'			=> (GlobalService::get('phpgw_info')['server']['sms_wsdl'   ]) ? GlobalService::get('phpgw_info')['server']['sms_wsdl'] : '',
+			'value_sms_user'			=> (GlobalService::get('phpgw_info')['server']['sms_user'   ]) ? GlobalService::get('phpgw_info')['server']['sms_user'] : '',
 			'grps_sortable'				=> $grps_sortable,
 			'grp_default'				=> $this->create_li($lang_user,$lang_passwd),
 			'groups_sms'				=> $gsms,
 			'ous_ldap'					=> $ous
 		));
 
-		$GLOBALS['phpgw']->template->pparse('out','sms_page');
+		GlobalService::get('phpgw')->template->pparse('out','sms_page');
 	}
 
 	function display_row($label, $value)
 	{
-		$GLOBALS['phpgw']->template->set_var('tr_color',$this->nextmatchs->alternate_row_color());
-		$GLOBALS['phpgw']->template->set_var('label',$label);
-		$GLOBALS['phpgw']->template->set_var('value',$value);
-		$GLOBALS['phpgw']->template->parse('rows','row',True);
+		GlobalService::get('phpgw')->template->set_var('tr_color',$this->nextmatchs->alternate_row_color());
+		GlobalService::get('phpgw')->template->set_var('label',$label);
+		GlobalService::get('phpgw')->template->set_var('value',$value);
+		GlobalService::get('phpgw')->template->parse('rows','row',True);
 	}
 
 	function add()
 	{
 
-		if($GLOBALS['phpgw']->acl->check('applications_access',1,'admin'))
+		if(GlobalService::get('phpgw')->acl->check('applications_access',1,'admin'))
 		{
-			$GLOBALS['phpgw']->redirect_link('/index.php');
+			GlobalService::get('phpgw')->redirect_link('/index.php');
 		}
 
 		if ($_POST['cancel'])
 		{
-			$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+			GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 		}
 
 		if ( $_POST['save'] )
@@ -181,7 +183,7 @@ class uisms
 			$this->bo->setConfDB($conf);
 		}
 
-		$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+		GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 	}
 
 	function create_li($lb_user, $lb_passwd, $id = 'default', $title = '', $user = '', $priority = -1)

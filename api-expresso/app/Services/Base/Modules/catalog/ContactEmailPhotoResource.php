@@ -8,16 +8,16 @@ use App\Services\Base\Commons\Errors;
 class ContactEmailPhotoResource extends CatalogAdapter {
 
 	public function setDocumentation() {
-		$this->setResource("Catalog","Catalog/Photo","Retorna a Foto do Usuário.",array("GET"));
+		$this->setResource("Catalog","Catalog/Photo","Retorna a Foto do Usuï¿½rio.",array("GET"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
-		$this->addResourceParam("email","string",false,"Email do usuário que será buscado a foto.");
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
+		$this->addResourceParam("email","string",false,"Email do usuï¿½rio que serï¿½ buscado a foto.");
 	}
 
 	private function getUserJpegPhotoByEmail($mail)
 	{
 		$filter="(&(phpgwAccountType=u)(mail=".$mail."))";
-		$ldap_context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$ldap_context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		$justthese = array('jpegPhoto');
 		$ds = $this->getLdapCatalog()->ds;
 		if( $ds ){

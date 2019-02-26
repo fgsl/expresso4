@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar - Custom fields and sorting                        *
   * http://www.egroupware.org                                                *
@@ -12,7 +14,7 @@
 
 
 	require_once(PHPGW_INCLUDE_ROOT.'/calendar/inc/class.bocustom_fields.inc.php');
-	$GLOBALS['phpgw_info']['flags']['included_classes']['bocustom_fields'] = True; // for 0.9.14
+	GlobalService::get('phpgw_info')['flags']['included_classes']['bocustom_fields'] = True; // for 0.9.14
 
 	class uicustom_fields extends bocustom_fields
 	{
@@ -25,30 +27,30 @@
 		{
 			$this->bocustom_fields();	// call constructor of extended class
 
-			$this->tpl = $GLOBALS['phpgw']->template;
-			if (!is_object($GLOBALS['phpgw']->nextmatchs))
+			$this->tpl = GlobalService::get('phpgw')->template;
+			if (!is_object(GlobalService::get('phpgw')->nextmatchs))
 			{
-				$GLOBALS['phpgw']->nextmatchs = CreateObject('phpgwapi.nextmatchs');
+				GlobalService::get('phpgw')->nextmatchs = CreateObject('phpgwapi.nextmatchs');
 			}
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
-			$this->html = &$GLOBALS['phpgw']->html;
+			$this->html = &GlobalService::get('phpgw')->html;
 		}
 
 		function index($error='')
 		{
-			if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 			{
-			      $GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+			      GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['calendar']['title'].' - '.lang('Custom fields and sorting');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['calendar']['title'].' - '.lang('Custom fields and sorting');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
-			$this->tpl = $GLOBALS['phpgw']->template;
+			$this->tpl = GlobalService::get('phpgw')->template;
 
 			$this->tpl->set_unknowns('remove');
 			$this->tpl->set_file(array(
@@ -79,7 +81,7 @@
 				'lang_order'   => lang('Order'),
 				'lang_title'   => lang('Title-row'),
 				'lang_disabled'=> lang('Disabled'),
-				'action_url'   => $GLOBALS['phpgw']->link('/index.php','menuaction=calendar.uicustom_fields.submited'),
+				'action_url'   => GlobalService::get('phpgw')->link('/index.php','menuaction=calendar.uicustom_fields.submited'),
 				'save_button'  => $this->html->submit_button('save','Save'),
 				'cancel_button'=> $this->html->submit_button('cancel','Cancel'),
 			));
@@ -106,7 +108,7 @@
 			));
 			if ($name !== 'add')
 			{
-				$this->tpl->set_var('tr_color',$values['title'] ? $GLOBALS['phpgw_info']['theme']['th_bg'] : $GLOBALS['phpgw']->nextmatchs->alternate_row_color());
+				$this->tpl->set_var('tr_color',$values['title'] ? GlobalService::get('phpgw_info')['theme']['th_bg'] : GlobalService::get('phpgw')->nextmatchs->alternate_row_color());
 				$this->tpl->parse('rows','row',True);
 			}
 		}
@@ -115,7 +117,7 @@
 		{
 			if ($_POST['cancel'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/admin/');
+				GlobalService::get('phpgw')->redirect_link('/admin/');
 			}
 			//echo "<pre>"; print_r($_POST); echo "</pre>";
 
@@ -201,7 +203,7 @@
 			if (!$error && isset($_POST['save']))
 			{
 				$this->save();
-				$GLOBALS['phpgw']->redirect_link('/admin/');
+				GlobalService::get('phpgw')->redirect_link('/admin/');
 			}
 			$this->index($error);
 		}

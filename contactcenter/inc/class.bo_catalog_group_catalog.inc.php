@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -123,14 +125,14 @@
 		{	
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{
@@ -179,14 +181,14 @@
 		{
 			if (!is_array($id_contacts) or !is_array($fields) or ($other_data != false and !is_array($other_data)))
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_multiple_entry parameter type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else {
 					exit('Argument Error on: <br>File:'.__FILE__.'<br>Line:'.__LINE__.'<br>');

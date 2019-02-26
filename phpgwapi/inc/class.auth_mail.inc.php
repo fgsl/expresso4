@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Auth from Mail server                                   *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -30,49 +32,49 @@
 		{
 			error_reporting(error_reporting() - 2);
 
-			if ($GLOBALS['phpgw_info']['server']['mail_login_type'] == 'vmailmgr')
+			if (GlobalService::get('phpgw_info')['server']['mail_login_type'] == 'vmailmgr')
 			{
-				$username = $username . '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$username = $username . '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
-			if ($GLOBALS['phpgw_info']['server']['mail_server_type']=='imap')
+			if (GlobalService::get('phpgw_info')['server']['mail_server_type']=='imap')
 			{
-				$GLOBALS['phpgw_info']['server']['mail_port'] = '143';
+				GlobalService::get('phpgw_info')['server']['mail_port'] = '143';
 			}
-			elseif ($GLOBALS['phpgw_info']['server']['mail_server_type']=='pop3')
+			elseif (GlobalService::get('phpgw_info')['server']['mail_server_type']=='pop3')
 			{
-				$GLOBALS['phpgw_info']['server']['mail_port'] = '110';
+				GlobalService::get('phpgw_info')['server']['mail_port'] = '110';
 			}
- 			elseif ($GLOBALS['phpgw_info']['server']['mail_server_type']=='imaps')
+ 			elseif (GlobalService::get('phpgw_info')['server']['mail_server_type']=='imaps')
  			{
- 				$GLOBALS['phpgw_info']['server']['mail_port'] = '993';
+ 				GlobalService::get('phpgw_info')['server']['mail_port'] = '993';
  			}
- 			elseif ($GLOBALS['phpgw_info']['server']['mail_server_type']=='pop3s')
+ 			elseif (GlobalService::get('phpgw_info')['server']['mail_server_type']=='pop3s')
  			{
- 				$GLOBALS['phpgw_info']['server']['mail_port'] = '995';
+ 				GlobalService::get('phpgw_info')['server']['mail_port'] = '995';
  			}
 
-			if( $GLOBALS['phpgw_info']['server']['mail_server_type']=='pop3')
+			if( GlobalService::get('phpgw_info')['server']['mail_server_type']=='pop3')
 			{
-				$mailauth = imap_open('{'.$GLOBALS['phpgw_info']['server']['mail_server'].'/pop3'
-					.':'.$GLOBALS['phpgw_info']['server']['mail_port'].'}INBOX', $username , $passwd);
+				$mailauth = imap_open('{'.GlobalService::get('phpgw_info')['server']['mail_server'].'/pop3'
+					.':'.GlobalService::get('phpgw_info')['server']['mail_port'].'}INBOX', $username , $passwd);
 			}
- 			elseif ( $GLOBALS['phpgw_info']['server']['mail_server_type']=='imaps' )
+ 			elseif ( GlobalService::get('phpgw_info')['server']['mail_server_type']=='imaps' )
  			{
  				// IMAPS support:
- 				$mailauth = imap_open('{'.$GLOBALS['phpgw_info']['server']['mail_server']."/ssl/novalidate-cert"
+ 				$mailauth = imap_open('{'.GlobalService::get('phpgw_info')['server']['mail_server']."/ssl/novalidate-cert"
                                          .':993}INBOX', $username , $passwd);
  			}
- 			elseif ( $GLOBALS['phpgw_info']['server']['mail_server_type']=='pop3s' )
+ 			elseif ( GlobalService::get('phpgw_info')['server']['mail_server_type']=='pop3s' )
  			{
  				// POP3S support:
- 				$mailauth = imap_open('{'.$GLOBALS['phpgw_info']['server']['mail_server']."/ssl/novalidate-cert"
+ 				$mailauth = imap_open('{'.GlobalService::get('phpgw_info')['server']['mail_server']."/ssl/novalidate-cert"
                                          .':995}INBOX', $username , $passwd);
 			}
 			else
 			{
 				/* assume imap */
-				$mailauth = imap_open('{'.$GLOBALS['phpgw_info']['server']['mail_server']
-					.':'.$GLOBALS['phpgw_info']['server']['mail_port'].'}INBOX', $username , $passwd);
+				$mailauth = imap_open('{'.GlobalService::get('phpgw_info')['server']['mail_server']
+					.':'.GlobalService::get('phpgw_info')['server']['mail_port'].'}INBOX', $username , $passwd);
 			}
 
 			error_reporting(error_reporting() + 2);
@@ -95,11 +97,11 @@
 		// Since there account data will still be stored in SQL, this should be safe to do. (jengo)
 		function update_lastlogin($account_id, $ip)
 		{
-			$GLOBALS['phpgw']->db->query("select account_lastlogin from phpgw_accounts where account_id='$account_id'",__LINE__,__FILE__);
-			$GLOBALS['phpgw']->db->next_record();
-			$this->previous_login = $GLOBALS['phpgw']->db->f('account_lastlogin');
+			GlobalService::get('phpgw')->db->query("select account_lastlogin from phpgw_accounts where account_id='$account_id'",__LINE__,__FILE__);
+			GlobalService::get('phpgw')->db->next_record();
+			$this->previous_login = GlobalService::get('phpgw')->db->f('account_lastlogin');
 
-			$GLOBALS['phpgw']->db->query("update phpgw_accounts set account_lastloginfrom='"
+			GlobalService::get('phpgw')->db->query("update phpgw_accounts set account_lastloginfrom='"
 				. "$ip', account_lastlogin='" . time()
 				. "' where account_id='$account_id'",__LINE__,__FILE__);
 		}

@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 defined('PHPGW_INCLUDE_ROOT') || define('PHPGW_INCLUDE_ROOT','../');	
 defined('PHPGW_API_INC') || define('PHPGW_API_INC','../phpgwapi/inc');
 include_once(PHPGW_API_INC.'/class.db_egw.inc.php');
@@ -18,9 +20,9 @@ class db_functions
 		}*/
 
 		if (is_array($_SESSION['phpgw_info']['expresso']['server']))
-			$GLOBALS['phpgw_info']['server'] = $_SESSION['phpgw_info']['expresso']['server'];
+			GlobalService::get('phpgw_info')['server'] = $_SESSION['phpgw_info']['expresso']['server'];
 		else
-			$_SESSION['phpgw_info']['expresso']['server'] = $GLOBALS['phpgw_info']['server'];
+			$_SESSION['phpgw_info']['expresso']['server'] = GlobalService::get('phpgw_info')['server'];
 		
 		$this->db = new db_egw();
 		$this->db->Halt_On_Error = 'no';
@@ -48,7 +50,7 @@ class db_functions
 			$DN =  strtolower( $params['dn'] );
 			do {
 				$DNs[] = $DN;
-				if ( $DN == $GLOBALS['phpgw_info']['server']['ldap_context'] ) $DN = '';
+				if ( $DN == GlobalService::get('phpgw_info')['server']['ldap_context'] ) $DN = '';
 				else $DN = substr( $DN, strpos( $DN, ',' ) + 1 );
 			} while ( strpos( $DN, ',' ) !== false );
 			
@@ -117,7 +119,7 @@ class db_functions
 			$aplications[] = $this->db->row();
 		}
 		
-		//Escrevre no Banco as aplicações que o gerente tem direito de disponibilizar aos seus usuarios.
+		//Escrevre no Banco as aplicaï¿½ï¿½es que o gerente tem direito de disponibilizar aos seus usuarios.
 		for ($i=0; $i<count($aplications); $i++)
 		{
 			$sql = "INSERT INTO phpgw_expressoadmin_apps (manager_lid, context, app) "
@@ -699,7 +701,7 @@ class db_functions
 		. "VALUES('" . $params['ea_select_manager'] . "','" . $params['context'] . "','" . $manager_acl . "')";
 		$this->db->query($sql);
 			
-		//Escrevre no Banco as aplicações que o gerente tem direito de disponibilizar aos seus usuarios.
+		//Escrevre no Banco as aplicaï¿½ï¿½es que o gerente tem direito de disponibilizar aos seus usuarios.
 		if (count($_POST['applications_list']))
 		{
 			foreach($_POST['applications_list'] as $app=>$value)
@@ -722,7 +724,7 @@ class db_functions
 		. "' WHERE manager_lid = '" . $params['manager_lid'] ."'";
 		$this->db->query($sql);
 			
-		//Deleta as aplicações e adiciona as novas.
+		//Deleta as aplicaï¿½ï¿½es e adiciona as novas.
 		//Deleta
 		$sql = "DELETE FROM phpgw_expressoadmin_apps WHERE manager_lid = '" . $params['manager_lid'] . "'";
 		$this->db->query($sql);

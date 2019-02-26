@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -1003,7 +1005,7 @@
 		function set_relateds ( $relations , $id_type )
 		{
 			$id = $this->id;
-			$db = $GLOBALS['phpgw']->db;
+			$db = GlobalService::get('phpgw')->db;
 
 			//Remove todos os contatos relacionados
 			$query = "delete from phpgw_cc_contact_rels where id_related=$id and id_typeof_contact_relation=1";

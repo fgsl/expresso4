@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -91,7 +93,7 @@
 	
 		function init()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 		}
 
 		/*!
@@ -205,7 +207,7 @@
 				}
 			}
 			
-			if($table_main!='') { //Quando faço checkout e não incluo a tabela principal, a função precisa funcionar...
+			if($table_main!='') { //Quando faï¿½o checkout e nï¿½o incluo a tabela principal, a funï¿½ï¿½o precisa funcionar...
 				$query = $query_main_select . $query_main_from . $query_main_where;
 	
 //			echo 'Query in SO_Main CheckOut: "'.$query.'"<br>';

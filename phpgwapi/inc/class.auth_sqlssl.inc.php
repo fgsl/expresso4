@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Auth from SQL, with optional SSL authentication         *
 	* This file written by Andreas 'Count' Kotes <count@flatline.de>           *
@@ -29,7 +31,7 @@
 
 		function auth_()
 		{
-			copyobj($GLOBALS['phpgw']->db,$this->db);
+			copyobj(GlobalService::get('phpgw')->db,$this->db);
 		}
 
 		function authenticate($username, $passwd)
@@ -58,7 +60,7 @@
 				$this->db->next_record();
 			}
 
-			if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+			if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 			{
 				if($db->f('account_lid') != $username)
 				{
@@ -79,26 +81,26 @@
 		{
 			if(!$account_id)
 			{
-				$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+				$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 			}
 
 			$encrypted_passwd = md5($new_passwd);
 
-			$GLOBALS['phpgw']->db->query("UPDATE phpgw_accounts SET account_pwd='" . md5($new_passwd) . "',"
+			GlobalService::get('phpgw')->db->query("UPDATE phpgw_accounts SET account_pwd='" . md5($new_passwd) . "',"
 				. "account_lastpwd_change='" . time() . "' WHERE account_id='" . $account_id . "'",__LINE__,__FILE__);
 
-			$GLOBALS['phpgw']->session->appsession('password','phpgwapi',$new_passwd);
+			GlobalService::get('phpgw')->session->appsession('password','phpgwapi',$new_passwd);
 
 			return $encrypted_passwd;
 		}
 
 		function update_lastlogin($account_id, $ip)
 		{
-			$GLOBALS['phpgw']->db->query("SELECT account_lastlogin FROM phpgw_accounts WHERE account_id='$account_id'",__LINE__,__FILE__);
-			$GLOBALS['phpgw']->db->next_record();
-			$this->previous_login = $GLOBALS['phpgw']->db->f('account_lastlogin');
+			GlobalService::get('phpgw')->db->query("SELECT account_lastlogin FROM phpgw_accounts WHERE account_id='$account_id'",__LINE__,__FILE__);
+			GlobalService::get('phpgw')->db->next_record();
+			$this->previous_login = GlobalService::get('phpgw')->db->f('account_lastlogin');
 
-			$GLOBALS['phpgw']->db->query("UPDATE phpgw_accounts SET account_lastloginfrom='"
+			GlobalService::get('phpgw')->db->query("UPDATE phpgw_accounts SET account_lastloginfrom='"
 				. "$ip', account_lastlogin='" . time()
 				. "' WHERE account_id='$account_id'",__LINE__,__FILE__);
 		}

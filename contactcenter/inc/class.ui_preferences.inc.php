@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -22,11 +24,11 @@
 		
 		function index()
 		{
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('ContactCenter').' - '.lang('Preferences');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('ContactCenter').' - '.lang('Preferences');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
-			$GLOBALS['phpgw']->template->set_file(array('pref' => 'preferences.tpl'));
+			GlobalService::get('phpgw')->template->set_file(array('pref' => 'preferences.tpl'));
 
 			/* Get Saved Preferences */
 			$actual = $this->get_preferences();
@@ -71,59 +73,59 @@
 			
 			if ($actual['displayConnector'] or !$actual['displayConnectorDefault'])
 			{
-				$GLOBALS['phpgw']->template->set_var('displayConnector', 'checked');
+				GlobalService::get('phpgw')->template->set_var('displayConnector', 'checked');
 			}
 			else
 			{
-				$GLOBALS['phpgw']->template->set_var('displayConnector', '');
+				GlobalService::get('phpgw')->template->set_var('displayConnector', '');
 			}
 			
 			if ($actual['empNum'])
 			{
-				$GLOBALS['phpgw']->template->set_var('empNum', 'checked');
+				GlobalService::get('phpgw')->template->set_var('empNum', 'checked');
 			}
 			else
 			{
-				$GLOBALS['phpgw']->template->set_var('empNum', '');
+				GlobalService::get('phpgw')->template->set_var('empNum', '');
 			}
 
 			if ($actual['cell'])
 			{
-				$GLOBALS['phpgw']->template->set_var('cell', 'checked');
+				GlobalService::get('phpgw')->template->set_var('cell', 'checked');
 			}
 			else
 			{
-				$GLOBALS['phpgw']->template->set_var('cell', '');
+				GlobalService::get('phpgw')->template->set_var('cell', '');
 			}
 
 			if ($actual['department'])
 			{
-				$GLOBALS['phpgw']->template->set_var('department', 'checked');
+				GlobalService::get('phpgw')->template->set_var('department', 'checked');
 			}
 			else
 			{
-				$GLOBALS['phpgw']->template->set_var('department', '');
+				GlobalService::get('phpgw')->template->set_var('department', '');
 			}
 
-			$GLOBALS['phpgw']->template->set_var('personCardEmail', $options_email);
-			$GLOBALS['phpgw']->template->set_var('personCardPhone', $options_phone);
+			GlobalService::get('phpgw')->template->set_var('personCardEmail', $options_email);
+			GlobalService::get('phpgw')->template->set_var('personCardPhone', $options_phone);
 
 			/* Translate the fields */
 			$this->translate('pref');
 
-			$GLOBALS['phpgw']->template->set_var('form_action', $GLOBALS['phpgw']->link('/index.php', 'menuaction=contactcenter.ui_preferences.set_preferences'));
+			GlobalService::get('phpgw')->template->set_var('form_action', GlobalService::get('phpgw')->link('/index.php', 'menuaction=contactcenter.ui_preferences.set_preferences'));
 
-			$GLOBALS['phpgw']->template->pparse('out', 'pref');
+			GlobalService::get('phpgw')->template->pparse('out', 'pref');
 		}
 		
 		function translate($handle)
 		{
-			$vars = $GLOBALS['phpgw']->template->get_undefined($handle);
+			$vars = GlobalService::get('phpgw')->template->get_undefined($handle);
 			foreach($vars as $name => $value)
 			{
 				if (preg_match('/^lang_/', $name) !== false)
 				{
-					$GLOBALS['phpgw']->template->set_var($name, lang(str_replace('_',' ',substr($name, 5))));
+					GlobalService::get('phpgw')->template->set_var($name, lang(str_replace('_',' ',substr($name, 5))));
 				}
 			}
 		}
@@ -132,64 +134,64 @@
 		{
 			if ($_POST['save'])
 			{
-				$GLOBALS['phpgw']->preferences->read();
+				GlobalService::get('phpgw')->preferences->read();
 				
-				$GLOBALS['phpgw']->preferences->delete('contactcenter', 'personCardEmail');
-				$GLOBALS['phpgw']->preferences->delete('contactcenter', 'personCardPhone');
+				GlobalService::get('phpgw')->preferences->delete('contactcenter', 'personCardEmail');
+				GlobalService::get('phpgw')->preferences->delete('contactcenter', 'personCardPhone');
 
-				$GLOBALS['phpgw']->preferences->delete('contactcenter', 'displayConnector');
-				$GLOBALS['phpgw']->preferences->delete('contactcenter', 'displayConnectorDefault');
+				GlobalService::get('phpgw')->preferences->delete('contactcenter', 'displayConnector');
+				GlobalService::get('phpgw')->preferences->delete('contactcenter', 'displayConnectorDefault');
 				
-				$GLOBALS['phpgw']->preferences->add('contactcenter', 'personCardEmail', $_POST['personCardEmail']);
-				$GLOBALS['phpgw']->preferences->add('contactcenter', 'personCardPhone', $_POST['personCardPhone']);
+				GlobalService::get('phpgw')->preferences->add('contactcenter', 'personCardEmail', $_POST['personCardEmail']);
+				GlobalService::get('phpgw')->preferences->add('contactcenter', 'personCardPhone', $_POST['personCardPhone']);
 				
-				$GLOBALS['phpgw']->preferences->add('contactcenter', 'displayConnectorDefault', '1');
+				GlobalService::get('phpgw')->preferences->add('contactcenter', 'displayConnectorDefault', '1');
 
 				if($_POST['displayConnector'])
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'displayConnector', '1');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'displayConnector', '1');
 				}
 				else
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'displayConnector', '0');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'displayConnector', '0');
 				}
 				
 				if($_POST['empNum'])
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'empNum', '1');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'empNum', '1');
 				}
 				else
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'empNum', '0');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'empNum', '0');
 				}
 				
 				if($_POST['cell'])
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'cell', '1');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'cell', '1');
 				}
 				else
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'cell', '0');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'cell', '0');
 				}
 				
 				if($_POST['department'])
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'department', '1');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'department', '1');
 				}
 				else
 				{
-					$GLOBALS['phpgw']->preferences->add('contactcenter', 'department', '0');
+					GlobalService::get('phpgw')->preferences->add('contactcenter', 'department', '0');
 				}
 
-				$GLOBALS['phpgw']->preferences->save_repository();
+				GlobalService::get('phpgw')->preferences->save_repository();
 			}
 
-			header('Location: '.$GLOBALS['phpgw']->link('/preferences/index.php'));
+			header('Location: '.GlobalService::get('phpgw')->link('/preferences/index.php'));
 		}
 
 		function get_preferences()
 		{
-			$prefs = $GLOBALS['phpgw']->preferences->read();
+			$prefs = GlobalService::get('phpgw')->preferences->read();
 
 			if (!$prefs['contactcenter']['displayConnectorDefault'] and !$prefs['contactcenter']['displayConnector'])
 			{

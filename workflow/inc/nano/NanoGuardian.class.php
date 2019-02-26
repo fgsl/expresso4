@@ -68,7 +68,7 @@ abstract class NanoGuardian
      * Enter description here...
      *
      * @param mixed $item
-     * @param unknown_type $key
+     * @param mixed unknown_type $key
      */
     protected function _encodeUtf8( &$item, $key )
     {

@@ -15,19 +15,19 @@ class FilesystemResource extends Resource {
     
     /**
      * Path to the files to use
-     * @var str
+     * @var string
      */
     var $path;
     
     /**
      * URI stub
-     * @var str
+     * @var string
      */
     var $uriStub = '/filesystem/';
     
     /**
      * The default document to use if the request is for a URI that maps to a directory
-     * @var str
+     * @var string
      */
     var $defaultDocument = 'default.html';
     

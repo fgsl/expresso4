@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -32,7 +34,7 @@
 		{
 			$this->acl = CreateObject('news_admin.boacl');
 			$this->sonews = CreateObject('news_admin.sonews');
-			$this->accounts = $GLOBALS['phpgw']->accounts->get_list('groups');
+			$this->accounts = GlobalService::get('phpgw')->accounts->get_list('groups');
 			$this->debug = False;
 			if($session)
 			{
@@ -51,7 +53,7 @@
 			settype($this->cats,'array');
 			//change this around 19 Jan 2038 03:14:07 GMT
 			$this->unixtimestampmax = 2147483647;
-			$this->dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$this->dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 		}
 
 		function save_sessiondata()
@@ -64,12 +66,12 @@
 				'cat_id' => $this->cat_id,
 			);
 			if($this->debug) { echo '<br>Save:'; _debug_array($data); }
-			$GLOBALS['phpgw']->session->appsession('session_data','news_admin',$data);
+			GlobalService::get('phpgw')->session->appsession('session_data','news_admin',$data);
 		}
 
 		function read_sessiondata()
 		{
-			$data = $GLOBALS['phpgw']->session->appsession('session_data','news_admin');
+			$data = GlobalService::get('phpgw')->session->appsession('session_data','news_admin');
 			if($this->debug) { echo '<br>Read:'; _debug_array($data); }
 
 			$this->start  = $data['start'];
@@ -81,7 +83,7 @@
 
 		function get_newslist($cat_id, $start=0, $order='',$sort='',$limit=0,$activeonly=False)
 		{
-			$charset = $GLOBALS['phpgw']->translation->charset();
+			$charset = GlobalService::get('phpgw')->translation->charset();
 			
 			$cats = False;
 			if ($cat_id == 'all')
@@ -119,7 +121,7 @@
 
 		function get_all_public_news($limit = 5)
 		{
-			$charset = $GLOBALS['phpgw']->translation->charset();
+			$charset = GlobalService::get('phpgw')->translation->charset();
 			
 			$news = $this->sonews->get_all_public_news($limit);
 			foreach($news as $id => $item)
@@ -289,8 +291,8 @@
 
 // 			$item = array(
 // 				'id'          => $fields['id'],
-// 				'date'        => $GLOBALS['phpgw']->common->show_date($fields['date']),
-// 				'subject'     => $GLOBALS['phpgw']->strip_html($fields['subject']),
+// 				'date'        => GlobalService::get('phpgw')->common->show_date($fields['date']),
+// 				'subject'     => GlobalService::get('phpgw')->strip_html($fields['subject']),
 // 				'submittedby' => $fields['submittedby'],
 // 				'content'     => $fields['content'],
 // 				'status'      => lang($fields['status']),
@@ -308,7 +310,7 @@
 				$this->total = 1;
 				$news['content'] = ($news['is_html'] ? 
 							$news['content']: 
-							nl2br(htmlspecialchars($news['content'],ENT_COMPAT,$GLOBALS['phpgw']->translation->charset())
+							nl2br(htmlspecialchars($news['content'],ENT_COMPAT,GlobalService::get('phpgw')->translation->charset())
 						));
 				return $news;
 			}

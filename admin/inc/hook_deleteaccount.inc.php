@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare                                                               *
   * http://www.egroupware.org                                                *
@@ -13,10 +15,10 @@
 
 	if($_POST['account_id'])
 	{
-		$GLOBALS['phpgw']->accounts->delete($_POST['account_id']);
-		$GLOBALS['phpgw']->db->lock(Array('phpgw_acl'));
-		$GLOBALS['phpgw']->db->query("DELETE FROM phpgw_acl WHERE acl_location='" . $_POST['account_id']
+		GlobalService::get('phpgw')->accounts->delete($_POST['account_id']);
+		GlobalService::get('phpgw')->db->lock(Array('phpgw_acl'));
+		GlobalService::get('phpgw')->db->query("DELETE FROM phpgw_acl WHERE acl_location='" . $_POST['account_id']
 			. "' OR acl_account=".$_POST['account_id'],__LINE__,__FILE__);
-		$GLOBALS['phpgw']->db->unlock();
+		GlobalService::get('phpgw')->db->unlock();
 	}
 ?>

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - VFS                                                     *
   * This file written by Jason Wies (Zone) <zone@phpgroupware.org>           *
@@ -49,9 +51,9 @@
 		function vfs ()
 		{
 			$this->vfs_shared ();
-			$this->basedir = $GLOBALS['phpgw_info']['server']['files_dir'];
-			$this->working_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$this->working_lid = $GLOBALS['phpgw']->accounts->id2name($this->working_id);
+			$this->basedir = GlobalService::get('phpgw_info')['server']['files_dir'];
+			$this->working_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$this->working_lid = GlobalService::get('phpgw')->accounts->id2name($this->working_id);
 			$this->my_home = $this->fakebase.'/'.$this->working_lid;
 			$this->now = date ('Y-m-d H:i:s');
 
@@ -72,20 +74,20 @@
 			   unlink(), rmdir(), touch(), etc.).  If not, then we're working completely
 			   in the database.
 			*/
-			$this->file_actions = $GLOBALS['phpgw_info']['server']['file_store_contents'] == 'filesystem' ||
-				!$GLOBALS['phpgw_info']['server']['file_store_contents'];
+			$this->file_actions = GlobalService::get('phpgw_info')['server']['file_store_contents'] == 'filesystem' ||
+				!GlobalService::get('phpgw_info')['server']['file_store_contents'];
 
 			// test if the files-dir is inside the document-root, and refuse working if so
 			//
 			if ($this->file_actions && $this->in_docroot($this->basedir))
 			{
-				$GLOBALS['phpgw']->common->phpgw_header();
-				if ($GLOBALS['phpgw_info']['flags']['noheader']) 
+				GlobalService::get('phpgw')->common->phpgw_header();
+				if (GlobalService::get('phpgw_info')['flags']['noheader']) 
 				{
 					echo parse_navbar();
 				}
 				echo '<p align="center"><font color="red"><b>'.lang('Path to user and group files HAS TO BE OUTSIDE of the webservers document-root!!!')."</b></font></p>\n";
-				$GLOBALS['phpgw']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 			/*
 			   These are stored in the MIME-type field and should normally be ignored.
@@ -96,20 +98,20 @@
 			$this->meta_types = array ('journal', 'journal-deleted');
 
 			/* We store the linked directories in an array now, so we don't have to make the SQL call again */
-			if ($GLOBALS['phpgw_info']['server']['db_type']=='mssql'
-				|| $GLOBALS['phpgw_info']['server']['db_type']=='sybase')
+			if (GlobalService::get('phpgw_info')['server']['db_type']=='mssql'
+				|| GlobalService::get('phpgw_info')['server']['db_type']=='sybase')
 			{
-				$query = $GLOBALS['phpgw']->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE CONVERT(varchar,link_directory) != '' AND CONVERT(varchar,link_name) != ''" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE CONVERT(varchar,link_directory) != '' AND CONVERT(varchar,link_name) != ''" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
 			}
 			else
 			{
-				$query = $GLOBALS['phpgw']->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE (link_directory IS NOT NULL or link_directory != '') AND (link_name IS NOT NULL or link_name != '')" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE (link_directory IS NOT NULL or link_directory != '') AND (link_name IS NOT NULL or link_name != '')" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
 			}
 
 			$this->linked_dirs = array ();
-			while ($GLOBALS['phpgw']->db->next_record ())
+			while (GlobalService::get('phpgw')->db->next_record ())
 			{
-				$this->linked_dirs[] = $GLOBALS['phpgw']->db->Record;
+				$this->linked_dirs[] = GlobalService::get('phpgw')->db->Record;
 			}
 		}
 
@@ -211,7 +213,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			$p = $this->path_parts (array ('string' => $data['string'], 'relatives' => array ($data['relatives'][0])));
 
@@ -457,9 +459,9 @@
 					)
 				);
 
-				$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET mime_type='journal-deleted' WHERE directory='".
-					$GLOBALS['phpgw']->db->db_addslashes($state_one_path_parts->fake_leading_dirs_clean)."' AND name='".
-					$GLOBALS['phpgw']->db->db_addslashes($state_one_path_parts->fake_name_clean)."' AND mime_type='journal'");
+				$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET mime_type='journal-deleted' WHERE directory='".
+					GlobalService::get('phpgw')->db->db_addslashes($state_one_path_parts->fake_leading_dirs_clean)."' AND name='".
+					GlobalService::get('phpgw')->db->db_addslashes($state_one_path_parts->fake_name_clean)."' AND mime_type='journal'");
 
 				/*
 				   We create the file in addition to logging the MOVED operation.  This is an
@@ -474,7 +476,7 @@
 			}
 
 			/* This is the SQL query we made for THIS request, remember that one? */
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
 			/*
 			   If we were to add an option of whether to keep journal entries for deleted files
@@ -482,9 +484,9 @@
 			*/
 			if ($data['operation'] == VFS_OPERATION_DELETED)
 			{
-				$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET mime_type='journal-deleted' WHERE directory='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."' AND mime_type='journal'");
+				$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET mime_type='journal-deleted' WHERE directory='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."' AND mime_type='journal'");
 			}
 
 			return True;
@@ -526,8 +528,8 @@
 
 
 			$sql = "DELETE FROM phpgw_vfs WHERE directory='".
-				$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean).SEP
-				.$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'";
+				GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean).SEP
+				.GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'";
 
 			if (!$data['deleteall'])
 			{
@@ -542,7 +544,7 @@
 			}
 
 			$sql .= ")";
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
 			if ($query)
 			{
@@ -587,8 +589,8 @@
 			}
 
 			$sql = "SELECT * FROM phpgw_vfs WHERE directory='".
-				$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-				$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'";
+				GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+				GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'";
 
 			if ($data['type'] == 1)
 			{
@@ -603,11 +605,11 @@
 				$sql .= " AND (mime_type='journal' OR mime_type='journal-deleted')";
 			}
 
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
-			while ($GLOBALS['phpgw']->db->next_record ())
+			while (GlobalService::get('phpgw')->db->next_record ())
 			{
-				$rarray[] = $GLOBALS['phpgw']->db->Record;
+				$rarray[] = GlobalService::get('phpgw')->db->Record;
 			}
 
 			return $rarray;
@@ -648,9 +650,9 @@
 				$data['string'] = SEP.$path[1].SEP.$path[2];
 			}
 			if ($data['operation'] == PHPGW_ACL_READ){
-				$user_groups = $GLOBALS['phpgw']->accounts->membership();
+				$user_groups = GlobalService::get('phpgw')->accounts->membership();
 				foreach($user_groups as $val){
-					if (strpos($data['string'],$this->fakebase.SEP.$GLOBALS['phpgw']->accounts->id2name($val['account_id'])) === 0)
+					if (strpos($data['string'],$this->fakebase.SEP.GlobalService::get('phpgw')->accounts->id2name($val['account_id'])) === 0)
 						return true;
 				}
 			}
@@ -729,7 +731,7 @@
 				$owner_id = $data['owner_id'];
 			}
 
-			$user_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$user_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			/* They always have access to their own files */
 			if ($owner_id == $user_id)
@@ -738,7 +740,7 @@
 			}
 
 			/* Check if they're in the group */
-			$memberships = $GLOBALS['phpgw']->accounts->membership ($user_id);
+			$memberships = GlobalService::get('phpgw')->accounts->membership ($user_id);
 
 			if (is_array ($memberships))
 			{
@@ -790,13 +792,13 @@
 			}
 		}
 		function ownerOf($base,$path){
-			$query = $GLOBALS['phpgw']->db->query ("SELECT owner_id FROM phpgw_vfs WHERE ".
-				"( directory='".$GLOBALS['phpgw']->db->db_addslashes($base)."' AND name='".$GLOBALS['phpgw']->db->db_addslashes($path)."' ".
-				"OR directory='/home/".$GLOBALS['phpgw']->db->db_addslashes($path)."') ".
+			$query = GlobalService::get('phpgw')->db->query ("SELECT owner_id FROM phpgw_vfs WHERE ".
+				"( directory='".GlobalService::get('phpgw')->db->db_addslashes($base)."' AND name='".GlobalService::get('phpgw')->db->db_addslashes($path)."' ".
+				"OR directory='/home/".GlobalService::get('phpgw')->db->db_addslashes($path)."') ".
 				$this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
 
-			$GLOBALS['phpgw']->db->next_record();
-			$owner_id = $GLOBALS['phpgw']->db->Record['owner_id'];
+			GlobalService::get('phpgw')->db->next_record();
+			$owner_id = GlobalService::get('phpgw')->db->Record['owner_id'];
 			if (!$owner_id)
 			{
 				$owner_id = 0;
@@ -1048,8 +1050,8 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$p = $this->path_parts (array(
 					'string'	=> $data['string'],
@@ -1110,9 +1112,9 @@
 					return False;
 				}
 
-				$query = $GLOBALS['phpgw']->db->query ("INSERT INTO phpgw_vfs (owner_id, directory, name) VALUES ($this->working_id, '".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."', '".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."')", __LINE__, __FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("INSERT INTO phpgw_vfs (owner_id, directory, name) VALUES ($this->working_id, '".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."', '".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."')", __LINE__, __FILE__);
 
 				$this->set_attributes(array(
 					'string'	=> $p->fake_full_path,
@@ -1177,7 +1179,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			$f = $this->path_parts (array(
 					'string'	=> $data['from'],
@@ -1291,11 +1293,11 @@
 					))
 				)
 				{
-					$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET owner_id='$this->working_id', directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_leading_dirs_clean)."', name='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_name_clean)."' WHERE owner_id='$this->working_id' AND directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_leading_dirs_clean)."' AND name='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_name_clean)."'" . $this->extra_sql (VFS_SQL_UPDATE), __LINE__, __FILE__);
+					$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET owner_id='$this->working_id', directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_leading_dirs_clean)."', name='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_name_clean)."' WHERE owner_id='$this->working_id' AND directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_leading_dirs_clean)."' AND name='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_name_clean)."'" . $this->extra_sql (VFS_SQL_UPDATE), __LINE__, __FILE__);
 				
 					$set_attributes_array = array (
 						'createdby_id' => $account_id,
@@ -1464,7 +1466,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			$f = $this->path_parts (array(
 					'string'	=> $data['from'],
@@ -1585,17 +1587,17 @@
 							'relatives'	=> array ($t->mask)
 						)
 					);
-					$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET size=$size WHERE directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_leading_dirs_clean)."' AND name='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE)), __LINE__, __FILE__);
+					$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET size=$size WHERE directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_leading_dirs_clean)."' AND name='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE)), __LINE__, __FILE__);
 				}
 				elseif (!$t->outside)
 				{
-					$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET name='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_name_clean)."', directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($t->fake_leading_dirs_clean)."' WHERE directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($f->fake_leading_dirs_clean)."' AND name='".
-						$GLOBALS['phpgw']->db->db_addslashes($f->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE)), __LINE__, __FILE__);
+					$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET name='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_name_clean)."', directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($t->fake_leading_dirs_clean)."' WHERE directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($f->fake_leading_dirs_clean)."' AND name='".
+						GlobalService::get('phpgw')->db->db_addslashes($f->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE)), __LINE__, __FILE__);
 				}
 
 				$this->set_attributes(array(
@@ -1649,8 +1651,8 @@
 					$newdir = preg_replace("#^$f->fake_full_path#", $t->fake_full_path, $entry['directory']);
 					$newdir_clean = $this->clean_string (array ('string' => $newdir));
 
-					$query = $GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($newdir_clean)."' WHERE file_id='$entry[file_id]'" .
+					$query = GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($newdir_clean)."' WHERE file_id='$entry[file_id]'" .
 						$this->extra_sql (array ('query_type' => VFS_SQL_UPDATE)), __LINE__, __FILE__);
 					$this->correct_attributes (array(
 							'string'	=> "$newdir/$entry[name]",
@@ -1742,9 +1744,9 @@
 					)
 				);
 
-				$query = $GLOBALS['phpgw']->db->query ("DELETE FROM phpgw_vfs WHERE directory='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'".$this->extra_sql (array ('query_type' => VFS_SQL_DELETE)), __LINE__, __FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("DELETE FROM phpgw_vfs WHERE directory='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'".$this->extra_sql (array ('query_type' => VFS_SQL_DELETE)), __LINE__, __FILE__);
 
 				if ($this->file_actions)
 				{
@@ -1837,9 +1839,9 @@
 					)
 				);
 
-				$query = $GLOBALS['phpgw']->db->query ("DELETE FROM phpgw_vfs WHERE directory='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" .
+				$query = GlobalService::get('phpgw')->db->query ("DELETE FROM phpgw_vfs WHERE directory='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" .
 					$this->extra_sql (array ('query_type' => VFS_SQL_DELETE)), __LINE__, __FILE__);
 
 				if ($this->file_actions)
@@ -1868,8 +1870,8 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$p = $this->path_parts (array(
 					'string'	=> $data['string'],
@@ -1920,9 +1922,9 @@
 				))
 			)
 			{
-				$query = $GLOBALS['phpgw']->db->query ("INSERT INTO phpgw_vfs (owner_id, name, directory) VALUES ($this->working_id, '".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."', '".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."')", __LINE__, __FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("INSERT INTO phpgw_vfs (owner_id, name, directory) VALUES ($this->working_id, '".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."', '".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."')", __LINE__, __FILE__);
 	
 				$this->set_attributes(array(
 					'string'	=> $p->fake_full_path,
@@ -1976,8 +1978,8 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$vp = $this->path_parts (array(
 					'string'	=> $data['vdir'],
@@ -2059,8 +2061,8 @@
 
 			$query = "SELECT summary FROM phpgw_vfs WHERE directory = '"
 				.$data['path']."' AND name = '".$data['string']."' and mime_type != 'journal' and mime_type != 'journal-deleted' LIMIT 1";
-			if ($GLOBALS['phpgw']->db->query($query) && $GLOBALS['phpgw']->db->next_record()){
-				$val = $GLOBALS['phpgw']->db->row();
+			if (GlobalService::get('phpgw')->db->query($query) && GlobalService::get('phpgw')->db->next_record()){
+				$val = GlobalService::get('phpgw')->db->row();
 				return $val['summary'];
 			}
 		}
@@ -2113,7 +2115,7 @@
 			$sql = 'UPDATE phpgw_vfs SET summary = \''.$data['summary'].'\'';
 			$sql .= ' WHERE file_id='.(int) $ls_array[0]['file_id'];
 			$sql .= $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE));
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 		}
 
 		/*
@@ -2216,10 +2218,10 @@
 					// the whole class need to be reworked with the new db-functions 
 					if (!isset($this->column_defs))
 					{
-						$table_defs = $GLOBALS['phpgw']->db->get_table_definitions('phpgwapi','phpgw_vfs');
+						$table_defs = GlobalService::get('phpgw')->db->get_table_definitions('phpgwapi','phpgw_vfs');
 						$this->column_defs = $table_defs['fd'];
 					}
-					$sql .= $attribute.'=' .$GLOBALS['phpgw']->db->quote($data['attributes'][$attribute],$this->column_defs[$attribute]['type']);
+					$sql .= $attribute.'=' .GlobalService::get('phpgw')->db->quote($data['attributes'][$attribute],$this->column_defs[$attribute]['type']);
 
 					$change_attributes++;
 				}
@@ -2231,7 +2233,7 @@
 			}
 			$sql .= ' WHERE file_id='.(int) $record['file_id'];
 			$sql .= $this->extra_sql (array ('query_type' => VFS_SQL_UPDATE));
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
 			if ($query) 
 			{
@@ -2296,7 +2298,7 @@
 			elseif (preg_match ("+^$this->fakebase\/(.*)$+U", $p->fake_full_path, $matches))
 			{
 				$set_attributes_array = Array(
-					'owner_id' => $GLOBALS['phpgw']->accounts->name2id ($matches[1])
+					'owner_id' => GlobalService::get('phpgw')->accounts->name2id ($matches[1])
 				);
 			}
 			else
@@ -2367,7 +2369,7 @@
 			   We don't use ls () because it calls file_type () to determine if it has been
 			   passed a directory
 			*/
-			$db2 = $GLOBALS['phpgw']->db;
+			$db2 = GlobalService::get('phpgw')->db;
 			$db2->query ("SELECT mime_type FROM phpgw_vfs WHERE directory='".
 				$db2->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
 				$db2->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
@@ -2417,10 +2419,10 @@
 				return $rr;
 			}
 
-			$db2 = $GLOBALS['phpgw']->db;
+			$db2 = GlobalService::get('phpgw')->db;
 			$db2->query ("SELECT name FROM phpgw_vfs WHERE directory='".
-				$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-				$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
+				GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+				GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
 
 			if ($db2->next_record ())
 			{
@@ -2501,12 +2503,12 @@
 
 			if ($data['checksubdirs'])
 			{
-				$query = $GLOBALS['phpgw']->db->query ("SELECT size FROM phpgw_vfs WHERE directory='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-					$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" .
+				$query = GlobalService::get('phpgw')->db->query ("SELECT size FROM phpgw_vfs WHERE directory='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+					GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" .
 					$this->extra_sql (array ('query_text' => VFS_SQL_SELECT)));
-				$GLOBALS['phpgw']->db->next_record ();
-				$size += $GLOBALS['phpgw']->db->Record[0];
+				GlobalService::get('phpgw')->db->next_record ();
+				$size += GlobalService::get('phpgw')->db->Record[0];
 			}
 
 			return $size;
@@ -2514,11 +2516,11 @@
 		
 		function get_size_all($owner_id)
 		{
-			$query = $GLOBALS['phpgw']->db->query ("SELECT Sum(size) FROM phpgw_vfs WHERE owner_id = '".$owner_id."'" .
+			$query = GlobalService::get('phpgw')->db->query ("SELECT Sum(size) FROM phpgw_vfs WHERE owner_id = '".$owner_id."'" .
 													$this->extra_sql(array ('query_text' => VFS_SQL_SELECT)));
-			$GLOBALS['phpgw']->db->next_record ();
+			GlobalService::get('phpgw')->db->next_record ();
 			
-			$size = $GLOBALS['phpgw']->db->Record[0];			
+			$size = GlobalService::get('phpgw')->db->Record[0];			
 			
 			return $size;
 		}		
@@ -2552,12 +2554,12 @@
                         {
                                 return False;
                         }
-			$sql = "SELECT count(*) FROM phpgw_vfs WHERE directory = '".$GLOBALS['phpgw']->db->db_addslashes($data['string'])."'";
+			$sql = "SELECT count(*) FROM phpgw_vfs WHERE directory = '".GlobalService::get('phpgw')->db->db_addslashes($data['string'])."'";
 			$sql .= $this->extra_sql (array ('query_type' => VFS_SQL_SELECT));
-                        $query = $GLOBALS['phpgw']->db->query ($sql, __LINE__,__FILE__);
+                        $query = GlobalService::get('phpgw')->db->query ($sql, __LINE__,__FILE__);
 
-                        $GLOBALS['phpgw']->db->next_record ();
-                        $record = $GLOBALS['phpgw']->db->Record;
+                        GlobalService::get('phpgw')->db->next_record ();
+                        $record = GlobalService::get('phpgw')->db->Record;
                         return $record['count'];
                 }
 
@@ -2576,7 +2578,7 @@
 				);
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
-			$data['string'] = $GLOBALS['phpgw']->db->db_addslashes($data['string']);
+			$data['string'] = GlobalService::get('phpgw')->db->db_addslashes($data['string']);
 
 			$p = $this->path_parts (array(
 					'string'	=> $data['string'],
@@ -2593,10 +2595,10 @@
 			{
 				return False;
 			}
-			$query = $GLOBALS['phpgw']->db->query ("SELECT quota_size FROM phpgw_vfs_quota WHERE directory = '".$data['string']."' LIMIT 1;", __LINE__,__FILE__);
+			$query = GlobalService::get('phpgw')->db->query ("SELECT quota_size FROM phpgw_vfs_quota WHERE directory = '".$data['string']."' LIMIT 1;", __LINE__,__FILE__);
 
-			$GLOBALS['phpgw']->db->next_record ();
-			$record = $GLOBALS['phpgw']->db->Record;
+			GlobalService::get('phpgw')->db->next_record ();
+			$record = GlobalService::get('phpgw')->db->Record;
 			return $record['quota_size'];
 		}
 		function set_quota($data){
@@ -2627,7 +2629,7 @@
 			{
 				return False;
 			}
-			return $GLOBALS['phpgw']->db->query("INSERT INTO phpgw_vfs_quota VALUES ('".$data['string']."',".$data['new_quota'].");", __LINE__,__FILE__);
+			return GlobalService::get('phpgw')->db->query("INSERT INTO phpgw_vfs_quota VALUES ('".$data['string']."',".$data['new_quota'].");", __LINE__,__FILE__);
 		}
 
 
@@ -2735,14 +2737,14 @@
 				}
 				else
 				{
-					$sql .= " directory='".$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND".
-						" name='".$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'".
+					$sql .= " directory='".GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND".
+						" name='".GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'".
 						$this->extra_sql (array ('query_type' => VFS_SQL_SELECT));
 				}
-				$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+				$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
-				$GLOBALS['phpgw']->db->next_record ();
-				$record = $GLOBALS['phpgw']->db->Record;
+				GlobalService::get('phpgw')->db->next_record ();
+				$record = GlobalService::get('phpgw')->db->Record;
 
 				/* We return an array of one array to maintain the standard */
 				$rarray = array ();
@@ -2750,7 +2752,7 @@
 				{
 					if ($attribute == 'mime_type' && !$record[$attribute])
 					{
-						$db2 = $GLOBALS['phpgw']->db;
+						$db2 = GlobalService::get('phpgw')->db;
 						$record[$attribute] = $this->get_ext_mime_type (array(
 								'string' => $p->fake_name_clean
 							)
@@ -2759,8 +2761,8 @@
 						if($record[$attribute])
 						{
 							$db2->query ("UPDATE phpgw_vfs SET mime_type='".$record[$attribute]."' WHERE directory='".
-								$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-								$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
+								GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+								GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
 						}
 					}
 
@@ -2838,9 +2840,9 @@
 
 			$dir_clean = $this->clean_string (array ('string' => $dir));
 			if ($recursive)
-				$sql .= " FROM phpgw_vfs WHERE ".$query_type." directory like '".$GLOBALS['phpgw']->db->db_addslashes($dir_clean)."%'";
+				$sql .= " FROM phpgw_vfs WHERE ".$query_type." directory like '".GlobalService::get('phpgw')->db->db_addslashes($dir_clean)."%'";
 			else
-				$sql .= " FROM phpgw_vfs WHERE ".$query_type." directory = '".$GLOBALS['phpgw']->db->db_addslashes($dir_clean)."'";
+				$sql .= " FROM phpgw_vfs WHERE ".$query_type." directory = '".GlobalService::get('phpgw')->db->db_addslashes($dir_clean)."'";
 			$sql .= $this->extra_sql (array ('query_type' => VFS_SQL_SELECT));
 
 			if ($data['mime_type'])
@@ -2860,17 +2862,17 @@
 			$data['limit'] = $data['limit'] ? $data['limit'] : 10000;
 			if ($data['orderby'] != 'directory')
 				$sql .= ' LIMIT '.$data['limit'].' OFFSET '.$data['offset'];
-			$query = $GLOBALS['phpgw']->db->query ($sql, __LINE__, __FILE__);
+			$query = GlobalService::get('phpgw')->db->query ($sql, __LINE__, __FILE__);
 
 			$rarray = array ();
-			for ($i = 0; $GLOBALS['phpgw']->db->next_record (); $i++)
+			for ($i = 0; GlobalService::get('phpgw')->db->next_record (); $i++)
 			{
-				$record = $GLOBALS['phpgw']->db->Record;
+				$record = GlobalService::get('phpgw')->db->Record;
 				foreach($this->attributes as $attribute)
 				{
 					if ($attribute == 'mime_type' && !$record[$attribute])
 					{
-						$db2 = $GLOBALS['phpgw']->db;
+						$db2 = GlobalService::get('phpgw')->db;
 						$record[$attribute] = $this->get_ext_mime_type (array(
 								'string'	=> $p->fake_name_clean
 							)
@@ -2879,8 +2881,8 @@
 						if($record[$attribute])
 						{
 							$db2->query ("UPDATE phpgw_vfs SET mime_type='".$record[$attribute]."' WHERE directory='".
-								$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-								$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
+								GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+								GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
 						}
 					}
 
@@ -3025,9 +3027,9 @@
 
 				if($mime_type)
 				{
-					$GLOBALS['phpgw']->db->query ("UPDATE phpgw_vfs SET mime_type='".$mime_type."' WHERE directory='".
-						$GLOBALS['phpgw']->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
-						$GLOBALS['phpgw']->db->db_addslashes($p->fake_name_clean)."'" .
+					GlobalService::get('phpgw')->db->query ("UPDATE phpgw_vfs SET mime_type='".$mime_type."' WHERE directory='".
+						GlobalService::get('phpgw')->db->db_addslashes($p->fake_leading_dirs_clean)."' AND name='".
+						GlobalService::get('phpgw')->db->db_addslashes($p->fake_name_clean)."'" .
 						$this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__, __FILE__);
 				}
 			}

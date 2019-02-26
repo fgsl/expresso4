@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -46,8 +48,8 @@
 		*/
 		function ui_data()
 		{
-			$temp = $GLOBALS['phpgw']->session->appsession('ui_data.page_info','contactcenter');
-			$temp2 = $GLOBALS['phpgw']->session->appsession('ui_data.all_entries','contactcenter');
+			$temp = GlobalService::get('phpgw')->session->appsession('ui_data.page_info','contactcenter');
+			$temp2 = GlobalService::get('phpgw')->session->appsession('ui_data.all_entries','contactcenter');
 
 			$this->bo = CreateObject('contactcenter.bo_contactcenter');
 
@@ -91,180 +93,180 @@
 		*/
 		function index()
 		{
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('venus','table');
-			$GLOBALS['phpgw']->js->validate_file('venus','shapes');
-			$GLOBALS['phpgw']->js->validate_file('venus','jsStructUtil');
-			$GLOBALS['phpgw']->js->validate_file('venus','cssUtil');
+			GlobalService::get('phpgw')->js->validate_file('venus','table');
+			GlobalService::get('phpgw')->js->validate_file('venus','shapes');
+			GlobalService::get('phpgw')->js->validate_file('venus','jsStructUtil');
+			GlobalService::get('phpgw')->js->validate_file('venus','cssUtil');
 
-//			$GLOBALS['phpgw']->js->set_onload('setTimeout(\'updateCards()\',1000)');
-			$GLOBALS['phpgw']->common->phpgw_header();
+//			GlobalService::get('phpgw')->js->set_onload('setTimeout(\'updateCards()\',1000)');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
-			$GLOBALS['phpgw']->template->set_file(array('index' => 'index.tpl'));
-			$GLOBALS['phpgw']->template->set_var('cc_root_dir', $GLOBALS['phpgw_info']['server']['webserver_url'].'/contactcenter/');
+			GlobalService::get('phpgw')->template->set_file(array('index' => 'index.tpl'));
+			GlobalService::get('phpgw')->template->set_var('cc_root_dir', GlobalService::get('phpgw_info')['server']['webserver_url'].'/contactcenter/');
 
 			/* Quick Add */
-			$GLOBALS['phpgw']->template->set_var('cc_qa_alias',lang('Alias').':');
-			$GLOBALS['phpgw']->template->set_var('cc_qa_given_names',lang('Given Names').':');
-			$GLOBALS['phpgw']->template->set_var('cc_qa_family_names',lang('Family Names').':');
-			$GLOBALS['phpgw']->template->set_var('cc_qa_phone',lang('Phone').':');
-			$GLOBALS['phpgw']->template->set_var('cc_qa_email',lang('Email').':');
-			$GLOBALS['phpgw']->template->set_var('cc_qa_save',lang('Save'));
-			$GLOBALS['phpgw']->template->set_var('cc_qa_clear',lang('Clear'));
-			$GLOBALS['phpgw']->template->set_var('cc_qa_close',lang('Close'));
+			GlobalService::get('phpgw')->template->set_var('cc_qa_alias',lang('Alias').':');
+			GlobalService::get('phpgw')->template->set_var('cc_qa_given_names',lang('Given Names').':');
+			GlobalService::get('phpgw')->template->set_var('cc_qa_family_names',lang('Family Names').':');
+			GlobalService::get('phpgw')->template->set_var('cc_qa_phone',lang('Phone').':');
+			GlobalService::get('phpgw')->template->set_var('cc_qa_email',lang('Email').':');
+			GlobalService::get('phpgw')->template->set_var('cc_qa_save',lang('Save'));
+			GlobalService::get('phpgw')->template->set_var('cc_qa_clear',lang('Clear'));
+			GlobalService::get('phpgw')->template->set_var('cc_qa_close',lang('Close'));
 			/* End Quick Add */
 
 			/* Advanced Search */
 			
-			$GLOBALS['phpgw']->template->set_var('cc_corporate',lang('Corporate'));
-			$GLOBALS['phpgw']->template->set_var('cc_cs_title',lang('Advanced Search'));
-			$GLOBALS['phpgw']->template->set_var('cc_catalogues',lang('Catalogues'));
+			GlobalService::get('phpgw')->template->set_var('cc_corporate',lang('Corporate'));
+			GlobalService::get('phpgw')->template->set_var('cc_cs_title',lang('Advanced Search'));
+			GlobalService::get('phpgw')->template->set_var('cc_catalogues',lang('Catalogues'));
 			
 			
 			
 			/* End of Advanced Search*/
 
-			$cc_css_file = $GLOBALS['phpgw_info']['server']['webserver_url'].'/contactcenter/styles/cc.css';
-			$cc_card_image_file = $GLOBALS['phpgw_info']['server']['webserver_url'].'/contactcenter/templates/default/images/card.png';
-			$GLOBALS['phpgw']->template->set_var('cc_css',$cc_css_file);
-			$GLOBALS['phpgw']->template->set_var('cc_dtree_css', $cc_dtree_file);
-			$GLOBALS['phpgw']->template->set_var('cc_card_image',$cc_card_image_file);
+			$cc_css_file = GlobalService::get('phpgw_info')['server']['webserver_url'].'/contactcenter/styles/cc.css';
+			$cc_card_image_file = GlobalService::get('phpgw_info')['server']['webserver_url'].'/contactcenter/templates/default/images/card.png';
+			GlobalService::get('phpgw')->template->set_var('cc_css',$cc_css_file);
+			GlobalService::get('phpgw')->template->set_var('cc_dtree_css', $cc_dtree_file);
+			GlobalService::get('phpgw')->template->set_var('cc_card_image',$cc_card_image_file);
 
-			$GLOBALS['phpgw']->template->set_var('cc_personal',lang('Personal'));
+			GlobalService::get('phpgw')->template->set_var('cc_personal',lang('Personal'));
 
 /***rev 104***/
-			//$GLOBALS['phpgw']->template->set_var('cc_full_add',lang('Full Add'));
-			$GLOBALS['phpgw']->template->set_var('cc_full_add_button',lang('Full Add'));
+			//GlobalService::get('phpgw')->template->set_var('cc_full_add',lang('Full Add'));
+			GlobalService::get('phpgw')->template->set_var('cc_full_add_button',lang('Full Add'));
 /******/
-                        $GLOBALS['phpgw']->template->set_var('cc_full_add_button_sh',lang('Full Add Shared'));
-			$GLOBALS['phpgw']->template->set_var('cc_reset',lang('Reset'));
+                        GlobalService::get('phpgw')->template->set_var('cc_full_add_button_sh',lang('Full Add Shared'));
+			GlobalService::get('phpgw')->template->set_var('cc_reset',lang('Reset'));
 
-			$GLOBALS['phpgw']->template->set_var('cc_personal_data',lang('Personal Data'));
-			$GLOBALS['phpgw']->template->set_var('cc_addresses',lang('Addresses'));
-			$GLOBALS['phpgw']->template->set_var('cc_connections',lang('Connections'));
-			$GLOBALS['phpgw']->template->set_var('cc_relations',lang('Relations'));
+			GlobalService::get('phpgw')->template->set_var('cc_personal_data',lang('Personal Data'));
+			GlobalService::get('phpgw')->template->set_var('cc_addresses',lang('Addresses'));
+			GlobalService::get('phpgw')->template->set_var('cc_connections',lang('Connections'));
+			GlobalService::get('phpgw')->template->set_var('cc_relations',lang('Relations'));
 
-			$GLOBALS['phpgw']->template->set_var('cc_quick_add',lang('Quick Add'));
-			$GLOBALS['phpgw']->template->set_var('cc_catalogs',lang('Catalogues'));
-			$GLOBALS['phpgw']->template->set_var('cc_group_add',lang('Group Add'));
+			GlobalService::get('phpgw')->template->set_var('cc_quick_add',lang('Quick Add'));
+			GlobalService::get('phpgw')->template->set_var('cc_catalogs',lang('Catalogues'));
+			GlobalService::get('phpgw')->template->set_var('cc_group_add',lang('Group Add'));
 
 			/* Panel */
-			$GLOBALS['phpgw']->template->set_var('cc_panel_new',lang('New').'...');
-			$GLOBALS['phpgw']->template->set_var('cc_panel_search',lang('Search').'...');
-			$GLOBALS['phpgw']->template->set_var('cc_panel_table',lang('Table View'));
-			$GLOBALS['phpgw']->template->set_var('cc_panel_cards',lang('Cards View'));
-			$GLOBALS['phpgw']->template->set_var('cc_btn_import_export', lang('Import/Export'));
-			$GLOBALS['phpgw']->template->set_var('cc_btn_new', lang("New..."));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_new',lang('New').'...');
+			GlobalService::get('phpgw')->template->set_var('cc_panel_search',lang('Search').'...');
+			GlobalService::get('phpgw')->template->set_var('cc_panel_table',lang('Table View'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_cards',lang('Cards View'));
+			GlobalService::get('phpgw')->template->set_var('cc_btn_import_export', lang('Import/Export'));
+			GlobalService::get('phpgw')->template->set_var('cc_btn_new', lang("New..."));
 
-			$GLOBALS['phpgw']->template->set_var('cc_panel_search_found',lang('Showing found entries'));
-			$GLOBALS['phpgw']->template->set_var('cc_panel_first_page',lang('First Page'));
-			$GLOBALS['phpgw']->template->set_var('cc_panel_previous_page',lang('Previous Page'));
-			$GLOBALS['phpgw']->template->set_var('cc_panel_next_page',lang('Next Page'));
-			$GLOBALS['phpgw']->template->set_var('cc_panel_last_page',lang('Last Page'));
-			$GLOBALS['phpgw']->template->set_var('cc_all',lang('all'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_search_found',lang('Showing found entries'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_first_page',lang('First Page'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_previous_page',lang('Previous Page'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_next_page',lang('Next Page'));
+			GlobalService::get('phpgw')->template->set_var('cc_panel_last_page',lang('Last Page'));
+			GlobalService::get('phpgw')->template->set_var('cc_all',lang('all'));
 			/* End Panel */
 
 			/* Messages */
 /**rev 104**/
-			$GLOBALS['phpgw']->template->set_var('cc_msg_not_allowed',lang('Not Allowed'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_unavailable',lang('Unavailable function'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_not_allowed',lang('Not Allowed'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_unavailable',lang('Unavailable function'));
 /*****/
 
 
-			$GLOBALS['phpgw']->template->set_var('cc_msg_name_mandatory',lang('Name is mandatory'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_err_invalid_serch',lang('The query should not have the characters {%,?}'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_tel_or_mail_required',lang('Tel or email is required'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_name_mandatory',lang('Name is mandatory'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_err_invalid_serch',lang('The query should not have the characters {%,?}'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_tel_or_mail_required',lang('Tel or email is required'));
 
-			$GLOBALS['phpgw']->template->set_var('cc_msg_no_cards',lang('No Cards'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_err_no_room',lang('No Room for Cards! Increase your browser area.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_card_new',lang('New from same Company'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_card_edit',lang('Edit Contact'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_card_remove',lang('Remove Contact'));
-			$GLOBALS['phpgw']->template->set_var('cc_send_mail',lang('Send Mail'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_group_edit',lang('Edit Group'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_group_remove',lang('Remove Group'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_group_remove_confirm',lang('Confirm Removal of this Group?'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_card_remove_confirm',lang('Confirm Removal of this Contact?'));
-			$GLOBALS['phpgw']->template->set_var('cc_participants',lang('Participants'));
-			$GLOBALS['phpgw']->template->set_var('cc_empty',lang('Empty'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_no_cards',lang('No Cards'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_err_no_room',lang('No Room for Cards! Increase your browser area.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_card_new',lang('New from same Company'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_card_edit',lang('Edit Contact'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_card_remove',lang('Remove Contact'));
+			GlobalService::get('phpgw')->template->set_var('cc_send_mail',lang('Send Mail'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_group_edit',lang('Edit Group'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_group_remove',lang('Remove Group'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_group_remove_confirm',lang('Confirm Removal of this Group?'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_card_remove_confirm',lang('Confirm Removal of this Contact?'));
+			GlobalService::get('phpgw')->template->set_var('cc_participants',lang('Participants'));
+			GlobalService::get('phpgw')->template->set_var('cc_empty',lang('Empty'));
 			/* End Messages */
 
-			$GLOBALS['phpgw']->template->set_var('cc_results',lang('Results'));
-			$GLOBALS['phpgw']->template->set_var('cc_is_my',lang('Is My'));
-			$GLOBALS['phpgw']->template->set_var('cc_ie_personal',lang('Import/Export pesonal contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_btn_search',lang('Search'));
-			$GLOBALS['phpgw']->template->set_var('cc_add_relation',lang('Add Relation'));
-			$GLOBALS['phpgw']->template->set_var('cc_del_relation',lang('Remove Selected Relations'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_group',lang('Group'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_contact_full',lang('Contact [Full]'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_contact_sh',lang('Contact [Shared]'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_contact_qa',lang('Contact [Quick Add]'));
-			$GLOBALS['phpgw']->template->set_var('cc_contact_title',lang('Contact Center').' - '.lang('Contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_window_views_title',lang('Contact Center').' - '.lang('Views'));
-			$GLOBALS['phpgw']->template->set_var('phpgw_img_dir', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/images');
+			GlobalService::get('phpgw')->template->set_var('cc_results',lang('Results'));
+			GlobalService::get('phpgw')->template->set_var('cc_is_my',lang('Is My'));
+			GlobalService::get('phpgw')->template->set_var('cc_ie_personal',lang('Import/Export pesonal contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_btn_search',lang('Search'));
+			GlobalService::get('phpgw')->template->set_var('cc_add_relation',lang('Add Relation'));
+			GlobalService::get('phpgw')->template->set_var('cc_del_relation',lang('Remove Selected Relations'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_group',lang('Group'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_contact_full',lang('Contact [Full]'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_contact_sh',lang('Contact [Shared]'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_contact_qa',lang('Contact [Quick Add]'));
+			GlobalService::get('phpgw')->template->set_var('cc_contact_title',lang('Contact Center').' - '.lang('Contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_window_views_title',lang('Contact Center').' - '.lang('Views'));
+			GlobalService::get('phpgw')->template->set_var('phpgw_img_dir', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/images');
 
-			$GLOBALS['phpgw']->template->set_var('cc_msg_import_contacts', lang('Import Contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_export_contacts', lang('Export Contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_expresso_info_csv', lang('The Expresso supports the contacts importation in the CSV file format.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_choose_file_type', lang('Select the file type'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook_express', lang('Outlook Express'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook2k', lang('Outlook 2000'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_expresso_default', lang('Expresso (default)'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_choose_contacts_file', lang('Select the file that contains the contacts to be imported:'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_close_win', lang('Close'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_close', lang('Close'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_ie_personal', lang('Import / Export personal Contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_import_fail', lang('The importation has failed. Verify the file format.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_importing_contacts', lang('Importing Contacts...'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_import_finished', lang('The importation has finished.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_new', lang(' new'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_failure', lang(' failed'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_exists', lang(' were existent'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_show_more_info', lang('show more info'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_clean', lang('Clean'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_invalid_csv', lang('Select a valid CSV file to import your contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_browser_support', lang('Update your browser'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_export_csv', lang('Select the format type that you want to export your contacts'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_automatic', lang('Automatic'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_export_error', lang('An error has occurred while the exportation.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_new_email', lang('New Email'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_main', lang('Main'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_alternative', lang('Alternative'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_select_email', lang('Select E-Mail'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_new_phone', lang('New Telephone'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_home', lang('Home Phone'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_cellphone', lang('Cellphone'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_corporative_cellphone', lang('Corporative Cellphone'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_corporative_fax', lang('Corporative Fax'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_corporative_pager', lang('Corporative Pager'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_work', lang('Work'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_fax', lang('Fax'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_pager', lang('Pager'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_choose_phone', lang('Select the telephone'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_warn_firefox', lang('Warning: Too old version of Firefox'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_firefox_half1', lang('For this application work correctly</u>'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_firefox_half2', lang('it\'s necessary to update your Firefox Browser for a new version (version > 1.5) Install now clicking in the link bellow, or if you want to update it later'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_click_close', lang('click Close'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_install_now', lang('Install Now'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_install_new_firefox', lang('Install a new Firefox version'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_moz_thunderbird', lang('Export as Mozilla Thunderbird CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook_express_pt', lang('Export as Outlook Express (Portuguese) CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook_express_en', lang('Export as Outlook Express (English) CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook_2k_pt', lang('Export as Outlook 2000 (Portuguese) CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_outlook_2k_en', lang('Export as Outlook 2000 (English) CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_expresso_default_csv', lang('Export as Expresso (Default) CSV.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_copy_to_catalog', lang('Copy to personal catalog.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_add_contact_to_group', lang('You did not add any contact for this group.'));
-			$GLOBALS['phpgw']->template->set_var('cc_msg_fill_field_name', lang('Fill the field Full Name'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_import_contacts', lang('Import Contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_export_contacts', lang('Export Contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_expresso_info_csv', lang('The Expresso supports the contacts importation in the CSV file format.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_choose_file_type', lang('Select the file type'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook_express', lang('Outlook Express'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook2k', lang('Outlook 2000'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_expresso_default', lang('Expresso (default)'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_choose_contacts_file', lang('Select the file that contains the contacts to be imported:'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_close_win', lang('Close'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_close', lang('Close'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_ie_personal', lang('Import / Export personal Contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_import_fail', lang('The importation has failed. Verify the file format.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_importing_contacts', lang('Importing Contacts...'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_import_finished', lang('The importation has finished.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_new', lang(' new'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_failure', lang(' failed'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_exists', lang(' were existent'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_show_more_info', lang('show more info'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_clean', lang('Clean'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_invalid_csv', lang('Select a valid CSV file to import your contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_browser_support', lang('Update your browser'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_export_csv', lang('Select the format type that you want to export your contacts'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_automatic', lang('Automatic'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_export_error', lang('An error has occurred while the exportation.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_new_email', lang('New Email'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_main', lang('Main'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_alternative', lang('Alternative'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_select_email', lang('Select E-Mail'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_new_phone', lang('New Telephone'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_home', lang('Home Phone'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_cellphone', lang('Cellphone'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_corporative_cellphone', lang('Corporative Cellphone'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_corporative_fax', lang('Corporative Fax'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_corporative_pager', lang('Corporative Pager'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_work', lang('Work'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_fax', lang('Fax'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_pager', lang('Pager'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_choose_phone', lang('Select the telephone'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_warn_firefox', lang('Warning: Too old version of Firefox'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_firefox_half1', lang('For this application work correctly</u>'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_firefox_half2', lang('it\'s necessary to update your Firefox Browser for a new version (version > 1.5) Install now clicking in the link bellow, or if you want to update it later'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_click_close', lang('click Close'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_install_now', lang('Install Now'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_install_new_firefox', lang('Install a new Firefox version'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_moz_thunderbird', lang('Export as Mozilla Thunderbird CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook_express_pt', lang('Export as Outlook Express (Portuguese) CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook_express_en', lang('Export as Outlook Express (English) CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook_2k_pt', lang('Export as Outlook 2000 (Portuguese) CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_outlook_2k_en', lang('Export as Outlook 2000 (English) CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_expresso_default_csv', lang('Export as Expresso (Default) CSV.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_copy_to_catalog', lang('Copy to personal catalog.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_add_contact_to_group', lang('You did not add any contact for this group.'));
+			GlobalService::get('phpgw')->template->set_var('cc_msg_fill_field_name', lang('Fill the field Full Name'));
 
 			$select_groups = '';
 			
 			$this->so_group = CreateObject('contactcenter.so_group');
 			
-			$array_groups = $this->so_group->selectGroupsOwnerCanImportContacts($GLOBALS['phpgw_info']['user']['account_id']);
+			$array_groups = $this->so_group->selectGroupsOwnerCanImportContacts(GlobalService::get('phpgw_info')['user']['account_id']);
 			
 			$select_groups = "<select id='id_group'>";//<option value=0>Selecione um grupo...</option></select>";
 			$select_groups .= "<option value=0 selected>Nenhum...</option>";
@@ -273,21 +275,21 @@
 			} 					
 			$select_groups .= "</select>";
 			
-			$GLOBALS['phpgw']->template->set_var('cc_select_groups',$select_groups);
+			GlobalService::get('phpgw')->template->set_var('cc_select_groups',$select_groups);
 			
-			if($GLOBALS['phpgw_info']['server']['personal_contact_type']=='True'){
-				$GLOBALS['phpgw']->template->set_var('cc_contact_type', 'advanced');
+			if(GlobalService::get('phpgw_info')['server']['personal_contact_type']=='True'){
+				GlobalService::get('phpgw')->template->set_var('cc_contact_type', 'advanced');
 			}else{
-				$GLOBALS['phpgw']->template->set_var('cc_contact_type', 'default');
+				GlobalService::get('phpgw')->template->set_var('cc_contact_type', 'default');
 			}
-			$GLOBALS['phpgw']->template->parse('out','index');
+			GlobalService::get('phpgw')->template->parse('out','index');
 
 			$api = CreateObject('contactcenter.ui_api');
 			$main = $api->get_full_add();
 			$main .= $api->get_search_obj();
 			$main .= $api->get_quick_add_plugin();
 			$main .= $api->get_add_group();
-			$main .= $GLOBALS['phpgw']->template->get_var('out');
+			$main .= GlobalService::get('phpgw')->template->get_var('out');
 
 			echo $main;
 		}
@@ -411,7 +413,7 @@
 					return $this->get_cards_data('search', '1', $ids);
 
 				case 'email_win':
-					$GLOBALS['phpgw']->common->phpgw_header();
+					GlobalService::get('phpgw')->common->phpgw_header();
 					$api = CreateObject('contactcenter.ui_api');
 					$win = $api->get_email_win();
 					$win .= $api->get_quick_add_plugin();
@@ -542,7 +544,7 @@
 			@abstract Returns the JS serialized array to used as the tree
 				level
 			@author Raphael Derosso Pereira
-            @author Mário César Kolling (error messages and timeout)
+            @author Mï¿½rio Cï¿½sar Kolling (error messages and timeout)
 
 			@param (string) $level The level to be taken
 
@@ -551,7 +553,7 @@
 		{
 			if ($level === '0')
 			{
-				$folderImageDir = $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/dftree/images/';
+				$folderImageDir = GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/dftree/images/';
 
 				$parent = '0';
 
@@ -587,7 +589,7 @@
 				}
 			}
 
-			$folderImageDir = $GLOBALS['phpgw']->common->image('contactcenter','globalcatalog-mini.png');
+			$folderImageDir = GlobalService::get('phpgw')->common->image('contactcenter','globalcatalog-mini.png');
 			$folderImageDir = substr($folderImageDir, 0, strpos($folderImageDir, 'globalcatalog-mini.png'));
 
 			// Deals with error messages from the server and returns them to the browser
@@ -644,7 +646,7 @@
 		}
 
 		function get_qtds_compartilhado() {
-			$so_contact = CreateObject('contactcenter.so_contact',  $GLOBALS['phpgw_info']['user']['account_id']);
+			$so_contact = CreateObject('contactcenter.so_contact',  GlobalService::get('phpgw_info')['user']['account_id']);
             $relacionados = $so_contact->get_relations();
 
 			$perms_relacao = array();
@@ -652,7 +654,7 @@
         	foreach($relacionados as $uid_relacionado => $tipo_relacionamento) {
 				$aclTemp = CreateObject("phpgwapi.acl",$uid_relacionado);
             	$aclTemp->read();
-                $perms_relacao[$uid_relacionado] = $aclTemp->get_specific_rights($GLOBALS['phpgw_info']['user']['account_id'],'contactcenter'); //Preciso verificar as permissões que o contato relacionado deu para o atual
+                $perms_relacao[$uid_relacionado] = $aclTemp->get_specific_rights(GlobalService::get('phpgw_info')['user']['account_id'],'contactcenter'); //Preciso verificar as permissï¿½es que o contato relacionado deu para o atual
 			}
 
 			$validos = array();
@@ -715,13 +717,13 @@
 								1 => array(
 									'field' => 'contact.id_owner',
 									'type'  => '=',
-									'value' => $GLOBALS['phpgw_info']['user']['account_id']
+									'value' => GlobalService::get('phpgw_info')['user']['account_id']
 	*/
 								)
 							);
 
-							//Tratamento de permissão de escrita no compartilhamento de catalogo
-                                			$so_contact = CreateObject('contactcenter.so_contact',  $GLOBALS['phpgw_info']['user']['account_id']);
+							//Tratamento de permissï¿½o de escrita no compartilhamento de catalogo
+                                			$so_contact = CreateObject('contactcenter.so_contact',  GlobalService::get('phpgw_info')['user']['account_id']);
                                 			$relacionados = $so_contact->get_relations();
 
 							$perms_relacao = array();
@@ -729,7 +731,7 @@
                         				foreach($relacionados as $uid_relacionado => $tipo_relacionamento) {
 								$aclTemp = CreateObject("phpgwapi.acl",$uid_relacionado);
                                 				$aclTemp->read();
-                                				$perms_relacao[$uid_relacionado] = $aclTemp->get_specific_rights($GLOBALS['phpgw_info']['user']['account_id'],'contactcenter'); //Preciso verificar as permissões que o contato relacionado deu para o atual
+                                				$perms_relacao[$uid_relacionado] = $aclTemp->get_specific_rights(GlobalService::get('phpgw_info')['user']['account_id'],'contactcenter'); //Preciso verificar as permissï¿½es que o contato relacionado deu para o atual
 							}
 
 							$validos = array();
@@ -753,7 +755,7 @@
                                                 			$ldaps = CreateObject('contactcenter.bo_ldap_manager');
                                                 			$this->bo->catalog->src_info = $ldaps->srcs[1];
                                         			}
-                                        			$s = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
+                                        			$s = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
                                         			$n=$this->bo->catalog->src_info['dn'];
                                         			$apenasThese = array("cn","uidnumber","uid");
                                         			$r = ldap_search($s,$n, $filtro,$apenasThese);
@@ -769,7 +771,7 @@
 								$find_restric[0][1] = array(
 										'field' => 'contact.id_owner',
 										'type'  => '=',
-										'value' => $GLOBALS['phpgw_info']['user']['account_id']
+										'value' => GlobalService::get('phpgw_info')['user']['account_id']
 								);
 							}
 /****/
@@ -838,7 +840,7 @@
 								1 => array(
 									'field' => 'contact.id_owner',
 									'type'  => '=',
-									'value' => $GLOBALS['phpgw_info']['user']['account_id']
+									'value' => GlobalService::get('phpgw_info')['user']['account_id']
 								),
 */
 								)
@@ -849,7 +851,7 @@
 							$find_restric[0][1]	= array(
 								'field' => 'contact.id_owner',
 								'type'  => '=',
-								'value' => $GLOBALS['phpgw_info']['user']['account_id']
+								'value' => GlobalService::get('phpgw_info')['user']['account_id']
 							);
 						}
 /*****/
@@ -1174,7 +1176,7 @@
 							array_push($find_restric[0],  array(
 											'field' => 'group.owner',
 											'type'  => '=',
-											'value' => $GLOBALS['phpgw_info']['user']['account_id']
+											'value' => GlobalService::get('phpgw_info')['user']['account_id']
 									)
 							);
 						}
@@ -1315,7 +1317,7 @@
 
 				//echo 'ID_I: '.$id_i.'<br>';
 				//echo 'ID_F: '.$id_f.'<br>';
-				///---------------- Correção Temporária PHP5 -----------------------///
+				///---------------- Correï¿½ï¿½o Temporï¿½ria PHP5 -----------------------///
 				$ids = array();
 /**rev 104**/
 				$perms = array();
@@ -1358,7 +1360,7 @@
 						$ldap = CreateObject('contactcenter.bo_ldap_manager');
 						$this->bo->catalog->src_info = $ldap->srcs[1];
 					}
-					$ds = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
+					$ds = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
 					$dn=$this->bo->catalog->src_info['dn'];
 					$justThese = array("cn","uidnumber","uid");
 					$sr = ldap_search($ds,$dn, $filter,$justThese);
@@ -1444,10 +1446,10 @@
 				$fields['connections'] = 'default';
 
 /**rev 104**/
-				// ?aqui alterar a chamada desse método para receber o base dn?
+				// ?aqui alterar a chamada desse mï¿½todo para receber o base dn?
 				//$contacts = &$this->bo->catalog->get_multiple_entries($ids,$fields);
 
-				// ?aqui alterar a chamada desse método para receber o base dn?
+				// ?aqui alterar a chamada desse mï¿½todo para receber o base dn?
 				if($external)
 				{
 					$contacts = &$this->bo->catalog->get_multiple_entries($ids,$fields,false,true);
@@ -1475,8 +1477,8 @@
 				foreach($contacts as $index => $contact)
 				{
 					/*
-					 * TODO: Os timeouts de conexão foram retirados, ver se será necessário retornar essa funcionalidade, e,
-					 * neste caso, terminar a implementação das mensagens de retorno.
+					 * TODO: Os timeouts de conexï¿½o foram retirados, ver se serï¿½ necessï¿½rio retornar essa funcionalidade, e,
+					 * neste caso, terminar a implementaï¿½ï¿½o das mensagens de retorno.
 					 */
 					if ($index !== 'error'){
 						$final[3][$i][0] = $contact['companies']['company1']['company_name']?$contact['companies']['company1']['company_name']:'none';
@@ -1596,7 +1598,7 @@
 		
 		function get_list_owners_perms_add(){
 			$acl = CreateObject('phpgwapi.acl');
-			$find_result = $acl->get_rights_and_owners($GLOBALS['phpgw_info']['user']['account_id'],'contactcenter');
+			$find_result = $acl->get_rights_and_owners(GlobalService::get('phpgw_info')['user']['account_id'],'contactcenter');
 			if($find_result){
 				$owner_names = array();
 				$filter = "(|";
@@ -1609,7 +1611,7 @@
 					$ldap = CreateObject('contactcenter.bo_ldap_manager');
 					$this->bo->catalog->src_info = $ldap->srcs[1];
 				}
-				$ds = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
+				$ds = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], false);
 				$filter .= ")";
 				$dn=$this->bo->catalog->src_info['dn'];
 				$justThese = array("cn","uidnumber","uid");
@@ -1676,7 +1678,7 @@
 		//function get_full_data($id)
 		function get_full_data($id,$catalog='bo_people_catalog')
 		{
-			$dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 			$this->bo->catalog = CreateObject('contactcenter.'.$catalog);
 
 			$fields = $this->bo->catalog->get_fields(true);
@@ -1752,7 +1754,7 @@
 			}
 
 			/*Corporative*/
-			if($GLOBALS['phpgw_info']['server']['personal_contact_type']=='True'){
+			if(GlobalService::get('phpgw_info')['server']['personal_contact_type']=='True'){
 				$data['personal']['cc_job_title'] = $entry['job_title'];
 				$data['personal']['cc_department'] = $entry['department'];
 				$data['personal']['cc_name_corporate'] = $entry['corporate_name'];
@@ -1807,7 +1809,7 @@
 		{
 			$newContact = unserialize($sdata);
 
-			// Verifica se email já existe!
+			// Verifica se email jï¿½ existe!
 			$boGroup = CreateObject('contactcenter.bo_group');
 			$contact = $boGroup->verify_contact($newContact[4]);
 
@@ -1877,7 +1879,7 @@
 				return;
 			}
 
-			// verifica se email já existe!
+			// verifica se email jï¿½ existe!
 			$boGroup = CreateObject('contactcenter.bo_group');
 			$contact = $boGroup->verify_contact($tdata[4]);
 
@@ -2185,11 +2187,11 @@
 			 * Process Photo, if available
 			 */
 			$sleep_count = 0;
-			$photo_ok = $GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter');
+			$photo_ok = GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter');
 			while($photo_ok[0]{0} !== 'o' and $photo_ok[1]{0} === 'y')
 			{
 				sleep(1);
-				$photo_ok = $GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter');
+				$photo_ok = GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter');
 				$sleep_count++;
 
 				if ($sleep_count > 35)
@@ -2198,7 +2200,7 @@
 					return;
 				}
 			}
-			$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('wait', 'n'));
+			GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('wait', 'n'));
 
 			if (isset($this->page_info['photos'][$id_photo]))
 			{
@@ -2221,7 +2223,7 @@
 			 * Arrange Date so it gets inserted correctly
 			 */
 
-			$dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 
 			$j = 0;
 			for ($i = 0; $i < 5; $i+=2)
@@ -2474,11 +2476,11 @@
 			 * Process Photo, if available
 			 */
 			$sleep_count = 0;
-			$photo_ok = $GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter');
+			$photo_ok = GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter');
 			while($photo_ok[0]{0} !== 'o' and $photo_ok[1]{0} === 'y')
 			{
 				sleep(1);
-				$photo_ok = $GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter');
+				$photo_ok = GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter');
 				$sleep_count++;
 
 				if ($sleep_count > 35)
@@ -2487,7 +2489,7 @@
 					return;
 				}
 			}
-			$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('wait', 'n'));
+			GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('wait', 'n'));
 
 			if (isset($this->page_info['photos'][$id_photo]))
 			{
@@ -2510,7 +2512,7 @@
 			 * Arrange Date so it gets inserted correctly
 			 */
 
-			$dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 
 			$j = 0;
 			for ($i = 0; $i < 5; $i+=2)
@@ -2710,7 +2712,7 @@
 		function post_photo($id)
 		{
 			//print_r($_FILES);
-			$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('wait', 'y'));
+			GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('wait', 'y'));
 
 			if (!is_array($_FILES) and is_array(!$_FILES['cc_pd_photo']))
 			{
@@ -2718,7 +2720,7 @@
 				$this->page_info['photos'][$id]['msg'] = lang('No Photos uploaded to Server.');
 
 				$this->save_session();
-				$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+				GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 				return;
 			}
 
@@ -2728,7 +2730,7 @@
 				$this->page_info['photos'][$id]['msg'] = lang('Cannot manipulate Image. No Image added. Please, if you want to use images, ask the Administrator to install GD library.');
 
 				$this->save_session();
-				$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+				GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 				return;
 			}
 
@@ -2739,7 +2741,7 @@
 				$this->page_info['photos'][$id]['msg'] = lang('Image too large! ContactCenter limits the image size to 1 Mb');
 
 				$this->save_session();
-				$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+				GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 				return;
 			}
 
@@ -2749,7 +2751,7 @@
 				$this->page_info['photos'][$id]['msg'] = lang('Some Error occured while processed the Image. Contact the Administrator. The error code was: ').$_FILES['cc_pd_photo']['error'];
 
 				$this->save_session();
-				$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+				GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 				return;
 			}
 
@@ -2787,7 +2789,7 @@
 					$this->page_info['photos'][$id]['msg'] = lang('The file must be an JPEG, PNG or GIF Image.');
 
 					$this->save_session();
-					$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+					GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 					return;
 			}
 
@@ -2797,7 +2799,7 @@
 					$this->page_info['photos'][$id]['msg'] = lang('Couldn\'t open Image. It may be corrupted or internal library doesn\'t support this format.');
 
 					$this->save_session();
-					$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+					GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 					return;
 			}
 
@@ -2810,7 +2812,7 @@
 				$this->page_info['photos'][$id]['msg'] = lang('Couldn\'t open Image. It may be corrupted or internal library doesn\'t support this format.');
 
 				$this->save_session();
-				$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+				GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 				return;
 			}
 
@@ -2824,7 +2826,7 @@
 
 			$this->save_session();
 
-			$GLOBALS['phpgw']->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
+			GlobalService::get('phpgw')->session->appsession('ui_data.photo','contactcenter', array('ok', 'y'));
 
 			imagedestroy($src_img);
 			imagedestroy($dst_img);
@@ -2947,7 +2949,7 @@
 			echo serialize($result);
 		}
 
-		//Traduz o campo na busca completa por entradas no catálogo do usuário.
+		//Traduz o campo na busca completa por entradas no catï¿½logo do usuï¿½rio.
 		function aux_full_search ($field,$isldap) {
 			$retorno = '';
 			if($isldap) {
@@ -2980,7 +2982,7 @@
 			@abstract Echos a serialized array containing the IDs
 				of the entries that matches the search argument
 			@author Raphael Derosso Pereira
-			@author Mário César Kolling (external catalogs)
+			@author Mï¿½rio Cï¿½sar Kolling (external catalogs)
 
 			@param string $str_data A serialized array with two informations:
 				$data = array(
@@ -3254,7 +3256,7 @@
             //    array_push($rules, array(
             //        'field' => 'contact.id_owner',
             //        'type'  => '=',
-            //        'value' => $GLOBALS['phpgw_info']['user']['account_id']
+            //        'value' => GlobalService::get('phpgw_info')['user']['account_id']
             //    ));
             //}
 
@@ -3467,8 +3469,8 @@
 		*/
 		function save_session()
 		{
-			$GLOBALS['phpgw']->session->appsession('ui_data.page_info','contactcenter',$this->page_info);
-			$GLOBALS['phpgw']->session->appsession('ui_data.all_entries','contactcenter',$this->all_entries);
+			GlobalService::get('phpgw')->session->appsession('ui_data.page_info','contactcenter',$this->page_info);
+			GlobalService::get('phpgw')->session->appsession('ui_data.all_entries','contactcenter',$this->all_entries);
 		}
 
 		/*!
@@ -3531,7 +3533,7 @@
 				$this->bo->catalog->src_info = $ldap->srcs[1];
 			}
 
-			$ds = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
+			$ds = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
 			$dn=$this->bo->catalog->src_info['dn'];
 			$justThese = array("givenname","givenname","sn","telephonenumber","mail");
 			$sr = ldap_read($ds,$id, "objectClass=*",$justThese);
@@ -3551,7 +3553,7 @@
 				$ldap = CreateObject('contactcenter.bo_ldap_manager');
 				$this->bo->catalog->src_info = $ldap->srcs[1];
 			}
-			$ds = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
+			$ds = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
 			$justThese = array("description","memberuid");
 			$sr = ldap_read($ds,$id, "objectClass=*",$justThese);
 			$info = ldap_get_entries($ds, $sr);
@@ -3614,7 +3616,7 @@
 					$ldap = CreateObject('contactcenter.bo_ldap_manager');
 					$this->bo->catalog->src_info = $ldap->srcs[1];
 				}
-				$ds = $GLOBALS['phpgw']->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
+				$ds = GlobalService::get('phpgw')->common->ldapConnect($this->bo->catalog->src_info['host'], $this->bo->catalog->src_info['acc'], $this->bo->catalog->src_info['pw'], true);
 				$dn=$this->bo->catalog->src_info['dn'];
 				$justThese = array("cn","mail");
 				$sr = ldap_search($ds,$dn, $filter,$justThese);
@@ -3677,12 +3679,12 @@
 					
 				case 'outlook_pt-BR':
 					
-					echo "Nome;Sobrenome;Segundo nome;Nome;Apelido;End. de email;Endereço residencial;"
-						. "Cidade do endereço residencial;CEP do endereço residencial;Estado;País/região do endereço residencial;"
-						. "Telefone residencial;Fax residencial;Telefone celular;Página pessoal da Web;Rua do endereço comercial;"
-						. "Cidade do endereço comercial;CEP do endereço comercial;Estado do endereço comercial;"
-						. "País/região do endereço comercial;Página comercial da Web;Telefone comercial;Fax comercial;Pager;Empresa;"
-						. "Cargo;Departamento;End. comercial;Observações\r\n";
+					echo "Nome;Sobrenome;Segundo nome;Nome;Apelido;End. de email;Endereï¿½o residencial;"
+						. "Cidade do endereï¿½o residencial;CEP do endereï¿½o residencial;Estado;Paï¿½s/regiï¿½o do endereï¿½o residencial;"
+						. "Telefone residencial;Fax residencial;Telefone celular;Pï¿½gina pessoal da Web;Rua do endereï¿½o comercial;"
+						. "Cidade do endereï¿½o comercial;CEP do endereï¿½o comercial;Estado do endereï¿½o comercial;"
+						. "Paï¿½s/regiï¿½o do endereï¿½o comercial;Pï¿½gina comercial da Web;Telefone comercial;Fax comercial;Pager;Empresa;"
+						. "Cargo;Departamento;End. comercial;Observaï¿½ï¿½es\r\n";
 					
 					if ( count($contacts) ) foreach( $contacts as $index => $object ) {
 						echo "\"".$object[ 'names_ordered'] . "\";"
@@ -3718,22 +3720,22 @@
 				case 'outlook2000_pt-BR':
 					
 					echo "\"Tratamento\",\"Nome\",\"Segundo Nome\",\"Sobrenome\",\"Sufixo\","
-						. "\"Empresa\",\"Departamento\",\"Cargo\",\"Rua do endereço comercial\",\"Rua do endereço comercial 2\","
-						. "\"Rua do endereço comercial 3\",\"Cidade do endereço comercial\",\"Estado do endereço comercial\","
-						. "\"CEP do endereço comercial\",\"País do endereço comercial\",\"Endereço residencial\",\"Rua residencial 2\","
-						. "\"Rua residencial 3\",\"Cidade do endereço residencial\",\"Estado\",\"CEP do endereço residencial\",\"País do endereço residencial\","
-						. "\"Outro endereço\",\"Outro endereço 2\",\"Outro endereço 3\",\"Cidade\",\"Estado\",\"CEP\",\"País\","
+						. "\"Empresa\",\"Departamento\",\"Cargo\",\"Rua do endereï¿½o comercial\",\"Rua do endereï¿½o comercial 2\","
+						. "\"Rua do endereï¿½o comercial 3\",\"Cidade do endereï¿½o comercial\",\"Estado do endereï¿½o comercial\","
+						. "\"CEP do endereï¿½o comercial\",\"Paï¿½s do endereï¿½o comercial\",\"Endereï¿½o residencial\",\"Rua residencial 2\","
+						. "\"Rua residencial 3\",\"Cidade do endereï¿½o residencial\",\"Estado\",\"CEP do endereï¿½o residencial\",\"Paï¿½s do endereï¿½o residencial\","
+						. "\"Outro endereï¿½o\",\"Outro endereï¿½o 2\",\"Outro endereï¿½o 3\",\"Cidade\",\"Estado\",\"CEP\",\"Paï¿½s\","
 						. "\"Telefone do assistente\",\"Fax comercial\",\"Telefone comercial\",\"Telefone comercial 2\",\"Retorno de chamada\","
 						. "\"Telefone do carro\",\"Telefone principal da empresa\",\"Fax residencial\",\"Telefone residencial\","
 						. "\"Telefone residencial 2\",\"ISDN\",\"Telefone celular\",\"Outro fax\",\"Outro telefone\",\"Pager\",\"Telefone principal\","
-						. "\"Radiofone\",\"Telefone TTY/TDD\",\"Telex\",\"Aniversário\",\"Anotações\",\"Caixa postal\",\"Categorias\","
-						. "\"Código da empresa\",\"Código do governo\",\"Cônjuge\",\"Conta\",\"Endereço de correio eletrônico\","
-						. "\"Nome de exibição do correio eletr.\",\"Endereço de correio eletrônico 2\","
-						. "\"Nome de exibição do correio eletr.2\",\"Endereço de correio eletrônico 3\","
-						. "\"Nome de exibição do correio eletr.3\",\"Datas especiais\",\"Disponibilidade da Internet\","
-						. "\"Filhos\",\"Hobby\",\"Idioma\",\"Indicação\",\"Informações para cobrança\",\"Iniciais\",\"Local\","
-						. "\"Nome do assistente\",\"Nome do gerenciador\",\"Página da Web\",\"Palavras-chave\",\"Particular\",\"Personalizado 1\",\"Personalizado 2\","
-						. "\"Personalizado 3\",\"Personalizado 4\",\"Prioridade\",\"Profissão\",\"Quilometragem\",\"Sala\",\"Sensibilidade\",\"Servidor de diretório\","
+						. "\"Radiofone\",\"Telefone TTY/TDD\",\"Telex\",\"Aniversï¿½rio\",\"Anotaï¿½ï¿½es\",\"Caixa postal\",\"Categorias\","
+						. "\"Cï¿½digo da empresa\",\"Cï¿½digo do governo\",\"Cï¿½njuge\",\"Conta\",\"Endereï¿½o de correio eletrï¿½nico\","
+						. "\"Nome de exibiï¿½ï¿½o do correio eletr.\",\"Endereï¿½o de correio eletrï¿½nico 2\","
+						. "\"Nome de exibiï¿½ï¿½o do correio eletr.2\",\"Endereï¿½o de correio eletrï¿½nico 3\","
+						. "\"Nome de exibiï¿½ï¿½o do correio eletr.3\",\"Datas especiais\",\"Disponibilidade da Internet\","
+						. "\"Filhos\",\"Hobby\",\"Idioma\",\"Indicaï¿½ï¿½o\",\"Informaï¿½ï¿½es para cobranï¿½a\",\"Iniciais\",\"Local\","
+						. "\"Nome do assistente\",\"Nome do gerenciador\",\"Pï¿½gina da Web\",\"Palavras-chave\",\"Particular\",\"Personalizado 1\",\"Personalizado 2\","
+						. "\"Personalizado 3\",\"Personalizado 4\",\"Prioridade\",\"Profissï¿½o\",\"Quilometragem\",\"Sala\",\"Sensibilidade\",\"Servidor de diretï¿½rio\","
 						. "\"Sexo\"\r\n";
 					
 					if ( count($contacts) ) foreach( $contacts as $index => $object ) {
@@ -3890,9 +3892,9 @@
 				default:
 					
 					echo 'Nome,Apelido,E-mail Principal,E-mail Alternativo,Celular,'
-						. 'Telefone Comercial,Endereço Comercial,Complemento End. Comercial,CEP Comercial,Cidade End. Comercial,Estado End. Comercial,País End. Comercial,'
-						. 'Telefone Residencial,Endereço Residencial,Complemento End. Residencial,CEP Residencial,Cidade End. Residencial,Estado End. Residencial,País End. Residencial,'
-						. 'Aniversário,Sexo,Assinatura GPG,Notas,Página Web,Empresa,Cargo,Departamento,Fax Comercial,Pager Comercial,Celular Comercial,Fax,Pager,Endereço Comercial 2,Endereço Residencial 2'
+						. 'Telefone Comercial,Endereï¿½o Comercial,Complemento End. Comercial,CEP Comercial,Cidade End. Comercial,Estado End. Comercial,Paï¿½s End. Comercial,'
+						. 'Telefone Residencial,Endereï¿½o Residencial,Complemento End. Residencial,CEP Residencial,Cidade End. Residencial,Estado End. Residencial,Paï¿½s End. Residencial,'
+						. 'Aniversï¿½rio,Sexo,Assinatura GPG,Notas,Pï¿½gina Web,Empresa,Cargo,Departamento,Fax Comercial,Pager Comercial,Celular Comercial,Fax,Pager,Endereï¿½o Comercial 2,Endereï¿½o Residencial 2'
 						. "\r\n";
 					
 					if ( count($contacts) ) foreach( $contacts as $index => $object ) {
@@ -4076,15 +4078,15 @@
 								$name3_pos = $key;
 								break;
 							case 'business street':
-							case 'rua do endereço comercial':
+							case 'rua do endereï¿½o comercial':
 								$corporate_street_pos = $key;
 								break;
-							case 'rua do endereço comercial 2':
-							case 'outro endereço':
+							case 'rua do endereï¿½o comercial 2':
+							case 'outro endereï¿½o':
 								$corporate_street_2_pos = $key;
 								break;
 							case 'business postal code':
-							case 'cep do endereço comercial':
+							case 'cep do endereï¿½o comercial':
 								$cep_pos = $key;
 								break;
 							case 'business fax':
@@ -4110,22 +4112,22 @@
 							case 'telefone comercial':
 								$phone_pos = $key;
 								break;
-							case 'aniversário':
+							case 'aniversï¿½rio':
 							case 'birthdate':
 								$birth_pos = $key;
 								break;
-							case 'anotações':
+							case 'anotaï¿½ï¿½es':
 							case 'notes':
 								$notes_pos = $key;
 								break;
 							case 'e-mail':
 							case 'email':
 							case 'e-mail address':
-							case 'endereço de correio eletrônico':
+							case 'endereï¿½o de correio eletrï¿½nico':
 							case 'end. de email':
 								$email_pos = $key;
 								break;
-							case 'endereço de correio eletrônico 2':
+							case 'endereï¿½o de correio eletrï¿½nico 2':
 								$aditionalEmail_pos = $key;
 								break;
 						}
@@ -4218,7 +4220,7 @@
 				$add_conn( $sdata['connections']['aditional_phone'], 'cellphone',       'Cell Phone' , trim( $row[$header[$personal_cell_pos]] ) );
 				$add_conn( $sdata['connections']['aditional_phone'], 'corporate_phone', 'Work',        trim( $row[$header[$corporate_phone_pos]] ) );
 				$add_conn( $sdata['connections']['aditional_phone'], 'fax',             'Fax',         trim( $row[$header[$fax_pos]] ) );
-				if ( $GLOBALS['phpgw_info']['server']['personal_contact_type'] == 'True' ) {
+				if ( GlobalService::get('phpgw_info')['server']['personal_contact_type'] == 'True' ) {
 					$add_conn( $sdata['connections']['aditional_phone'], 'pager',           'Pager',                trim( $row[$header[$pager_pos]] ) );
 					$add_conn( $sdata['connections']['aditional_phone'], 'corporate_fax',   'Corporative Fax',        trim( $row[$header[$corporate_fax_pos]] ) );
 					$add_conn( $sdata['connections']['aditional_phone'], 'corporate_cell',  'Corporative Cell Phone', trim( $row[$header[$corporate_cell_pos]] ) );

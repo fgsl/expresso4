@@ -1,15 +1,17 @@
 <?php
+use Expresso\Core\GlobalService;
+
 $phpgw_flags = Array(
 	'currentapp'    =>      'calendar',
 	'noappheader'   =>      True,
 	'noappfooter'   =>      True,
 	'nofooter'      =>      True
 );
-$GLOBALS['phpgw_info']['flags'] = $phpgw_flags;
+GlobalService::get('phpgw_info')['flags'] = $phpgw_flags;
 
 include('../../header.inc.php');
-$_SESSION['calendar']['user'] = $GLOBALS['phpgw_info']['user'];
-$_SESSION['calendar']['server'] = $GLOBALS['phpgw_info']['server'];
+$_SESSION['calendar']['user'] = GlobalService::get('phpgw_info')['user'];
+$_SESSION['calendar']['server'] = GlobalService::get('phpgw_info')['server'];
 define('PHPGW_API_INC','../../phpgwapi/inc');
 include_once(PHPGW_API_INC.'/class.db_egw.inc.php');
 $page_content = <<<PAGE

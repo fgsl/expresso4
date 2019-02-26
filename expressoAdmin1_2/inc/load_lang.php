@@ -1,9 +1,11 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 $isJSON = (preg_match('/application\/json/', $_SERVER['HTTP_ACCEPT']));
 
 if ( empty($_SESSION['phpgw_info']['expressoAdmin']['lang']) ) {
-	$fn = dirname( __FILE__ ).'/../setup/phpgw_'.$GLOBALS['phpgw_info']['user']['preferences']['common']['lang'].'.lang';
+	$fn = dirname( __FILE__ ).'/../setup/phpgw_'.GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'].'.lang';
 	if (file_exists($fn)) {
 		$fp = fopen($fn,'r');
 		while ($data = fgets($fp,16000)) {

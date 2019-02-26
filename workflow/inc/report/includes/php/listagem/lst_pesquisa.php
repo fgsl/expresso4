@@ -58,7 +58,7 @@ $tr .= "<table class='tableMoldura'>
             if ($habilitasincronizacao) {
             
                 $xmlversao = verificaVersao(array( "$listagen->lstidlistagem" ));
-                $versao = new SimpleXMLElement($xmlversao);
+                $versao = new \SimpleXMLElement($xmlversao);
                 
                 $sincronizado = $versao->listagem[0]->sincronizado;
                 

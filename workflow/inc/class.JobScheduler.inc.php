@@ -12,7 +12,7 @@
 require_once 'jobs/class.JobEnum.inc.php';
 
 /**
- * Classe que verifica se um Job deve ser executado neste momento. E, em caso positivo, dispara sua execução
+ * Classe que verifica se um Job deve ser executado neste momento. E, em caso positivo, dispara sua execuï¿½ï¿½o
  * @author Sidnei Augusto Drovetto Junior - drovetto@gmail.com
  * @version 1.0
  * @license http://www.gnu.org/copyleft/gpl.html GPL
@@ -28,7 +28,7 @@ class JobScheduler
 	private $currentDate;
 
 	/**
-	 * @var object $db Objeto de conexão com o Banco de Dados
+	 * @var object $db Objeto de conexï¿½o com o Banco de Dados
 	 * @access private
 	 */
 	private $db;
@@ -40,7 +40,7 @@ class JobScheduler
 	private $jobManager;
 
 	/**
-	 * Tempo máximo de execução de um Job (em microsegundos)
+	 * Tempo mï¿½ximo de execuï¿½ï¿½o de um Job (em microsegundos)
 	 * @name MAXIMUM_EXECUTION_TIME
 	 */
 	const MAXIMUM_EXECUTION_TIME = 900000000;
@@ -52,7 +52,7 @@ class JobScheduler
 	 */
 	function JobScheduler()
 	{
-		$this->currentDate = new DateTime(date('Y-n-j G:i:00'));
+		$this->currentDate = new \DateTime(date('Y-n-j G:i:00'));
 		$this->db = &Factory::getInstance('WorkflowObjects')->getDBGalaxia()->Link_ID;
 		$this->jobManager = &Factory::getInstance('WorkflowJobManager');
 	}
@@ -66,7 +66,7 @@ class JobScheduler
 	private function convertRecordToDateObject($record)
 	{
 		$interval = array('value' => $record['interval_value'], 'unity' => $record['interval_unity']);
-		$startDate = new DateTime($record['time_start']);
+		$startDate = new \DateTime($record['time_start']);
 
 		$object = null;
 		switch ($record['date_type'])
@@ -90,7 +90,7 @@ class JobScheduler
 	}
 
 	/**
-	 * Verifica os jobs que devem ser executados e solicita sua execução
+	 * Verifica os jobs que devem ser executados e solicita sua execuï¿½ï¿½o
 	 * @return void
 	 * @access public
 	 */
@@ -130,16 +130,16 @@ class JobScheduler
 			else
 			{
 				$runningJobs[$i]->kill();
-				$this->jobManager->writeLog($jobs[$i]['job_id'], $this->currentDate, 'O Job foi abortado por ultrapassar o limite do tempo de execução (atualmente em: ' . (JobScheduler::MAXIMUM_EXECUTION_TIME / 1000000) . 's)', JobManager::STATUS_FAIL);
+				$this->jobManager->writeLog($jobs[$i]['job_id'], $this->currentDate, 'O Job foi abortado por ultrapassar o limite do tempo de execuï¿½ï¿½o (atualmente em: ' . (JobScheduler::MAXIMUM_EXECUTION_TIME / 1000000) . 's)', JobManager::STATUS_FAIL);
 			}
 		}
 	}
 
 	/**
-	 * Dispara a execução de um Job
+	 * Dispara a execuï¿½ï¿½o de um Job
 	 * @param array $job Um registro da tabela de jobs
-	 * @param bool $testMode Indica se o Job será executado em modo de teste (true) ou não (false)
-	 * @return object Um objeto da classe Thread que gerencia a execução do Job
+	 * @param bool $testMode Indica se o Job serï¿½ executado em modo de teste (true) ou nï¿½o (false)
+	 * @return object Um objeto da classe Thread que gerencia a execuï¿½ï¿½o do Job
 	 * @access public
 	 */
 	public function execute($job, $testMode = false)
@@ -186,8 +186,8 @@ class JobScheduler
 	}
 }
 
-/* se este arquivo é executado a partir da linha de comando, executa os
- * jobs que estão programados para execução no momento da chamada */
+/* se este arquivo ï¿½ executado a partir da linha de comando, executa os
+ * jobs que estï¿½o programados para execuï¿½ï¿½o no momento da chamada */
 if (php_sapi_name() == 'cli')
 {
 	require_once 'common.inc.php';

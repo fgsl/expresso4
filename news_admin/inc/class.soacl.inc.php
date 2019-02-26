@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -17,7 +19,7 @@
 
 		function soacl()
 		{
-			copyobj($GLOBALS['phpgw']->db,$this->db);
+			copyobj(GlobalService::get('phpgw')->db,$this->db);
 		}
 
 		function get_rights($location)
@@ -40,7 +42,7 @@
 
 		function get_permissions($user, $inc_groups)
 		{
-			$groups = $GLOBALS['phpgw']->acl->get_location_list_for_id('phpgw_group', 1, $user);
+			$groups = GlobalService::get('phpgw')->acl->get_location_list_for_id('phpgw_group', 1, $user);
 			$result = array();
 			$sql  = 'SELECT acl_location, acl_rights FROM phpgw_acl ';
 			$sql .= "WHERE acl_appname = 'news_admin' ";

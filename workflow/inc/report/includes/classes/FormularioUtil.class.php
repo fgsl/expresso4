@@ -2,14 +2,14 @@
 /**
  * FormularioUtil
  * 
- * Funções uteis que podem ser usadas para facilitar e padronizar o desenvolvimento.
+ * FunÃ§Ãµes uteis que podem ser usadas para facilitar e padronizar o desenvolvimento.
  * @author Jair Pereira <pereira.jair@gmail.com>
  */
 class FormularioUtil {
 	
 
    /**
-     * Inclui os arquivos de CSS e de Javascript na Página.
+     * Inclui os arquivos de CSS e de Javascript na Pï¿½gina.
      * 
      * @return void
      */
@@ -26,9 +26,9 @@ class FormularioUtil {
     }
    
     /**
-     * Função para escrever uma Mensagem de Erro ou Sucesso na Listagem.
+     * FunÃ§Ã£o para escrever uma Mensagem de Erro ou Sucesso na Listagem.
      * @param $msg
-     * @return unknown_type
+     * @return string unknown_type
      */
     function escreveMensagem($msg) {
         if ($msg) {
@@ -41,7 +41,7 @@ class FormularioUtil {
    /**
      * Abre o Quadro Principal
      * 
-     * Função para abrir o quadro Principal do Sistema.
+     * Funï¿½ï¿½o para abrir o quadro Principal do Sistema.
      *
      * @param  string $titulo
      * @return void
@@ -62,7 +62,7 @@ class FormularioUtil {
    /**
      * Fecha o Quadro Principal
      * 
-     * Função para fechar o quadro Principal do Sistema.
+     * Funï¿½ï¿½o para fechar o quadro Principal do Sistema.
      * 
      * @return void
      */
@@ -74,8 +74,8 @@ class FormularioUtil {
    /**
      * MontaArraySelect
      * 
-     * Função para Retornar o array necessário para montar um campo do tipo SELECT. 
-     * Parâmetros: Conexão, SQL, Id (nome do campo que será usado para o value das options), Valor (nome do campo que será mostrado nas options) 
+     * Funï¿½ï¿½o para Retornar o array necessï¿½rio para montar um campo do tipo SELECT. 
+     * Parï¿½metros: Conexï¿½o, SQL, Id (nome do campo que serï¿½ usado para o value das options), Valor (nome do campo que serï¿½ mostrado nas options) 
      *
      * @param  string $conn
      * @param  string $sql
@@ -97,8 +97,8 @@ class FormularioUtil {
     /**
      * MontaArraySelect
      * 
-     * Função para Retornar o array necessário para montar um campo do tipo SELECT. 
-     * Parâmetros: Conexão, SQL, Id (nome do campo que será usado para o value das options), Valor (nome do campo que será mostrado nas options) 
+     * Funï¿½ï¿½o para Retornar o array necessï¿½rio para montar um campo do tipo SELECT. 
+     * Parï¿½metros: Conexï¿½o, SQL, Id (nome do campo que serï¿½ usado para o value das options), Valor (nome do campo que serï¿½ mostrado nas options) 
      *
      * @param  string $conn
      * @param  string $sql

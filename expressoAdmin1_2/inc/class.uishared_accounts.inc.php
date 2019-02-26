@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /***********************************************************************************\
 * Expresso Administração															*
 * by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	*
@@ -27,14 +29,14 @@ class uishared_accounts
 		{
 			$this->functions = CreateObject('expressoAdmin1_2.functions');
 			
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
-			$GLOBALS['phpgw']->js->validate_file('jscode','sharedAccounts','expressoAdmin1_2');
-			$GLOBALS['phpgw']->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
-			$GLOBALS['phpgw']->js->validate_file('modal','modal','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
+			GlobalService::get('phpgw')->js->validate_file('jscode','sharedAccounts','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('modal','modal','expressoAdmin1_2');
             $c = CreateObject('phpgwapi.config','expressoAdmin1_2');
             $c->read_repository();
             $this->current_config = $c->config_data;
@@ -44,7 +46,7 @@ class uishared_accounts
 	function index()
 	{
 		/* Begin:  Check manager access */
-		$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+		$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 		$acl = $this->functions->read_acl($account_lid);
 		$contexts = $acl['contexts'];
                     
@@ -53,14 +55,14 @@ class uishared_accounts
 		}
 		
 		if (!$this->functions->check_acl($account_lid, ACL_Managers::GRP_VIEW_SHARED_ACCOUNTS )) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 		}
 		/* End: Check manager access */
 
-		unset($GLOBALS['phpgw_info']['flags']['noheader']);
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('shared accounts');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('shared accounts');
+		GlobalService::get('phpgw')->common->phpgw_header();
 
 		$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 
@@ -85,7 +87,7 @@ class uishared_accounts
 			$combo_manager_org .= $this->functions->get_organizations($context);
 		}
 		
-		$combo_all_orgs = $this->functions->get_organizations($GLOBALS['phpgw_info']['server']['ldap_context']);
+		$combo_all_orgs = $this->functions->get_organizations(GlobalService::get('phpgw_info')['server']['ldap_context']);
 		
 		$p->set_var('manager_organizations', $combo_manager_org);
 		$p->set_var('all_organizations', $combo_all_orgs);
@@ -104,8 +106,8 @@ class uishared_accounts
         /* End: set modal */
 		
 		$var = array(
-			'th_bg'						=> $GLOBALS['phpgw_info']['theme']['th_bg'],
-			'back_url'					=> $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php'),
+			'th_bg'						=> GlobalService::get('phpgw_info')['theme']['th_bg'],
+			'back_url'					=> GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php'),
 			'context_display'			=> $context_display,
 			'shared_accounts_modal' 		=> $shared_accounts_modal_tpl,                                
 			'onclick_create_shared_account' => "modal(\"$modal_id\",\"create\")"

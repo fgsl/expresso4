@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - administration                                              *
   * http://www.egroupware.org                                                *
@@ -16,7 +18,7 @@
 
 		function uimainscreen()
 		{
-			$GLOBALS['phpgw']->nextmatchs = CreateObject('phpgwapi.nextmatchs');
+			GlobalService::get('phpgw')->nextmatchs = CreateObject('phpgwapi.nextmatchs');
 		}
 
 		function index()
@@ -28,34 +30,34 @@
 			$message     = addslashes($_POST['message']);
 
 			$acl_ok = array();
-			if (!$GLOBALS['phpgw']->acl->check('mainscreen_message_access',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('mainscreen_message_access',1,'admin'))
 			{
 				$acl_ok['mainscreen'] = True;
 			}
-			if (!$GLOBALS['phpgw']->acl->check('mainscreen_message_access',2,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('mainscreen_message_access',2,'admin'))
 			{
 				$acl_ok['loginscreen'] = True;
 			}
-			if (!$GLOBALS['phpgw']->acl->check('mainscreen_message_access',3,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('mainscreen_message_access',3,'admin'))
 			{
 				$acl_ok['loginhelp'] = True;
 			}
 			if ($_POST['cancel'] && !isset($_POST['message']) || 
 			    !count($acl_ok) || $_POST['submit'] && !isset($acl_ok[$section]))
 			{
-				$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+				GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 			}
 
-			$GLOBALS['phpgw']->template->set_file(array('message' => 'mainscreen_message.tpl'));
-			$GLOBALS['phpgw']->template->set_block('message','form','form');
-			$GLOBALS['phpgw']->template->set_block('message','row','row');
-			$GLOBALS['phpgw']->template->set_block('message','row_2','row_2');
+			GlobalService::get('phpgw')->template->set_file(array('message' => 'mainscreen_message.tpl'));
+			GlobalService::get('phpgw')->template->set_block('message','form','form');
+			GlobalService::get('phpgw')->template->set_block('message','row','row');
+			GlobalService::get('phpgw')->template->set_block('message','row_2','row_2');
 
 			if ($_POST['submit'])
 			{
-				$GLOBALS['phpgw']->db->query("DELETE FROM phpgw_lang WHERE message_id='$section" . "_message' AND app_name='"
+				GlobalService::get('phpgw')->db->query("DELETE FROM phpgw_lang WHERE message_id='$section" . "_message' AND app_name='"
 					. "$section' AND lang='$select_lang'",__LINE__,__FILE__);
-				$GLOBALS['phpgw']->db->query("INSERT INTO phpgw_lang (message_id,app_name,lang,content)VALUES ('$section" . "_message','$section','$select_lang','"
+				GlobalService::get('phpgw')->db->query("INSERT INTO phpgw_lang (message_id,app_name,lang,content)VALUES ('$section" . "_message','$section','$select_lang','"
 					. $message . "')",__LINE__,__FILE__);
 					$feedback_message = '<center>'.lang('message has been updated').'</center>';
 				
@@ -68,21 +70,21 @@
 			switch ($section)
 			{
 				case 'mainscreen':
-					$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('Edit main screen message') . ': '.strtoupper($select_lang);
+					GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('Edit main screen message') . ': '.strtoupper($select_lang);
 					break;
 				case 'loginscreen':
-					$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('Edit login screen message') . ': '.strtoupper($select_lang);
+					GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('Edit login screen message') . ': '.strtoupper($select_lang);
 					break;
 				case 'loginhelp':
-					$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('Edit login help message') . ': '.strtoupper($select_lang);
+					GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('Edit login help message') . ': '.strtoupper($select_lang);
                                         break;
 				default:
-					$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('Main screen message');
+					GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('Main screen message');
 					break;
 			}
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
 
 			
@@ -91,36 +93,36 @@
 			if (empty($section))
 			{
 
-			   $GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			   $GLOBALS['phpgw']->common->phpgw_header();
+			   GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			   GlobalService::get('phpgw')->common->phpgw_header();
 			   echo parse_navbar();
 				  
 			   
-			   $GLOBALS['phpgw']->template->set_var('form_action',$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uimainscreen.index'));
-				$GLOBALS['phpgw']->template->set_var('tr_color',$GLOBALS['phpgw_info']['theme']['th_bg']);
-				$GLOBALS['phpgw']->template->set_var('value','&nbsp;');
-				$GLOBALS['phpgw']->template->fp('rows','row_2',True);
+			   GlobalService::get('phpgw')->template->set_var('form_action',GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uimainscreen.index'));
+				GlobalService::get('phpgw')->template->set_var('tr_color',GlobalService::get('phpgw_info')['theme']['th_bg']);
+				GlobalService::get('phpgw')->template->set_var('value','&nbsp;');
+				GlobalService::get('phpgw')->template->fp('rows','row_2',True);
 
-				$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$tr_color);
+				$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+				GlobalService::get('phpgw')->template->set_var('tr_color',$tr_color);
 
 				$lang_select = '<select name="select_lang">';
-				$GLOBALS['phpgw']->db->query("SELECT lang,phpgw_languages.lang_name,phpgw_languages.lang_id FROM phpgw_lang,phpgw_languages WHERE "
+				GlobalService::get('phpgw')->db->query("SELECT lang,phpgw_languages.lang_name,phpgw_languages.lang_id FROM phpgw_lang,phpgw_languages WHERE "
 					. "phpgw_lang.lang=phpgw_languages.lang_id GROUP BY lang,phpgw_languages.lang_name,"
 					. "phpgw_languages.lang_id ORDER BY lang",__LINE__,__FILE__);
-				while ($GLOBALS['phpgw']->db->next_record())
+				while (GlobalService::get('phpgw')->db->next_record())
 				{
-					$lang = $GLOBALS['phpgw']->db->f('lang');
+					$lang = GlobalService::get('phpgw')->db->f('lang');
 					$lang_select .= '<option value="' . $lang . '"'.($lang == $select_lang ? ' selected' : '').'>' . 
-						$lang . ' - ' . $GLOBALS['phpgw']->db->f('lang_name') . "</option>\n";
+						$lang . ' - ' . GlobalService::get('phpgw')->db->f('lang_name') . "</option>\n";
 				}
 				$lang_select .= '</select>';
-				$GLOBALS['phpgw']->template->set_var('label',lang('Language'));
-				$GLOBALS['phpgw']->template->set_var('value',$lang_select);
-				$GLOBALS['phpgw']->template->fp('rows','row',True);
+				GlobalService::get('phpgw')->template->set_var('label',lang('Language'));
+				GlobalService::get('phpgw')->template->set_var('value',$lang_select);
+				GlobalService::get('phpgw')->template->fp('rows','row',True);
 
-				$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$tr_color);
+				$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+				GlobalService::get('phpgw')->template->set_var('tr_color',$tr_color);
 				$select_section = '<select name="section">'."\n";
 				foreach($acl_ok as $key => $val)
 				{
@@ -129,67 +131,67 @@
 						($key == 'mainscreen' ? lang('Main screen') : lang($key)) . "</option>\n";
 				}
 				$select_section .= '</select>';
-				$GLOBALS['phpgw']->template->set_var('label',lang('Section'));
-				$GLOBALS['phpgw']->template->set_var('value',$select_section);
-				$GLOBALS['phpgw']->template->fp('rows','row',True);
+				GlobalService::get('phpgw')->template->set_var('label',lang('Section'));
+				GlobalService::get('phpgw')->template->set_var('value',$select_section);
+				GlobalService::get('phpgw')->template->fp('rows','row',True);
 
-				$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$tr_color);
-				$GLOBALS['phpgw']->template->set_var('value','<input type="submit" value="' . lang('Edit')
+				$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+				GlobalService::get('phpgw')->template->set_var('tr_color',$tr_color);
+				GlobalService::get('phpgw')->template->set_var('value','<input type="submit" value="' . lang('Edit')
 					. '"><input type="submit" name="cancel" value="'. lang('cancel') .'">');
-				$GLOBALS['phpgw']->template->fp('rows','row_2',True);
+				GlobalService::get('phpgw')->template->fp('rows','row_2',True);
 			}
 			else
 			{
-			   $GLOBALS['phpgw']->db->query("SELECT content FROM phpgw_lang WHERE lang='$select_lang' AND message_id='$section"
+			   GlobalService::get('phpgw')->db->query("SELECT content FROM phpgw_lang WHERE lang='$select_lang' AND message_id='$section"
 				. "_message'",__LINE__,__FILE__);
-				$GLOBALS['phpgw']->db->next_record();
+				GlobalService::get('phpgw')->db->next_record();
 				
-				$current_message = $GLOBALS['phpgw']->db->f('content');
+				$current_message = GlobalService::get('phpgw')->db->f('content');
 				
 				if($_POST['htmlarea'])
 				{
 				   $text_or_htmlarea=$html->htmlarea('message',stripslashes($current_message));
-				   $htmlarea_button='<input type="submit" name="no-htmlarea" onclick="self.location.href=\''.$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uimainscreen.index&htmlarea=true').'\'" value="'.lang('disable WYSIWYG-editor').'">';	
+				   $htmlarea_button='<input type="submit" name="no-htmlarea" onclick="self.location.href=\''.GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uimainscreen.index&htmlarea=true').'\'" value="'.lang('disable WYSIWYG-editor').'">';	
 				}
 				else
 				{
 				   $text_or_htmlarea='<textarea name="message" style="width:100%; min-width:350px; height:300px;" wrap="virtual">' . stripslashes($current_message) . '</textarea>';
-				   $htmlarea_button='<input type="submit" name="htmlarea" onclick="self.location.href=\''.$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uimainscreen.index&htmlarea=true').'\'" value="'.lang('activate WYSIWYG-editor').'">';
+				   $htmlarea_button='<input type="submit" name="htmlarea" onclick="self.location.href=\''.GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uimainscreen.index&htmlarea=true').'\'" value="'.lang('activate WYSIWYG-editor').'">';
 
 				}			   
 
-				$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-				$GLOBALS['phpgw']->common->phpgw_header();
+				GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+				GlobalService::get('phpgw')->common->phpgw_header();
 				echo parse_navbar();
 				
-				$GLOBALS['phpgw']->template->set_var('form_action',$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uimainscreen.index'));
-				$GLOBALS['phpgw']->template->set_var('select_lang',$select_lang);
-				$GLOBALS['phpgw']->template->set_var('section',$section);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$GLOBALS['phpgw_info']['theme']['th_bg']);
-				$GLOBALS['phpgw']->template->set_var('value','&nbsp;');
-				$GLOBALS['phpgw']->template->fp('rows','row_2',True);
+				GlobalService::get('phpgw')->template->set_var('form_action',GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uimainscreen.index'));
+				GlobalService::get('phpgw')->template->set_var('select_lang',$select_lang);
+				GlobalService::get('phpgw')->template->set_var('section',$section);
+				GlobalService::get('phpgw')->template->set_var('tr_color',GlobalService::get('phpgw_info')['theme']['th_bg']);
+				GlobalService::get('phpgw')->template->set_var('value','&nbsp;');
+				GlobalService::get('phpgw')->template->fp('rows','row_2',True);
 
-				$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$tr_color);
+				$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+				GlobalService::get('phpgw')->template->set_var('tr_color',$tr_color);
 
 				
-				$GLOBALS['phpgw']->template->set_var('value',$text_or_htmlarea);
+				GlobalService::get('phpgw')->template->set_var('value',$text_or_htmlarea);
 				
 				
 				
-				$GLOBALS['phpgw']->template->fp('rows','row_2',True);
+				GlobalService::get('phpgw')->template->fp('rows','row_2',True);
 
-				$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-				$GLOBALS['phpgw']->template->set_var('tr_color',$tr_color);
-				$GLOBALS['phpgw']->template->set_var('value','<input type="submit" name="submit" value="' . lang('Save')
+				$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+				GlobalService::get('phpgw')->template->set_var('tr_color',$tr_color);
+				GlobalService::get('phpgw')->template->set_var('value','<input type="submit" name="submit" value="' . lang('Save')
 				. '"><input type="submit" name="cancel" value="'. lang('cancel') .'">'.$htmlarea_button);
-				$GLOBALS['phpgw']->template->fp('rows','row_2',True);
+				GlobalService::get('phpgw')->template->fp('rows','row_2',True);
 			}
 
-			$GLOBALS['phpgw']->template->set_var('lang_cancel',lang('Cancel'));
-			$GLOBALS['phpgw']->template->set_var('error_message',$feedback_message);
-			$GLOBALS['phpgw']->template->pfp('out','form');
+			GlobalService::get('phpgw')->template->set_var('lang_cancel',lang('Cancel'));
+			GlobalService::get('phpgw')->template->set_var('error_message',$feedback_message);
+			GlobalService::get('phpgw')->template->pfp('out','form');
 		}
 	}
 ?>

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Record history logging                                  *
 	* This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -38,11 +40,11 @@
 		{
 			if (! $appname)
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 
 			$this->appname = $appname;
-			$this->db      = $GLOBALS['phpgw']->db;
+			$this->db      = GlobalService::get('phpgw')->db;
 		}
 
 		function delete($record_id)
@@ -63,7 +65,7 @@
 				$this->db->query("insert into phpgw_history_log (history_record_id,"
 					. "history_appname,history_owner,history_status,history_new_value,history_old_value,history_timestamp) "
 					. "values ('".(int)$record_id."','" . $this->appname . "','"
-					. $GLOBALS['phpgw_info']['user']['account_id'] . "','$status','"
+					. GlobalService::get('phpgw_info')['user']['account_id'] . "','$status','"
 					. addslashes($new_value) . "','" . addslashes($old_value) . "','" . $this->db->to_timestamp(time())
 					. "')",__LINE__,__FILE__);
 			}
@@ -110,7 +112,7 @@
 				$return_values[] = array(
 					'id'         => $this->db->f('history_id'),
 					'record_id'  => $this->db->f('history_record_id'),
-					'owner'      => $GLOBALS['phpgw']->accounts->id2name($this->db->f('history_owner')),
+					'owner'      => GlobalService::get('phpgw')->accounts->id2name($this->db->f('history_owner')),
 //					'status'     => lang($this->types[$this->db->f('history_status')]),
 					'status'     => str_replace(' ','',$this->db->f('history_status')),
 					'new_value'  => $this->db->f('history_new_value'),
@@ -137,7 +139,7 @@
 			$this->template->set_var('lang_action',lang('Action'));
 			$this->template->set_var('lang_new_value',lang('New Value'));
 
-			$this->template->set_var('th_bg',$GLOBALS['phpgw_info']['theme']['th_bg']);
+			$this->template->set_var('th_bg',GlobalService::get('phpgw_info')['theme']['th_bg']);
 			$this->template->set_var('sort_date',lang('Date'));
 			$this->template->set_var('sort_owner',lang('User'));
 			$this->template->set_var('sort_status',lang('Status'));
@@ -148,7 +150,7 @@
 
 			if (! is_array($values))
 			{
-				$this->template->set_var('tr_color',$GLOBALS['phpgw_info']['theme']['row_off']);
+				$this->template->set_var('tr_color',GlobalService::get('phpgw_info')['theme']['row_off']);
 				$this->template->set_var('lang_no_history',lang('No history for this record'));
 				$this->template->fp('rows','row_no_history');
 				return $this->template->fp('out','list');
@@ -158,7 +160,7 @@
 			{
 				$this->nextmatchs->template_alternate_row_color($this->template);
 
-				$this->template->set_var('row_date',$GLOBALS['phpgw']->common->show_date($value['datetime']));
+				$this->template->set_var('row_date',GlobalService::get('phpgw')->common->show_date($value['datetime']));
 				$this->template->set_var('row_owner',$value['owner']);
 
 				if ($this->alternate_handlers[$value['status']])

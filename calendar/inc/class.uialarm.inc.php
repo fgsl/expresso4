@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -33,9 +35,9 @@
 
 		function uialarm()
 		{
-			$GLOBALS['phpgw']->nextmatchs = CreateObject('phpgwapi.nextmatchs');
+			GlobalService::get('phpgw')->nextmatchs = CreateObject('phpgwapi.nextmatchs');
 			
-			$this->theme = $GLOBALS['phpgw_info']['theme'];
+			$this->theme = GlobalService::get('phpgw_info')['theme'];
 
 			$this->bo = CreateObject('calendar.boalarm');
 
@@ -43,13 +45,13 @@
 			{
 				echo "BO Owner : ".$this->bo->owner."<br>\n";
 			}
-			$this->template_dir = $GLOBALS['phpgw']->common->get_tpl_dir('calendar');
+			$this->template_dir = GlobalService::get('phpgw')->common->get_tpl_dir('calendar');
 
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
-			$this->html = &$GLOBALS['phpgw']->html;
+			$this->html = &GlobalService::get('phpgw')->html;
 		}
 
 		function prep_page()
@@ -57,15 +59,15 @@
 			if ($this->bo->cal_id <= 0 ||
 				!$this->event = $this->bo->read_entry($this->bo->cal_id))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php',Array(
+				GlobalService::get('phpgw')->redirect_link('/index.php',Array(
 					'menuaction'	=> 'calendar.uicalendar.index'
 				));
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['calendar']['title'].' - '.lang('Alarm Management');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['calendar']['title'].' - '.lang('Alarm Management');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$this->template = CreateObject('phpgwapi.Template',$this->template_dir);
 
@@ -86,7 +88,7 @@
 		{
 			if (!isset($var['tr_color']))
 			{
-				$var['tr_color'] = $GLOBALS['phpgw']->nextmatchs->alternate_row_color();
+				$var['tr_color'] = GlobalService::get('phpgw')->nextmatchs->alternate_row_color();
 			}
 			$this->template->set_var($var);
 			$this->template->parse($row,$list,True);
@@ -98,14 +100,14 @@
 		{
 			if ($_POST['cancel'])
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php','menuaction='.($_POST['return_to'] ? $_POST['return_to'] : 'calendar.uicalendar.index'));
+				GlobalService::get('phpgw')->redirect_link('/index.php','menuaction='.($_POST['return_to'] ? $_POST['return_to'] : 'calendar.uicalendar.index'));
 			}
 			if ($_POST['delete'] && count($_POST['alarm']))
 			{
 				if ($this->bo->delete($_POST['alarm']) < 0)
 				{
 					echo '<center>'.lang('You do not have permission to delete this alarm !!!').'</center>';
-					$GLOBALS['phpgw']->common->phpgw_exit(True);
+					GlobalService::get('phpgw')->common->phpgw_exit(True);
 				}
 			}
 			if (($_POST['enable'] || $_POST['disable']) && count($_POST['alarm']))
@@ -113,7 +115,7 @@
 				if ($this->bo->enable($_POST['alarm'],$_POST['enable']) < 0)
 				{
 					echo '<center>'.lang('You do not have permission to enable/disable this alarm !!!').'</center>';
-					$GLOBALS['phpgw']->common->phpgw_exit(True);
+					GlobalService::get('phpgw')->common->phpgw_exit(True);
 				}
 			}
 			$this->prep_page();
@@ -135,33 +137,33 @@
 				if ($alarm_time <= time())
 				{
 					echo lang('Alarm is older than now!!!');
-					$GLOBALS['phpgw']->common->phpgw_exit(True);
+					GlobalService::get('phpgw')->common->phpgw_exit(True);
 				}
 				
 				foreach ( $this->bo->bo->so->cal->event['alarm'] as $object ){
 					if ($object['time'] == $alarm_time)
 					{
 						echo '<center>'.lang('Alarm already added!!!').'</center>';
-						$GLOBALS['phpgw']->common->phpgw_exit(True);
+						GlobalService::get('phpgw')->common->phpgw_exit(True);
 					}
 				}
 
 				if ($time > 0 && !$this->bo->add($this->event,$time,$_POST['owner']))
 				{
 					echo '<center>'.lang('You do not have permission to add alarms to this event !!!').'</center>';
-					$GLOBALS['phpgw']->common->phpgw_exit(True);
+					GlobalService::get('phpgw')->common->phpgw_exit(True);
 				}
 			}
 			if (!ExecMethod('calendar.uicalendar.view_event',$this->event))
 			{
 				echo '<center>'.lang('You do not have permission to read this record!').'</center>';
-				$GLOBALS['phpgw']->common->phpgw_exit(True);
+				GlobalService::get('phpgw')->common->phpgw_exit(True);
 			}
 			echo "<br>\n";
-			$GLOBALS['phpgw']->template->set_var('th_bg',$this->theme['th_bg']);
-			$GLOBALS['phpgw']->template->set_var('hr_text',lang('Alarms').':');
-			$GLOBALS['phpgw']->template->fp('row','hr',True);
-			$GLOBALS['phpgw']->template->pfp('phpgw_body','view_event');
+			GlobalService::get('phpgw')->template->set_var('th_bg',$this->theme['th_bg']);
+			GlobalService::get('phpgw')->template->set_var('hr_text',lang('Alarms').':');
+			GlobalService::get('phpgw')->template->fp('row','hr',True);
+			GlobalService::get('phpgw')->template->pfp('phpgw_body','view_event');
 
 			$var = Array(
 				'tr_color'		=> $this->theme['th_bg'],
@@ -176,8 +178,8 @@
 			{
 				$this->output_template_array('rows','alarm_headers',$var);
 				// Bug Fix - Nilton Neto - 19/10/2008
-				$format = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'] . ' - H:i';	
-				$tz_offset = (60*60*$GLOBALS['phpgw_info']['user']['preferences']['common']['tz_offset']);
+				$format = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'] . ' - H:i';	
+				$tz_offset = (60*60*GlobalService::get('phpgw_info')['user']['preferences']['common']['tz_offset']);
 				foreach($this->event['alarm'] as $key => $alarm)
 				{
 					if (!$this->bo->check_perms(PHPGW_ACL_READALARM,$alarm['owner']))
@@ -188,7 +190,7 @@
 						'field'    => date($format, $alarm['time']+$tz_offset),
 						//'data'   => $alarm['text'],
 						'data'     => lang('Email Notification'),
-						'owner'    => $GLOBALS['phpgw']->common->grab_owner_name($alarm['owner']),
+						'owner'    => GlobalService::get('phpgw')->common->grab_owner_name($alarm['owner']),
 						'enabled'  => $this->html->image('calendar',$alarm['enabled']?'enabled':'disabled',$alarm['enabled']?'enabled':'disabled','width="13" height="13"'),
 						'select'   => $this->html->checkbox("alarm[$alarm[id]]")
 					);
@@ -206,18 +208,18 @@
 				}
 				$this->template->parse('rows','buttons',True);
 			}
-			if (isset($this->event['participants'][(int)$GLOBALS['phpgw_info']['user']['account_id']]))
+			if (isset($this->event['participants'][(int)GlobalService::get('phpgw_info')['user']['account_id']]))
 			{
 				$this->template->set_var(Array(
 					'input_days'    => $this->html->select('time[days]',$_POST['time']['days'],range(0,31),True).' '.lang('days'),
 					'input_hours'   => $this->html->select('time[hours]',$_POST['time']['hours'],range(0,24),True).' '.lang('hours'),
 					'input_minutes' => $this->html->select('time[mins]',$_POST['time']['mins'],range(0,60),True).' '.lang('minutes').' '.lang('before the event'),
-					'input_owner'   => $this->html->select('owner',$GLOBALS['phpgw_info']['user']['account_id'],$this->bo->participants($this->event,True),True),
+					'input_owner'   => $this->html->select('owner',GlobalService::get('phpgw_info')['user']['account_id'],$this->bo->participants($this->event,True),True),
 					'input_add'     => $this->html->submit_button('add','Add Alarm'),
 				));
 			}
 			$this->template->set_var(Array(
-				'action_url'	=> $GLOBALS['phpgw']->link('/index.php',Array('menuaction'=>'calendar.uialarm.manager')),
+				'action_url'	=> GlobalService::get('phpgw')->link('/index.php',Array('menuaction'=>'calendar.uialarm.manager')),
 				'hidden_vars'	=> $this->html->input_hidden(array(
 					'cal_id' => $this->bo->cal_id,
 					'return_to' => $_POST['return_to']
@@ -228,7 +230,7 @@
 			));
 //echo "<p>alarm_management='".htmlspecialchars($this->template->get_var('alarm_management'))."'</p>\n";
 			$this->template->pfp('out','alarm_management');
-			$GLOBALS['phpgw']->common->phpgw_footer();
+			GlobalService::get('phpgw')->common->phpgw_footer();
 		}
 	
 	}

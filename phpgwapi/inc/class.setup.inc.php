@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -57,19 +59,19 @@
 				$this->ConfigDomain = get_var('ConfigDomain',array('COOKIE','POST'),$_POST['FormDomain']);
 			}
 
-			$GLOBALS['phpgw_info']['server']['db_type'] = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_type'];
+			GlobalService::get('phpgw_info')['server']['db_type'] = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_type'];
 
-			if ($GLOBALS['phpgw_info']['server']['db_type'] == 'pgsql')
+			if (GlobalService::get('phpgw_info')['server']['db_type'] == 'pgsql')
 			{
-				$GLOBALS['phpgw_info']['server']['db_persistent'] = False;
+				GlobalService::get('phpgw_info')['server']['db_persistent'] = False;
 			}
 			$this->db           = CreateObject('phpgwapi.db_egw');
-			$this->db->Host     = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_host'];
-			$this->db->Port     = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_port'];
-			$this->db->Type     = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_type'];
-			$this->db->Database = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_name'];
-			$this->db->User     = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_user'];
-			$this->db->Password = $GLOBALS['phpgw_domain'][$this->ConfigDomain]['db_pass'];
+			$this->db->Host     = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_host'];
+			$this->db->Port     = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_port'];
+			$this->db->Type     = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_type'];
+			$this->db->Database = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_name'];
+			$this->db->User     = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_user'];
+			$this->db->Password = GlobalService::get('phpgw_domain')[$this->ConfigDomain]['db_pass'];
 		}
 
 		/**
@@ -136,13 +138,13 @@
 				/* Setup defaults to aid in header upgrade to version 1.26.
 				 * This was the first version to include the following values.
 				 */
-				if(!@isset($GLOBALS['phpgw_domain'][$FormDomain]['config_user']) && isset($GLOBALS['phpgw_domain'][$FormDomain]))
+				if(!@isset(GlobalService::get('phpgw_domain')[$FormDomain]['config_user']) && isset(GlobalService::get('phpgw_domain')[$FormDomain]))
 				{
-					@$GLOBALS['phpgw_domain'][$FormDomain]['config_user'] = 'admin';
+					@GlobalService::get('phpgw_domain')[$FormDomain]['config_user'] = 'admin';
 				}
-				if(!@isset($GLOBALS['phpgw_info']['server']['header_admin_user']))
+				if(!@isset(GlobalService::get('phpgw_info')['server']['header_admin_user']))
 				{
-					@$GLOBALS['phpgw_info']['server']['header_admin_user'] = 'admin';
+					@GlobalService::get('phpgw_info')['server']['header_admin_user'] = 'admin';
 				}
 			}
 
@@ -159,9 +161,9 @@
 					$this->set_cookie('ConfigPW','',$expire,'/');
 					$this->set_cookie('ConfigDomain','',$expire,'/');
 					$this->set_cookie('ConfigLang','',$expire,'/');
-					$GLOBALS['phpgw_info']['setup']['LastDomain'] = $_COOKIE['ConfigDomain'];
-					$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = lang('You have successfully logged out');
-					$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = '';
+					GlobalService::get('phpgw_info')['setup']['LastDomain'] = $_COOKIE['ConfigDomain'];
+					GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = lang('You have successfully logged out');
+					GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = '';
 					return False;
 				case 'header':
 					/* header admin logout */
@@ -169,8 +171,8 @@
 					$this->set_cookie('HeaderUser','',$expire,'/');
 					$this->set_cookie('HeaderPW','',$expire,'/');
 					$this->set_cookie('ConfigLang','',$expire,'/');
-					$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = lang('You have successfully logged out');
-					$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = '';
+					GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = lang('You have successfully logged out');
+					GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = '';
 					return False;
 			}
 
@@ -185,8 +187,8 @@
 					{
 						/* header admin login */
 						/* New test is md5, cleartext version is for header < 1.26 */
-						if ($this->check_auth($FormUser,$FormPW,$GLOBALS['phpgw_info']['server']['header_admin_user'],
-							$GLOBALS['phpgw_info']['server']['header_admin_password']))
+						if ($this->check_auth($FormUser,$FormPW,GlobalService::get('phpgw_info')['server']['header_admin_user'],
+							GlobalService::get('phpgw_info')['server']['header_admin_password']))
 						{
 							$this->set_cookie('HeaderUser',"$FormUser",$expire,'/');
 							$this->set_cookie('HeaderPW',"$FormPW",$expire,'/');
@@ -195,8 +197,8 @@
 						}
 						else
 						{
-							$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = lang('Invalid password');
-							$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = '';
+							GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = lang('Invalid password');
+							GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = '';
 							return False;
 						}
 					}
@@ -204,8 +206,8 @@
 					{
 						// Returning after login to header admin
 						/* New test is md5, cleartext version is for header < 1.26 */
-						if ($this->check_auth($HeaderUser,$HeaderPW,$GLOBALS['phpgw_info']['server']['header_admin_user'],
-							$GLOBALS['phpgw_info']['server']['header_admin_password']))
+						if ($this->check_auth($HeaderUser,$HeaderPW,GlobalService::get('phpgw_info')['server']['header_admin_user'],
+							GlobalService::get('phpgw_info')['server']['header_admin_password']))
 						{
 							$this->set_cookie('HeaderUser',"$HeaderUser",$expire,'/');
 							$this->set_cookie('HeaderPW',"$HeaderPW",$expire,'/');
@@ -214,8 +216,8 @@
 						}
 						else
 						{
-							$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = lang('Invalid password');
-							$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = '';
+							GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = lang('Invalid password');
+							GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = '';
 							return False;
 						}
 					}
@@ -225,9 +227,9 @@
 					{
 						/* config login */
 						/* New test is md5, cleartext version is for header < 1.26 */
-						if (isset($GLOBALS['phpgw_domain'][$FormDomain]) &&
-							$this->check_auth($FormUser,$FormPW,@$GLOBALS['phpgw_domain'][$FormDomain]['config_user'],
-							@$GLOBALS['phpgw_domain'][$FormDomain]['config_passwd']))
+						if (isset(GlobalService::get('phpgw_domain')[$FormDomain]) &&
+							$this->check_auth($FormUser,$FormPW,@GlobalService::get('phpgw_domain')[$FormDomain]['config_user'],
+							@GlobalService::get('phpgw_domain')[$FormDomain]['config_passwd']))
 						{
 							$this->set_cookie('ConfigUser',"$FormUser",$expire,'/');
 							$this->set_cookie('ConfigPW',"$FormPW",$expire,'/');
@@ -239,8 +241,8 @@
 						}
 						else
 						{
-							$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = lang('Invalid password');
-							$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = '';
+							GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = lang('Invalid password');
+							GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = '';
 							return False;
 						}
 					}
@@ -248,8 +250,8 @@
 					{
 						// Returning after login to config
 						/* New test is md5, cleartext version is for header < 1.26 */
-						if ($this->check_auth($ConfigUser,$ConfigPW,@$GLOBALS['phpgw_domain'][$this->ConfigDomain]['config_user'],
-							@$GLOBALS['phpgw_domain'][$this->ConfigDomain]['config_passwd']))
+						if ($this->check_auth($ConfigUser,$ConfigPW,@GlobalService::get('phpgw_domain')[$this->ConfigDomain]['config_user'],
+							@GlobalService::get('phpgw_domain')[$this->ConfigDomain]['config_passwd']))
 						{
 							$this->set_cookie('ConfigUser',"$ConfigUser",$expire,'/');
 							$this->set_cookie('ConfigPW',"$ConfigPW",$expire,'/');
@@ -259,8 +261,8 @@
 						}
 						else
 						{
-							$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = lang('Invalid password');
-							$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = '';
+							GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = lang('Invalid password');
+							GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = '';
 							return False;
 						}
 					}
@@ -286,9 +288,9 @@
 
 		function checkip($remoteip='')
 		{
-			//echo "<p>setup::checkip($remoteip) against setup_acl='".$GLOBALS['phpgw_info']['server']['setup_acl']."'</p>\n";
-			$allowed_ips = explode(',',@$GLOBALS['phpgw_info']['server']['setup_acl']);
-			if(empty($GLOBALS['phpgw_info']['server']['setup_acl']) || !is_array($allowed_ips))
+			//echo "<p>setup::checkip($remoteip) against setup_acl='".GlobalService::get('phpgw_info')['server']['setup_acl']."'</p>\n";
+			$allowed_ips = explode(',',@GlobalService::get('phpgw_info')['server']['setup_acl']);
+			if(empty(GlobalService::get('phpgw_info')['server']['setup_acl']) || !is_array($allowed_ips))
 			{
 				return True;	// no test
 			}
@@ -313,8 +315,8 @@
 					return True;	// match
 				}
 			}
-			$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = '';
-			$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG'] = lang('Invalid IP address');
+			GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = '';
+			GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG'] = lang('Invalid IP address');
 
 			return False;
 		}
@@ -368,7 +370,7 @@
 		*/
 		function register_app($appname,$enable=99)
 		{
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if(!$appname)
 			{
@@ -394,7 +396,7 @@
 				$appstbl = 'phpgw_applications';
 			}
 
-			if($GLOBALS['DEBUG'])
+			if(GlobalService::get('DEBUG'))
 			{
 				echo '<br>register_app(): ' . $appname . ', version: ' . $setup_info[$appname]['version'] . ', table: ' . $appstbl . '<br>';
 				// _debug_array($setup_info[$appname]);
@@ -438,7 +440,7 @@
 		*/
 		function app_registered($appname)
 		{
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if(!$appname)
 			{
@@ -454,7 +456,7 @@
 				$appstbl = 'phpgw_applications';
 			}
 
-			if(@$GLOBALS['DEBUG'])
+			if(@GlobalService::get('DEBUG'))
 			{
 				echo '<br>app_registered(): checking ' . $appname . ', table: ' . $appstbl;
 				// _debug_array($setup_info[$appname]);
@@ -464,13 +466,13 @@
 			$this->db->next_record();
 			if($this->db->f(0))
 			{
-				if(@$GLOBALS['DEBUG'])
+				if(@GlobalService::get('DEBUG'))
 				{
 					echo '... app previously registered.';
 				}
 				return True;
 			}
-			if(@$GLOBALS['DEBUG'])
+			if(@GlobalService::get('DEBUG'))
 			{
 				echo '... app not registered';
 			}
@@ -485,7 +487,7 @@
 		*/
 		function update_app($appname)
 		{
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if(!$appname)
 			{
@@ -501,7 +503,7 @@
 				$appstbl = 'phpgw_applications';
 			}
 
-			if($GLOBALS['DEBUG'])
+			if(GlobalService::get('DEBUG'))
 			{
 				echo '<br>update_app(): ' . $appname . ', version: ' . $setup_info[$appname]['currentver'] . ', table: ' . $appstbl . '<br>';
 				// _debug_array($setup_info[$appname]);
@@ -560,7 +562,7 @@
 
 			if($tableschanged == True)
 			{
-				$GLOBALS['phpgw_info']['setup']['tableschanged'] = True;
+				GlobalService::get('phpgw_info')['setup']['tableschanged'] = True;
 			}
 			if($setup_info[$appname]['currentver'])
 			{
@@ -580,7 +582,7 @@
 			{
 				return False;
 			}
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if($this->alessthanb($setup_info['phpgwapi']['currentver'],'0.9.10pre8') && ($setup_info['phpgwapi']['currentver'] != ''))
 			{
@@ -603,7 +605,7 @@
 		*/
 		function register_hooks($appname)
 		{
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if(!$appname)
 			{
@@ -844,8 +846,8 @@
 
 		function get_hooks_table_name()
 		{
-			if(@$this->alessthanb($GLOBALS['setup_info']['phpgwapi']['currentver'],'0.9.8pre5') &&
-			   @$GLOBALS['setup_info']['phpgwapi']['currentver'] != '')
+			if(@$this->alessthanb(GlobalService::get('setup_info')['phpgwapi']['currentver'],'0.9.8pre5') &&
+			   @GlobalService::get('setup_info')['phpgwapi']['currentver'] != '')
 			{
 				/* No phpgw_hooks table yet. */
 				return False;
@@ -855,7 +857,7 @@
 
 		function setup_account_object()
 		{
-			if (!is_object($GLOBALS['phpgw']->accounts))
+			if (!is_object(GlobalService::get('phpgw')->accounts))
 			{
 				if (!is_object($this->db))
 				{
@@ -866,20 +868,20 @@
 					. "WHERE config_app = 'phpgwapi' AND (config_name LIKE 'ldap%' OR config_name LIKE 'account_%' OR config_name LIKE '%encryption%')",__LINE__,__FILE__);
 				while($this->db->next_record())
 				{
-					$GLOBALS['phpgw_info']['server'][$this->db->f('config_name')] = $this->db->f('config_value');
+					GlobalService::get('phpgw_info')['server'][$this->db->f('config_name')] = $this->db->f('config_value');
 				}
-				if (!is_object($GLOBALS['phpgw']))
+				if (!is_object(GlobalService::get('phpgw')))
 				{
-					$GLOBALS['phpgw'] = CreateObject('phpgwapi.phpgw');
+					GlobalService::set('phpgw', CreateObject('phpgwapi.phpgw'));
 				}
-				copyobj($this->db,$GLOBALS['phpgw']->db);
-				$GLOBALS['phpgw']->common      = CreateObject('phpgwapi.common');
-				$GLOBALS['phpgw']->accounts    = CreateObject('phpgwapi.accounts');
+				copyobj($this->db,GlobalService::get('phpgw')->db);
+				GlobalService::get('phpgw')->common      = CreateObject('phpgwapi.common');
+				GlobalService::get('phpgw')->accounts    = CreateObject('phpgwapi.accounts');
 
-				if(($GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap') &&
-					!$GLOBALS['phpgw']->accounts->ds)
+				if((GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap') &&
+					!GlobalService::get('phpgw')->accounts->ds)
 				{
-					printf("<b>Error: Error connecting to LDAP server %s!</b><br>",$GLOBALS['phpgw_info']['server']['ldap_host']);
+					printf("<b>Error: Error connecting to LDAP server %s!</b><br>",GlobalService::get('phpgw_info')['server']['ldap_host']);
 					exit;
 				}
 			}
@@ -900,11 +902,11 @@
 		{
 			$this->setup_account_object();
 
-			$groupid = $group ? $GLOBALS['phpgw']->accounts->name2id($group) : False;
+			$groupid = $group ? GlobalService::get('phpgw')->accounts->name2id($group) : False;
 
-			if(!($accountid = $GLOBALS['phpgw']->accounts->name2id($username)))
+			if(!($accountid = GlobalService::get('phpgw')->accounts->name2id($username)))
 			{
-				$accountid = $accountid ? $accountid : $GLOBALS['phpgw']->accounts->create(array(
+				$accountid = $accountid ? $accountid : GlobalService::get('phpgw')->accounts->create(array(
 					'account_type'      => $group ? 'u' : 'g',
 					'account_lid'       => $username,
 					'account_passwd'    => $passwd,
@@ -938,7 +940,7 @@
 			if (!is_int($account))
 			{
 				$this->setup_account_object();
-				$account = $GLOBALS['phpgw']->accounts->name2id($account);
+				$account = GlobalService::get('phpgw')->accounts->name2id($account);
 			}
 			$rights = (int)$rights;
 			if(!is_object($this->db))

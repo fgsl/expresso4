@@ -1,4 +1,6 @@
 <?php 
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Password auth and crypt functions                       *
   * This file written by Miles Lott <milos@groupwhere.org>                   *
@@ -21,11 +23,11 @@
   \**************************************************************************/
 
 
-	if(empty($GLOBALS['phpgw_info']['server']['auth_type']))
+	if(empty(GlobalService::get('phpgw_info')['server']['auth_type']))
 	{
-		$GLOBALS['phpgw_info']['server']['auth_type'] = 'sql';
+		GlobalService::get('phpgw_info')['server']['auth_type'] = 'sql';
 	}
-	include(PHPGW_API_INC.'/class.auth_'.$GLOBALS['phpgw_info']['server']['auth_type'].'.inc.php');
+	include(PHPGW_API_INC.'/class.auth_'.GlobalService::get('phpgw_info')['server']['auth_type'].'.inc.php');
 
 	class auth_egw extends auth_
 	{
@@ -84,7 +86,7 @@
 		*/
 		function encrypt_ldap($password)
 		{
-			$type = strtolower($GLOBALS['phpgw_info']['server']['ldap_encryption_type']);
+			$type = strtolower(GlobalService::get('phpgw_info')['server']['ldap_encryption_type']);
 			$salt = '';
 			switch($type)
 			{
@@ -134,8 +136,8 @@
 		function encrypt_sql($password)
 		{
 			/* Grab configured type, or default to md5() (old method) */
-			$type = @$GLOBALS['phpgw_info']['server']['sql_encryption_type']
-				? strtolower($GLOBALS['phpgw_info']['server']['sql_encryption_type'])
+			$type = @GlobalService::get('phpgw_info')['server']['sql_encryption_type']
+				? strtolower(GlobalService::get('phpgw_info')['server']['sql_encryption_type'])
 				: 'md5';
 			switch($type)
 			{
@@ -207,8 +209,8 @@
 		/**
 		@function smd5_compare
 		@abstract compare SMD5-encrypted passwords for authentication
-		@param $form_val user input value for comparison
-		@param $db_val   stored value (from database)
+		@param $form_val string user input value for comparison
+		@param $db_val   string stored value (from database)
 		@return boolean	 True on successful comparison
 		*/
 		function smd5_compare($form_val,$db_val)
@@ -233,8 +235,8 @@
 		/**
 		@function sha_compare
 		@abstract compare SHA-encrypted passwords for authentication
-		@param $form_val user input value for comparison
-		@param $db_val   stored value (from database)
+		@param $form_val string user input value for comparison
+		@param $db_val   string stored value (from database)
 		@return boolean	 True on successful comparison
 		*/
 		function sha_compare($form_val,$db_val)
@@ -254,8 +256,8 @@
 		/**
 		@function ssha_compare
 		@abstract compare SSHA-encrypted passwords for authentication
-		@param $form_val user input value for comparison
-		@param $db_val   stored value (from database)
+		@param $form_val string user input value for comparison
+		@param $db_val   string stored value (from database)
 		@return boolean	 True on successful comparison
 		*/
 		function ssha_compare($form_val,$db_val)
@@ -278,8 +280,8 @@
 		/**
 		@function crypt_compare
 		@abstract compare crypted passwords for authentication whether des,ext_des,md5, or blowfish crypt
-		@param $form_val user input value for comparison
-		@param $db_val   stored value (from database)
+		@param $form_val string user input value for comparison
+		@param $db_val   string stored value (from database)
 		@param $type     crypt() type
 		@return boolean	 True on successful comparison
 		*/

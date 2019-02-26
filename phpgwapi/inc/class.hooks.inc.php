@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Hooks                                                   *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -38,7 +40,7 @@
 
 		function hooks($db='')
 		{
-			$this->db = $db ? $db : $GLOBALS['phpgw']->db;	// this is to allow setup to set the db
+			$this->db = $db ? $db : GlobalService::get('phpgw')->db;	// this is to allow setup to set the db
 
 			//jakjr: Go search in DB, only if the array is empty.
 			if (empty($this->found_hooks))
@@ -74,7 +76,7 @@
 			if ($order == '')
 			{
 				$order = is_array($args) && isset($args['order']) ? $args['order'] : 
-					array($GLOBALS['phpgw_info']['flags']['currentapp']);
+					array(GlobalService::get('phpgw_info')['flags']['currentapp']);
 			}
 
 			/* First include the ordered apps hook file */
@@ -91,11 +93,11 @@
 			/* Then add the rest */
 			if ($no_permission_check)
 			{
-				$apps = $GLOBALS['phpgw_info']['apps'];
+				$apps = GlobalService::get('phpgw_info')['apps'];
 			}
 			else
 			{
-				$apps = $GLOBALS['phpgw_info']['user']['apps'];
+				$apps = GlobalService::get('phpgw_info')['user']['apps'];
 			}
 			settype($apps,'array');
 			foreach($apps as $app)
@@ -135,7 +137,7 @@
 			}
 			if (!$appname)
 			{
-				$appname = is_array($args) && isset($args['appname']) ? $args['appname'] : $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = is_array($args) && isset($args['appname']) ? $args['appname'] : GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 			$SEP = filesystem_separator();
 
@@ -152,7 +154,7 @@
 					}
 					$f = PHPGW_SERVER_ROOT . $SEP . $appname . $SEP . 'inc' . $SEP . $method;
 					if (file_exists($f) &&
-						( $GLOBALS['phpgw_info']['user']['apps'][$appname] || (($no_permission_check || $location == 'config' || $appname == 'phpgwapi') && $appname)) )
+						( GlobalService::get('phpgw_info')['user']['apps'][$appname] || (($no_permission_check || $location == 'config' || $appname == 'phpgwapi') && $appname)) )
 					{
 						include($f);
 						return True;
@@ -180,7 +182,7 @@
 		function count($location)
 		{
 			$count = 0;
-			foreach($GLOBALS['phpgw_info']['user']['apps'] as $appname => $data)
+			foreach(GlobalService::get('phpgw_info')['user']['apps'] as $appname => $data)
 			{
 				if (isset($this->found_hooks[$appname][$location]))
 				{
@@ -251,7 +253,7 @@
 		{
 			$SEP = filesystem_separator();
 			
-			foreach($GLOBALS['phpgw_info']['apps'] as $appname => $app)
+			foreach(GlobalService::get('phpgw_info')['apps'] as $appname => $app)
 			{			
 				$f = PHPGW_SERVER_ROOT . $SEP . $appname . $SEP . 'setup' . $SEP . 'setup.inc.php';
 				if(@file_exists($f))

@@ -164,8 +164,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_DRIVER'])) {
-				return $GLOBALS['ADODB_SESSION_DRIVER'];
+			if (isset(GlobalService::get('ADODB_SESSION_DRIVER'])) {
+				return GlobalService::get('ADODB_SESSION_DRIVER'];
 			}
 		}
 
@@ -183,8 +183,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_CONNECT'])) {
-				return $GLOBALS['ADODB_SESSION_CONNECT'];
+			if (isset(GlobalService::get('ADODB_SESSION_CONNECT'])) {
+				return GlobalService::get('ADODB_SESSION_CONNECT'];
 			}
 		}
 
@@ -203,8 +203,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_USER'])) {
-				return $GLOBALS['ADODB_SESSION_USER'];
+			if (isset(GlobalService::get('ADODB_SESSION_USER'])) {
+				return GlobalService::get('ADODB_SESSION_USER'];
 			}
 		}
 
@@ -223,8 +223,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_PWD'])) {
-				return $GLOBALS['ADODB_SESSION_PWD'];
+			if (isset(GlobalService::get('ADODB_SESSION_PWD'])) {
+				return GlobalService::get('ADODB_SESSION_PWD'];
 			}
 		}
 
@@ -243,8 +243,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_DB'])) {
-				return $GLOBALS['ADODB_SESSION_DB'];
+			if (isset(GlobalService::get('ADODB_SESSION_DB'])) {
+				return GlobalService::get('ADODB_SESSION_DB'];
 			}
 		}
 		return $_database;
@@ -275,8 +275,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESS_LIFE'])) {
-				return $GLOBALS['ADODB_SESS_LIFE'];
+			if (isset(GlobalService::get('ADODB_SESS_LIFE'])) {
+				return GlobalService::get('ADODB_SESS_LIFE'];
 			}
 		}
 		if (!$_lifetime) {
@@ -308,8 +308,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESS_DEBUG'])) {
-				return $GLOBALS['ADODB_SESS_DEBUG'];
+			if (isset(GlobalService::get('ADODB_SESS_DEBUG'])) {
+				return GlobalService::get('ADODB_SESS_DEBUG'];
 			}
 		}
 
@@ -328,8 +328,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_EXPIRE_NOTIFY'])) {
-				return $GLOBALS['ADODB_SESSION_EXPIRE_NOTIFY'];
+			if (isset(GlobalService::get('ADODB_SESSION_EXPIRE_NOTIFY'])) {
+				return GlobalService::get('ADODB_SESSION_EXPIRE_NOTIFY'];
 			}
 		}
 
@@ -348,8 +348,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_TBL'])) {
-				return $GLOBALS['ADODB_SESSION_TBL'];
+			if (isset(GlobalService::get('ADODB_SESSION_TBL'])) {
+				return GlobalService::get('ADODB_SESSION_TBL'];
 			}
 		}
 
@@ -395,8 +395,8 @@ class ADODB_Session {
 			$set = true;
 		} elseif (!$set) {
 			// backwards compatibility
-			if (isset($GLOBALS['ADODB_SESSION_USE_LOBS'])) {
-				return $GLOBALS['ADODB_SESSION_USE_LOBS'];
+			if (isset(GlobalService::get('ADODB_SESSION_USE_LOBS'])) {
+				return GlobalService::get('ADODB_SESSION_USE_LOBS'];
 			}
 		}
 
@@ -445,8 +445,8 @@ class ADODB_Session {
 	*/
 	function &_conn($conn=null) 
 	{
-		if (isset($GLOBALS['ADODB_SESS_CONN'])) {
-			$conn =& $GLOBALS['ADODB_SESS_CONN'];
+		if (isset(GlobalService::get('ADODB_SESS_CONN'])) {
+			$conn =& GlobalService::get('ADODB_SESS_CONN'];
 			return $conn;
 		}
 		$false = false;
@@ -585,7 +585,7 @@ class ADODB_Session {
 			$ok = $conn->Connect($host, $user, $password, $database);
 		}
 
-		if ($ok) $GLOBALS['ADODB_SESS_CONN'] =& $conn;
+		if ($ok) GlobalService::get('ADODB_SESS_CONN'] =& $conn;
 		else
 			ADOConnection::outp('<p>Session: connection failed</p>', false);
 		

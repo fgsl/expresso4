@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**********************************************************************************\
 	* Expresso Administra��o                 									      *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br) *
@@ -54,13 +56,13 @@
 		function auto_list($type, $context, $admlista)
 		{
 			$common = new common();
-			$ldap_conn = $GLOBALS['phpgw']->common->ldapConnect();
+			$ldap_conn = GlobalService::get('phpgw')->common->ldapConnect();
 
 			if ($type == 'maillists')
 			{
 				
 				//filtro de busca das listas de e-mail, busca apenas as listas permitidas ao usuario conectado;
-				//$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+				//$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 				$filter="(&(phpgwAccountType=l)(admlista=$admlista)(|(cn=*)(uid=*)))";
 				$justthese = array("uidnumber", "cn", "uid", "mail");
 				$search=ldap_search($ldap_conn, $context, $filter, $justthese);
@@ -84,13 +86,13 @@
 		function get_list($type, $query, $context, $admlista)
 		{
 			$common = new common();
-			$ldap_conn = $GLOBALS['phpgw']->common->ldapConnect();//$common->ldapConnect();
+			$ldap_conn = GlobalService::get('phpgw')->common->ldapConnect();//$common->ldapConnect();
 			if ($type == 'accounts')
 			{
 				$justthese = array("uidnumber", "uid", "cn", "mail", "objectclass");
 				//$filter="(&(phpgwAccountType=u)(|(uid=*".$query."*)(sn=*".$query."*)(cn=*".$query."*)(givenName=*".$query."*)(mail=$query*)(mailAlternateAddress=$query*)))";
-				//$filter="(&(objectclass=".$GLOBALS['phpgw_info']['server']['atributousuarios'].")(|(uid=*".$query."*)(sn=*".$query."*)(cn=*".$query."*)(givenName=*".$query."*)(mail=$query*)))";
-				$filter="(&(objectclass=".$GLOBALS['phpgw_info']['server']['atributousuarios'].")(|(uid=*".$query."*)(sn=*".$query."*)(cn=*".$query."*)(givenName=*".$query."*)(mail=$query*)))";
+				//$filter="(&(objectclass=".GlobalService::get('phpgw_info')['server']['atributousuarios'].")(|(uid=*".$query."*)(sn=*".$query."*)(cn=*".$query."*)(givenName=*".$query."*)(mail=$query*)))";
+				$filter="(&(objectclass=".GlobalService::get('phpgw_info')['server']['atributousuarios'].")(|(uid=*".$query."*)(sn=*".$query."*)(cn=*".$query."*)(givenName=*".$query."*)(mail=$query*)))";
 				$search=ldap_search($ldap_conn, $context, $filter, $justthese);
 				ldap_sort($ldap_conn, $search, "cn");
 				$info = ldap_get_entries($ldap_conn, $search);
@@ -129,20 +131,20 @@
 						}
 					// consulta pelo uidnumber na tabela das acls					
 					$sql="SELECT DISTINCT acl_account FROM phpgw_acl WHERE acl_account='".$uidnumber."'";
-					$GLOBALS['phpgw']->db->query($sql);
-                        		while($GLOBALS['phpgw']->db->next_record())
+					GlobalService::get('phpgw')->db->query($sql);
+                        		while(GlobalService::get('phpgw')->db->next_record())
 						{
 						$find=false;
 						foreach ($tmp as $ldap)
 							{
-							if ($ldap[account_id] == $GLOBALS['phpgw']->db->f(0))
+							if ($ldap[account_id] == GlobalService::get('phpgw')->db->f(0))
 								{
 								$find=true;
 								}
 							}
 						if (!$find)
 							{
-							$tmp[$i][account_id]                    = $GLOBALS['phpgw']->db->f(0);
+							$tmp[$i][account_id]                    = GlobalService::get('phpgw')->db->f(0);
 				                	$tmp[$i][account_lid]                   = $query;
 				                	$tmp[$i][account_cn]                    = "Nao encontrado no RHDS";
 				                	$tmp[$i][account_mail]                  = "Nao encontrado no RHDS";
@@ -181,7 +183,7 @@
 //				$filter="(&(phpgwAccountType=l)(|(cn=*".$query."*)(uid=*".$query."*)(mail=*".$query."*)(admlista=$admlista)))";
 
 				//filtro de busca das listas de e-mail, busca apenas as listas permitidas ao usuario conectado;
-				$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+				$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 				$filter="(&(phpgwAccountType=l)(admlista=$admlista)(|(cn=*".$query."*)(uid=*".$query."*)))";
 				$justthese = array("uidnumber", "cn", "uid", "mail");
 				$search=ldap_search($ldap_conn, $context, $filter, $justthese);
@@ -236,9 +238,9 @@
 		// Get list of all levels, this function is used for sectors module.
 		function get_sectors_list($context, $selected='', $referral=false ,$show_invisible_ou=false)
 		{
-			$dn			= $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-			$passwd		= $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-			$ldap_conn	= ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$dn			= GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+			$passwd		= GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+			$ldap_conn	= ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			
 			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			
@@ -289,7 +291,7 @@
                 $array_dn_reverse = explode ( "#", $invert_ufn );
                 $array_dn  = array_reverse ( $array_dn_reverse, true );
 
-                $level = count( $array_dn ) - (int)(count(explode(",", $GLOBALS['phpgw_info']['server']['ldap_context'])) + 1);
+                $level = count( $array_dn ) - (int)(count(explode(",", GlobalService::get('phpgw_info')['server']['ldap_context'])) + 1);
 
                 if ($level == 0)
                         $display .= '+';
@@ -310,16 +312,16 @@
 		
 		function exist_account_lid($account_lid)
 		{
-			$conection = $GLOBALS['phpgw']->common->ldapConnect();
-			$sri = ldap_search($conection, $GLOBALS['phpgw_info']['server']['ldap_context'], "uid=" . $account_lid);
+			$conection = GlobalService::get('phpgw')->common->ldapConnect();
+			$sri = ldap_search($conection, GlobalService::get('phpgw_info')['server']['ldap_context'], "uid=" . $account_lid);
 			$result = ldap_get_entries($conection, $sri);
 			return $result['count'];
 		}
 		
 		function exist_email($mail)
 		{
-			$conection = $GLOBALS['phpgw']->common->ldapConnect();
-			$sri = ldap_search($conection, $GLOBALS['phpgw_info']['server']['ldap_context'], "mail=" . $mail);
+			$conection = GlobalService::get('phpgw')->common->ldapConnect();
+			$sri = ldap_search($conection, GlobalService::get('phpgw_info')['server']['ldap_context'], "mail=" . $mail);
 			$result = ldap_get_entries($conection, $sri);
 			ldap_close($conection);
 			
@@ -341,19 +343,19 @@
 		{
 			// Busco o ID dos accounts
 			$query_accounts = "SELECT id FROM phpgw_nextid WHERE appname = 'accounts'";
-			$GLOBALS['phpgw']->db->query($query_accounts);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query($query_accounts);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$result_accounts[] = $GLOBALS['phpgw']->db->row();
+				$result_accounts[] = GlobalService::get('phpgw')->db->row();
 			}			
 			$accounts_id = $result_accounts[0]['id'];
 			
 			// Busco o ID dos groups
 			$query_groups = "SELECT id FROM phpgw_nextid WHERE appname = 'groups'";
-			$GLOBALS['phpgw']->db->query($query_groups);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query($query_groups);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$result_groups[] = $GLOBALS['phpgw']->db->row();
+				$result_groups[] = GlobalService::get('phpgw')->db->row();
 			}			
 			$groups_id = $result_groups[0]['id'];
 			
@@ -367,20 +369,20 @@
 		function increment_id($id, $type)
 		{
 			$sql = "UPDATE phpgw_nextid set id = '".$id."' WHERE appname = '" . $type . "'"; 
-			$GLOBALS['phpgw']->db->query($sql);
+			GlobalService::get('phpgw')->db->query($sql);
 		}
 		
 		function make_list_app($account_lid, $context, $user_applications, $disabled='')
 		{
 			// create list of ALL available apps
-			$availableAppsGLOBALS = $GLOBALS['phpgw_info']['apps'];
+			$availableAppsGLOBALS = GlobalService::get('phpgw_info')['apps'];
 			
 			// create list of available apps for the user
 			$query = "SELECT * FROM phpgw_expressoadmin_apps WHERE manager_lid = '".$account_lid."' AND context = '".$context."'";
-			$GLOBALS['phpgw']->db->query($query);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query($query);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$availableApps[] = $GLOBALS['phpgw']->db->row();
+				$availableApps[] = GlobalService::get('phpgw')->db->row();
 			}
 			
 			// Retira alguns modulos
@@ -451,7 +453,7 @@
 		
 		function exist_attribute_in_ldap($dn, $attribute, $value)
 		{
-			$connection = $GLOBALS['phpgw']->common->ldapConnect();
+			$connection = GlobalService::get('phpgw')->common->ldapConnect();
 			$search = ldap_search($connection, $dn, $attribute. "=" . $value);
 			$result = ldap_get_entries($connection, $search);
 			ldap_close($connection);
@@ -472,7 +474,7 @@
 		{
 			$sql = "INSERT INTO phpgw_expressoadmin_log (date, manager, action, groupinfo, userinfo, appinfo, msg) "
 			. "VALUES('now','" . $_SESSION['phpgw_info']['expresso']['user']['account_lid'] . "','" . strtolower($action) . "','" . strtolower($groupinfo) . "','" . strtolower($userinfo) . "','" . strtolower($appinfo) . "','" .strtolower($msg_log) . "')";
-			$GLOBALS['phpgw']->db->query($sql);
+			GlobalService::get('phpgw')->db->query($sql);
 			return;
 		}
 		

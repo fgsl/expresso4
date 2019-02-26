@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -236,7 +238,7 @@
 		// other colum or function to set the value of a new or changed column
 		function RefreshTable($sTableName, $aTableDef, $aDefaults=False)
 		{
-			if($GLOBALS['DEBUG']) { echo "<p>schema_proc::RefreshTable('$sTableName',"._debug_array($aTableDef,False).")<p>m_aTables[$sTableName]="._debug_array($this->m_aTables[$sTableName],False)."\n"; }
+			if(GlobalService::get('DEBUG')) { echo "<p>schema_proc::RefreshTable('$sTableName',"._debug_array($aTableDef,False).")<p>m_aTables[$sTableName]="._debug_array($this->m_aTables[$sTableName],False)."\n"; }
 			$old_fd = $this->m_aTables[$sTableName]['fd'];
 
 			$Ok = $this->m_oDeltaProc->RefreshTable($this, $this->m_aTables, $sTableName, $aTableDef);
@@ -375,7 +377,7 @@
 				}
 				else
 				{
-					if($GLOBALS['DEBUG']) { echo 'GetFieldSQL failed for ' . $sFieldName; }
+					if(GlobalService::get('DEBUG')) { echo 'GetFieldSQL failed for ' . $sFieldName; }
 					return False;
 				}
 			}
@@ -454,7 +456,7 @@
 		// Get field DDL
 		function _GetFieldSQL($aField, &$sFieldSQL)
 		{
-			if($GLOBALS['DEBUG']) { echo'<br>_GetFieldSQL(): Incoming ARRAY: '; var_dump($aField); }
+			if(GlobalService::get('DEBUG')) { echo'<br>_GetFieldSQL(): Incoming ARRAY: '; var_dump($aField); }
 			if(!is_array($aField))
 			{
 				return false;
@@ -503,17 +505,17 @@
 				}
 				if(isset($aField['default']))
 				{
-					if($GLOBALS['DEBUG']) { echo'<br>_GetFieldSQL(): Calling TranslateDefault for "' . $aField['default'] . '"'; }
+					if(GlobalService::get('DEBUG')) { echo'<br>_GetFieldSQL(): Calling TranslateDefault for "' . $aField['default'] . '"'; }
 					// Get default DDL - useful for differences in date defaults (eg, now() vs. getdate())
 
 					$sFieldSQL .= ' DEFAULT ' . (is_numeric($aField['default']) ? $aField['default'] :
 						$this->m_oTranslator->TranslateDefault($aField['default']));
 				}
-				if($GLOBALS['DEBUG']) { echo'<br>_GetFieldSQL(): Outgoing SQL:   ' . $sFieldSQL; }
+				if(GlobalService::get('DEBUG')) { echo'<br>_GetFieldSQL(): Outgoing SQL:   ' . $sFieldSQL; }
 				return true;
 			}
 
-			if($GLOBALS['DEBUG']) { echo '<br>Failed to translate field: type[' . $sType . '] precision[' . $iPrecision . '] scale[' . $iScale . ']<br>'; }
+			if(GlobalService::get('DEBUG')) { echo '<br>Failed to translate field: type[' . $sType . '] precision[' . $iPrecision . '] scale[' . $iScale . ']<br>'; }
 
 			return False;
 		}

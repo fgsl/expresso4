@@ -10,7 +10,7 @@
 \**************************************************************************/
 
 /**
-* Provê métodos que acessam informações relacionadas às instâncias.
+* Prova mÃ©todos que acessam informaï¿½ï¿½es relacionadas ï¿½s instï¿½ncias.
 * @author Sidnei Augusto Drovetto Junior - drovetto@gmail.com
 * @version 1.0
 * @license http://www.gnu.org/copyleft/gpl.html GPL
@@ -26,15 +26,15 @@ class wf_instance
 	private $db;
 
 	/**
-	* @var int $processID o ID do processo onde a classe está sendo utilizada
+	* @var int $processID o ID do processo onde a classe estï¿½ sendo utilizada
 	* @access private
 	*/
 	private $processID;
 
 	/**
-	* Verifica se um dado processo equivale àquele que está sendo executado.
+	* Verifica se um dado processo equivale ï¿½quele que estï¿½ sendo executado.
 	* @param int $processID O ID do processo.
-	* @return bool true caso sejam o mesmo processo ou, false caso contrário.
+	* @return bool true caso sejam o mesmo processo ou, false caso contrï¿½rio.
 	* @access public
 	*/
 	private function checkProcessAccess($processID)
@@ -44,9 +44,9 @@ class wf_instance
 	}
 
 	/**
-	* Verifica se uma instância pertence ao processo que está sendo executado.
-	* @param int instanceID O ID da instância.
-	* @return bool true caso a instância pertença ao processo que está sendo executado ou, false caso contrário.
+	* Verifica se uma instï¿½ncia pertence ao processo que estï¿½ sendo executado.
+	* @param int instanceID O ID da instï¿½ncia.
+	* @return bool true caso a instï¿½ncia pertenï¿½a ao processo que estï¿½ sendo executado ou, false caso contrï¿½rio.
 	* @access public
 	*/
 	private function checkInstanceAccess($instanceID, $activityID = null)
@@ -68,9 +68,9 @@ class wf_instance
 	}
 
 	/**
-	* Pega o objeto de uma instância.
-	* @param int instanceID O ID da instância.
-	* @return mixed object caso a instância seja encontrada ou false caso contrário.
+	* Pega o objeto de uma instï¿½ncia.
+	* @param int instanceID O ID da instï¿½ncia.
+	* @return mixed object caso a instï¿½ncia seja encontrada ou false caso contrï¿½rio.
 	* @access public
 	*/
 	private function getInstanceObject($instanceID)
@@ -102,10 +102,10 @@ class wf_instance
 	}
 
 	/**
-	* Dá seqüência no fluxo de uma instância (simula ação do usuário).
-	* @param int $activityID O ID da atividade da instância.
-	* @param int $instanceID O ID da instância.
-	* @return bool true caso a instância tenha sido continuada e false caso contrário.
+	* Dï¿½ seqï¿½ï¿½ncia no fluxo de uma instï¿½ncia (simula aï¿½ï¿½o do usuï¿½rio).
+	* @param int $activityID O ID da atividade da instï¿½ncia.
+	* @param int $instanceID O ID da instï¿½ncia.
+	* @return bool true caso a instï¿½ncia tenha sido continuada e false caso contrï¿½rio.
 	* @access public
 	*/
 	public function continueInstance($activityID, $instanceID)
@@ -127,9 +127,9 @@ class wf_instance
 	}
 
 	/**
-	* Aborta uma instância
-	* @param int $instanceID O ID da instância.
-	* @return boolean true se foi possível abortar a instância e false caso contrário.
+	* Aborta uma instï¿½ncia
+	* @param int $instanceID O ID da instï¿½ncia.
+	* @return boolean true se foi possï¿½vel abortar a instï¿½ncia e false caso contrï¿½rio.
 	* @access public
 	*/
 	public function abort($instanceID)
@@ -146,10 +146,10 @@ class wf_instance
 	}
 
 	/**
-	* Define o nome (identificador) de uma instância
-	* @param int $instanceID O ID da instância.
-	* @param string $name O novo nome da instância.
-	* @return boolean true se foi possível mudar o nome da instância e false caso contrário.
+	* Define o nome (identificador) de uma instï¿½ncia
+	* @param int $instanceID O ID da instï¿½ncia.
+	* @param string $name O novo nome da instï¿½ncia.
+	* @return boolean true se foi possï¿½vel mudar o nome da instï¿½ncia e false caso contrï¿½rio.
 	* @access public
 	*/
 	public function setName($instanceID, $name)
@@ -169,10 +169,10 @@ class wf_instance
 	}
 
 	/**
-	* Define a prioridade de uma instância
-	* @param int $instanceID O ID da instância.
-	* @param int $priority A nova prioridade da instância
-	* @return boolean true se foi possível mudar a prioridade da instância e false caso contrário.
+	* Define a prioridade de uma instï¿½ncia
+	* @param int $instanceID O ID da instï¿½ncia.
+	* @param int $priority A nova prioridade da instï¿½ncia
+	* @return boolean true se foi possï¿½vel mudar a prioridade da instï¿½ncia e false caso contrï¿½rio.
 	* @access public
 	*/
 	public function setPriority($instanceID, $priority)
@@ -194,10 +194,10 @@ class wf_instance
 	}
 
 	/**
-	* Busca instâncias ativas que estão "abandonadas".
-	* @param int $numberOfDays O tempo (em dias) em que a instância está abandonada.
-	* @param array $activities Uma lista de atividades das quais se quer as instâncias abandonadas (também pode ser um valor inteiro).
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca instï¿½ncias ativas que estï¿½o "abandonadas".
+	* @param int $numberOfDays O tempo (em dias) em que a instï¿½ncia estï¿½ abandonada.
+	* @param array $activities Uma lista de atividades das quais se quer as instï¿½ncias abandonadas (tambï¿½m pode ser um valor inteiro).
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	*/
 	public function getIdle($numberOfDays, $activities = null)
@@ -238,9 +238,9 @@ class wf_instance
 	}
 
 	/**
-	* Busca todas as instâncias ativas.
-	* @param array $activities Uma lista de atividades das quais se quer as instâncias (também pode ser um valor inteiro).
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca todas as instï¿½ncias ativas.
+	* @param array $activities Uma lista de atividades das quais se quer as instï¿½ncias (tambï¿½m pode ser um valor inteiro).
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	* @deprecated 2.2.000
 	*/
@@ -333,9 +333,9 @@ class wf_instance
 	}
 
 	/**
-	* Busca as propriedades de uma instância (do mesmo processo).
-	* @param int $instanceID O ID da instância.
-	* @return mixed Uma array contento as propriedades da instância (no formato "nome_da_propriedade" => "valor"). Ou false em caso de erro.
+	* Busca as propriedades de uma instï¿½ncia (do mesmo processo).
+	* @param int $instanceID O ID da instï¿½ncia.
+	* @return mixed Uma array contento as propriedades da instï¿½ncia (no formato "nome_da_propriedade" => "valor"). Ou false em caso de erro.
 	* @access public
 	*/
 	public function getProperties($instanceID)
@@ -349,8 +349,8 @@ class wf_instance
 	}
 
 	/**
-	* Define uma propriedade de uma instância.
-	* @param int $instanceID O ID da instância.
+	* Define uma propriedade de uma instï¿½ncia.
+	* @param int $instanceID O ID da instï¿½ncia.
 	* @return bool true caso a propriedade tenha sido alterada com sucesso
 	* @access public
 	*/
@@ -371,11 +371,11 @@ class wf_instance
 	}
 
 	/**
-	* Busca as instância de usuários de acordo com alguns critérios
-	* @param mixed $users Um array com IDs de usuários ou perfis (no caso de perfis, deve-se prefixar seu ID com o caractere 'p'). Também pode possuir um único ID (seja de usuário ou de perfil)
-	* @param mixed $activities Um array com IDs de atividades das se quer as instâncias. Também pode ser um inteiro, representando um único ID. Caso possua valor null, o resultado não é filtrado de acordo com as atividades (parâmetro opcional)
-	* @param mixed $status Um array com os status requeridos (para filtrar as instâncias). Também pode ser uma string, representando um único status. Caso possua valor null, o resultado não é filtrado de acordo com o status. Os status podem ser: completed, active, aborted e exception (parâmetro opcional)
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca as instï¿½ncia de usuï¿½rios de acordo com alguns critï¿½rios
+	* @param mixed $users Um array com IDs de usuï¿½rios ou perfis (no caso de perfis, deve-se prefixar seu ID com o caractere 'p'). Tambï¿½m pode possuir um ï¿½nico ID (seja de usuï¿½rio ou de perfil)
+	* @param mixed $activities Um array com IDs de atividades das se quer as instï¿½ncias. Tambï¿½m pode ser um inteiro, representando um ï¿½nico ID. Caso possua valor null, o resultado nï¿½o ï¿½ filtrado de acordo com as atividades (parï¿½metro opcional)
+	* @param mixed $status Um array com os status requeridos (para filtrar as instï¿½ncias). Tambï¿½m pode ser uma string, representando um ï¿½nico status. Caso possua valor null, o resultado nï¿½o ï¿½ filtrado de acordo com o status. Os status podem ser: completed, active, aborted e exception (parï¿½metro opcional)
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	*/
 	public function getByUser($users, $activities = null, $status = null)
@@ -388,7 +388,7 @@ class wf_instance
 		foreach ($users as &$user)
 		{
 			if (!preg_match('/^[p]{0,1}[0-9]+$/i', "$user"))
-				trigger_error('wf_engine::getUserInstances: O usuário/perfil "' . $user . '" é inválido', E_USER_ERROR);
+				trigger_error('wf_engine::getUserInstances: O usuï¿½rio/perfil "' . $user . '" ï¿½ invï¿½lido', E_USER_ERROR);
 			$user = "'{$user}'";
 		}
 
@@ -409,7 +409,7 @@ class wf_instance
 			array_walk($status, create_function('&$a', '$a = strtolower($a);'));
 			foreach ($status as $currentStatus)
 				if (!in_array($currentStatus, $statusPossibleValues))
-					trigger_error('wf_engine::getUserInstances: O status "' . $currentStatus . '" é inválido', E_USER_ERROR);
+					trigger_error('wf_engine::getUserInstances: O status "' . $currentStatus . '" ï¿½ invï¿½lido', E_USER_ERROR);
 		}
 
 		/* build the SQL query */
@@ -442,9 +442,9 @@ class wf_instance
 	}
 
 	/**
-	* Busca uma instância pelo id
-	* @param int $wf_instance_id O id da instância
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca uma instï¿½ncia pelo id
+	* @param int $wf_instance_id O id da instï¿½ncia
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	*/
 	public function getById($wf_instance_id)
@@ -460,9 +460,9 @@ class wf_instance
 	}
 
 	/**
-	* Busca todas as instâncias que possuem esse nome (identificador).
-	* @param string $name O nome da instância que se quer encontrar.
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca todas as instï¿½ncias que possuem esse nome (identificador).
+	* @param string $name O nome da instï¿½ncia que se quer encontrar.
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	*/
 	public function getByName($name)
@@ -477,9 +477,9 @@ class wf_instance
 	}
 
 	/**
-	* Busca todas as instâncias que possuem um trecho do nome (identificador).
-	* @param string $name O trecho do nome da instância que se quer encontrar.
-	* @return array As instâncias que satisfazem o critério de seleção.
+	* Busca todas as instï¿½ncias que possuem um trecho do nome (identificador).
+	* @param string $name O trecho do nome da instï¿½ncia que se quer encontrar.
+	* @return array As instï¿½ncias que satisfazem o critï¿½rio de seleï¿½ï¿½o.
 	* @access public
 	*/
 	public function getLikeName($name)
@@ -495,12 +495,12 @@ class wf_instance
 	}
 
 	/**
-	* Verifica se um dado usuário tem acesso a uma instância
-	* @param int $userID O ID do usuário que se quer verificar
-	* @param int $instanceID O ID da instância
-	* @param int $activityID O ID da atividade onde a instância está
-	* @param bool $writeAccess Se true, indica que é necessário que o usuário tenha acesso para modificar a instância (dar seqüência ao fluxo). Se false, não será verificado se o usuário tem permissão de escrita na instância
-	* @return bool true se o usuário tiver acesso à instância (levando em consideração $writeAccess) ou false caso contrário
+	* Verifica se um dado usuï¿½rio tem acesso a uma instï¿½ncia
+	* @param int $userID O ID do usuï¿½rio que se quer verificar
+	* @param int $instanceID O ID da instï¿½ncia
+	* @param int $activityID O ID da atividade onde a instï¿½ncia estï¿½
+	* @param bool $writeAccess Se true, indica que ï¿½ necessï¿½rio que o usuï¿½rio tenha acesso para modificar a instï¿½ncia (dar seqï¿½ï¿½ncia ao fluxo). Se false, nï¿½o serï¿½ verificado se o usuï¿½rio tem permissï¿½o de escrita na instï¿½ncia
+	* @return bool true se o usuï¿½rio tiver acesso ï¿½ instï¿½ncia (levando em consideraï¿½ï¿½o $writeAccess) ou false caso contrï¿½rio
 	* @access public
 	*/
 	public function checkUserAccess($userID, $instanceID, $activityID, $writeAccess = true)
@@ -528,11 +528,11 @@ class wf_instance
 	}
 
 	/**
-	* Define o usuário de uma instância (em uma atividade)
-	* @param int $instanceID O ID da instância.
+	* Define o usuï¿½rio de uma instï¿½ncia (em uma atividade)
+	* @param int $instanceID O ID da instï¿½ncia.
 	* @param int $activityID O ID da atividade.
-	* @param int $userID O ID do usuário.
-	* @return boolean true se foi possível definir o usuário da instância ou false caso contrário.
+	* @param int $userID O ID do usuï¿½rio.
+	* @return boolean true se foi possï¿½vel definir o usuï¿½rio da instï¿½ncia ou false caso contrï¿½rio.
 	* @access public
 	*/
 	public function setUser($instanceID, $activityID, $userID)
@@ -599,11 +599,11 @@ class wf_instance
 	}
 
 	/**
-	* Define o perfil que poderá acessar uma instância (em uma atividade)
-	* @param int $instanceID O ID da instância.
+	* Define o perfil que poderï¿½ acessar uma instï¿½ncia (em uma atividade)
+	* @param int $instanceID O ID da instï¿½ncia.
 	* @param int $activityID O ID da atividade.
 	* @param string $roleName O nome do perfil.
-	* @return boolean true se foi possível definir o perfil da instância ou false caso contrário.
+	* @return boolean true se foi possï¿½vel definir o perfil da instï¿½ncia ou false caso contrï¿½rio.
 	* @access public
 	*/
 	public function setRole($instanceID, $activityID, $roleName)
@@ -621,12 +621,12 @@ class wf_instance
 	}
 
 	/**
-	* Altera o wf_name das instâncias, fazendo o replace no nome da categoria de serviço. 
-	* Método chamado quando é alterada a categoria de um serviço e existem ocorrências atrelados a esse serviço.
+	* Altera o wf_name das instÃ¢ncias, fazendo o replace no nome da categoria de serviÃ§o. 
+	* MÃ©todo chamado quando Ã© alterada a categoria de um serviÃ§o e existem ocorrÃªncias atrelados a esse serviï¿½o.
 	* @param int | array $instanceID se for um array, concatena os instances ids
-	* @param string @currentServiceName Nome da categoria de serviço atual
-	* @param string @newServiceName Nome da nova categoria de serviço
-	* @return resultSet em caso de sucesso ou false
+	* @param string @currentServiceName Nome da categoria de serviÃ§o atual
+	* @param string @newServiceName Nome da nova categoria de serviÃ§o
+	* @return object resultSet em caso de sucesso ou false
 	* @access public 
 	*/
 	public function updateReplaceName($instanceID, $currentServiceName, $newServiceName)

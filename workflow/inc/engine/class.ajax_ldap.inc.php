@@ -97,7 +97,7 @@ class ajax_ldap
 
     /**
     * Return groups IDs and names of a given user
-    * @param $accountID ID of the user that we want to know the groups
+    * @param $accountID string ID of the user that we want to know the groups
    	* @return mixed Array containing the groups informations or false in case no group was found
    	* @access public
    	*/

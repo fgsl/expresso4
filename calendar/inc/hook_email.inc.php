@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -15,7 +17,7 @@
 
 	global $calendar_id;
 
-	$d1 = strtolower(substr($GLOBALS['phpgw_info']['server']['app_inc'],0,3));
+	$d1 = strtolower(substr(GlobalService::get('phpgw_info')['server']['app_inc'],0,3));
 	if($d1 == 'htt' || $d1 == 'ftp')
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>'."\n";
@@ -25,7 +27,7 @@
 
 	if ($calendar_id)
 	{
-		$GLOBALS['phpgw']->translation->add_app('calendar');
+		GlobalService::get('phpgw')->translation->add_app('calendar');
 
 		$cal = CreateObject('calendar.uicalendar');
 		//echo "Event ID: $calendar_id<br>\n";
@@ -34,7 +36,7 @@
 		{
 			echo $cal->timematrix(
 				Array(
-					'date'		=> $GLOBALS['phpgw']->datetime->localdates(mktime(0,0,0,$event['start']['month'],$event['start']['mday'],$event['start']['year']) - $phpgw->calendar->tz_offset),
+					'date'		=> GlobalService::get('phpgw')->datetime->localdates(mktime(0,0,0,$event['start']['month'],$event['start']['mday'],$event['start']['year']) - $phpgw->calendar->tz_offset),
 					'starttime'	=> $cal->bo->splittime('000000',False),
 					'endtime'	=> 0,
 					'participants'	=> $event['participants'])

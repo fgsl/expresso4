@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - API htmlarea translations (according to lang in user prefs) *
 * http: //www.eGroupWare.org                                                *
@@ -12,7 +14,7 @@
 \**************************************************************************/
 
 
-$GLOBALS['phpgw_info']['flags'] = Array(
+GlobalService::get('phpgw_info')['flags'] = Array(
 	'currentapp'  => 'home',		// can't be phpgwapi, nor htmlarea (no own directory)
 	'noheader'    => True,
 	'nonavbar'    => True,
@@ -23,8 +25,8 @@ $GLOBALS['phpgw_info']['flags'] = Array(
 );
 
 include('../../../../../../header.inc.php');
-header('Content-type: text/javascript; charset='.$GLOBALS['phpgw']->translation->charset());
-$GLOBALS['phpgw']->translation->add_app('htmlarea-FullPage');
+header('Content-type: text/javascript; charset='.GlobalService::get('phpgw')->translation->charset());
+GlobalService::get('phpgw')->translation->add_app('htmlarea-FullPage');
 
 // I18N for the FullPage plugin
 

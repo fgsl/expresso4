@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - freebusy times as iCals                                     *
 	* http://www.egroupware.org                                                *
@@ -11,7 +13,7 @@
 	\**************************************************************************/
 
 
-	$GLOBALS['phpgw_info'] = array(
+	GlobalService::get('phpgw_info') = array(
 		'flags' => array(
 			'currentapp' => 'calendar',
 			'noheader'   => True,
@@ -24,38 +26,38 @@
 
 	if (!($loged_in = $sessionid && $kp3))
 	{
-		$GLOBALS['phpgw_info']['flags']['currentapp'] = 'login';
-		$GLOBALS['phpgw_info']['flags']['noapi'] = True;
+		GlobalService::get('phpgw_info')['flags']['currentapp'] = 'login';
+		GlobalService::get('phpgw_info')['flags']['noapi'] = True;
 	}
 	include ('../header.inc.php');
 
 	function fail_exit($msg)
 	{
 		echo "<html>\n<head>\n<title>$msg</title>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=".
-			$GLOBALS['phpgw']->translation->charset()."\" />\n</head>\n<body><h1>$msg</h1>\n</body>\n</html>\n";
+			GlobalService::get('phpgw')->translation->charset()."\" />\n</head>\n<body><h1>$msg</h1>\n</body>\n</html>\n";
 
-		$GLOBALS['phpgw']->common->phpgw_exit();
+		GlobalService::get('phpgw')->common->phpgw_exit();
 	}
 
 	if (!$loged_in)
 	{
 		include ('../phpgwapi/inc/functions.inc.php');
-		$GLOBALS['phpgw_info']['flags']['currentapp'] = 'calendar';
+		GlobalService::get('phpgw_info')['flags']['currentapp'] = 'calendar';
 	}
-	$user  = is_numeric($_GET['user']) ? (int) $_GET['user'] : $GLOBALS['phpgw']->accounts->name2id($_GET['user']);
+	$user  = is_numeric($_GET['user']) ? (int) $_GET['user'] : GlobalService::get('phpgw')->accounts->name2id($_GET['user']);
 
-	if (!($username = $GLOBALS['phpgw']->accounts->id2name($user)))
+	if (!($username = GlobalService::get('phpgw')->accounts->id2name($user)))
 	{
 		fail_exit(lang("freebusy: Unknow user '%1', wrong password or not availible to not loged in users !!!",$_GET['user']));
 	}
 	if (!$loged_in)
 	{
-		$GLOBALS['phpgw']->preferences->account_id = $user;
-		$GLOBALS['phpgw_info']['user']['preferences'] = $GLOBALS['phpgw']->preferences->read_repository();
-		$GLOBALS['phpgw_info']['user']['account_id'] = $user;
-		$GLOBALS['phpgw_info']['user']['account_lid'] = $username;
+		GlobalService::get('phpgw')->preferences->account_id = $user;
+		GlobalService::get('phpgw_info')['user']['preferences'] = GlobalService::get('phpgw')->preferences->read_repository();
+		GlobalService::get('phpgw_info')['user']['account_id'] = $user;
+		GlobalService::get('phpgw_info')['user']['account_lid'] = $username;
 
-		$cal_prefs = &$GLOBALS['phpgw_info']['user']['preferences']['calendar'];
+		$cal_prefs = &GlobalService::get('phpgw_info')['user']['preferences']['calendar'];
 		if (!$cal_prefs['freebusy'] || !empty($cal_prefs['freebusy_pw']) && $cal_prefs['freebusy_pw'] != $_GET['password'])
 		{
 			fail_exit(lang("freebusy: Unknow user '%1', wrong password or not availible to not loged in users !!!",$_GET['user']));

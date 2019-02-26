@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -24,8 +26,8 @@
 			// PHP will automatically replace any dots in incoming
 			// variable names with underscores.
 
-			$GLOBALS['header_template']->set_file(array('header' => 'header.inc.php.template'));
-			$GLOBALS['header_template']->set_block('header','domain','domain');
+			GlobalService::get('header_template')->set_file(array('header' => 'header.inc.php.template'));
+			GlobalService::get('header_template')->set_block('header','domain','domain');
 			$var = Array();
 
 			$deletedomain = get_var('deletedomain',Array('POST'));
@@ -39,16 +41,16 @@
 				}
 				$variableName = str_replace('.','_',$k);
 				$dom = get_var('setting_'.$variableName,Array('POST'));
-				$GLOBALS['header_template']->set_var('DB_DOMAIN',$v);
+				GlobalService::get('header_template')->set_var('DB_DOMAIN',$v);
 				while(list($x,$y) = @each($dom))
 				{
 					if(strtoupper($x) == 'CONFIG_PASS')
 					{
-						$GLOBALS['header_template']->set_var(strtoupper($x),md5($y));
+						GlobalService::get('header_template')->set_var(strtoupper($x),md5($y));
 					}
 					else
 					{
-						$GLOBALS['header_template']->set_var(strtoupper($x),$y);
+						GlobalService::get('header_template')->set_var(strtoupper($x),$y);
 					}
 				}
 				/* Admin did not type a new password, so use the old one from the hidden field,
@@ -57,17 +59,17 @@
 				if($dom['config_password'] && !$dom['config_pass'])
 				{
 					/* Real == hidden */
-					$GLOBALS['header_template']->set_var('CONFIG_PASS',$dom['config_password']);
+					GlobalService::get('header_template')->set_var('CONFIG_PASS',$dom['config_password']);
 				}
 				/* If the admin didn't select a db_port, set to the default */
 				if(!$dom['db_port'])
 				{
-					$GLOBALS['header_template']->set_var('DB_PORT',$GLOBALS['default_db_ports'][$dom['db_type']]);
+					GlobalService::get('header_template')->set_var('DB_PORT',GlobalService::get('default_db_ports')[$dom['db_type']]);
 				}
-				$GLOBALS['header_template']->parse('domains','domain',True);
+				GlobalService::get('header_template')->parse('domains','domain',True);
 			}
 
-			$GLOBALS['header_template']->set_var('domain','');
+			GlobalService::get('header_template')->set_var('domain','');
 
 			$setting = get_var('setting',Array('POST'));
 			
@@ -91,14 +93,14 @@
 				/* Real == hidden */
 				$var['HEADER_ADMIN_PASSWORD'] = $var['HEADER_ADMIN_PASS'];
 			}
-			$GLOBALS['header_template']->set_var($var);
+			GlobalService::get('header_template')->set_var($var);
 
-			if ( trim($GLOBALS['header_template']->get_var('domains')) === '' )
+			if ( trim(GlobalService::get('header_template')->get_var('domains')) === '' )
 			{
-				$GLOBALS['header_template']->set_var('domains', "/* no domains defined */");
+				GlobalService::get('header_template')->set_var('domains', "/* no domains defined */");
 			}
 
-			return $GLOBALS['header_template']->parse('out','header');
+			return GlobalService::get('header_template')->parse('out','header');
 		}
 
 		function setup_tpl_dir($app_name='setup')
@@ -123,7 +125,7 @@
 			// add a content-type header to overwrite an existing default charset in apache (AddDefaultCharset directiv)
 			header('Content-type: text/html; charset='.lang('charset'));
 
-			$GLOBALS['setup_tpl']->set_var('charset',lang('charset'));
+			GlobalService::get('setup_tpl')->set_var('charset',lang('charset'));
 			$style = array(
 				'th_bg'		=> '#486591',
 				'th_text'	=> '#FFFFFF',
@@ -132,11 +134,11 @@
 				'banner_bg'	=> '#4865F1',
 				'msg'		=> '#FF0000',
 			);
-			$GLOBALS['setup_tpl']->set_var($style);
+			GlobalService::get('setup_tpl')->set_var($style);
 			if ($nologoutbutton)
 			{
-				$GLOBALS['setup_tpl']->set_block('T_head','loged_in');
-				$GLOBALS['setup_tpl']->set_var('loged_in','');
+				GlobalService::get('setup_tpl')->set_block('T_head','loged_in');
+				GlobalService::get('setup_tpl')->set_var('loged_in','');
 			}
 			else
 			{
@@ -144,15 +146,15 @@
 				$check_install = '<a class="textsidebox" href="check_install.php">'.lang('Check installation').'</a>';
 			}
 
-			$GLOBALS['setup_tpl']->set_var('lang_setup', lang('setup'));
-			$GLOBALS['setup_tpl']->set_var('page_title',$title);
+			GlobalService::get('setup_tpl')->set_var('lang_setup', lang('setup'));
+			GlobalService::get('setup_tpl')->set_var('page_title',$title);
 			if ($configdomain == '')
 			{
-				$GLOBALS['setup_tpl']->set_var('configdomain','');
+				GlobalService::get('setup_tpl')->set_var('configdomain','');
 			}
 			else
 			{
-				$GLOBALS['setup_tpl']->set_var('configdomain',' - ' . lang('Domain') . ': ' . $configdomain);
+				GlobalService::get('setup_tpl')->set_var('configdomain',' - ' . lang('Domain') . ': ' . $configdomain);
 			}
 
 			if(basename($_SERVER['SCRIPT_FILENAME']) != 'index.php')
@@ -161,10 +163,10 @@
 				$index_img = '<img src="templates/default/images/orange-ball.png" alt="ball" />';				
 			}
 
-			$GLOBALS['setup_tpl']->set_var('lang_version',lang('version'));
+			GlobalService::get('setup_tpl')->set_var('lang_version',lang('version'));
                         if(!is_file(dirname( __FILE__ ) . '/../../infodist/ultima-revisao-svn.php'))
                             {
-                                $GLOBALS['setup_tpl']->set_var('pgw_ver',@$GLOBALS['phpgw_info']['server']['versions']['phpgwapi']);
+                                GlobalService::get('setup_tpl')->set_var('pgw_ver',@GlobalService::get('phpgw_info')['server']['versions']['phpgwapi']);
                             }
                         else
                             {
@@ -174,10 +176,10 @@
                                     {
                                         $aux =  '<br>' . $ultima_revisao;
                                     }
-                                $GLOBALS['setup_tpl']->set_var('pgw_ver',@$GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] . $aux);
+                                GlobalService::get('setup_tpl')->set_var('pgw_ver',@GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] . $aux);
                             }
                         
-			$GLOBALS['setup_tpl']->set_var(array(
+			GlobalService::get('setup_tpl')->set_var(array(
 				'logoutbutton'  => $btn_logout,
 				'indexbutton'   => $index_btn,
 				'indeximg'      => $index_img,
@@ -185,21 +187,21 @@
 				'main_menu'     => lang('Setup Main Menu'),
 				'user_login'    => lang('Back to user login')
 			));
-			$GLOBALS['setup_tpl']->pparse('out','T_head');
+			GlobalService::get('setup_tpl')->pparse('out','T_head');
 			/* $setup_tpl->set_var('T_head',''); */
 		}
 
 		function show_footer()
 		{
-			$GLOBALS['setup_tpl']->pparse('out','T_footer');
-			unset($GLOBALS['setup_tpl']);
+			GlobalService::get('setup_tpl')->pparse('out','T_footer');
+			unset(GlobalService::get('setup_tpl'));
 		}
 
 		function show_alert_msg($alert_word='Setup alert',$alert_msg='setup alert (generic)')
 		{
-			$GLOBALS['setup_tpl']->set_var('V_alert_word',$alert_word);
-			$GLOBALS['setup_tpl']->set_var('V_alert_msg',$alert_msg);
-			$GLOBALS['setup_tpl']->pparse('out','T_alert_msg');
+			GlobalService::get('setup_tpl')->set_var('V_alert_word',$alert_word);
+			GlobalService::get('setup_tpl')->set_var('V_alert_msg',$alert_msg);
+			GlobalService::get('setup_tpl')->pparse('out','T_alert_msg');
 		}
 
 		function make_frm_btn_simple($pre_frm_blurb='',$frm_method='POST',$frm_action='',$input_type='submit',$input_value='',$post_frm_blurb='')
@@ -225,66 +227,66 @@
 		function login_form()
 		{
 			/* begin use TEMPLATE login_main.tpl */
-			$GLOBALS['setup_tpl']->set_var('ConfigLoginMSG',@$GLOBALS['phpgw_info']['setup']['ConfigLoginMSG']);
-			$GLOBALS['setup_tpl']->set_var('HeaderLoginMSG',@$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG']);
-			$GLOBALS['setup_tpl']->set_var('lang_header_username',lang('Header Username'));
-			$GLOBALS['setup_tpl']->set_var('lang_header_password',lang('Header Password'));
-			$GLOBALS['setup_tpl']->set_var('lang_header_login',lang('Header Admin Login'));
-			$GLOBALS['setup_tpl']->set_var('lang_config_login',lang('Setup/Config Admin Login'));
-			$GLOBALS['setup_tpl']->set_var('lang_config_username',lang('Config Username'));
-			$GLOBALS['setup_tpl']->set_var('lang_config_password',lang('Config Password'));
-			$GLOBALS['setup_tpl']->set_var('lang_domain',lang('Domain'));
+			GlobalService::get('setup_tpl')->set_var('ConfigLoginMSG',@GlobalService::get('phpgw_info')['setup']['ConfigLoginMSG']);
+			GlobalService::get('setup_tpl')->set_var('HeaderLoginMSG',@GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG']);
+			GlobalService::get('setup_tpl')->set_var('lang_header_username',lang('Header Username'));
+			GlobalService::get('setup_tpl')->set_var('lang_header_password',lang('Header Password'));
+			GlobalService::get('setup_tpl')->set_var('lang_header_login',lang('Header Admin Login'));
+			GlobalService::get('setup_tpl')->set_var('lang_config_login',lang('Setup/Config Admin Login'));
+			GlobalService::get('setup_tpl')->set_var('lang_config_username',lang('Config Username'));
+			GlobalService::get('setup_tpl')->set_var('lang_config_password',lang('Config Password'));
+			GlobalService::get('setup_tpl')->set_var('lang_domain',lang('Domain'));
 
-			$GLOBALS['setup_tpl']->set_var('lang_select',lang_select());
+			GlobalService::get('setup_tpl')->set_var('lang_select',lang_select());
 
-			if ($GLOBALS['phpgw_info']['setup']['stage']['header'] == '10')
+			if (GlobalService::get('phpgw_info')['setup']['stage']['header'] == '10')
 			{
 				/*
 				 Begin use SUB-TEMPLATE login_stage_header,
 				 fills V_login_stage_header used inside of login_main.tpl
 				*/
-				if (count($GLOBALS['phpgw_domain']) > 1)
+				if (count(GlobalService::get('phpgw_domain')) > 1)
 				{
-					foreach($GLOBALS['phpgw_domain'] as $domain => $data)
+					foreach(GlobalService::get('phpgw_domain') as $domain => $data)
 					{
-						$domains .= "<option value=\"$domain\" ".($domain == @$GLOBALS['phpgw_info']['setup']['LastDomain'] ? ' SELECTED' : '').">$domain</option>\n";
+						$domains .= "<option value=\"$domain\" ".($domain == @GlobalService::get('phpgw_info')['setup']['LastDomain'] ? ' SELECTED' : '').">$domain</option>\n";
 					}
-					$GLOBALS['setup_tpl']->set_var('domains',$domains);
+					GlobalService::get('setup_tpl')->set_var('domains',$domains);
 
 					// use BLOCK B_multi_domain inside of login_stage_header
-					$GLOBALS['setup_tpl']->parse('V_multi_domain','B_multi_domain');
+					GlobalService::get('setup_tpl')->parse('V_multi_domain','B_multi_domain');
 					// in this case, the single domain block needs to be nothing
-					$GLOBALS['setup_tpl']->set_var('V_single_domain','');
+					GlobalService::get('setup_tpl')->set_var('V_single_domain','');
 				}
 				else
 				{
-					reset($GLOBALS['phpgw_domain']);
-					$default_domain = each($GLOBALS['phpgw_domain']);
-					$GLOBALS['setup_tpl']->set_var('default_domain_zero',$default_domain[0]);
+					reset(GlobalService::get('phpgw_domain'));
+					$default_domain = each(GlobalService::get('phpgw_domain'));
+					GlobalService::get('setup_tpl')->set_var('default_domain_zero',$default_domain[0]);
 
 					/* Use BLOCK B_single_domain inside of login_stage_header */
-					$GLOBALS['setup_tpl']->parse('V_single_domain','B_single_domain');
+					GlobalService::get('setup_tpl')->parse('V_single_domain','B_single_domain');
 					/* in this case, the multi domain block needs to be nothing */
-					$GLOBALS['setup_tpl']->set_var('V_multi_domain','');
+					GlobalService::get('setup_tpl')->set_var('V_multi_domain','');
 				}
 				/*
 				 End use SUB-TEMPLATE login_stage_header
 				 put all this into V_login_stage_header for use inside login_main
 				*/
-				$GLOBALS['setup_tpl']->parse('V_login_stage_header','T_login_stage_header');
+				GlobalService::get('setup_tpl')->parse('V_login_stage_header','T_login_stage_header');
 			}
 			else
 			{
 				/* begin SKIP SUB-TEMPLATE login_stage_header */
-				$GLOBALS['setup_tpl']->set_var('V_multi_domain','');
-				$GLOBALS['setup_tpl']->set_var('V_single_domain','');
-				$GLOBALS['setup_tpl']->set_var('V_login_stage_header','');
+				GlobalService::get('setup_tpl')->set_var('V_multi_domain','');
+				GlobalService::get('setup_tpl')->set_var('V_single_domain','');
+				GlobalService::get('setup_tpl')->set_var('V_login_stage_header','');
 			}
 			/*
 			 end use TEMPLATE login_main.tpl
 			 now out the login_main template
 			*/
-			$GLOBALS['setup_tpl']->pparse('out','T_login_main');
+			GlobalService::get('setup_tpl')->pparse('out','T_login_main');
 		}
 
 		function get_template_list()
@@ -300,7 +302,7 @@
 					if (file_exists ($f))
 					{
 						include($f);
-						$list[$entry]['title'] = 'Use ' . $GLOBALS['phpgw_info']['template'][$entry]['title'] . 'interface';
+						$list[$entry]['title'] = 'Use ' . GlobalService::get('phpgw_info')['template'][$entry]['title'] . 'interface';
 					}
 					else
 					{

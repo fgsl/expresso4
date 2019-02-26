@@ -1,28 +1,30 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 class AddEventResource extends CalendarAdapter {
 
 	public function setDocumentation() {
 
-		$this->setResource("Calendar","Calendar/AddEvent","Adiciona ou altera um evento na agenda do usuário.",array("POST"));
+		$this->setResource("Calendar","Calendar/AddEvent","Adiciona ou altera um evento na agenda do usuÃ³rio.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
+		$this->addResourceParam("auth","string",true,"Chave de autenticaÃ§Ã£o do UsuÃ¡rio.",false);
 
-		$this->addResourceParam("eventID","integer",false,"Código do Evento (Informado quando for alterar um evento existente)");
-		$this->addResourceParam("eventDateStart","date",true,"Data de início (DD/MM/YYYY)");
-		$this->addResourceParam("eventDateEnd","date",true,"Data de término (DD/MM/YYYY)");
-		$this->addResourceParam("eventTimeStart","time",true,"Hora de início (HH:MM)");
-		$this->addResourceParam("eventTimeEnd","time",true,"Hora de término (HH:MM)");
+		$this->addResourceParam("eventID","integer",false,"CÃ³digo do Evento (Informado quando for alterar um evento existente)");
+		$this->addResourceParam("eventDateStart","date",true,"Data de inÃ­cio (DD/MM/YYYY)");
+		$this->addResourceParam("eventDateEnd","date",true,"Data de tÃ©rmino (DD/MM/YYYY)");
+		$this->addResourceParam("eventTimeStart","time",true,"Hora de inÃ­cio (HH:MM)");
+		$this->addResourceParam("eventTimeEnd","time",true,"Hora de tÃ©rmino (HH:MM)");
 		$this->addResourceParam("eventCategoryID","integer",false,"ID da categoria do Evento.");
 		$this->addResourceParam("eventType","integer",true,"Tipo do Evento. (1=Normal, 2=Restrito)",false,"1");
 		$this->addResourceParam("eventName","string",true,"Nome do Evento.");
-		$this->addResourceParam("eventDescription","string",false,"Descrição do Evento.");
-		$this->addResourceParam("eventLocation","string",false,"Localização do Evento.");
+		$this->addResourceParam("eventDescription","string",false,"DescriÃ§Ã£o do Evento.");
+		$this->addResourceParam("eventLocation","string",false,"LocalizaÃ§Ã£o do Evento.");
 		$this->addResourceParam("eventPriority","integer",false,"Prioridade do Evento (1,2,3,4) ");
-		$this->addResourceParam("eventOwnerIsParticipant","integer",false,"0 - Proprietário do evento não participa do evento. 1 - Proprietário do Evento também participa do Evento.");
+		$this->addResourceParam("eventOwnerIsParticipant","integer",false,"0 - ProprietÃ¡rio do evento nÃ£o participa do evento. 1 - ProprietÃ¡rio do Evento tambÃ©m participa do Evento.");
 		$this->addResourceParam("eventParticipants","string",false,"Participantes do Evento.");
 		$this->addResourceParam("eventExternalParticipants","string",false,"Participantes externos do evento.");
-		$this->addResourceParam("eventIgnoreConflicts","integer",false,"Usado para forçar a inclusão de um evento, 1 quando for para ignorar conflitos e 0 para não ignorar.");
+		$this->addResourceParam("eventIgnoreConflicts","integer",false,"Usado para forÃ§ar a inclusÃ£o de um evento, 1 quando for para ignorar conflitos e 0 para nÃ£o ignorar.");
 
 	}
 
@@ -49,12 +51,12 @@ class AddEventResource extends CalendarAdapter {
 			$eventParticipants		 			= $this->getParam('eventParticipants');
 			$eventExternalParticipants		 	= $this->getParam('eventExternalParticipants');
 
-			//USADO PARA FORÇAR A INCLUSÃO DE UM EVENTO IGNORANDO CONFLITOS DA AGENDA.
+			//USADO PARA FORÃ³AR A INCLUSÃ³O DE UM EVENTO IGNORANDO CONFLITOS DA AGENDA.
 			$eventIgnoreConflicts               = $this->getParam('eventIgnoreConflicts');
 
 			$this->addModuleTranslation("calendar");
 
-			//VALIDAÇÕES DE CAMPOS 
+			//VALIDAÃ§Ã£ES DE CAMPOS 
 			$this->validateInteger($eventID,false,"CALENDAR_INVALID_EVENTID");
 
 			if ($eventID != "") {
@@ -103,7 +105,7 @@ class AddEventResource extends CalendarAdapter {
 				$arrParticipants = explode(",",$eventParticipants);
 				foreach ($arrParticipants as $participantID) {
 					$this->validateInteger(trim($participantID),false,"CALENDAR_INVALID_EVENT_PARTICIPANTS");
-					$accountData = $GLOBALS['phpgw']->accounts->get_account_data($participantID);
+					$accountData = GlobalService::get('phpgw')->accounts->get_account_data($participantID);
 					//CHECK IF THE PARTICIPANT EXISTS IN LDAP.
 
 					if (isset($accountData[""])) {
@@ -119,7 +121,7 @@ class AddEventResource extends CalendarAdapter {
 			}
 
 
-			//FORMATAÇÃO DE CAMPOS
+			//FORMATAÃ§Ã£O DE CAMPOS
 			if ($eventOwnerIsParticipant == "") {
 				$eventOwnerIsParticipant = "1";
 			}
@@ -153,11 +155,11 @@ class AddEventResource extends CalendarAdapter {
 			$cal['title']			= $eventName;
 			$cal['description']		= $eventDescription;
 			$cal['location'] 		= $eventLocation;	
-			$cal['owner']			= $GLOBALS['phpgw_info']['user']['account_id'];
+			$cal['owner']			= GlobalService::get('phpgw_info')['user']['account_id'];
 			$cal['priority']		= $eventPriority;
 			$cal['type'] 			= $eventFormatedType;
 
-			//ALARMES E REPETIÇÃO DE EVENTOS NÃO SÃO UTILIZADAS NA API
+			//ALARMES E REPETIÃ§Ã£O DE EVENTOS NÃ³O SÃ³O UTILIZADAS NA API
 			$cal['uid']				= '';
 			$cal['recur_interval']	= '0';
 			$cal['recur_type']		= '0';
@@ -178,7 +180,7 @@ class AddEventResource extends CalendarAdapter {
 			
 			//PARTICIPANTES
 			if ($eventOwnerIsParticipant == "1") {
-				$participants[]	= $GLOBALS['phpgw_info']['user']['account_id'] . 'A'; // A = ACCEPTED
+				$participants[]	= GlobalService::get('phpgw_info')['user']['account_id'] . 'A'; // A = ACCEPTED
 			}
 			
 			$params = array();
@@ -190,7 +192,7 @@ class AddEventResource extends CalendarAdapter {
 			$params['end'] 				= $end;
 			$params['categories']	    = $eventValidCategories;
 
-			//PARAMETRO SENDTOUI ADICIONADO AO BO.CALENDAR PARA EVITAR QUE O BO FAÇA O REDIRECIONAMENTO PARA UM TEMPLATE.
+			//PARAMETRO SENDTOUI ADICIONADO AO BO.CALENDAR PARA EVITAR QUE O BO FAÃ‡A O REDIRECIONAMENTO PARA UM TEMPLATE.
 			$params['sendToUi'] 		= '0';
 			$params['forceOverlapEvents']  = $eventIgnoreConflicts;
 

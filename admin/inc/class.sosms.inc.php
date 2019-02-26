@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /****************************************************************************\
  * Expresso Livre - SMS - administration									*
  * 																			*
@@ -100,7 +102,7 @@ class sosms
 
 	public final function setConfDB($pConf)
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 		if( $this->db )
 		{
 			foreach($pConf as $key => $tmp )
@@ -125,7 +127,7 @@ class sosms
 
 	public final function getConfDB()
 	{
-		$this->db = $GLOBALS['phpgw']->db;
+		$this->db = GlobalService::get('phpgw')->db;
 
 		if( $this->db )
 		{

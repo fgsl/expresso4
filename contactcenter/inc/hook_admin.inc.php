@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -15,9 +17,9 @@
 	// Only Modify the $file and $title variables.....
 	$title = $appname;
 	$file = Array(
-		'Global Catalogues Configuration' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname),
-		//'Edit custom fields' => $GLOBALS['phpgw']->link('/index.php','menuaction=addressbook.uifields.index'),
-		//'Global Categories' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uicategories.index&appname=addressbook')
+		'Global Catalogues Configuration' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname),
+		//'Edit custom fields' => GlobalService::get('phpgw')->link('/index.php','menuaction=addressbook.uifields.index'),
+		//'Global Categories' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uicategories.index&appname=addressbook')
 	);
 	//Do not modify below this line
 	display_section($appname,$title,$file);

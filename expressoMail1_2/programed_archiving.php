@@ -1,7 +1,9 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************/
 	ini_set("display_errors","1");
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'expressoMail1_2',
 		'noheader'   => True, 
 		'nonavbar'   => True,
@@ -13,32 +15,32 @@
 
 	
 	if($_POST["save"]=="save") {
-		if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'])
-			$GLOBALS['phpgw']->preferences->change('expressoMail','keep_after_auto_archiving',$_POST['keep_after_auto_archiving']);
+		if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['keep_after_auto_archiving'])
+			GlobalService::get('phpgw')->preferences->change('expressoMail','keep_after_auto_archiving',$_POST['keep_after_auto_archiving']);
 		else
-			$GLOBALS['phpgw']->preferences->add('expressoMail','keep_after_auto_archiving',$_POST['keep_after_auto_archiving']);
+			GlobalService::get('phpgw')->preferences->add('expressoMail','keep_after_auto_archiving',$_POST['keep_after_auto_archiving']);
 
-		$GLOBALS['phpgw']->preferences->save_repository();
-		$url = ($GLOBALS['phpgw']->link('/'.'expressoMail1_2'));
-		$GLOBALS['phpgw']->redirect($url);
+		GlobalService::get('phpgw')->preferences->save_repository();
+		$url = (GlobalService::get('phpgw')->link('/'.'expressoMail1_2'));
+		GlobalService::get('phpgw')->redirect($url);
 	}
 	else {
-		$GLOBALS['phpgw']->preferences->read_repository();
-		if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'])
-			$GLOBALS['phpgw']->template->set_var('keep_after_auto_archiving_Yes_selected','selected');
+		GlobalService::get('phpgw')->preferences->read_repository();
+		if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['keep_after_auto_archiving'])
+			GlobalService::get('phpgw')->template->set_var('keep_after_auto_archiving_Yes_selected','selected');
 		else {
-			$GLOBALS['phpgw']->template->set_var('keep_after_auto_archiving_No_selected','');
-			$GLOBALS['phpgw']->template->set_var('keep_after_auto_archiving_Yes_selected','');
+			GlobalService::get('phpgw')->template->set_var('keep_after_auto_archiving_No_selected','');
+			GlobalService::get('phpgw')->template->set_var('keep_after_auto_archiving_Yes_selected','');
 		}
 		$_SESSION['phpgw_info']['expressomail']['email_server'] = CreateObject('emailadmin.bo')->getProfile();
-		$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
-		$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
-		$_SESSION['phpgw_info']['expressomail']['user']['email'] = $GLOBALS['phpgw']->preferences->values['email'];
+		$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];
+		$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
+		$_SESSION['phpgw_info']['expressomail']['user']['email'] = GlobalService::get('phpgw')->preferences->values['email'];
 		
-		$GLOBALS['phpgw']->common->phpgw_header();
+		GlobalService::get('phpgw')->common->phpgw_header();
 		print parse_navbar();
 	
-		$GLOBALS['phpgw']->template->set_file(array(
+		GlobalService::get('phpgw')->template->set_file(array(
 			'expressoMail_prefs' => 'programed_archiving.tpl'
 		));
 		
@@ -63,10 +65,10 @@
 								"js/offline_access.js," .
 								"js/mail_sync.js," .
 								"js/md5.js,",
-								$GLOBALS['phpgw_info']['flags']['update_version']);
+								GlobalService::get('phpgw_info')['flags']['update_version']);
 		
-		$GLOBALS['phpgw']->template->set_var('libs',$libs);
-		$GLOBALS['phpgw']->template->set_var('lib_modal',"<script src='js/modal/modal.js'>");
+		GlobalService::get('phpgw')->template->set_var('libs',$libs);
+		GlobalService::get('phpgw')->template->set_var('lib_modal',"<script src='js/modal/modal.js'>");
 	
 	
 		//combo folders
@@ -86,34 +88,34 @@
 			}
 				
 		}
-		$GLOBALS['phpgw']->template->set_var('all_folders',$options);
+		GlobalService::get('phpgw')->template->set_var('all_folders',$options);
 		echo '<script language="javascript">var array_lang = new Array();</script>';
 		include("inc/load_lang.php");	
 	
-		$GLOBALS['phpgw']->template->set_var('lang_Would_you_like_to_keep_messages_on_server_?',lang("Would you like to keep archived messages?"));
-		$GLOBALS['phpgw']->template->set_var('lang_check_redirect',$check_gears);
-		$GLOBALS['phpgw']->template->set_var('lang_folders_to_sync',lang('Folders to sync'));
-		$GLOBALS['phpgw']->template->set_var('lang_add',lang('Add'));
-		$GLOBALS['phpgw']->template->set_var('lang_save',lang('Save'));
-		$GLOBALS['phpgw']->template->set_var('lang_Yes',lang('Yes'));
-		$GLOBALS['phpgw']->template->set_var('lang_No',lang('No'));
-		$GLOBALS['phpgw']->template->set_var('account_id',$GLOBALS['phpgw_info']['user']['account_id']);
-		$GLOBALS['phpgw']->template->set_var('lang_rem',lang('Remove'));
-		$GLOBALS['phpgw']->template->set_var('go_back','../preferences/');
+		GlobalService::get('phpgw')->template->set_var('lang_Would_you_like_to_keep_messages_on_server_?',lang("Would you like to keep archived messages?"));
+		GlobalService::get('phpgw')->template->set_var('lang_check_redirect',$check_gears);
+		GlobalService::get('phpgw')->template->set_var('lang_folders_to_sync',lang('Folders to sync'));
+		GlobalService::get('phpgw')->template->set_var('lang_add',lang('Add'));
+		GlobalService::get('phpgw')->template->set_var('lang_save',lang('Save'));
+		GlobalService::get('phpgw')->template->set_var('lang_Yes',lang('Yes'));
+		GlobalService::get('phpgw')->template->set_var('lang_No',lang('No'));
+		GlobalService::get('phpgw')->template->set_var('account_id',GlobalService::get('phpgw_info')['user']['account_id']);
+		GlobalService::get('phpgw')->template->set_var('lang_rem',lang('Remove'));
+		GlobalService::get('phpgw')->template->set_var('go_back','../preferences/');
 	
-		$GLOBALS['phpgw']->template->set_var('value_save_in_folder',$o_folders);
-		$GLOBALS['phpgw']->template->set_var('lang_save',lang('Save'));
-		$GLOBALS['phpgw']->template->set_var('lang_cancel',lang('Cancel'));
+		GlobalService::get('phpgw')->template->set_var('value_save_in_folder',$o_folders);
+		GlobalService::get('phpgw')->template->set_var('lang_save',lang('Save'));
+		GlobalService::get('phpgw')->template->set_var('lang_cancel',lang('Cancel'));
 		
-		$GLOBALS['phpgw']->template->set_var('save_action',$GLOBALS['phpgw']->link('/'.'expressoMail1_2'.'/programed_archiving.php'));
-		$GLOBALS['phpgw']->template->set_var('th_bg',$GLOBALS['phpgw_info']["theme"][th_bg]);
+		GlobalService::get('phpgw')->template->set_var('save_action',GlobalService::get('phpgw')->link('/'.'expressoMail1_2'.'/programed_archiving.php'));
+		GlobalService::get('phpgw')->template->set_var('th_bg',GlobalService::get('phpgw_info')["theme"][th_bg]);
 	
-		$tr_color = $GLOBALS['phpgw']->nextmatchs->alternate_row_color($tr_color);
-		$GLOBALS['phpgw']->template->set_var('tr_color1',$GLOBALS['phpgw_info']['theme']['row_on']);
-		$GLOBALS['phpgw']->template->set_var('tr_color2',$GLOBALS['phpgw_info']['theme']['row_off']);
+		$tr_color = GlobalService::get('phpgw')->nextmatchs->alternate_row_color($tr_color);
+		GlobalService::get('phpgw')->template->set_var('tr_color1',GlobalService::get('phpgw_info')['theme']['row_on']);
+		GlobalService::get('phpgw')->template->set_var('tr_color2',GlobalService::get('phpgw_info')['theme']['row_off']);
 	
-		$GLOBALS['phpgw']->template->parse('out','expressoMail_prefs',True);
-		$GLOBALS['phpgw']->template->p('out');
+		GlobalService::get('phpgw')->template->parse('out','expressoMail_prefs',True);
+		GlobalService::get('phpgw')->template->p('out');
 	}
 	
 	

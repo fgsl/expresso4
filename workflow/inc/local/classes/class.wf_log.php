@@ -3,7 +3,7 @@
 require_once(PHPGW_SERVER_ROOT.SEP.'workflow'.SEP.'inc'.SEP.'class.Logger.inc.php');
 
 /**
- * Geração de logs.
+ * GeraÃ§Ã£o de logs.
  * @license http://www.gnu.org/copyleft/gpl.html GPL
  * @author Guilherme Striquer Bisotto - gbisotto@celepar.pr.gov.br
  * @package Workflow
@@ -14,7 +14,7 @@ class wf_log extends Logger
 
 	/**
 	 * Construtor da classe wf_log
-	 * @param array/string $logTypes Array ou String com o(s) tipo(s) de log(s) que deverá(ão) ser criado(s)
+	 * @param array/string $logTypes Array ou String com o(s) tipo(s) de log(s) que deverï¿½(ï¿½o) ser criado(s)
 	 * @return object Objeto do tipo wf_log
 	 * @access public
 	 */
@@ -22,11 +22,11 @@ class wf_log extends Logger
 	{
 		$processName = $GLOBALS['workflow']['wf_normalized_name'];
 		if(empty($processName))
-			throw new Exception(lang('Cannot find out the process name'));
+			throw new \Exception(lang('Cannot find out the process name'));
 
 		$processId = $GLOBALS['workflow']['wf_process_id'];
 		if(empty($processId))
-			throw new Exception('Cannot fint out the process id ');
+			throw new \Exception('Cannot fint out the process id ');
 
 		parent::Logger($logTypes, $processId, $processName);
 	}

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - VFS base class                                          *
   * This file written by Jason Wies (Zone) <zone@phpgroupware.org>           *
@@ -227,7 +229,7 @@
 		 *			PHPGW_ACL_READ
 		 *			PHPGW_ACL_READ|PHPGW_ACL_WRITE
 		 * @optional owner_id	phpGW ID to check access for.
-		 * 			Default: $GLOBALS['phpgw_info']['user']['account_id']
+		 * 			Default: GlobalService::get('phpgw_info')['user']['account_id']
 		 * @optional must_exist	If set, string must exist, and acl_check() must
 		 *			return False if it doesn't.  If must_exist isn't
 		 *			passed, and string doesn't exist, check the owner_id's
@@ -290,10 +292,10 @@
 				);
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
  
-			$GLOBALS['phpgw_info']['flags']['noheader'] = true;
-			$GLOBALS['phpgw_info']['flags']['nonavbar'] = true;
-			$GLOBALS['phpgw_info']['flags']['noappheader'] = true;
-			$GLOBALS['phpgw_info']['flags']['noappfooter'] = true;
+			GlobalService::get('phpgw_info')['flags']['noheader'] = true;
+			GlobalService::get('phpgw_info')['flags']['nonavbar'] = true;
+			GlobalService::get('phpgw_info')['flags']['noappheader'] = true;
+			GlobalService::get('phpgw_info')['flags']['noappfooter'] = true;
 			$ls_array = $this->ls (array (
 					'string'	=>  $data['string'],
 					'relatives'	=> $data['relatives'],
@@ -306,7 +308,7 @@
 			{
 				$mime_type = $ls_array[0]['mime_type'];
 			}
-			elseif ($GLOBALS['settings']['viewtextplain'])
+			elseif (GlobalService::get('settings')['viewtextplain'])
 			{
 				$mime_type = 'text/plain';
 			}
@@ -643,7 +645,7 @@
 				$data = array ();
 			}
 
-			$string = $GLOBALS['phpgw']->db->db_addslashes ($data['string']);
+			$string = GlobalService::get('phpgw')->db->db_addslashes ($data['string']);
 
 			return $string;
 		}
@@ -743,12 +745,12 @@
 
 			if (($data['mask'][0] & RELATIVE_USER) || ($data['mask'][0] & RELATIVE_USER_APP))
 			{
-				$basedir = $basedir . $GLOBALS['phpgw_info']['user']['account_lid'] . $sep;
+				$basedir = $basedir . GlobalService::get('phpgw_info')['user']['account_lid'] . $sep;
 			}
 
 			if ($data['mask'][0] & RELATIVE_USER_APP)
 			{
-				$basedir = $basedir . "." . $GLOBALS['phpgw_info']['flags']['currentapp'] . $sep;
+				$basedir = $basedir . "." . GlobalService::get('phpgw_info')['flags']['currentapp'] . $sep;
 			}
 
 			/* Don't add string if it's a /, just for aesthetics */
@@ -1147,7 +1149,7 @@
 				}
 				else
 				{
-					$currentdir = $GLOBALS['phpgw']->session->appsession('vfs','');
+					$currentdir = GlobalService::get('phpgw')->session->appsession('vfs','');
 					$basedir = $this->getabsolutepath (array(
 							'string'	=> $currentdir . $sep . $data['string'],
 							'mask'	=> array ($data['relatives'][0]),
@@ -1165,7 +1167,7 @@
 				);
 			}
 
-			$GLOBALS['phpgw']->session->appsession('vfs','',$basedir);
+			GlobalService::get('phpgw')->session->appsession('vfs','',$basedir);
 
 			return True;
 		}
@@ -1192,7 +1194,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$currentdir = $GLOBALS['phpgw']->session->appsession('vfs','');
+			$currentdir = GlobalService::get('phpgw')->session->appsession('vfs','');
 
 			if (!$data['full'])
 			{

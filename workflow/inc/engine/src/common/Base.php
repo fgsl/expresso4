@@ -281,7 +281,7 @@ class Base {
 	/**
 	 * Clean the data before it is recorded on the database
 	 *
-	 * @param $value is a data we want to be stored in the database.
+	 * @param $value mixed is a data we want to be stored in the database.
 	 * If it is an array we'll make a serialize and then an base64_encode
 	 * (you'll have to make an unserialize(base64_decode())
 	 * If it is not an array we make an htmlspecialchars() on it

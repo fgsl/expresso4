@@ -2,7 +2,7 @@
 require_once('class.utils.php');
 /**
  * Contains useful methods for PHP type checking and casting
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @author Marcos Pont
  * @version 1.0
  * @link http://workflow.celepar.parana/doc-workflow/classes/typeutils Complete reference
@@ -14,7 +14,7 @@ class TypeUtils extends Utils
 	/**
 	 * Return the type of variable
 	 * @param $value 
-	 * @return type of element
+	 * @return string type of element
 	 * @access public
 	 */
 	function getType($value) {

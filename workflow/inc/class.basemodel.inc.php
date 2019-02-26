@@ -1,7 +1,7 @@
 <?php
 /**
  * Implements workflow module processes providing support for MVC architecture
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @author Sidnei Augusto Drovetto Jr. - drovetto@gmail.com
  * @version 1.3
  * @package Workflow
@@ -268,12 +268,12 @@ class BaseModel
      * @access public
      * @return object ArrayObject
      * @since PHP 5
-     * @throws Exception
+     * @throws \Exception
      */
     function toObject($input = array())
     {
         if (is_array($input)) {
-            return new ArrayObject($input);
+            return new \ArrayObject($input);
     	}
         return false;
     }
@@ -286,7 +286,7 @@ class BaseModel
      * @return array
      * @access public
      */
-    function fromObject(ArrayObject $input)
+    function fromObject(\ArrayObject $input)
     {
         return iterator_to_array($input->getIterator());
     }
@@ -304,10 +304,10 @@ class BaseModel
         if (!is_null($target)) {
             switch(gettype($target)) {
                 case 'string':
-                    return new ReflectionClass($target);
+                    return new \ReflectionClass($target);
                     break;
                 case 'object':
-                    return new ReflectionObject($target);
+                    return new \ReflectionObject($target);
                     break;
                 default:
                     return false;

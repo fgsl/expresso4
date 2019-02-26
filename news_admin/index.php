@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Webpage news admin                                          *
 	* http://www.egroupware.org                                                *
@@ -14,7 +16,7 @@
 
 
 	$phpgw_info = array();
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'news_admin',
 		'noheader' => True,
 		'nonavbar' => True,
@@ -24,5 +26,5 @@
 	$ui = CreateObject('news_admin.uinews');
 	$ui->read_news();
 
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

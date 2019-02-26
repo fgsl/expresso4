@@ -6,10 +6,10 @@ class ContactPictureResource extends CatalogAdapter {
 
 		$this->setResource("Catalog","Catalog/ContactPicture","Retorna a foto do contato em BASE64.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
 
-		$this->addResourceParam("contactType","string",true,"(1 = Catálogo Pessoal, 2 = Catálogo Geral)",false,"1");
-		$this->addResourceParam("contactID","string",false,"ID do contato que será retornado.");
+		$this->addResourceParam("contactType","string",true,"(1 = Catï¿½logo Pessoal, 2 = Catï¿½logo Geral)",false,"1");
+		$this->addResourceParam("contactID","string",false,"ID do contato que serï¿½ retornado.");
 
 	}
 
@@ -45,7 +45,7 @@ class ContactPictureResource extends CatalogAdapter {
 			// Global Catalog
 			elseif($this->getParam('contactType') == 2){
 				if(!$contactID){
-					$contactID = $GLOBALS['phpgw_info']['user']['account_dn'];
+					$contactID = GlobalService::get('phpgw_info')['user']['account_dn'];
 				}
 				$photo = $this->getUserLdapPhoto(urldecode($contactID));
 				$contact[] = array(

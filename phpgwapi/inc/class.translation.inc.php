@@ -1,7 +1,9 @@
 <?php 
-	if (empty($GLOBALS['phpgw_info']['server']['translation_system']))
+	use Expresso\Core\GlobalService;
+
+	if (empty(GlobalService::get('phpgw_info')['server']['translation_system']))
 	{
-		$GLOBALS['phpgw_info']['server']['translation_system'] = 'sql';
+		GlobalService::get('phpgw_info')['server']['translation_system'] = 'sql';
 	}
-	include(PHPGW_API_INC.'/class.translation_' . $GLOBALS['phpgw_info']['server']['translation_system'].'.inc.php'); 
+	include(PHPGW_API_INC.'/class.translation_' . GlobalService::get('phpgw_info')['server']['translation_system'].'.inc.php'); 
 ?>

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - JavaScript                                              *
   * Written by Dave Hall skwashd at phpgroupware.org                         *
@@ -18,9 +20,9 @@
        *
        * Only instanstiate this class using:
        * <code>
-       *  if(!@is_object($GLOBALS['phpgw']->js))
+       *  if(!@is_object(GlobalService::get('phpgw')->js))
        *  {
-       *    $GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+       *    GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
        *  }
        * </code>
        *
@@ -138,7 +140,7 @@
 								foreach($files as $file => $ignored)
 								{
 									$links .= '<script type="text/javascript" src="'
-								 	. $GLOBALS['phpgw_info']['server']['webserver_url']
+								 	. GlobalService::get('phpgw_info')['server']['webserver_url']
 								 	. "/$app/js/$pkg/$file" . '.js">'
 								 	. "</script>\n";
 								}

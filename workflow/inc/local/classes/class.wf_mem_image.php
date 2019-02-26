@@ -2,10 +2,10 @@
 require_once(PHPGW_SERVER_ROOT.SEP.'workflow'.SEP.'inc'.SEP.'fpdf'.SEP.'mem_image.php');
 
 /**
- * Classe que permite a inclusão de imagens em relatórios gerados pelo FPDF sem a necessidade da utilização de arquivos temporários.
+ * Classe que permite a inclusÃ£o de imagens em relatï¿½rios gerados pelo FPDF sem a necessidade da utilizaï¿½ï¿½o de arquivos temporï¿½rios.
  * @license http://www.gnu.org/copyleft/gpl.html GPL
  * @author Allan Bomfim
- * @author Sidnei Augusto Drovetto Jr. - drovetto@gmail.com (revisão)
+ * @author Sidnei Augusto Drovetto Jr. - drovetto@gmail.com (revisï¿½o)
  * @package Workflow
  * @subpackage local
  */
@@ -13,9 +13,9 @@ class wf_mem_image extends MEM_IMAGE
 {
 	/**
 	 * Construtor da classe wf_mem_image
-	 * @param string $orientation Orientação da página: 'P' (ou 'portrait') para retrato ou 'L' (ou 'landscape') para paisagem.
-	 * @param string $unit Unidade de medida: 'pt' para ponto, 'mm' para milímetro, 'cm' para centímetros ou 'in' para polegadas.
-	 * @param string $format Formato da página: 'a3', 'a4', 'a5', 'letter' ou 'legal'.
+	 * @param string $orientation Orientaï¿½ï¿½o da pï¿½gina: 'P' (ou 'portrait') para retrato ou 'L' (ou 'landscape') para paisagem.
+	 * @param string $unit Unidade de medida: 'pt' para ponto, 'mm' para milï¿½metro, 'cm' para centï¿½metros ou 'in' para polegadas.
+	 * @param string $format Formato da pï¿½gina: 'a3', 'a4', 'a5', 'letter' ou 'legal'.
 	 * @return object
 	 * @access public
 	 */

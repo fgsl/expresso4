@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Holiday                                                     *
   * http://www.egroupware.org                                                *
@@ -173,28 +175,28 @@
 
 		function prepare_read_holidays($year=0,$owner=0)
 		{
-			$this->year = (isset($year) && $year > 0?$year:$GLOBALS['phpgw']->common->show_date(time() - $GLOBALS['phpgw']->datetime->tz_offset,'Y'));
-			$this->owner = ($owner?$owner:$GLOBALS['phpgw_info']['user']['account_id']);
+			$this->year = (isset($year) && $year > 0?$year:GlobalService::get('phpgw')->common->show_date(time() - GlobalService::get('phpgw')->datetime->tz_offset,'Y'));
+			$this->owner = ($owner?$owner:GlobalService::get('phpgw_info')['user']['account_id']);
 
 			if($this->debug)
 			{
 				echo 'Setting Year to : '.$this->year.'<br>'."\n";
 			}
 
-			if(@$GLOBALS['phpgw_info']['user']['preferences']['common']['country'])
+			if(@GlobalService::get('phpgw_info')['user']['preferences']['common']['country'])
 			{
-				$this->locales[] = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+				$this->locales[] = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 			}
-			elseif(@$GLOBALS['phpgw_info']['user']['preferences']['calendar']['locale'])
+			elseif(@GlobalService::get('phpgw_info')['user']['preferences']['calendar']['locale'])
 			{
-				$this->locales[] = $GLOBALS['phpgw_info']['user']['preferences']['calendar']['locale'];
+				$this->locales[] = GlobalService::get('phpgw_info')['user']['preferences']['calendar']['locale'];
 			}
 			else
 			{
 				$this->locales[] = 'US';
 			}
 
-			if($this->owner != $GLOBALS['phpgw_info']['user']['account_id'])
+			if($this->owner != GlobalService::get('phpgw_info')['user']['account_id'])
 			{
 				$owner_pref = CreateObject('phpgwapi.preferences',$owner);
 				$owner_prefs = $owner_pref->read_repository();
@@ -210,7 +212,7 @@
 			}
 
 			@reset($this->locales);
-			if($GLOBALS['phpgw_info']['server']['auto_load_holidays'] == True)
+			if(GlobalService::get('phpgw_info')['server']['auto_load_holidays'] == True)
 			{
 				while(list($key,$value) = each($this->locales))
 				{
@@ -228,13 +230,13 @@
 				/* get the file that contains the calendar events for your locale */
 				/* "http://www.egroupware.org/cal/holidays.US.csv";                 */
 				$network = CreateObject('phpgwapi.network');
-				if(isset($GLOBALS['phpgw_info']['server']['holidays_url_path']) && $GLOBALS['phpgw_info']['server']['holidays_url_path'] != 'localhost')
+				if(isset(GlobalService::get('phpgw_info')['server']['holidays_url_path']) && GlobalService::get('phpgw_info')['server']['holidays_url_path'] != 'localhost')
 				{
-					$load_from = $GLOBALS['phpgw_info']['server']['holidays_url_path'];
+					$load_from = GlobalService::get('phpgw_info')['server']['holidays_url_path'];
 				}
 				else
 				{
-					$pos = strpos(' '.$GLOBALS['phpgw_info']['server']['webserver_url'],$_SERVER['HTTP_HOST']);
+					$pos = strpos(' '.GlobalService::get('phpgw_info')['server']['webserver_url'],$_SERVER['HTTP_HOST']);
 					if($pos == 0)
 					{
 						switch($_SERVER['SERVER_PORT'])
@@ -246,16 +248,16 @@
 								$http_protocol = 'https://';
 								break;
 						}
-						$server_host = $http_protocol.$_SERVER['HTTP_HOST'].$GLOBALS['phpgw_info']['server']['webserver_url'];
+						$server_host = $http_protocol.$_SERVER['HTTP_HOST'].GlobalService::get('phpgw_info')['server']['webserver_url'];
 					}
 					else
 					{
-						$server_host = $GLOBALS['phpgw_info']['server']['webserver_url'];
+						$server_host = GlobalService::get('phpgw_info')['server']['webserver_url'];
 					}
 					$load_from = $server_host.'/calendar/egroupware.org';
 				}
 //				echo 'Loading from: '.$load_from.'/holidays.'.strtoupper($locale).'.csv'."<br>\n";
-                                if(isset($GLOBALS['phpgw_info']['server']['holidays_url_path']) && $GLOBALS['phpgw_info']['server']['holidays_url_path'] != 'localhost')
+                                if(isset(GlobalService::get('phpgw_info')['server']['holidays_url_path']) && GlobalService::get('phpgw_info')['server']['holidays_url_path'] != 'localhost')
                                 {
                                     $lines = $network->gethttpsocketfile($load_from.'/holidays.'.strtoupper($locale).'.csv');
                                 }
@@ -275,7 +277,7 @@
 					if(count($holiday) == 7)
 					{
 						$holiday['locale'] = $holiday[0];
-						$holiday['name'] = $GLOBALS['phpgw']->db->db_addslashes($holiday[1]);
+						$holiday['name'] = GlobalService::get('phpgw')->db->db_addslashes($holiday[1]);
 						$holiday['mday'] = (int)$holiday[2];
 						$holiday['month_num'] = (int)$holiday[3];
 						$holiday['occurence'] = (int)$holiday[4];
@@ -392,7 +394,7 @@
 				return $holidays;
 			}
 
-			$temp_locale = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+			$temp_locale = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 			for($i=0;$i<count($holidays);$i++)
 			{
 				$c = $i;
@@ -402,7 +404,7 @@
 					{
 						unset($holidaycalc);
 					}
-					$GLOBALS['phpgw_info']['user']['preferences']['common']['country'] = $holidays[$i]['locale'];
+					GlobalService::get('phpgw_info')['user']['preferences']['common']['country'] = $holidays[$i]['locale'];
 					$holidaycalc = CreateObject('calendar.holidaycalc');
 				}
 				$holidays[$i]['date'] = $holidaycalc->calculate_date($holidays[$i], $holidays, $this->year, $c);
@@ -414,16 +416,16 @@
 			unset($holidaycalc);
 			$this->holidays = $this->sort_holidays_by_date($holidays);
 			$this->cached_holidays = $this->set_holidays_to_date($this->holidays);
-			$GLOBALS['phpgw_info']['user']['preferences']['common']['country'] = $temp_locale;
+			GlobalService::get('phpgw_info')['user']['preferences']['common']['country'] = $temp_locale;
 			return $this->cached_holidays;
 		}
 		/* End Calendar functions */
 
 		function check_admin()
 		{
-			if(!@$GLOBALS['phpgw_info']['user']['apps']['admin'])
+			if(!@GlobalService::get('phpgw_info')['user']['apps']['admin'])
 			{
-				Header('Location: ' . $GLOBALS['phpgw']->link('/index.php'));
+				Header('Location: ' . GlobalService::get('phpgw')->link('/index.php'));
 			}
 		}
 
@@ -448,7 +450,7 @@
 			}
 			else
 			{
-				$str = $GLOBALS['phpgw']->common->dateformatorder($holiday['occurence']>1900?$holiday['occurence']:'',$month,$holiday[day]);
+				$str = GlobalService::get('phpgw')->common->dateformatorder($holiday['occurence']>1900?$holiday['occurence']:'',$month,$holiday[day]);
 			}
 			if ($holiday['observance_rule'])
 			{

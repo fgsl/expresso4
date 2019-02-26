@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Webpage news admin                                          *
   * http://www.egroupware.org                                                *
@@ -36,18 +38,18 @@
 		return;
 	}
 
-	$GLOBALS['phpgw_info']['flags']['noapi'] = True;
+	GlobalService::get('phpgw_info')['flags']['noapi'] = True;
 	include($path_to_header . 'header.inc.php');
 	include(PHPGW_SERVER_ROOT . '/phpgwapi/inc/class.Template.inc.php');
 	$tpl = new Template($template_path);
 	include(PHPGW_SERVER_ROOT . '/phpgwapi/inc/class.db_egw.inc.php');
 
-	$GLOBALS['phpgw']->db = new db_egw();
-	$GLOBALS['phpgw']->db->Host     = $GLOBALS['phpgw_domain'][$domain]['server']['db_host'];
-	$GLOBALS['phpgw']->db->Type     = $GLOBALS['phpgw_domain'][$domain]['db_type'];
-	$GLOBALS['phpgw']->db->Database = $GLOBALS['phpgw_domain'][$domain]['db_name'];
-	$GLOBALS['phpgw']->db->User     = $GLOBALS['phpgw_domain'][$domain]['db_user'];
-	$GLOBALS['phpgw']->db->Password = $GLOBALS['phpgw_domain'][$domain]['db_pass'];
+	GlobalService::get('phpgw')->db = new db_egw();
+	GlobalService::get('phpgw')->db->Host     = GlobalService::get('phpgw_domain')[$domain]['server']['db_host'];
+	GlobalService::get('phpgw')->db->Type     = GlobalService::get('phpgw_domain')[$domain]['db_type'];
+	GlobalService::get('phpgw')->db->Database = GlobalService::get('phpgw_domain')[$domain]['db_name'];
+	GlobalService::get('phpgw')->db->User     = GlobalService::get('phpgw_domain')[$domain]['db_user'];
+	GlobalService::get('phpgw')->db->Password = GlobalService::get('phpgw_domain')[$domain]['db_pass'];
 
 	include(PHPGW_SERVER_ROOT . '/news_admin/inc/class.sonews.inc.php');
 	$news_obj = new sonews();

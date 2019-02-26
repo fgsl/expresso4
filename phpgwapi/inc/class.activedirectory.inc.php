@@ -24,7 +24,7 @@ class ActiveDirectory extends ConfigSerial
 		if ( !$this->_soap ) {
 			try {
 				$this->_soap = new SoapClientX( $this->url, array( 'trace' => true, 'exceptions' => true ) );
-			} catch( Exception $e ) {
+			} catch( \Exception $e ) {
 				$this->_error = $e->getMessage();
 				return false;
 			}

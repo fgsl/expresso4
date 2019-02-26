@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /*
 
 	SOAPx4
@@ -71,7 +73,7 @@
 				$type = 'int';
 			}
 
-			$this->soapTypes = $GLOBALS['soapTypes'];
+			$this->soapTypes = GlobalService::get('soapTypes');
 			$this->name = $name;
 			$this->value = '';
 			$this->type = $type;
@@ -85,11 +87,11 @@
 			if($namespace)
 			{
 				$this->namespace = $namespace;
-				if(!isset($GLOBALS['namespaces'][$namespace]))
+				if(!isset(GlobalService::get('namespaces')[$namespace]))
 				{
-					$GLOBALS['namespaces'][$namespace] = "ns".(count($GLOBALS['namespaces'])+1);
+					GlobalService::get('namespaces')[$namespace] = "ns".(count(GlobalService::get('namespaces'))+1);
 				}
-				$this->prefix = $GLOBALS['namespaces'][$namespace];
+				$this->prefix = GlobalService::get('namespaces')[$namespace];
 			}
 
 			// get type prefix
@@ -100,11 +102,11 @@
 			}
 			elseif($type_namespace)
 			{
-				if(!isset($GLOBALS['namespaces'][$type_namespace]))
+				if(!isset(GlobalService::get('namespaces')[$type_namespace]))
 				{
-					$GLOBALS['namespaces'][$type_namespace] = 'ns'.(count($GLOBALS['namespaces'])+1);
+					GlobalService::get('namespaces')[$type_namespace] = 'ns'.(count(GlobalService::get('namespaces'))+1);
 				}
-				$this->type_prefix = $GLOBALS['namespaces'][$type_namespace];
+				$this->type_prefix = GlobalService::get('namespaces')[$type_namespace];
 			}
 
 			// if type namespace was not explicitly passed, and we're not in a method struct:
@@ -114,7 +116,7 @@
 				if(!$this->type_prefix = $this->verify_type($type))
 				{
 					// else default to method namespace
-					$this->type_prefix = $GLOBALS['namespaces'][$GLOBALS['methodNamespace']];
+					$this->type_prefix = GlobalService::get('namespaces')[GlobalService::get('methodNamespace')];
 				}
 			}
 
@@ -138,7 +140,7 @@
 			}
 			else
 			{
-				//if($namespace == $GLOBALS['methodNamespace']){
+				//if($namespace == GlobalService::get('methodNamespace']){
 					$this->type_code = 3;
 					$this->addStruct($value);
 				//}
@@ -430,16 +432,16 @@
 		{
 			if ($type)
 			{
-//				global $GLOBALS['namespaces'],$GLOBALS['soapTypes'],$GLOBALS['typemap'];
-//				global $GLOBALS['namespaces'],$GLOBALS['typemap'];
+//				global GlobalService::get('namespaces'),GlobalService::get('soapTypes'],GlobalService::get('typemap'];
+//				global GlobalService::get('namespaces'),GlobalService::get('typemap'];
 
-				@reset($GLOBALS['typemap']);
-				while(list($namespace,$types) = @each($GLOBALS['typemap']))
-				/* foreach($GLOBALS['typemap'] as $namespace => $types) */
+				@reset(GlobalService::get('typemap'));
+				while(list($namespace,$types) = @each(GlobalService::get('typemap')))
+				/* foreach(GlobalService::get('typemap'] as $namespace => $types) */
 				{
 					if(in_array($type,$types))
 					{
-						return $GLOBALS['namespaces'][$namespace];
+						return GlobalService::get('namespaces')[$namespace];
 					}
 				}
 			}

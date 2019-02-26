@@ -1,11 +1,11 @@
 <?php
 /**
- * Corresponde ao formato de data armazenado na configuração (d/m/Y ou Y/m/d)
+ * Corresponde ao formato de data armazenado na configuraï¿½ï¿½o (d/m/Y ou Y/m/d)
  * @name DATE_FORMAT_LOCAL
  */
 define('DATE_FORMAT_LOCAL', 'd/m/Y');
 /**
- * maior número inteiro
+ * maior nÃºmero inteiro
  * @name DATE_FORMAT_LOCAL
  */
 define('LONG_MAX', is_int(2147483648) ? 9223372036854775807 : 2147483647);
@@ -16,9 +16,9 @@ define('LONG_MAX', is_int(2147483648) ? 9223372036854775807 : 2147483647);
 define('DATE_FORMAT_CUSTOM', 'CUSTOM');
 
 /**
- * Classe para manipulação e realização de cálculos com datas
+ * Classe para manipulaï¿½ï¿½o e realizaï¿½ï¿½o de cï¿½lculos com datas
  * @author Marcos Pont
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @version 1.0
  * @license http://www.gnu.org/copyleft/gpl.html GPL
  * @package Workflow 
@@ -37,7 +37,7 @@ class wf_date
 	}
 
 	/**
-	 * Verifica se uma determinada data é válida
+	 * Verifica se uma determinada data ï¿½ vï¿½lida
 	 * @access public
 	 * @param string $date Data a ser validada
 	 * @return boolean
@@ -58,7 +58,7 @@ class wf_date
 		}
 	}
 	/**
-	 *	Verifica se um valor de time zone é válido
+	 *	Verifica se um valor de time zone ï¿½ vï¿½lido
 	 *	@access public
 	 *	@param	string $tz	Valor de time zone
 	 *	@return boolean	
@@ -68,8 +68,8 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se uma data está no formato europeu dd[/-.]mm[/-.]YYYY[ HH:mm:ss]
-	 * @param array &$regs Vetor para onde retornam os valores destacados de dia, mês e ano
+	 * Verifica se uma data estï¿½ no formato europeu dd[/-.]mm[/-.]YYYY[ HH:mm:ss]
+	 * @param array &$regs Vetor para onde retornam os valores destacados de dia, mï¿½s e ano
 	 * @access public
 	 * @return boolean
 	 */
@@ -87,9 +87,9 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se uma data está no formato americano YYYY[/-.]mm[/-.]dd[ HH:mm:ss]
+	 * Verifica se uma data estï¿½ no formato americano YYYY[/-.]mm[/-.]dd[ HH:mm:ss]
 	 * @param string $date Data a ser verificada
-	 * @param array	&$regs Vetor para onde retornam os valores destacados de dia, mês e ano
+	 * @param array	&$regs Vetor para onde retornam os valores destacados de dia, mï¿½s e ano
 	 * @access public
 	 * @return boolean
 	 */	
@@ -107,9 +107,9 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se uma data está no formato SQL YYYY-mm-dd
+	 * Verifica se uma data estï¿½ no formato SQL YYYY-mm-dd
 	 * @param string $date Data a ser verificada
-	 * @param array &$regs Vetor para onde retornam os valores destacados de dia, mês e ano
+	 * @param array &$regs Vetor para onde retornam os valores destacados de dia, mï¿½s e ano
 	 * @access public
 	 * @return boolean
 	 */
@@ -127,7 +127,7 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se uma data é posterior à data atual
+	 * Verifica se uma data ï¿½ posterior ï¿½ data atual
 	 * @access public
 	 * @param string $date Data a ser verificada
 	 * @return boolean
@@ -139,7 +139,7 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se uma data é anterior à data atual
+	 * Verifica se uma data ï¿½ anterior ï¿½ data atual
 	 * @access public
 	 * @param string date Data a ser verificada
 	 * @return boolean
@@ -151,7 +151,7 @@ class wf_date
 	}
 	
 	/**
-	 * Calcula o dia seguinte em relação à data atual
+	 * Calcula o dia seguinte em relaï¿½ï¿½o ï¿½ data atual
 	 * @access public
 	 * @return string Data calculada
 	 */
@@ -160,7 +160,7 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se um determinado valor é NULL
+	 * Verifica se um determinado valor ï¿½ NULL
 	 * @param mixed $value Valor a testar
 	 * @param boolean $strict Considerar o tipo do dado
 	 * @access public
@@ -184,12 +184,12 @@ class wf_date
 	}
 	
 	/**
-	 * Calcula uma data no futuro, a partir de um número de dias, meses e anos
+	 * Calcula uma data no futuro, a partir de um nÃºmero de dias, meses e anos
 	 * @access public
 	 * @param string $date Data original
-	 * @param iny $days Número de dias no futuro
-	 * @param int $months Número de meses no futuro
-	 * @param int $years Número de anos no futuro
+	 * @param int $days NÃºmero de dias no futuro
+	 * @param int $months NÃºmero de meses no futuro
+	 * @param int $years NÃºmero de anos no futuro
 	 * @return string Data calculada no formato original
 	 */
 	function futureDate($date, $days = 0, $months = 0, $years = 0) {
@@ -207,7 +207,7 @@ class wf_date
 		} else {			
 			return NULL;
 		}
-		// Calcula o número de dias da data original
+		// Calcula o nÃºmero de dias da data original
 		$daysFrom = $this->dateToDays($date);
 		$daysInc = 0;
 		// Adiciona os anos
@@ -216,7 +216,7 @@ class wf_date
 			++$year;
 			$daysInc += ($this->isLeapYear($year)) ? 366 : 365;
 		}
-		// Adiciona os meses de acordo com o número de dias em cada um
+		// Adiciona os meses de acordo com o nÃºmero de dias em cada um
 		$months = intval($months);
 		for ($i = 1; $i <= $months; ++$i) {
 			$mTemp = $i % 12 - 1;
@@ -236,7 +236,7 @@ class wf_date
 	}
 	
 	/**
-	 * Calcula o dia anterior em relação à data atual
+	 * Calcula o dia anterior em relaÃ§Ã£o Ã  data atual
 	 * @access public
 	 * @return string Data calculada
 	 */
@@ -258,11 +258,11 @@ class wf_date
 	}
 	
 	/**
-	 * Calcula uma data no passado, a partir de um número de dias, meses e anos
+	 * Calcula uma data no passado, a partir de um nÃºmero de dias, meses e anos
 	 * @param string $date Data original
-	 * @param int $days Número de dias no passado
-	 * @param int $months Número de meses no passado
-	 * @param int $years Número de anos no passado
+	 * @param int $days NÃºmero de dias no passado
+	 * @param int $months NÃºmero de meses no passado
+	 * @param int $years NÃºmero de anos no passado
 	 * @return string Data calculada no formato original
 	 * @access public
 	 */
@@ -281,7 +281,7 @@ class wf_date
 		} else {
 			return NULL;
 		}
-		// Calcula o número de dias da data original
+		// Calcula o nï¿½mero de dias da data original
 		$daysFrom = $this->dateToDays($date);
 		$daysDec = 0;
 		// Adiciona os anos
@@ -290,7 +290,7 @@ class wf_date
 			$daysDec += ($this->isLeapYear($year)) ? 366 : 365;
 			$year--;			
 		}		
-		// Adiciona os meses de acordo com os dias de cada mês
+		// Adiciona os meses de acordo com os dias de cada mï¿½s
 		for ($i = 1; $i <= $months; ++$i) {
 			$mTemp = $i % 12;
 			$yTemp = intval($i / 12);
@@ -309,14 +309,14 @@ class wf_date
 	}
 	
 	/**
-	 * Calcula a diferença em dias entre duas datas
+	 * Calcula a diferenï¿½a em dias entre duas datas
 	 * @param string $dateM Data 1
 	 * @param string $dateS Data 2
 	 * @param boolean $unsigned Usar sinal no retorno
 	 * @access public
 	 */
 	function getDiff($dateM, $dateS, $unsigned=TRUE) {
-		// Calcula o número de dias da diferença
+		// Calcula o nï¿½mero de dias da diferenï¿½a
 		$daysS = $this->dateToDays($dateS);
 		$daysM = $this->dateToDays($dateM);
 		return ($unsigned? abs($daysS - $daysM) : ($daysS - $daysM));
@@ -327,7 +327,7 @@ class wf_date
 	 * @param string $date Data a ser processada
 	 * @param boolean $text Retornar o nome do dia da semana
 	 * @param boolean $abbr Retornar o nome do dia da semana abreviadamente
-	 * @return mixed Nome ou número do dia da semana (baseado em zero)
+	 * @return mixed Nome ou nï¿½mero do dia da semana (baseado em zero)
 	 * @access public 
 	 */
 	function dayOfWeek($date, $text=TRUE, $abbr=FALSE) {
@@ -340,7 +340,7 @@ class wf_date
 		} else {
 			return NULL;
 		}
-		// Cálculo do dia da semana
+		// Cï¿½lculo do dia da semana
 		if ($month > 2) {
 			$month -= 2;
 		} else {
@@ -349,9 +349,9 @@ class wf_date
 		}
 		$dow = (floor((13 * $month - 1) / 5) + $day + ($year % 100) + floor(($year % 100) / 4) + floor(($year / 100) / 4) - 2 * floor($year / 100) + 77);
 		$dow = (($dow - 7 * floor($dow / 7)));
-		// Exibição do resultado, de acordo com os parâmetros fornecidos
+		// Exibiï¿½ï¿½o do resultado, de acordo com os parï¿½metros fornecidos
 		if ($text) {
-			$daysOfWeek = array('segunda', 'terça', 'quarta', 'quinta', 'sexta');
+			$daysOfWeek = array('segunda', 'terï¿½a', 'quarta', 'quinta', 'sexta');
 			if ($abbr) {
 				return $daysOfWeek[$dow];	
 			} else {
@@ -363,10 +363,10 @@ class wf_date
 	}
 	
 	/**
-	 * Retorna o número de dias de um mês de acordo com o mês e o ano
-	 * @param int $month Mês
+	 * Retorna o nï¿½mero de dias de um mï¿½s de acordo com o mï¿½s e o ano
+	 * @param int $month Mï¿½s
 	 * @param int $year Ano
-	 * @return int Número de dias do mês solicitado
+	 * @return int Nï¿½mero de dias do mï¿½s solicitado
 	 * @access public 
 	 */
 	function daysInMonth($month=NULL, $year=NULL) {
@@ -384,7 +384,7 @@ class wf_date
 	}
 	
 	/**
-	 * Verifica se um determinado ano é bissexto
+	 * Verifica se um determinado ano ï¿½ bissexto
 	 * @param int $year Ano para ser verificado
 	 * @access public
 	 * @return boolean
@@ -398,10 +398,10 @@ class wf_date
 	}	
 	
 	/**
-	 * Converte uma data no padrão europeu (dd/mm/YYYY) para o padrão SQL (YYYY-mm-dd)
+	 * Converte uma data no padrï¿½o europeu (dd/mm/YYYY) para o padrï¿½o SQL (YYYY-mm-dd)
 	 * @param string $date Data a ser convertida
-	 * @param boolean @preserveTime Preservar porção de hora, se ela existir na data fornecida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @param boolean @preserveTime Preservar porï¿½ï¿½o de hora, se ela existir na data fornecida
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromEuroToSqlDate($date, $preserveTime=FALSE) {
@@ -420,10 +420,10 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data no padrão europeu (dd/mm/YYYY)
+	 * Converte uma data no padrï¿½o europeu (dd/mm/YYYY)
 	 * @param string $date Data a ser convertida
-	 * @param boolean $preserveTime Preservar porção de hora, se ela existir na data fornecida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @param boolean $preserveTime Preservar porï¿½ï¿½o de hora, se ela existir na data fornecida
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromEuroToUsDate($date, $preserveTime=FALSE) {
@@ -442,9 +442,9 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data no padrã americano (YYYY/mm/dd) para o padrão SQL (YYYY-mm-dd)
+	 * Converte uma data no padrï¿½ americano (YYYY/mm/dd) para o padrï¿½o SQL (YYYY-mm-dd)
 	 * @param string $date Data a ser convertida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromUsToSqlDate($date) {
@@ -457,10 +457,10 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data no padrão americano (YYYY/mm/dd) para o padrão europeu (dd/mm/YYYY)
+	 * Converte uma data no padrï¿½o americano (YYYY/mm/dd) para o padrï¿½o europeu (dd/mm/YYYY)
 	 * @param string $date Data a ser convertida
-	 * @param boolean $preserveTime Preservar porção de hora, se ela existir na data fornecida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @param boolean $preserveTime Preservar porï¿½ï¿½o de hora, se ela existir na data fornecida
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromUsToEuroDate($date, $preserveTime=FALSE) {
@@ -479,10 +479,10 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data no padrão SQL (YYYY-mm-dd) para o padrão europeu (dd/mm/YYYY)
+	 * Converte uma data no padrï¿½o SQL (YYYY-mm-dd) para o padrï¿½o europeu (dd/mm/YYYY)
 	 * @param string $date	Data a ser convertida
-	 * @param boolean preserveTime Preservar porção de hora, se ela existir na data fornecida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @param boolean preserveTime Preservar porï¿½ï¿½o de hora, se ela existir na data fornecida
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromSqlToEuroDate($date, $preserveTime=FALSE) {
@@ -501,9 +501,9 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data no padrão SQL (YYYY-mm-dd) para o padrão americano (YYYY/mm/dd)
+	 * Converte uma data no padrï¿½o SQL (YYYY-mm-dd) para o padrï¿½o americano (YYYY/mm/dd)
 	 * @param string $date Data a ser convertida
-	 * @return string Data convertida ou a original se o padrão de entrada estiver incorreto
+	 * @return string Data convertida ou a original se o padrï¿½o de entrada estiver incorreto
 	 * @access public
 	 */
 	function fromSqlToUsDate($date) {
@@ -517,7 +517,7 @@ class wf_date
 	
 	/**
 	 * Converte um timestamp Unix em uma data/hora no formato DOS com 4 bytes
-	 * @param int $unixTimestamp Timestamp UNIX para a conversão
+	 * @param int $unixTimestamp Timestamp UNIX para a conversï¿½o
 	 * @return string Data e hora no formato DOS
 	 * @access public
 	 */
@@ -551,9 +551,9 @@ class wf_date
 	}
 	
 	/**
-	 * Converte uma data para o correspondente em número de dias
-	 * @param string $date Data base para o cálculo
-	 * @return int Data convertida em número de dias
+	 * Converte uma data para o correspondente em nï¿½mero de dias
+	 * @param string $date Data base para o cï¿½lculo
+	 * @return int Data convertida em nï¿½mero de dias
 	 * @access public
 	 */
 	function dateToDays($date=NULL) {		
@@ -584,8 +584,8 @@ class wf_date
 	}
 	
 	/**
-	 * Converte um número de dias em uma data
-	 * @param int $days Número de dias
+	 * Converte um nï¿½mero de dias em uma data
+	 * @param int $days Nï¿½mero de dias
 	 * @param string $dateType Tipo da data a ser retornada (EURO, US ou SQL)
 	 * @return string Data correspondente
 	 * @access public
@@ -629,7 +629,7 @@ class wf_date
 	/**
 	 * Retorna a data local de acordo com o formato
 	 * @access public
-	 * @param int $ts Timestamp opcional para geração da data local
+	 * @param int $ts Timestamp opcional para geraï¿½ï¿½o da data local
 	 * @return string Data local, a partir do timestamp atual ou um determinado
 	 */
 	function localDate($ts=0) {
@@ -650,10 +650,10 @@ class wf_date
 	}
 	
 	/**
-	 * Formata um valor de data a partir dos valores de dia, mês e ano
+	 * Formata um valor de data a partir dos valores de dia, mï¿½s e ano
 	 * @param int $day Valor do dia na data
-	 * @param int $month Valor do mês na data
-	 * @param int $year Valor do ano na data, com 4 dígitos
+	 * @param int $month Valor do mï¿½s na data
+	 * @param int $year Valor do ano na data, com 4 dï¿½gitos
 	 * @param int $fmtType Tipo de formato de data (vide constantes da classe)
 	 * @return string Data formatada
 	 * @access public
@@ -671,7 +671,7 @@ class wf_date
 	 * @access public
 	 * @param int $time Unix timestamp
 	 * @param int $fmtType Tipo de formato de data (vide constantes da classse)
-	 * @param string $fmtString Descrição do formato (quando $fmtType==DATE_FORMAT_CUSTOM)
+	 * @param string $fmtString Descriï¿½ï¿½o do formato (quando $fmtType==DATE_FORMAT_CUSTOM)
 	 * @return string Timestamp formatado
 	 */
 	function formatTime($time=NULL, $fmtType=DATE_FORMAT_LOCAL, $fmtStr='') {

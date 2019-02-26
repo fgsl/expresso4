@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -51,7 +53,7 @@
 			@function global_ldap_catalog
 			@abstract Constructor
 			@author Raphael Derosso Pereira
-			@author Mário César Kolling (external catalogs)
+			@author Mï¿½rio Cï¿½sar Kolling (external catalogs)
 
 			@param integer $id_source The ID of the LDAP source
 			@param string $context Ldap bind DN
@@ -151,7 +153,7 @@
             // Find objects where 'mail' attribute is not null.
 			$filter = "(&".$filter."(mail=*))";
 			
-			$ldap = $GLOBALS['phpgw']->common->ldapConnect($this->src_info['host'], $this->src_info['acc'], $this->src_info['pw'], true);
+			$ldap = GlobalService::get('phpgw')->common->ldapConnect($this->src_info['host'], $this->src_info['acc'], $this->src_info['pw'], true);
 			$result_r = $recursive ? ldap_search($ldap , $this->src_info['context'], $filter, $fields, 0, $this->src_info['max_results']) :
 						ldap_list($ldap , $this->src_info['context'], $filter, $fields, 0, $this->src_info['max_results']);
 
@@ -556,14 +558,14 @@
 		{
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{
@@ -571,14 +573,14 @@
 				}
 			}
 			
-			$ldap = $GLOBALS['phpgw']->common->ldapConnect($this->src_info['host'],$this->src_info['acc'],$this->src_info['pw'],true);
+			$ldap = GlobalService::get('phpgw')->common->ldapConnect($this->src_info['host'],$this->src_info['acc'],$this->src_info['pw'],true);
 			
 			if (!$ldap)
 			{
 				return false;
 			}
 
-			//Alteração feita especificamente para tratar problema da montagem do $id_contact
+			//Alteraï¿½ï¿½o feita especificamente para tratar problema da montagem do $id_contact
 			if(!$external)
 			{
 				if($this->src_info['montaDN'] == "true")
@@ -888,7 +890,7 @@
 		 @function get_all_entries
 		 @abstract Returns all information requested about a bunch of contacts, usually a page
 		 @author Raphael Derosso Pereira
-		 @author Mário César Kolling
+		 @author Mï¿½rio Cï¿½sar Kolling
 
 		 @param string $filter Filter (returned by generate_filter).
 		 @param array $fields The array returned by get_fields with true
@@ -899,14 +901,14 @@
 		{
 			if (!is_array($fields))
 			{
-				if (is_object($GLOBALS['phpgw']->log))
+				if (is_object(GlobalService::get('phpgw')->log))
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else
 				{
@@ -914,7 +916,7 @@
 				}
 			}
 
-			$ldap = $GLOBALS['phpgw']->common->ldapConnect($this->src_info['host'],$this->src_info['acc'],$this->src_info['pw'],true);
+			$ldap = GlobalService::get('phpgw')->common->ldapConnect($this->src_info['host'],$this->src_info['acc'],$this->src_info['pw'],true);
 
 			if (!$ldap)
 			{
@@ -1218,14 +1220,14 @@
 		{
 			if (!is_array($id_contacts) or !is_array($fields) or ($other_data != false and !is_array($other_data)))
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_multiple_entry parameter type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else {
 					exit('Argument Error on: <br>File:'.__FILE__.'<br>Line:'.__LINE__.'<br>');
@@ -1278,22 +1280,22 @@
 				{
 
 					// 
-					//  Não utiliza mais a função ldap_explode, usa a expressão regular a seguir para pegar o primeiro
+					//  Nï¿½o utiliza mais a funï¿½ï¿½o ldap_explode, usa a expressï¿½o regular a seguir para pegar o primeiro
 					//  componente da dn
 					// 
 					preg_match('/^(\w*=[^,]*),.*$/', $id_contacts[$i], $cn);
 
     				//
     				// Adicionados os str_replace para adicionar caracteres de escape em frente aos caracteres '(' e ')',
-    				// posteriormente poderá ser necessário substituir por uma expressão regular mais genérica.
+    				// posteriormente poderï¿½ ser necessï¿½rio substituir por uma expressï¿½o regular mais genï¿½rica.
     				//
 
 					if ($cn[1])
 					{
 						//
-						// Esta operação resolve o problema causado pela conversão de caracteres acentuados realizada
-						// pela função ldap_explode_dn(). Talvez seja necessário utilizar esta tradução em outros lugares,
-						// neste caso é mais apropriado colocar dentro de uma função.
+						// Esta operaï¿½ï¿½o resolve o problema causado pela conversï¿½o de caracteres acentuados realizada
+						// pela funï¿½ï¿½o ldap_explode_dn(). Talvez seja necessï¿½rio utilizar esta traduï¿½ï¿½o em outros lugares,
+						// neste caso ï¿½ mais apropriado colocar dentro de uma funï¿½ï¿½o.
 						//
 						//foreach($cn as $key=>$value){
 	          			//	$cn[$key]=preg_replace("/\\\([0-9A-Fa-f]{2})/e", "''.chr(hexdec('\\1')).''", $value);

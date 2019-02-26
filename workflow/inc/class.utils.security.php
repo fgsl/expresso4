@@ -27,19 +27,19 @@ class SecurityUtils extends Utils {
 	var $attrArray;
 
 	/**
-	 * @var $tagsMethod  default = 0
+	 * @var $tagsMethod  integer default = 0
 	 * @access public
 	 */
 	var $tagsMethod;
 
 	/**
-	 * @var $attrMethod  default = 0
+	 * @var $attrMethod  integer default = 0
 	 * @access public
 	 */
 	var $attrMethod;
 
 	/**
-	 * @var $xssAuto  default = 1
+	 * @var $xssAuto  integer default = 1
 	 * @access public
 	 */
 	var $xssAuto;

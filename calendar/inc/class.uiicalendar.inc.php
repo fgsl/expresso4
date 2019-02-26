@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -26,8 +28,8 @@
 		function uiicalendar()
 		{
 			$this->bo = CreateObject('calendar.boicalendar');
-			$this->template = $GLOBALS['phpgw']->template;
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Calendar - [iv]Cal Importer');
+			$this->template = GlobalService::get('phpgw')->template;
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Calendar - [iv]Cal Importer');
 		}
 
 		function print_test($val,$title,$x_pre='')
@@ -82,20 +84,20 @@
 
 		function import()
 		{
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['nonappheader'] = True;
-			$GLOBALS['phpgw_info']['flags']['nonappfooter'] = True;
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['nonappheader'] = True;
+			GlobalService::get('phpgw_info')['flags']['nonappfooter'] = True;
+			GlobalService::get('phpgw')->common->phpgw_header();
 
-			if(!@is_dir($GLOBALS['phpgw_info']['server']['temp_dir']))
+			if(!@is_dir(GlobalService::get('phpgw_info')['server']['temp_dir']))
 			{
-				mkdir($GLOBALS['phpgw_info']['server']['temp_dir'],0700);
+				mkdir(GlobalService::get('phpgw_info')['server']['temp_dir'],0700);
 			}
 
-			echo '<body bgcolor="' . $GLOBALS['phpgw_info']['theme']['bg_color'] . '">';
+			echo '<body bgcolor="' . GlobalService::get('phpgw_info')['theme']['bg_color'] . '">';
 
-			if ($GLOBALS['HTTP_GET_VARS']['action'] == 'GetFile')
+			if (GlobalService::get('HTTP_GET_VARS']['action'] == 'GetFile')
 			{
 				echo '<b><center>' . lang('You must select a [iv]Cal. (*.[iv]cs)') . '</b></center><br><br>';
 			}
@@ -104,15 +106,15 @@
 			$this->template->set_block('vcalimport','page_block');
 			$this->template->set_block('vcalimport','error_block');
 			
-			if($GLOBALS['HTTP_GET_VARS']['error_number']) {
-				$this->template->set_var('error_message',$this->get_error_message( $GLOBALS['HTTP_GET_VARS']['error_number'] ) );
+			if(GlobalService::get('HTTP_GET_VARS']['error_number']) {
+				$this->template->set_var('error_message',$this->get_error_message( GlobalService::get('HTTP_GET_VARS']['error_number'] ) );
 				$this->template->parse('error_box','error_block',true);
 			}
 			
 			$var = Array(
 				'vcal_header'	=> '<p>',
 				'ical_lang'		=> lang('(i/v)Cal'),
-				'action_url'	=> $GLOBALS['phpgw']->link('/index.php','menuaction=calendar.boicalendar.import'),
+				'action_url'	=> GlobalService::get('phpgw')->link('/index.php','menuaction=calendar.boicalendar.import'),
 				'lang_access'	=> lang('Access'),
 				'lang_groups'	=> lang('Which groups'),
 				'access_option'=> $access_option,

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -16,7 +18,7 @@
 	  Set a global flag to indicate this file was found by admin/config.php.
 	  config.php will unset it after parsing the form values.
 	*/
-	$GLOBALS['phpgw_info']['server']['found_validation_hook'] = True;
+	GlobalService::get('phpgw_info')['server']['found_validation_hook'] = True;
 
 	/* Check all settings to validate input.  Name must be 'final_validation' */
 	function final_validation($value='')
@@ -43,7 +45,7 @@
 		
 		if ($error)
 		{ 
-			$GLOBALS['config_error'] = implode("\n", $error);
+			GlobalService::set('config_error',implode("\n", $error));
 		}
 	}
 ?>

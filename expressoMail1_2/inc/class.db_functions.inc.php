@@ -1,13 +1,15 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 if ( !isset( $_SESSION['phpgw_info']['expressomail']['server']['db_name'] ) ) {
 	include_once( dirname( __FILE__ ) . '/../../header.inc.php' );
-	$_SESSION['phpgw_info']['expressomail']['server']['db_name'] = $GLOBALS['phpgw_info']['server']['db_name'];
-	$_SESSION['phpgw_info']['expressomail']['server']['db_host'] = $GLOBALS['phpgw_info']['server']['db_host'];
-	$_SESSION['phpgw_info']['expressomail']['server']['db_port'] = $GLOBALS['phpgw_info']['server']['db_port'];
-	$_SESSION['phpgw_info']['expressomail']['server']['db_user'] = $GLOBALS['phpgw_info']['server']['db_user'];
-	$_SESSION['phpgw_info']['expressomail']['server']['db_pass'] = $GLOBALS['phpgw_info']['server']['db_pass'];
-	$_SESSION['phpgw_info']['expressomail']['server']['db_type'] = $GLOBALS['phpgw_info']['server']['db_type'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_name'] = GlobalService::get('phpgw_info')['server']['db_name'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_host'] = GlobalService::get('phpgw_info')['server']['db_host'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_port'] = GlobalService::get('phpgw_info')['server']['db_port'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_user'] = GlobalService::get('phpgw_info')['server']['db_user'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_pass'] = GlobalService::get('phpgw_info')['server']['db_pass'];
+	$_SESSION['phpgw_info']['expressomail']['server']['db_type'] = GlobalService::get('phpgw_info')['server']['db_type'];
 } else {
 	define( 'PHPGW_INCLUDE_ROOT', dirname( __FILE__ ) . '/../..');
 	define( 'PHPGW_API_INC', PHPGW_INCLUDE_ROOT.'/phpgwapi/inc' );
@@ -324,7 +326,7 @@ class db_functions
 	
 	function get_dynamic_contacts()
 	{				
-		// Pesquisa os emails e ultima inserção nos contatos dinamicos.
+		// Pesquisa os emails e ultima inserï¿½ï¿½o nos contatos dinamicos.
  		if(!$this->db->select('phpgw_expressomail_contacts','data',
 						  'id_owner ='.$this -> user_id,
 						  __LINE__,__FILE__))
@@ -400,8 +402,8 @@ class db_functions
 			$owner = $_SESSION['phpgw_info']['expressomail']['user']['account_id'];
 		}
 
-		if( isset($GLOBALS['phpgw_info']['user']['account_id']) ){
-			$owner = $GLOBALS['phpgw_info']['user']['account_id'];
+		if( isset(GlobalService::get('phpgw_info')['user']['account_id']) ){
+			$owner = GlobalService::get('phpgw_info')['user']['account_id'];
 		}
 		
 		$hash = sha1($vcalendar).( $msgNumber ? sha1($msgNumber) : "" ).sha1($owner);

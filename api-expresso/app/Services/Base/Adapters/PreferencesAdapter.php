@@ -4,12 +4,13 @@ namespace App\Services\Base\adapters;
 
 use App\Services\Base\Adapters\ExpressoAdapter;
 use App\Services\Base\Commons\Errors;
+use Expresso\Core\GlobalService;
 
 class PreferencesAdapter extends ExpressoAdapter
 {
 	protected function getAclPassword()
 	{
-		$acl = $GLOBALS['phpgw_info']['user']['acl'];
+		$acl = GlobalService::get('phpgw_info')['user']['acl'];
 
 		$return = 'false';
 
@@ -24,14 +25,14 @@ class PreferencesAdapter extends ExpressoAdapter
 	protected function isPassword( $currentPassword )
 	{
 		// Conf Ldap
-		$ldapServer 	= $GLOBALS['phpgw_info']['server']['ldap_host'];
-		$ldapContext	= $GLOBALS['phpgw_info']['user']['account_dn'];
+		$ldapServer 	= GlobalService::get('phpgw_info')['server']['ldap_host'];
+		$ldapContext	= GlobalService::get('phpgw_info')['user']['account_dn'];
 		$_return		= false;
 
 		// Connect Ldap
 		$connLdap = ldap_connect( $ldapServer );
 		
-		if( $GLOBALS['phpgw_info']['server']['ldap_version3'] ){ ldap_set_option($connLdap, LDAP_OPT_PROTOCOL_VERSION, 3); }
+		if( GlobalService::get('phpgw_info')['server']['ldap_version3'] ){ ldap_set_option($connLdap, LDAP_OPT_PROTOCOL_VERSION, 3); }
 
 		if( $connLdap )
 		{
@@ -53,7 +54,7 @@ class PreferencesAdapter extends ExpressoAdapter
 		$auth 		= CreateObject('phpgwapi.auth_egw');
 		$_return	= "false";
 
-		if( $GLOBALS['phpgw_info']['server']['certificado'] )
+		if( GlobalService::get('phpgw_info')['server']['certificado'] )
 		{
 			$_return = array( "error" => Errors::runException("NO_SUPPORT_FOR_CERTIFICATE"));
 		}

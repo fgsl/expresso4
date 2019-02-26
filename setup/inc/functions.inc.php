@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -16,9 +18,9 @@
 
 
 	/* ######## Start security check ########## */
-	$d1 = strtolower(substr(@$GLOBALS['phpgw_info']['server']['api_inc'],0,3));
-	$d2 = strtolower(substr(@$GLOBALS['phpgw_info']['server']['server_root'],0,3));
-	$d3 = strtolower(substr(@$GLOBALS['phpgw_info']['server']['app_inc'],0,3));
+	$d1 = strtolower(substr(@GlobalService::get('phpgw_info')['server']['api_inc'],0,3));
+	$d2 = strtolower(substr(@GlobalService::get('phpgw_info')['server']['server_root'],0,3));
+	$d3 = strtolower(substr(@GlobalService::get('phpgw_info')['server']['app_inc'],0,3));
 	if($d1 == 'htt' || $d1 == 'ftp' || $d2 == 'htt' || $d2 == 'ftp' || $d3 == 'htt' || $d3 == 'ftp')
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>';
@@ -66,7 +68,7 @@
 		{
 			$vars = array($m1,$m2,$m3,$m4,$m5,$m6,$m7,$m8,$m9,$m10);
 		}
-		$value = $GLOBALS['phpgw_setup']->translation->translate("$key", $vars );
+		$value = GlobalService::get('phpgw_setup')->translation->translate("$key", $vars );
 		return $value;
 	}
 
@@ -132,14 +134,14 @@
 	{
 		include(PHPGW_SERVER_ROOT.'/phpgwapi/setup/setup.inc.php'); /* To set the current core version */
 		/* This will change to just use setup_info */
-		$GLOBALS['phpgw_info']['server']['versions']['current_header'] = $setup_info['phpgwapi']['versions']['current_header'];
+		GlobalService::get('phpgw_info')['server']['versions']['current_header'] = $setup_info['phpgwapi']['versions']['current_header'];
 	}
 	else
 	{
-		$GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] = 'Undetected';
+		GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] = 'Undetected';
 	}
 
-	$GLOBALS['phpgw_info']['server']['app_images'] = 'templates/default/images';
+	GlobalService::get('phpgw_info')['server']['app_images'] = 'templates/default/images';
 
-	$GLOBALS['phpgw_setup'] = CreateObject('phpgwapi.setup',True,True);
+	GlobalService::get('phpgw_setup') = CreateObject('phpgwapi.setup',True,True);
 ?>

@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 include_once dirname(__FILE__).'/../library/tonic/lib/tonic.php';
 include_once dirname(__FILE__).'/../library/utils/Errors.php';
 class ExpressoAdapter extends Resource {
@@ -20,11 +22,11 @@ class ExpressoAdapter extends Resource {
 
 	function __construct($id){
 		
-		if (!isset($GLOBALS['phpgw_info'])) {
+		if (!isset(GlobalService::get('phpgw_info'))) {
 			
 			preg_match( "/.*(Mail\/Send)/" , $_SERVER['REQUEST_URI'], $foundResources );
 
-			$GLOBALS['phpgw_info'] = array(
+			GlobalService::get('phpgw_info') = array(
 				'flags' => array(
 					'currentapp'				=> "login",
 					'noheader'					=> True,
@@ -37,7 +39,7 @@ class ExpressoAdapter extends Resource {
 			include_once(API_EXPRESSO_PATH.'/phpgwapi/inc/class.xmlrpc_server.inc.php');
 		}
 		//define('PHPGW_TEMPLATE_DIR', ExecMethod('phpgwapi.phpgw.common.get_tpl_dir', 'phpgwapi'));
-		$this->expressoVersion = substr($GLOBALS['phpgw_info']['server']['versions']['phpgwapi'],0,3);
+		$this->expressoVersion = substr(GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'],0,3);
 		$this->setCannotModifyHeader(false);
 
 	}
@@ -94,8 +96,8 @@ class ExpressoAdapter extends Resource {
 	}
 
 	protected function addModuleTranslation($module) {
-		$lang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
-		$GLOBALS['phpgw']->translation->add_app($module,$lang);
+		$lang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
+		GlobalService::get('phpgw')->translation->add_app($module,$lang);
 	}
 	
 	protected function setRequest($request){
@@ -203,15 +205,15 @@ class ExpressoAdapter extends Resource {
 	protected function isLoggedIn(){
 		if($this->getParam('auth') != null) {
 			list($sessionid, $kp3) = explode(":", $this->getParam('auth'));
-			if($GLOBALS['phpgw']->session->verify($sessionid, $kp3)){							
+			if(GlobalService::get('phpgw')->session->verify($sessionid, $kp3)){							
 				return $sessionid;
 			}
 			else{
 				Errors::runException("LOGIN_AUTH_INVALID");							
 			}
 		}
-		elseif($sessionid = $GLOBALS['_COOKIE']['sessionid']) {
-			if($GLOBALS['phpgw']->session->verify($sessionid)) {
+		elseif($sessionid = GlobalService::get('_COOKIE')['sessionid']) {
+			if(GlobalService::get('phpgw')->session->verify($sessionid)) {
 				return $sessionid;
 			}
 			else{
@@ -245,7 +247,7 @@ class ExpressoAdapter extends Resource {
 		// Load Granted Apps for User
 		$contactApps = array();
 		$acl 	= CreateObject('phpgwapi.acl');
-    $user_id = ( trim($user_id) !== "" ? $user_id : $GLOBALS['phpgw_info']['user']['account_id']);
+    $user_id = ( trim($user_id) !== "" ? $user_id : GlobalService::get('phpgw_info')['user']['account_id']);
     $applicationsACL = $acl->get_user_applications($user_id);
 
     if( is_array($applicationsACL) && count($applicationsACL) > 0 ){

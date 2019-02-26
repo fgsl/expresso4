@@ -22,15 +22,15 @@ require_once 'class.JobDate.inc.php';
 class WeekDate extends JobDate
 {
 	/**
-	 * @var int $weekDays Inteiro que representa os dias da semana quando o Job será executado
+	 * @var int $weekDays Inteiro que representa os dias da semana quando o Job serï¿½ executado
 	 * @access private
 	 */
 	private $weekDays;
 
 	/**
 	 * Construtor da classe WeekDate
-	 * @param object $startDate A data a partir da qual o Job é válido
-	 * @param array $interval O intervalo de execução do Job
+	 * @param object $startDate A data a partir da qual o Job ï¿½ vï¿½lido
+	 * @param array $interval O intervalo de execuï¿½ï¿½o do Job
 	 * @param int $weekDays Inteiro que representa os dias da semana
 	 * @return object Objeto da classe WeekDate
 	 * @access public
@@ -46,11 +46,11 @@ class WeekDate extends JobDate
 	{
 		if (($checkDate->format('G:i') == $this->startDate->format('G:i')) && ($this->weekDays & $this->getWeekDay($checkDate)))
 		{
-			$startSunday = new DateTime(date($this->startDate->format('Y-n-j') . ' 00:00:00'));
+			$startSunday = new \DateTime(date($this->startDate->format('Y-n-j') . ' 00:00:00'));
 			if ($this->getWeekDay($startSunday) != WeekDays::SUNDAY)
 				$startSunday->modify('-' . $startSunday->format('N') . ' day');
 
-			$checkSunday = new DateTime(date($checkDate->format('Y-n-j') . ' 00:00:00'));
+			$checkSunday = new \DateTime(date($checkDate->format('Y-n-j') . ' 00:00:00'));
 			if ($this->getWeekDay($checkSunday) != WeekDays::SUNDAY)
 				$checkSunday->modify('-' . $checkSunday->format('N') . ' day');
 
@@ -66,7 +66,7 @@ class WeekDate extends JobDate
 	}
 
 	/**
-	 * Pega o inteiro que representa os dias da semana quando o Job será executado
+	 * Pega o inteiro que representa os dias da semana quando o Job serï¿½ executado
 	 * @return int $weekDays Inteiro que representa os dias da semana
 	 * @access public
 	 */
@@ -76,7 +76,7 @@ class WeekDate extends JobDate
 	}
 
 	/**
-	 * Define o inteiro que representa os dias da semana quando o Job será executado
+	 * Define o inteiro que representa os dias da semana quando o Job serï¿½ executado
 	 * @param int $weekDays Inteiro que representa os dias da semana
 	 * @return void
 	 * @access public

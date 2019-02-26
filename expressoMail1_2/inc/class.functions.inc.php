@@ -4,9 +4,9 @@
 		// get the offset against GMT.
 		function CalculateDateOffset( $date = 'now' )
 		{
-			$tz = new DateTimeZone($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['timezone']);
-			$gmt = new DateTimeZone("Etc/GMT+0");
-			$gmttime = new DateTime($date, $gmt);
+			$tz = new \DateTimeZone($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['timezone']);
+			$gmt = new \DateTimeZone("Etc/GMT+0");
+			$gmttime = new \DateTime($date, $gmt);
 			$offset = $tz->getOffset($gmttime);
 			return $offset;
 		}

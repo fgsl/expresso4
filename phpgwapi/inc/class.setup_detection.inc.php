@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -40,8 +42,8 @@
 		function get_db_versions($setup_info='')
 		{
 			$tname = Array();
-			$GLOBALS['phpgw_setup']->db->Halt_On_Error = 'no';
-			$tables = $GLOBALS['phpgw_setup']->db->table_names();
+			GlobalService::get('phpgw_setup')->db->Halt_On_Error = 'no';
+			$tables = GlobalService::get('phpgw_setup')->db->table_names();
 			foreach($tables as $key => $val)
 			{
 				$tname[] = $val['table_name'];
@@ -54,11 +56,11 @@
 				/* one of these tables exists. checking for post/pre beta version */
 				if($newapps)
 				{
-					$GLOBALS['phpgw_setup']->db->query('SELECT * FROM phpgw_applications',__LINE__,__FILE__);
-					while(@$GLOBALS['phpgw_setup']->db->next_record())
+					GlobalService::get('phpgw_setup')->db->query('SELECT * FROM phpgw_applications',__LINE__,__FILE__);
+					while(@GlobalService::get('phpgw_setup')->db->next_record())
 					{
-						$setup_info[$GLOBALS['phpgw_setup']->db->f('app_name')]['currentver'] = $GLOBALS['phpgw_setup']->db->f('app_version');
-						$setup_info[$GLOBALS['phpgw_setup']->db->f('app_name')]['enabled'] = $GLOBALS['phpgw_setup']->db->f('app_enabled');
+						$setup_info[GlobalService::get('phpgw_setup')->db->f('app_name')]['currentver'] = GlobalService::get('phpgw_setup')->db->f('app_version');
+						$setup_info[GlobalService::get('phpgw_setup')->db->f('app_name')]['enabled'] = GlobalService::get('phpgw_setup')->db->f('app_enabled');
 					}
 					/* This is to catch old setup installs that did not have phpgwapi listed as an app */
 					$tmp = @$setup_info['phpgwapi']['version']; /* save the file version */
@@ -70,25 +72,25 @@
 						// _debug_array($setup_info['phpgwapi']);exit;
 						// There seems to be a problem here.  If ['phpgwapi']['currentver'] is set,
 						// The GLOBALS never gets set.
-						$GLOBALS['setup_info'] = $setup_info;
-						$GLOBALS['phpgw_setup']->register_app('phpgwapi');
+						GlobalService::set('setup_info', $setup_info);
+						GlobalService::get('phpgw_setup')->register_app('phpgwapi');
 					}
 					else
 					{
-						$GLOBALS['setup_info'] = $setup_info;
+						GlobalService::set('setup_info',$setup_info);
 					}
 					$setup_info['phpgwapi']['version'] = $tmp; /* restore the file version */
 				}
 				elseif($oldapps)
 				{
-					$GLOBALS['phpgw_setup']->db->query('select * from applications');
-					while(@$GLOBALS['phpgw_setup']->db->next_record())
+					GlobalService::get('phpgw_setup')->db->query('select * from applications');
+					while(@GlobalService::get('phpgw_setup')->db->next_record())
 					{
-						if($GLOBALS['phpgw_setup']->db->f('app_name') == 'admin')
+						if(GlobalService::get('phpgw_setup')->db->f('app_name') == 'admin')
 						{
-							$setup_info['phpgwapi']['currentver'] = $GLOBALS['phpgw_setup']->db->f('app_version');
+							$setup_info['phpgwapi']['currentver'] = GlobalService::get('phpgw_setup')->db->f('app_version');
 						}
-						$setup_info[$GLOBALS['phpgw_setup']->db->f('app_name')]['currentver'] = $GLOBALS['phpgw_setup']->db->f('app_version');
+						$setup_info[GlobalService::get('phpgw_setup')->db->f('app_name')]['currentver'] = GlobalService::get('phpgw_setup')->db->f('app_version');
 					}
 				}
 			}
@@ -115,7 +117,7 @@
 				if(!( (@$value['status'] == 'F') || (@$value['status'] == 'C') ))
 				{
 					//if ($setup_info[$key]['currentver'] > $setup_info[$key]['version'])
-					if($GLOBALS['phpgw_setup']->amorethanb($value['currentver'],@$value['version']))
+					if(GlobalService::get('phpgw_setup')->amorethanb($value['currentver'],@$value['version']))
 					{
 						$setup_info[$key]['status'] = 'V';
 					}
@@ -123,7 +125,7 @@
 					{
 						$setup_info[$key]['status'] = 'C';
 					}
-					elseif($GLOBALS['phpgw_setup']->alessthanb(@$value['currentver'],@$value['version']))
+					elseif(GlobalService::get('phpgw_setup')->alessthanb(@$value['currentver'],@$value['version']))
 					{
 						$setup_info[$key]['status'] = 'U';
 					}
@@ -159,14 +161,14 @@
 							{
 								$currentver = '0.9.14.508';
 							}
-							$major = $GLOBALS['phpgw_setup']->get_major($currentver);
+							$major = GlobalService::get('phpgw_setup')->get_major($currentver);
 							if ($major == $depsvalue)
 							{
 								$setup_info['depends'][$depkey]['status'] = True;
 							}
 							else	// check if majors are equal and minors greater or equal
 							{
-								$major_depsvalue = $GLOBALS['phpgw_setup']->get_major($depsvalue);
+								$major_depsvalue = GlobalService::get('phpgw_setup')->get_major($depsvalue);
 								list(,,,$minor_depsvalue) = explode('.',$depsvalue);
 								list(,,,$minor) = explode('.',$currentver);
 								if ($major == $major_depsvalue && $minor <= $minor_depsvalue)
@@ -223,49 +225,49 @@
 		{
 			if(!file_exists('../header.inc.php'))
 			{
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage One';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage One';
 				return '1';
 			}
 			else
 			{
-				if(!@isset($GLOBALS['phpgw_info']['server']['header_admin_password']))
+				if(!@isset(GlobalService::get('phpgw_info')['server']['header_admin_password']))
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage One (No header admin password set)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage One (No header admin password set)';
 					return '2';
 				}
-				elseif(!@isset($GLOBALS['phpgw_domain']))
+				elseif(!@isset(GlobalService::get('phpgw_domain')))
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage One (Add domains to your header.inc.php)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage One (Add domains to your header.inc.php)';
 					return '3';
 				}
-				elseif(@$GLOBALS['phpgw_info']['server']['versions']['header'] != @$GLOBALS['phpgw_info']['server']['versions']['current_header'])
+				elseif(@GlobalService::get('phpgw_info')['server']['versions']['header'] != @GlobalService::get('phpgw_info')['server']['versions']['current_header'])
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage One (Upgrade your header.inc.php)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage One (Upgrade your header.inc.php)';
 					return '4';
 				}
 			}
 			/* header.inc.php part settled. Moving to authentication */
-			$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage One (Completed)';
+			GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage One (Completed)';
 			return '10';
 		}
 
 		function check_db($setup_info='')
 		{
-			$setup_info = $setup_info ? $setup_info : $GLOBALS['setup_info'];
+			$setup_info = $setup_info ? $setup_info : GlobalService::get('setup_info');
 
-			$GLOBALS['phpgw_setup']->db->Halt_On_Error = 'no';
+			GlobalService::get('phpgw_setup')->db->Halt_On_Error = 'no';
 			// _debug_array($setup_info);
 
-			if (!$GLOBALS['phpgw_setup']->db->Link_ID)
+			if (!GlobalService::get('phpgw_setup')->db->Link_ID)
 			{
 				$old = error_reporting();
 				error_reporting($old & ~E_WARNING);	// no warnings
-				$GLOBALS['phpgw_setup']->db->connect();
+				GlobalService::get('phpgw_setup')->db->connect();
 				error_reporting($old);
 			}
-			if (!$GLOBALS['phpgw_setup']->db->Link_ID)
+			if (!GlobalService::get('phpgw_setup')->db->Link_ID)
 			{
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 1 (Create Database)';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 1 (Create Database)';
 				return 1;
 			}
 			if(!isset($setup_info['phpgwapi']['currentver']))
@@ -277,28 +279,28 @@
 			{
 				if(@$setup_info['phpgwapi']['currentver'] == @$setup_info['phpgwapi']['version'])
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 1 (Tables Complete)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 1 (Tables Complete)';
 					return 10;
 				}
 				else
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 1 (Tables need upgrading)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 1 (Tables need upgrading)';
 					return 4;
 				}
 			}
 			else
 			{
 				/* no tables, so checking if we can create them */
-				$GLOBALS['phpgw_setup']->db->query('CREATE TABLE phpgw_testrights ( testfield varchar(5) NOT NULL )');
-				if(!$GLOBALS['phpgw_setup']->db->Errno)
+				GlobalService::get('phpgw_setup')->db->query('CREATE TABLE phpgw_testrights ( testfield varchar(5) NOT NULL )');
+				if(!GlobalService::get('phpgw_setup')->db->Errno)
 				{
-					$GLOBALS['phpgw_setup']->db->query('DROP TABLE phpgw_testrights');
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 3 (Install Applications)';
+					GlobalService::get('phpgw_setup')->db->query('DROP TABLE phpgw_testrights');
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 3 (Install Applications)';
 					return 3;
 				}
 				else
 				{
-					$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 1 (Create Database)';
+					GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 1 (Create Database)';
 					return 1;
 				}
 			}
@@ -306,14 +308,14 @@
 
 		function check_config()
 		{
-			$GLOBALS['phpgw_setup']->db->Halt_On_Error = 'no';
-			if(@$GLOBALS['phpgw_info']['setup']['stage']['db'] != 10)
+			GlobalService::get('phpgw_setup')->db->Halt_On_Error = 'no';
+			if(@GlobalService::get('phpgw_info')['setup']['stage']['db'] != 10)
 			{
 				return '';
 			}
 
 			/* Since 0.9.10pre6 config table is named as phpgw_config */
-			$ver = explode('.',@$GLOBALS['phpgw_info']['server']['versions']['phpgwapi']);
+			$ver = explode('.',@GlobalService::get('phpgw_info')['server']['versions']['phpgwapi']);
 			$config_table = $ver[0] > 0 || (int)$ver[2] > 10 ? 'phpgw_config' : 'config';
 
 			if(preg_match("/([0-9]+)(pre)([0-9]+)/",$ver[2],$regs))
@@ -324,33 +326,33 @@
 				}
 			}
 
-			@$GLOBALS['phpgw_setup']->db->query("select config_value from $config_table where config_name='freshinstall'");
-			$configured = $GLOBALS['phpgw_setup']->db->next_record() ? $GLOBALS['phpgw_setup']->db->f('config_value') : False;
+			@GlobalService::get('phpgw_setup')->db->query("select config_value from $config_table where config_name='freshinstall'");
+			$configured = GlobalService::get('phpgw_setup')->db->next_record() ? GlobalService::get('phpgw_setup')->db->f('config_value') : False;
 			if($configed)
 			{
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 2 (Needs Configuration)';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 2 (Needs Configuration)';
 				return 1;
 			}
 			else
 			{
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 2 (Configuration OK)';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 2 (Configuration OK)';
 				return 10;
 			}
 		}
 
 		function check_lang($check = True)
 		{
-			$GLOBALS['phpgw_setup']->db->Halt_On_Error = 'no';
-			if($check && $GLOBALS['phpgw_info']['setup']['stage']['db'] != 10)
+			GlobalService::get('phpgw_setup')->db->Halt_On_Error = 'no';
+			if($check && GlobalService::get('phpgw_info')['setup']['stage']['db'] != 10)
 			{
 				return '';
 			}
 			if (!$check)
 			{
-				$GLOBALS['setup_info'] = $GLOBALS['phpgw_setup']->detection->get_db_versions($GLOBALS['setup_info']);
+				GlobalService::get('setup_info') = GlobalService::get('phpgw_setup')->detection->get_db_versions(GlobalService::get('setup_info'));
 			}
-			if($GLOBALS['phpgw_setup']->alessthanb($GLOBALS['setup_info']['phpgwapi']['currentver'], '0.9.14.501') ||
-			   preg_match('/0\.9\.15\.00[01]{1,1}/',$GLOBALS['setup_info']['phpgwapi']['currentver']))
+			if(GlobalService::get('phpgw_setup')->alessthanb(GlobalService::get('setup_info')['phpgwapi']['currentver'], '0.9.14.501') ||
+			   preg_match('/0\.9\.15\.00[01]{1,1}/',GlobalService::get('setup_info')['phpgwapi']['currentver']))
 			{
 				$langtbl  = 'lang';
 				$languagestbl = 'languages';
@@ -360,28 +362,28 @@
 				$langtbl  = 'phpgw_lang';
 				$languagestbl = 'phpgw_languages';
 			}
-			$GLOBALS['phpgw_setup']->db->query($q = "SELECT DISTINCT lang FROM $langtbl",__LINE__,__FILE__);
-			if($GLOBALS['phpgw_setup']->db->num_rows() == 0)
+			GlobalService::get('phpgw_setup')->db->query($q = "SELECT DISTINCT lang FROM $langtbl",__LINE__,__FILE__);
+			if(GlobalService::get('phpgw_setup')->db->num_rows() == 0)
 			{
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 3 (No languages installed)';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 3 (No languages installed)';
 				return 1;
 			}
 			else
 			{
-				while(@$GLOBALS['phpgw_setup']->db->next_record())
+				while(@GlobalService::get('phpgw_setup')->db->next_record())
 				{
-					$GLOBALS['phpgw_info']['setup']['installed_langs'][$GLOBALS['phpgw_setup']->db->f('lang')] = $GLOBALS['phpgw_setup']->db->f('lang');
+					GlobalService::get('phpgw_info')['setup']['installed_langs'][GlobalService::get('phpgw_setup')->db->f('lang')] = GlobalService::get('phpgw_setup')->db->f('lang');
 				}
-				foreach($GLOBALS['phpgw_info']['setup']['installed_langs'] as $key => $value)
+				foreach(GlobalService::get('phpgw_info')['setup']['installed_langs'] as $key => $value)
 				{
 					$sql = "SELECT lang_name FROM $languagestbl WHERE lang_id = '".$value."'";
-					$GLOBALS['phpgw_setup']->db->query($sql);
-					if ($GLOBALS['phpgw_setup']->db->next_record())
+					GlobalService::get('phpgw_setup')->db->query($sql);
+					if (GlobalService::get('phpgw_setup')->db->next_record())
 					{
-						$GLOBALS['phpgw_info']['setup']['installed_langs'][$value] = $GLOBALS['phpgw_setup']->db->f('lang_name');
+						GlobalService::get('phpgw_info')['setup']['installed_langs'][$value] = GlobalService::get('phpgw_setup')->db->f('lang_name');
 					}
 				}
-				$GLOBALS['phpgw_info']['setup']['header_msg'] = 'Stage 3 (Completed)';
+				GlobalService::get('phpgw_info')['setup']['header_msg'] = 'Stage 3 (Completed)';
 				return 10;
 			}
 		}
@@ -395,14 +397,14 @@
 		function check_app_tables($appname,$any=False)
 		{
 			$none = 0;
-			$setup_info = $GLOBALS['setup_info'];
+			$setup_info = GlobalService::get('setup_info');
 
 			if(@$setup_info[$appname]['tables'])
 			{
 				/* Make a copy, else we send some callers into an infinite loop */
 				$copy = $setup_info;
-				$GLOBALS['phpgw_setup']->db->Halt_On_Error = 'no';
-				$table_names = $GLOBALS['phpgw_setup']->db->table_names();
+				GlobalService::get('phpgw_setup')->db->Halt_On_Error = 'no';
+				$table_names = GlobalService::get('phpgw_setup')->db->table_names();
 				$tables = Array();
 				foreach($table_names as $key => $val)
 				{
@@ -410,13 +412,13 @@
 				}
 				foreach($copy[$appname]['tables'] as $key => $val)
 				{
-					if($GLOBALS['DEBUG'])
+					if(GlobalService::get('DEBUG'))
 					{
 						echo '<br>check_app_tables(): Checking: ' . $appname . ',table: ' . $val;
 					}
 					if(!in_array($val,$tables))
 					{
-						if($GLOBALS['DEBUG'])
+						if(GlobalService::get('DEBUG'))
 						{
 							echo '<br>check_app_tables(): ' . $val . ' missing!';
 						}
@@ -433,7 +435,7 @@
 					{
 						if($any)
 						{
-							if($GLOBALS['DEBUG'])
+							if(GlobalService::get('DEBUG'))
 							{
 								echo '<br>check_app_tables(): Some tables installed';
 							}
@@ -444,7 +446,7 @@
 			}
 			if($none && $any)
 			{
-				if($GLOBALS['DEBUG'])
+				if(GlobalService::get('DEBUG'))
 				{
 					echo '<br>check_app_tables(): No tables installed';
 				}
@@ -452,7 +454,7 @@
 			}
 			else
 			{
-				if($GLOBALS['DEBUG'])
+				if(GlobalService::get('DEBUG'))
 				{
 					echo '<br>check_app_tables(): All tables installed';
 				}

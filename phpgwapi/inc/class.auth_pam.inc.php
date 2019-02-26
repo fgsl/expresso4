@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Auth from PAM                                           *
   * -------------------------------------------------------------------------*
@@ -43,8 +45,8 @@
 		{
 			$account_id = get_account_id($account_id);
 	
-			$GLOBALS['phpgw']->db->query('update phpgw_accounts set account_lastloginfrom='
-			        . $GLOBALS['phpgw']->db->quote($ip).', account_lastlogin=' . time()
+			GlobalService::get('phpgw')->db->query('update phpgw_accounts set account_lastloginfrom='
+			        . GlobalService::get('phpgw')->db->quote($ip).', account_lastlogin=' . time()
 			        . ' where account_id='.(int)$account_id,__LINE__,__FILE__);
 		}
 	}

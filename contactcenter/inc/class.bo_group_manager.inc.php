@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -67,7 +69,7 @@
 					array_push($rules, array(
 						'field' => 'group.owner',
 						'type'  => '=',
-						'value' => $GLOBALS['phpgw_info']['user']['account_id']
+						'value' => GlobalService::get('phpgw_info')['user']['account_id']
 					));
 				}
 				else
@@ -76,7 +78,7 @@
 						0 => array(
 							'field' => 'group.owner',
 							'type'  => '=',
-							'value' => $GLOBALS['phpgw_info']['user']['account_id']
+							'value' => GlobalService::get('phpgw_info')['user']['account_id']
 						)
 					);
 				}
@@ -139,7 +141,7 @@
 			array_push($search_rules, array(
 					'field' => 'group.owner',
 					'type'  => '=',
-					'value' => $GLOBALS['phpgw_info']['user']['account_id']
+					'value' => GlobalService::get('phpgw_info')['user']['account_id']
 				));			
 
 			$result_i = $this->find($search_fields, $search_rules, $search_other);
@@ -164,14 +166,14 @@
 			
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{

@@ -993,7 +993,7 @@ class ActivityManager extends BaseManager {
   * if the agent of this type for this activity already exists we return his id.
   * @param int activityId: the activity id
   * @param string $agentType: The type of the agent
-  * @return agent_id created or retrieved after this association was done or false in case of problems
+  * @return integer agent_id created or retrieved after this association was done or false in case of problems
   * @access public
   */
   function add_activity_agent($activityId, $agentType)
@@ -1180,7 +1180,7 @@ class ActivityManager extends BaseManager {
    * If wrong or no default user or the user has no access grant and performAccessCheck was asked, '*' is returned
    *
    * @param int $activityId Activity Id
-   * @param boll $performAccessCheck
+   * @param boolean $performAccessCheck
    * @return mixed User Id or '*' if no default user is set
    * @access public
   */

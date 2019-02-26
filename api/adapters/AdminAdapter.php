@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 class AdminAdapter extends ExpressoAdapter
 {
 	function __construct($id)
@@ -18,12 +20,12 @@ class AdminAdapter extends ExpressoAdapter
 		$emailadmin_profile = $boemailadmin->getProfileList();
 
 		$_SESSION['phpgw_info']['expresso']['email_server'] = $boemailadmin->getProfile($emailadmin_profile[0]['profileID']);
-		$_SESSION['phpgw_info']['expresso']['user'] = $GLOBALS['phpgw_info']['user'];
-		$_SESSION['phpgw_info']['expresso']['server'] = $GLOBALS['phpgw_info']['server'];
+		$_SESSION['phpgw_info']['expresso']['user'] = GlobalService::get('phpgw_info')['user'];
+		$_SESSION['phpgw_info']['expresso']['server'] = GlobalService::get('phpgw_info')['server'];
 		$_SESSION['phpgw_info']['expresso']['cc_ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
 		$_SESSION['phpgw_info']['expresso']['expressoAdmin'] = $current_config;
-		$_SESSION['phpgw_info']['expresso']['global_denied_users'] = $GLOBALS['phpgw_info']['server']['global_denied_users'];
-		$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = $GLOBALS['phpgw_info']['server']['global_denied_groups'];
+		$_SESSION['phpgw_info']['expresso']['global_denied_users'] = GlobalService::get('phpgw_info')['server']['global_denied_users'];
+		$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = GlobalService::get('phpgw_info')['server']['global_denied_groups'];
 	}
 
 	protected function createUser($params)
@@ -126,7 +128,7 @@ class AdminAdapter extends ExpressoAdapter
 	{
 		$adminFunctions = CreateObject('expressoAdmin1_2.functions');
 		
-		$result	= $adminFunctions->get_list('api', $params, array($GLOBALS['phpgw_info']['server']['ldap_context']));
+		$result	= $adminFunctions->get_list('api', $params, array(GlobalService::get('phpgw_info')['server']['ldap_context']));
 		
 		if( isset($result[0]['accountDn']) )
 		{
@@ -150,7 +152,7 @@ class AdminAdapter extends ExpressoAdapter
 	{
 		$adminListUser = CreateObject('expressoAdmin1_2.functions');
 
-		$acl = $adminListUser->read_acl($GLOBALS['phpgw']->accounts->data['account_lid']);
+		$acl = $adminListUser->read_acl(GlobalService::get('phpgw')->accounts->data['account_lid']);
 
 		$_exp = ( $exactly ) ? "/[^a-z0-9A-Z\_\-\.\@]/" : "/[^a-z0-9A-Z\_\-\.\@\\s]/";
 

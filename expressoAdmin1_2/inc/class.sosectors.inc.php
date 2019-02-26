@@ -1,6 +1,8 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**********************************************************************************\
-* Expresso Administração                                                            *
+* Expresso Administraï¿½ï¿½o                                                            *
 * by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)   *
 * ----------------------------------------------------------------------------------*
 *  This program is free software; you can redistribute it and/or modify it          *
@@ -23,17 +25,17 @@ class sosectors
 		$this->sectors      = CreateObject( 'phpgwapi.sector_search_ldap' );
 		
 		if (
-			( !empty( $GLOBALS['phpgw_info']['server']['ldap_master_host'] ) ) &&
-			( !empty( $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'] ) ) &&
-			( !empty( $GLOBALS['phpgw_info']['server']['ldap_master_root_pw'] ) )
+			( !empty( GlobalService::get('phpgw_info')['server']['ldap_master_host'] ) ) &&
+			( !empty( GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'] ) ) &&
+			( !empty( GlobalService::get('phpgw_info')['server']['ldap_master_root_pw'] ) )
 		) {
-			$this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect(
-				$GLOBALS['phpgw_info']['server']['ldap_master_host'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_pw']
+			$this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect(
+				GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']
 			);
 			
-		} else $this->ldap_connection = $GLOBALS['phpgw']->common->ldapConnect();
+		} else $this->ldap_connection = GlobalService::get('phpgw')->common->ldapConnect();
 	}
 	
 	public function exist_context( $context )
@@ -247,7 +249,7 @@ class sosectors
 	
 	public function row_action( $action, $type, $context, $title = '' )
 	{
-		return '<a title="'.$title.'" href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+		return '<a title="'.$title.'" href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 			'menuaction' => 'expressoAdmin1_2.uisectors.'.$action.'_'.$type,
 			'context'    => $context
 		)).'"> '.lang($action).' </a>';

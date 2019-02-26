@@ -1,4 +1,6 @@
 <?php 
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - holidaycalc                                                 *
   * http://www.egroupware.org                                                *
@@ -12,13 +14,13 @@
   \**************************************************************************/
 
 
-	if (empty($GLOBALS['phpgw_info']['user']['preferences']['common']['country']))
+	if (empty(GlobalService::get('phpgw_info')['user']['preferences']['common']['country']))
 	{
 		$rule = 'US';
 	}
 	else
 	{
-		$rule = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+		$rule = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 	}
 
 	$calc_include = PHPGW_INCLUDE_ROOT.'/calendar/inc/class.holidaycalc_'.$rule.'.inc.php';

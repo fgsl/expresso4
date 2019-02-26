@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* eGroupWare                                                                *
 	* http://www.egroupware.org                                                 *
@@ -47,17 +49,17 @@ class bo
 	function getProfile( $mode = null, $value = null )
 	{
 		$mode = is_null($mode)? 'uid' : (in_array($mode,array('id','uid','mail'))? $mode : 'uid');
-		$value = is_null($value)? (($mode == 'id')? 0 : $GLOBALS['phpgw_info']['user'][(($mode=='mail')?'email':'account_lid')]) : $value;
+		$value = is_null($value)? (($mode == 'id')? 0 : GlobalService::get('phpgw_info')['user'][(($mode=='mail')?'email':'account_lid')]) : $value;
 		
 		if ( $mode == 'uid' ) {
-			if ( $value == $GLOBALS['phpgw_info']['user']['account_lid'] )
-				$value = $GLOBALS['phpgw_info']['user']['email'];
+			if ( $value == GlobalService::get('phpgw_info')['user']['account_lid'] )
+				$value = GlobalService::get('phpgw_info')['user']['email'];
 			else {
 				$entry = ldap_get_entries(
 					$this->ldap,
 					ldap_search(
 						$this->ldap,
-						$GLOBALS['phpgw_info']['server']['ldap_context'],
+						GlobalService::get('phpgw_info')['server']['ldap_context'],
 						"(&(|(phpgwAccountType=u)(phpgwAccountType=l)(phpgwAccountType=s))(uid=".$value."))",
 						array("mail")
 					)
@@ -82,7 +84,7 @@ class bo
 					$this->ldap, 
 					@ldap_search(
 						$this->ldap, 
-						$GLOBALS['phpgw_info']['server']['ldap_context'], 
+						GlobalService::get('phpgw_info')['server']['ldap_context'], 
 						('(&(phpgwaccounttype=u)(mail=*@'.$domain.'))'),						
 						array("uid"), 0 , $this->ldapLimit + 1 ) 
 					);

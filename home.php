@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare                                                               *
 	* http://www.egroupware.org                                                *
@@ -19,14 +21,14 @@
 		exit;
 	}
 
-	$GLOBALS['sessionid'] = @$_GET['sessionid'] ? $_GET['sessionid'] : @$_COOKIE['sessionid'];
-	if (!isset($GLOBALS['sessionid']) || !$GLOBALS['sessionid'])
+	GlobalService::set('sessionid', @$_GET['sessionid'] ? $_GET['sessionid'] : @$_COOKIE['sessionid']);
+	if (!isset(GlobalService::get('sessionid')) || !GlobalService::get('sessionid'))
 	{
 		Header('Location: '.$current_url.'login.php?cd=10');
 		exit;
 	}
 
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'noheader'                => True,
 		'nonavbar'                => True,
 		'currentapp'              => 'home',
@@ -37,11 +39,11 @@
 	
 	include('header.inc.php');
 	
-	if ( isset( $GLOBALS['phpgw_info']['server']['display_widgets_only']) && trim($GLOBALS['phpgw_info']['server']['display_widgets_only']) !== '')
+	if ( isset( GlobalService::get('phpgw_info')['server']['display_widgets_only']) && trim(GlobalService::get('phpgw_info')['server']['display_widgets_only']) !== '')
 	{
-		$display_widgets_only = $GLOBALS['phpgw_info']['server']['display_widgets_only'];
+		$display_widgets_only = GlobalService::get('phpgw_info')['server']['display_widgets_only'];
 		$display_widgets_only = ( !is_array($display_widgets_only) ) ? explode(";", $display_widgets_only) : $display_widgets_only;
-		$account_dn = trim(strtolower($GLOBALS['phpgw_info']['user']['account_dn']));
+		$account_dn = trim(strtolower(GlobalService::get('phpgw_info')['user']['account_dn']));
 		foreach ( $display_widgets_only as $value)
 		{
 			if( stripos( $account_dn, $value . "," ) !== false )
@@ -50,7 +52,7 @@
 
 				if (file_exists("./" . $file_widgets)) {
 
-						if ($GLOBALS['phpgw_info']['server']['use_https'] != '0') {
+						if (GlobalService::get('phpgw_info')['server']['use_https'] != '0') {
 							$url_add = "https://";
 						} else {
 							$url_add = "http://";
@@ -64,22 +66,22 @@
 		}
 	}
 
-	$GLOBALS['phpgw_info']['flags']['app_header']=lang('home');
+	GlobalService::get('phpgw_info')['flags']['app_header']=lang('home');
 
-	if ($GLOBALS['phpgw_info']['server']['force_default_app'] && $GLOBALS['phpgw_info']['server']['force_default_app'] != 'user_choice')
+	if (GlobalService::get('phpgw_info')['server']['force_default_app'] && GlobalService::get('phpgw_info')['server']['force_default_app'] != 'user_choice')
 	{
-		$GLOBALS['phpgw_info']['user']['preferences']['common']['default_app'] = $GLOBALS['phpgw_info']['server']['force_default_app'];
+		GlobalService::get('phpgw_info')['user']['preferences']['common']['default_app'] = GlobalService::get('phpgw_info')['server']['force_default_app'];
 	}
 
-	if ($_GET['cd']=='yes' && $GLOBALS['phpgw_info']['user']['preferences']['common']['default_app'] &&
-		$GLOBALS['phpgw_info']['user']['apps'][$GLOBALS['phpgw_info']['user']['preferences']['common']['default_app']])
+	if ($_GET['cd']=='yes' && GlobalService::get('phpgw_info')['user']['preferences']['common']['default_app'] &&
+		GlobalService::get('phpgw_info')['user']['apps'][GlobalService::get('phpgw_info')['user']['preferences']['common']['default_app']])
 	{
-		$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/' . $GLOBALS['phpgw_info']['user']['preferences']['common']['default_app'] . '/' . 'index.php'));
+		GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/' . GlobalService::get('phpgw_info')['user']['preferences']['common']['default_app'] . '/' . 'index.php'));
 	}
 	else
 	{
 
-		$GLOBALS['phpgw']->common->phpgw_header();
+		GlobalService::get('phpgw')->common->phpgw_header();
 		echo parse_navbar();
 	}
 
@@ -91,7 +93,7 @@
 			'news_admin'
 		);
 	$sorted_apps = array();
-	$user_apps = $GLOBALS['phpgw_info']['user']['apps']; 
+	$user_apps = GlobalService::get('phpgw_info')['user']['apps']; 
 	@reset($user_apps);	
 	for($i = 0; $i < count($default_apps);$i++) {
 		if(array_key_exists($default_apps[$i], $user_apps)){
@@ -99,7 +101,7 @@
 		}		
 	}
 	
-	foreach($GLOBALS['phpgw_info']['user']['apps'] as $i => $p) {
+	foreach(GlobalService::get('phpgw_info')['user']['apps'] as $i => $p) {
 		$sorted_apps[] = $p['name'];
 	}
 	
@@ -127,12 +129,12 @@
 				$thisd = 1;
 				break;
 			}
-			if($GLOBALS['phpgw_info']['user']['preferences'][$appname][$varcheck]=='True') {
+			if(GlobalService::get('phpgw_info')['user']['preferences'][$appname][$varcheck]=='True') {
 				$thisd = 1;
 				break;
 			}
 			else  {
-				$_thisd = (int)$GLOBALS['phpgw_info']['user']['preferences'][$appname][$varcheck];
+				$_thisd = (int)GlobalService::get('phpgw_info')['user']['preferences'][$appname][$varcheck];
 				if($_thisd > 0) {
 					$thisd = $_thisd;
 					break;
@@ -150,7 +152,7 @@
 				print '<tr>';
 			}
 			print '<td style="vertical-align:top;" width="45%">';
-			$GLOBALS['phpgw']->hooks->single('home',$appname);			
+			GlobalService::get('phpgw')->hooks->single('home',$appname);			
 			print '</td>';
 			
 			if($idx == 2){
@@ -163,5 +165,5 @@
 		$done[$appname] = 1;
 	} 
 	print '</table>';
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

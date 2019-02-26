@@ -12,7 +12,7 @@ $retorno = utf8_decode(verificaVersao($listas,false));
 if ($retorno) {
     
     //echo $retorno;
-$resposta = new SimpleXMLElement($retorno);
+$resposta = new \SimpleXMLElement($retorno);
 
     
 foreach ($resposta->listagem as $listagem) {
@@ -23,8 +23,8 @@ foreach ($resposta->listagem as $listagem) {
         $versao_producao = $listagem->versaoPRODUCAO;
         
         $tr .= "<table class='tableMoldura'>
-                <tr class='tableSubTitulo'><td colspan=3><h2>Módulos dependentes desta listagem em producao.</h2></td></tr>
-                <tr class='tableTituloColunas'><td><h3>Arquivo</h3></td><td align='center'><h3>Data Primeiro Acesso</h3></td><td align='center'><h3>Data Último Acesso</h3></td></tr>";
+                <tr class='tableSubTitulo'><td colspan=3><h2>Mï¿½dulos dependentes desta listagem em producao.</h2></td></tr>
+                <tr class='tableTituloColunas'><td><h3>Arquivo</h3></td><td align='center'><h3>Data Primeiro Acesso</h3></td><td align='center'><h3>Data ï¿½ltimo Acesso</h3></td></tr>";
         foreach ($listagem->dependencias as $dep) {
             if (is_object($dep)) {
             	foreach ($dep as $dependencia) {
@@ -40,11 +40,11 @@ foreach ($resposta->listagem as $listagem) {
         $tr .= "</table>";
         
         if ($versao_desenvolvimento == "0") {
-            $versao_desenvolvimento = "NÃO EXISTE.";
+            $versao_desenvolvimento = "Nï¿½O EXISTE.";
         } 
         
         if ($versao_producao == "0") {
-        	$versao_producao = "NÃO EXISTE.";
+        	$versao_producao = "Nï¿½O EXISTE.";
         } 
         
         if ($listagem->sincronizado == "1") {
@@ -58,7 +58,7 @@ foreach ($resposta->listagem as $listagem) {
 
 $html = "<center>
             <table class='tableMoldura'>
-               <tr class='tableSubTitulo'><td><h2>Sincronização de Servidores</h2></td></tr>
+               <tr class='tableSubTitulo'><td><h2>Sincronizaï¿½ï¿½o de Servidores</h2></td></tr>
                <tr><td align='center'>
                 <div style='text-align: center; width: 100%;'>
                 <div style='margin: 10px; width: 300px; border: 1px solid #E0E0E0; float: left;'>
@@ -67,7 +67,7 @@ $html = "<center>
                     <h2>DESENVOLVIMENTO</h2>
                     <br>
                     <br>
-                    <h2>VERSÃO:<span id='versao_desenvolvimento'>$versao_desenvolvimento</span></h2> 
+                    <h2>VERSï¿½O:<span id='versao_desenvolvimento'>$versao_desenvolvimento</span></h2> 
                     <div style='clear: both;'></div>
                 </div>
                 $html_botoes
@@ -77,7 +77,7 @@ $html = "<center>
                     <h2>PRODUCAO</h2>
                     <br>
                     <br>
-                    <h2>VERSÃO:<span id='versao_producao'>$versao_producao</span></h2> 
+                    <h2>VERSï¿½O:<span id='versao_producao'>$versao_producao</span></h2> 
                     <div style='clear: both;'></div>
                 </div>
                 <div style='clear: both;'></div>

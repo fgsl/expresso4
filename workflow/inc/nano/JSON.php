@@ -601,7 +601,7 @@ class Services_JSON
                             $obj = array();
                         } else {
                             $stk = array(SERVICES_JSON_IN_OBJ);
-                            $obj = new stdClass();
+                            $obj = new \stdClass();
                         }
                     }
 

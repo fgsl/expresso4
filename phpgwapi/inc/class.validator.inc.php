@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Validator                                               *
   * This file written by Dave Hall <skwashd@phpgroupware.org>                *
@@ -295,11 +297,11 @@
 			echo '<a href="http://sourceforge.net/projects/egroupwaregroup">';
 			echo 'our project page at sourceforge.net</a>. Please copy and paste ';
 			echo 'the following information into the bug report:<br>';
-			echo '<b>Summary<b>: ' . $GLOBALS['phpgw_info']['flags']['currentapp'];
+			echo '<b>Summary<b>: ' . GlobalService::get('phpgw_info')['flags']['currentapp'];
 			echo 'calls class.validator.inc.php';
 			echo 'Information:<br> The call was found when calling: ' . $_SERVER['QUERY_STRING'];
 			echo '<br><br>This application will now halt!<br><br>';
-			echo '<a href="'. $GLOBALS['phpgw']->link('/home.php') .'">Return to Home Screen</a>';
+			echo '<a href="'. GlobalService::get('phpgw')->link('/home.php') .'">Return to Home Screen</a>';
 			exit;
 		}
 	}

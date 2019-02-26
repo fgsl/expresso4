@@ -1,6 +1,8 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /************************************************************************************\
-* Expresso Administração                                                             *
+* Expresso Administraï¿½ï¿½o                                                             *
 * by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)    *
 * -----------------------------------------------------------------------------------*
 *  This program is free software; you can redistribute it and/or modify it           *
@@ -36,17 +38,17 @@ class uisectors
 	
 	public function list_sectors()
 	{
-		$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+		$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 		
 		// Verifica se o administrador tem acesso.
 		if ( !$this->functions->check_acl( $manager_lid, ACL_Managers::GRP_VIEW_SECTORS ) ) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 		}
 		
-		unset($GLOBALS['phpgw_info']['flags']['noheader']);
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Sectors');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Sectors');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 		$p->set_file(array('sectors' => 'sectors.tpl'));
@@ -59,8 +61,8 @@ class uisectors
 		$tree = $this->so->getContextTree( $this->functions->get_sectors_list( $acl['contexts'] ) );
 		
 		$p->set_var( array(
-			'th_bg'     => $GLOBALS['phpgw_info']['theme']['th_bg'],
-			'back_url'  => $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php'),
+			'th_bg'     => GlobalService::get('phpgw_info')['theme']['th_bg'],
+			'back_url'  => GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php'),
 		) );
 		$p->set_var($this->functions->make_dinamic_lang($p, 'list'));
 		
@@ -77,7 +79,7 @@ class uisectors
 			foreach( $acl['contexts_display'] as $key => $context_name ) {
 				$context = $acl['contexts'][$key];
 				$p->set_var( array(
-					'tr_color'     => $GLOBALS['phpgw_info']['theme']['th_bg'],
+					'tr_color'     => GlobalService::get('phpgw_info')['theme']['th_bg'],
 					'td_style'     => 'color: blue; padding: 3px;',
 					'sector_name'  => $context_name,
 					'add_link'     => $this->so->row_action( 'add', 'sector', $context, $context_name ),
@@ -119,7 +121,7 @@ class uisectors
 	{
 		$error       = false;
 		$is_post     = ( $_SERVER['REQUEST_METHOD'] === 'POST' );
-		$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+		$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 		$context     = $is_post?
 			( isset($_POST['context'])? $_POST['context'] : '' ) :
 			( isset($_GET['context'])? $_GET['context'] : '' );
@@ -129,7 +131,7 @@ class uisectors
 			$this->functions->check_acl( $manager_lid, ACL_Managers::ACL_ADD_SECTORS ) &&
 			$this->so->check_context( $manager_lid, $context )
 		) ) {
-			$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw']->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
+			GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw')->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
 		}
 		
 		$sector = isset($_POST['sector'])? $_POST['sector'] : '';
@@ -154,16 +156,16 @@ class uisectors
 				$error = lang( 'Error in OpenLDAP recording' );
 			
 			// Redirect on success
-			if ( !$error ) $GLOBALS['phpgw']->redirect(
-				$GLOBALS['phpgw']->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
+			if ( !$error ) GlobalService::get('phpgw')->redirect(
+				GlobalService::get('phpgw')->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
 			);
 		}
 		
 		// Init render
-		unset($GLOBALS['phpgw_info']['flags']['noheader']);
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Create Sector');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Create Sector');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		// Set the template
 		$p = CreateObject( 'phpgwapi.Template', PHPGW_APP_TPL );
@@ -171,15 +173,15 @@ class uisectors
 		$p->set_block( 'create_sector', 'list', 'list' );
 		
 		$p->set_var( array(
-			'th_bg'               => $GLOBALS['phpgw_info']['theme']['th_bg'],
+			'th_bg'               => GlobalService::get('phpgw_info')['theme']['th_bg'],
 			'context'             => $context,
 			'sector'              => $sector,
 			'hide_sector_checked' => $hide ? 'checked' : '',
 			'error_messages'      => $error? '<script type="text/javascript">alert(\''.str_replace(PHP_EOL, '\\n',$error).'\')</script>' : '',
-			'back_url'            => $GLOBALS['phpgw']->link( '/index.php',
+			'back_url'            => GlobalService::get('phpgw')->link( '/index.php',
 				'menuaction=expressoAdmin1_2.uisectors.list_sectors'
 			),
-			'action'              => $GLOBALS['phpgw']->link( '/index.php', array(
+			'action'              => GlobalService::get('phpgw')->link( '/index.php', array(
 				'menuaction' => 'expressoAdmin1_2.uisectors.add_sector',
 				'context'    => $context
 			)),
@@ -193,7 +195,7 @@ class uisectors
 	{
 		$error       = false;
 		$is_post     = ( $_SERVER['REQUEST_METHOD'] === 'POST' );
-		$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+		$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 		$context     = $is_post?
 			( isset($_POST['context'])? $_POST['context'] : '' ) :
 			( isset($_GET['context'])? $_GET['context'] : '' );
@@ -203,7 +205,7 @@ class uisectors
 			$this->functions->check_acl( $manager_lid, ACL_Managers::ACL_MOD_SECTORS ) &&
 			$this->so->check_context( $manager_lid, $context, true )
 		) ) {
-			$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw']->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
+			GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw')->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
 		}
 		
 		// Check if the context exists
@@ -222,16 +224,16 @@ class uisectors
 				$error = lang( 'Error in OpenLDAP recording' );
 			
 			// Redirect on success
-			if ( !$error ) $GLOBALS['phpgw']->redirect(
-				$GLOBALS['phpgw']->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
+			if ( !$error ) GlobalService::get('phpgw')->redirect(
+				GlobalService::get('phpgw')->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
 			);
 		}
 		
 		// Init render
-		unset($GLOBALS['phpgw_info']['flags']['noheader']);
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Sector');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Sector');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		// Set the template
 		$p = CreateObject( 'phpgwapi.Template', PHPGW_APP_TPL );
@@ -239,17 +241,17 @@ class uisectors
 		$p->set_block( 'edit_sector', 'list', 'list' );
 		
 		$p->set_var( array(
-			'th_bg'               => $GLOBALS['phpgw_info']['theme']['th_bg'],
+			'th_bg'               => GlobalService::get('phpgw_info')['theme']['th_bg'],
 			'context'             => $context,
 			'disable'             => 'disabled',
 			'sector'              => $sector,
 			'hide_sector_checked' => $hide ? 'checked' : '',
 			'error_messages'      => $error? '<script type="text/javascript">alert(\''.str_replace(PHP_EOL, '\\n',$error).'\')</script>' : '',
-			'action'              => $GLOBALS['phpgw']->link( '/index.php', array(
+			'action'              => GlobalService::get('phpgw')->link( '/index.php', array(
 				'menuaction' => 'expressoAdmin1_2.uisectors.edit_sector',
 				'context'    => $context
 			)),
-			'back_url'            => $GLOBALS['phpgw']->link( '/index.php',
+			'back_url'            => GlobalService::get('phpgw')->link( '/index.php',
 				'menuaction=expressoAdmin1_2.uisectors.list_sectors'
 			),
 		) );
@@ -263,7 +265,7 @@ class uisectors
 		$error       = false;
 		$loop        = false;
 		$is_post     = ( $_SERVER['REQUEST_METHOD'] === 'POST' );
-		$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+		$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 		$context     = $is_post?
 			( isset($_POST['context'])? $_POST['context'] : '' ) :
 			( isset($_GET['context'])? $_GET['context'] : '' );
@@ -274,7 +276,7 @@ class uisectors
 			$this->so->check_context( $manager_lid, $context, true ) &&
 			!$this->so->sectors->denied( $context )
 		) ) {
-			$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw']->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
+			GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw')->link( '/expressoAdmin1_2/inc/access_denied.php' ) );
 		}
 		
 		// Check if the context exists
@@ -304,8 +306,8 @@ class uisectors
 			if ( !$error ) {
 				$result = $this->bo->delete_sector( $context , $entrylist );
 				if ( isset( $result['status'] ) && $result['status'] === true ) {
-					$GLOBALS['phpgw']->redirect(
-						$GLOBALS['phpgw']->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
+					GlobalService::get('phpgw')->redirect(
+						GlobalService::get('phpgw')->link( '/index.php','menuaction=expressoAdmin1_2.uisectors.list_sectors' )
 					);
 				} else if ( isset( $result['partial'] ) ) {
 					$loop = true;
@@ -320,10 +322,10 @@ class uisectors
 		}
 		
 		// Init render
-		unset($GLOBALS['phpgw_info']['flags']['noheader']);
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Delete Sectors');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Delete Sectors');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		$title = array(
 			'error'      => lang( 'Error' ),
@@ -358,11 +360,11 @@ class uisectors
 				'$(\'form[name=form]\').attr(\'onsubmit\',null);'.PHP_EOL.
 				'$(\'input[name=delete]\').click();'.PHP_EOL.
 				'});</script>' : '',
-			'action'         => $GLOBALS['phpgw']->link( '/index.php', array(
+			'action'         => GlobalService::get('phpgw')->link( '/index.php', array(
 				'menuaction' => 'expressoAdmin1_2.uisectors.delete_sector',
 				'context'    => $context
 			)),
-			'back_url'       => $GLOBALS['phpgw']->link( '/index.php',
+			'back_url'       => GlobalService::get('phpgw')->link( '/index.php',
 				'menuaction=expressoAdmin1_2.uisectors.list_sectors'
 			),
 			'lang_sectors'   => $title['ous'],

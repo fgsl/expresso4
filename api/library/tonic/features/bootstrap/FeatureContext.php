@@ -46,7 +46,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeARequestUriOf($uri)
     {
 		if ($this->request->uri != $uri)
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -63,7 +63,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeARequestMethodOf($method)
     {
 		if ($this->request->method != $method)
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -80,7 +80,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeTheRequestData($data)
     {
 		if($this->request->data != $data)
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -89,7 +89,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeANegotiatedUriOf($uri)
     {
 		if($this->request->negotiatedUris != explode(',', $uri))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -98,7 +98,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeAFormatNegotiatedUriOf($uri)
     {
 		if($this->request->formatNegotiatedUris != explode(',', $uri))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -107,7 +107,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeALanguageNegotiatedUriOf($uri)
     {
 		if($this->request->languageNegotiatedUris != explode(',', $uri))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -140,7 +140,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeAnIfMatchHeaderOf($header)
     {
 		if($this->request->ifMatch != explode(',', $header))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -149,7 +149,7 @@ class FeatureContext extends BehatContext
     public function ifMatchShouldMatch($match)
     {
 		if(!$this->request->ifMatch($match))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -166,7 +166,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeAnIfNoneMatchHeaderOf($header)
     {
 		if($this->request->ifNoneMatch != explode(',', $header))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -175,7 +175,7 @@ class FeatureContext extends BehatContext
     public function ifNoneMatchShouldMatch($match)
     {
 		if(!$this->request->ifNoneMatch($match))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -184,7 +184,7 @@ class FeatureContext extends BehatContext
     public function ifNoneMatchShouldNotMatch($match)
     {
 		if($this->request->ifNoneMatch($match))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -204,7 +204,7 @@ class FeatureContext extends BehatContext
 			$this->request->loadResource();
 		} catch(ResponseException $e) {
 			if($e->getCode() != Response::NOTFOUND)
-				throw new Exception;
+				throw new \Exception;
 		}
     }
 
@@ -214,7 +214,7 @@ class FeatureContext extends BehatContext
     public function iShouldHaveAResponseOfType($type)
     {
 		if(get_class($this->resource != $type))
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -223,7 +223,7 @@ class FeatureContext extends BehatContext
     public function iShouldSeeResourceMetadataOf($argument1, $argument2)
     {
 		if($this->request->resources[$this->request->uri][$argument1] != $argument2)
-			throw new Exception("metadata $argument1: want $argument2, got {$this->request->resources[$this->request->uri][$argument1]}");
+			throw new \Exception("metadata $argument1: want $argument2, got {$this->request->resources[$this->request->uri][$argument1]}");
     }
 
     /**
@@ -264,7 +264,7 @@ class FeatureContext extends BehatContext
     public function theResponseHeaderShouldContain($header, $contents)
     {
 		if($this->response->headers[$header] != $contents)
-			throw new Exception;
+			throw new \Exception;
     }
 
 #    /**
@@ -275,13 +275,13 @@ class FeatureContext extends BehatContext
 #    	switch ($transform) {
 #    	case 'gzipped':
 ##    	    var_dump($this->response->body, $contents, gzencode($contents));
-#    	    if ($this->response->body != gzencode($contents)) throw new Exception;
+#    	    if ($this->response->body != gzencode($contents)) throw new \Exception;
 #    	    break;
 #    	case 'deflated':
-#    	    if ($this->response->body != gzdeflate($contents)) throw new Exception;
+#    	    if ($this->response->body != gzdeflate($contents)) throw new \Exception;
 #    	    break;
 #    	case 'compressed':
-#    	    if ($this->response->body != gzcompress($contents)) throw new Exception;
+#    	    if ($this->response->body != gzcompress($contents)) throw new \Exception;
 #    	    break;
 #    	}
 #    }
@@ -315,9 +315,9 @@ class FeatureContext extends BehatContext
 			$this->request->loadResource();
 		} catch(Exception $e) {
 			if($e->getCode() != $code)
-				throw new Exception('bad code ' . $e->getCode() . " (want $code)");
+				throw new \Exception('bad code ' . $e->getCode() . " (want $code)");
 			if($e->getMessage() != $body)
-				throw new Exception('bad error message ' . $e->getMessage() . " (want $body)");
+				throw new \Exception('bad error message ' . $e->getMessage() . " (want $body)");
 		}
     }
 
@@ -327,7 +327,7 @@ class FeatureContext extends BehatContext
     public function theResponseCodeShouldBe($code)
     {
 		if($this->response->code != $code)
-			throw new Exception;
+			throw new \Exception;
     }
 
     /**
@@ -336,7 +336,7 @@ class FeatureContext extends BehatContext
     public function theResponseBodyShouldBe($body)
     {
 		if($this->response->body != $body)
-			throw new Exception;
+			throw new \Exception;
     }
 
 }

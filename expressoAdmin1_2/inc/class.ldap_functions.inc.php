@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 defined('PHPGW_INCLUDE_ROOT') || define('PHPGW_INCLUDE_ROOT','../');
 defined('PHPGW_API_INC') || define('PHPGW_API_INC','../phpgwapi/inc');	
 include_once(PHPGW_API_INC.'/class.common.inc.php');
@@ -7,9 +9,9 @@ include_once('class.functions.inc.php');
 
 function ldapRebind($ldap_connection, $ldap_url)
 {
-	// Enquanto estivermos utilizando referral na arvore ldap, teremos que continuar a utilizar o usuário sistemas:expresso.
-	// Depois, quando não existir mais referral, não existirá a necessidade de ldapRebind.
-	//ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_master_root_pw']);
+	// Enquanto estivermos utilizando referral na arvore ldap, teremos que continuar a utilizar o usuï¿½rio sistemas:expresso.
+	// Depois, quando nï¿½o existir mais referral, nï¿½o existirï¿½ a necessidade de ldapRebind.
+	//ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']);
 	if ( ($_SESSION['phpgw_info']['expresso']['cc_ldap_server']['acc'] != '') && ($_SESSION['phpgw_info']['expresso']['cc_ldap_server']['pw'] != '') )
 	{
 		@ldap_bind($ldap_connection, $_SESSION['phpgw_info']['expresso']['cc_ldap_server']['acc'], $_SESSION['phpgw_info']['expresso']['cc_ldap_server']['pw']);
@@ -26,19 +28,19 @@ class ldap_functions
 	
 	function ldap_functions()
 	{
-		if ( !is_array($GLOBALS['phpgw_info']['server']) )
-			$GLOBALS['phpgw_info']['server'] = $_SESSION['phpgw_info']['expresso']['server'];
+		if ( !is_array(GlobalService::get('phpgw_info')['server']) )
+			GlobalService::get('phpgw_info')['server'] = $_SESSION['phpgw_info']['expresso']['server'];
 		
 		$this->current_config = $_SESSION['phpgw_info']['expresso']['expressoAdmin'];
 		$common = new common();
 		
-		if ( (!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-			 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-			 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw'])) )
+		if ( (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+			 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+			 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw'])) )
 		{
-			$this->ldap = $common->ldapConnect($GLOBALS['phpgw_info']['server']['ldap_master_host'],
-											   $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-											   $GLOBALS['phpgw_info']['server']['ldap_master_root_pw']);
+			$this->ldap = $common->ldapConnect(GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+											   GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+											   GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']);
 		}
 		else
 		{
@@ -46,7 +48,7 @@ class ldap_functions
 		}
 		
 		$account_lid = isset( $_SESSION['phpgw_info']['expresso']['user']['account_lid'] )?
-			$_SESSION['phpgw_info']['expresso']['user']['account_lid'] : $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$_SESSION['phpgw_info']['expresso']['user']['account_lid'] : GlobalService::get('phpgw')->accounts->data['account_lid'];
 		
 		$this->functions = new functions;
 		$manager_acl = $this->functions->read_acl( $account_lid );
@@ -70,7 +72,7 @@ class ldap_functions
 		}
 		else
 		{
-		    $array1 = array( "á", "à", "â", "ã", "ä", "é", "è", "ê", "ë", "í", "ì", "î", "ï", "ó", "ò", "ô", "õ", "ö", "ú", "ù", "û", "ü", "ç", "Á", "À", "Â", "Ã", "Ä", "É", "È", "Ê", "Ë", "Í", "Ì", "Î", "Ï", "Ó", "Ò", "Ô", "Õ", "Ö", "Ú", "Ù", "Û", "Ü", "Ç" );
+		    $array1 = array( "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½" );
 
 		    $array2 = array( "a", "a", "a", "a", "a", "e", "e", "e", "e", "i", "i", "i", "i", "o", "o", "o", "o", "o", "u", "u", "u", "u", "c", "A", "A", "A", "A", "A", "E", "E", "E", "E", "I", "I", "I", "I", "O", "O", "O", "O", "O", "U", "U", "U", "U", "C" );
 
@@ -134,7 +136,7 @@ class ldap_functions
 		$dn = "uid=$params[uid]," . $params['context'];
                        $filter = "(mail=".$params['mail'].")";
 		$justthese = array("cn");
-		$search = @ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = @ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = @ldap_get_entries($this->ldap,$search);
 		if ($entries['count'] != 0)
 		{
@@ -188,21 +190,21 @@ class ldap_functions
 	{
 		/*
 		$common = new common();
-		if ( (!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-			 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-			 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw'])) )
+		if ( (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+			 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+			 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw'])) )
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_master_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_master_host']);
 			ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
 			ldap_set_rebind_proc($ldap_connection, ldapRebind);
-			ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_master_root_pw']);
+			ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']);
 		}
 		else
 		{
-			$ldap_connection = $common->ldapConnect($GLOBALS['phpgw_info']['server']['ldap_host'],
-											   $GLOBALS['phpgw_info']['server']['ldap_root_dn'],
-											   $GLOBALS['phpgw_info']['server']['ldap_root_pw'], true);
+			$ldap_connection = $common->ldapConnect(GlobalService::get('phpgw_info')['server']['ldap_host'],
+											   GlobalService::get('phpgw_info')['server']['ldap_root_dn'],
+											   GlobalService::get('phpgw_info')['server']['ldap_root_pw'], true);
 		}
 		
 		// If success, return follow_referral connection. Else, return normal connection.
@@ -212,8 +214,8 @@ class ldap_functions
 			return $this->ldap;
 		*/
 		
-		// Este if é para utilizar o master. (para replicação)
-		if ( (!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) && ($ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_master_host'])) )
+		// Este if ï¿½ para utilizar o master. (para replicaï¿½ï¿½o)
+		if ( (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) && ($ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) )
 		{
 			/*
 			ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -231,9 +233,9 @@ class ldap_functions
 			ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, false);
 			
-			if ( ($GLOBALS['phpgw_info']['server']['ldap_root_dn'] != '') && ($GLOBALS['phpgw_info']['server']['ldap_root_pw'] != '') )
+			if ( (GlobalService::get('phpgw_info')['server']['ldap_root_dn'] != '') && (GlobalService::get('phpgw_info')['server']['ldap_root_pw'] != '') )
 			{
-				if ( ! ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']) )
+				if ( ! ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']) )
 				{
 					return false;
 				}
@@ -242,12 +244,12 @@ class ldap_functions
 		}
 		else
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			if ($ldap_connection)
 			{
 				ldap_set_option($ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 				ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-				if ( ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']) )
+				if ( ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']) )
 					return $ldap_connection;
 			}
 		}
@@ -286,11 +288,11 @@ class ldap_functions
 		}
 		else
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-			ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
-			$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
+			$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		}
 		
 		$result['status'] = true;
@@ -313,7 +315,7 @@ class ldap_functions
 		{
 			if ($this->current_config['expressoAdmin_prefix_org'] == 'true')
 			{
-				//Obtenho UID sem a organização. Na criação o uid já vem sem a organização
+				//Obtenho UID sem a organizaï¿½ï¿½o. Na criaï¿½ï¿½o o uid jï¿½ vem sem a organizaï¿½ï¿½o
 				$tmp_uid_without_org = explode("-", $params['uid']);
 				$tmp_reverse_uid_without_org = array_reverse($tmp_uid_without_org);
 				array_pop($tmp_reverse_uid_without_org);
@@ -328,7 +330,7 @@ class ldap_functions
 			//UID
 			if (($type == 'rename_user') && ($this->current_config['expressoAdmin_prefix_org'] == 'true'))
 			{
-				//Obtenho UID sem a organização. Na criação o uid já vem sem a organização
+				//Obtenho UID sem a organizaï¿½ï¿½o. Na criaï¿½ï¿½o o uid jï¿½ vem sem a organizaï¿½ï¿½o
 				$tmp_uid_without_org = explode("-", $params['uid']);
 				$tmp_reverse_uid_without_org = array_reverse($tmp_uid_without_org);
 				array_pop($tmp_reverse_uid_without_org);
@@ -371,22 +373,22 @@ class ldap_functions
 			}
 			
 			
-			// UID em outras organizações, pesquiso apenas na maquina local e se utilizar prefix_org
+			// UID em outras organizaï¿½ï¿½es, pesquiso apenas na maquina local e se utilizar prefix_org
 			if ($this->current_config['expressoAdmin_prefix_org'] == 'true')
 			{
-				$ldap_connection2 = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+				$ldap_connection2 = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 				ldap_set_option($ldap_connection2,LDAP_OPT_PROTOCOL_VERSION,3);
 				ldap_set_option($ldap_connection2, LDAP_OPT_REFERRALS, false);
-				ldap_bind($ldap_connection2, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
-				$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+				ldap_bind($ldap_connection2, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
+				$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 				
-				//Obtenho UID sem a organização
+				//Obtenho UID sem a organizaï¿½ï¿½o
 				/*
 				$tmp_uid_without_org = explode("-", $params['uid']);
 				if (count($tmp_uid_without_org) < 2)
 				{
 					$result['status'] = false;
-					$result['msg'] = 'Novo login sem organização.';
+					$result['msg'] = 'Novo login sem organizaï¿½ï¿½o.';
 					return $result;
 				}
 				$tmp_reverse_uid_without_org = array_reverse($tmp_uid_without_org);
@@ -485,15 +487,15 @@ class ldap_functions
 				}
 				else
 				{
-					//retira caracteres que não são números.
+					//retira caracteres que nï¿½o sï¿½o nï¿½meros.
 					$cpf = preg_replace("/[^0-9]/", "", $cpf);
 				
-					$local_ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+					$local_ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 					if ($ldap_connection)
 					{
 						ldap_set_option($local_ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 						ldap_set_option($local_ldap_connection, LDAP_OPT_REFERRALS, false);
-						ldap_bind($local_ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
+						ldap_bind($local_ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
 					}
 					else
 					{
@@ -592,11 +594,11 @@ class ldap_functions
 		}
 		else
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-			ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
-			$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
+			$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		}
 		
 		if ( $type == 'create_group' ) {
@@ -623,10 +625,10 @@ class ldap_functions
 			$mail_filter = "";
 			$cn_filter = "";
 			
-			$local_ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$local_ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($local_ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option($local_ldap_connection, LDAP_OPT_REFERRALS, false);
-			ldap_bind($local_ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
+			ldap_bind($local_ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
 			
 			$filter = "(&(phpgwAccountType=g)(gidnumber=$gidnumber))";
 			$justthese = array("cn","mail");
@@ -683,8 +685,8 @@ class ldap_functions
 			{
 				ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 				ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-				if ( ($GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['acc'] != '') && ($GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['pw'] != '') )
-					ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['acc'], $GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['pw']);
+				if ( (GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['acc'] != '') && (GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['pw'] != '') )
+					ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['acc'], GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['pw']);
 				$context = $_SESSION['phpgw_info']['expresso']['cc_ldap_server']['dn'];
 			}
 			else
@@ -696,11 +698,11 @@ class ldap_functions
 		}
 		else
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-			ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
-			$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
+			$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		}
 
 		$cn = $params['cn'];
@@ -750,8 +752,8 @@ class ldap_functions
 			{
 				ldap_set_option($ldap_connection, LDAP_OPT_PROTOCOL_VERSION, 3);
 				ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-				if ( ($GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['acc'] != '') && ($GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['pw'] != '') )
-					ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['acc'], $GLOBALS['phpgw_info']['expresso']['cc_ldap_server']['pw']);
+				if ( (GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['acc'] != '') && (GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['pw'] != '') )
+					ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['acc'], GlobalService::get('phpgw_info')['expresso']['cc_ldap_server']['pw']);
 				$context = $_SESSION['phpgw_info']['expresso']['cc_ldap_server']['dn'];
 			}
 			else
@@ -763,11 +765,11 @@ class ldap_functions
 		}
 		else
 		{
-			$ldap_connection = ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ldap_connection = ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_connection,LDAP_OPT_PROTOCOL_VERSION,3);
 			ldap_set_option($ldap_connection, LDAP_OPT_REFERRALS, true);
-			ldap_bind($ldap_connection, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']);
-			$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+			ldap_bind($ldap_connection, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']);
+			$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		}
 		
 		$uid = $params['uid'];
@@ -808,7 +810,7 @@ class ldap_functions
 		return $result;	
 	}
 
-	//Busca usuários de um contexto e já retorna as options do select;
+	//Busca usuï¿½rios de um contexto e jï¿½ retorna as options do select;
 	function get_available_users($params)
 	{
 		$context = $params['context'];
@@ -818,7 +820,7 @@ class ldap_functions
 		$options = "";
 		
 		if( $recursive == 'true'){
-			if( $context === $GLOBALS['phpgw_info']['server']['ldap_context'] ){
+			if( $context === GlobalService::get('phpgw_info')['server']['ldap_context'] ){
 				return '';
 			}
 			$groups_list=ldap_search($this->ldap, $context, $filter, $justthese);
@@ -852,7 +854,7 @@ class ldap_functions
 	//Busca usuarios de um contexto e ja retorna as options do select;
 	function get_available_users2($params)
 	{
-		if( $params['context'] !== $GLOBALS['phpgw_info']['server']['ldap_context'] )
+		if( $params['context'] !== GlobalService::get('phpgw_info')['server']['ldap_context'] )
 		{	
 			$context= $params['context'];
 			$justthese = array("cn", "uid");
@@ -884,13 +886,13 @@ class ldap_functions
 
 	}
 
-	//Busca usuários e listas de um contexto e já retorna as options do select;
+	//Busca usuï¿½rios e listas de um contexto e jï¿½ retorna as options do select;
 	function get_available_users_and_maillist($params)
 	{
 		$context = $params['context'];
 		$recursive = $params['recursive'];
 		
-		//Usado para retirar a própria lista das possibilidades de inclusão.
+		//Usado para retirar a prï¿½pria lista das possibilidades de inclusï¿½o.
 		$denied_uidnumber = $params['denied_uidnumber'];
 		
 		$justthese = array("cn", "uidNumber", "mail");
@@ -919,7 +921,7 @@ class ldap_functions
 
 		if ($recursive == 'true')
 		{
-			if ( $context === $GLOBALS['phpgw_info']['server']['ldap_context'] ) return '';
+			if ( $context === GlobalService::get('phpgw_info')['server']['ldap_context'] ) return '';
 			$lists_search = ldap_search($ldap_conn_following_ref, $context, $lists_filter, $justthese);
 			$users_search = ldap_search($ldap_conn_following_ref, $context, $users_filter, $justthese);
 		}
@@ -1007,7 +1009,7 @@ class ldap_functions
 		$recursive = $params['recursive'];
 		$context = $params['context'];
 		
-		if ($context == $GLOBALS['phpgw_info']['server']['ldap_context'])
+		if ($context == GlobalService::get('phpgw_info')['server']['ldap_context'])
 			$recursive = false;
 		
 		$justthese = array("uid","mail","uidNumber");
@@ -1085,12 +1087,12 @@ class ldap_functions
 		return true;
 	}	
 	
-	// Pode receber tanto um único memberUid quanto um array de memberUid's
+	// Pode receber tanto um ï¿½nico memberUid quanto um array de memberUid's
 	function add_user2group($gidNumber, $memberUid)
 	{
 		$filter = "(&(phpgwAccountType=g)(gidNumber=$gidNumber))";
 		$justthese = array("dn");
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		$group_dn = $entry[0]['dn'];
 		$attrs['memberUid'] = $memberUid;
@@ -1114,7 +1116,7 @@ class ldap_functions
 	{
 		$filter = "(&(phpgwAccountType=g)(gidNumber=$gidNumber))";
 		$justthese = array("dn");
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		$group_dn = $entry[0]['dn'];
 		$attrs['memberUid'] = $memberUid;
@@ -1144,7 +1146,7 @@ class ldap_functions
 			
 		$filter = "(&(phpgwAccountType=l)(uid=$uid))";
 		$justthese = array("dn");
-		$search = ldap_search($ldapMasterConnect, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($ldapMasterConnect, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($ldapMasterConnect, $search);
 		$group_dn = $entry[0]['dn'];
 		$attrs['mailForwardingAddress'] = $mail;
@@ -1201,7 +1203,7 @@ class ldap_functions
 		
 		$filter = "(&(phpgwAccountType=l)(uid=$uid))";
 		$justthese = array("dn");
-		$search = ldap_search($ldapMasterConnect, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($ldapMasterConnect, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($ldapMasterConnect, $search);
 		$group_dn = $entry[0]['dn'];
 		$attrs['mailForwardingAddress'] = $mail;
@@ -1249,7 +1251,7 @@ class ldap_functions
 	{
 		$filter = "(&(phpgwAccountType=l)(mailforwardingaddress=$old_mail))";
 		$justthese = array("dn");
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = ldap_get_entries($this->ldap, $search);
 		$result['status'] = true;
 		for ($i=0; $i<$entries['count']; $i++)
@@ -1371,7 +1373,7 @@ class ldap_functions
 				// Groups
 				$justthese = array("gidnumber","cn");
 				$filter="(&(phpgwAccountType=g)(memberuid=".$result['uid']."))";
-				$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+				$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
     			ldap_sort($this->ldap, $search, "cn");
     			$entries = ldap_get_entries($this->ldap, $search);
     			for ($i=0; $i<$entries['count']; $i++)
@@ -1449,7 +1451,7 @@ class ldap_functions
 		unset( $members['count'] );
 		while ( count( $members ) ) {
 			$filter = '(&(phpgwAccountType=u)(|('.$attr.'='.implode( ')('.$attr.'=', array_splice( $members, 0, 10 ) ).')))';
-			$user_entry = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array( 'cn', 'uid', 'uidnumber' ) ) );
+			$user_entry = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array( 'cn', 'uid', 'uidnumber' ) ) );
 			unset( $user_entry['count'] );
 			foreach ( $user_entry as $entry ) $result[$entry['uid'][0]] = array( 'cn' => $entry['cn'][0], 'uidnumber' => $entry['uidnumber'][0], 'type' => 'u' );
 		}
@@ -1477,7 +1479,7 @@ class ldap_functions
 				if ( isset( $entry[0]['accountrestrictive'][0] )     ) $result['accountrestrictive']     = $entry[0]['accountrestrictive'][0];
 				if ( isset( $entry[0]['participantcansendmail'][0] ) ) $result['participantcansendmail'] = $entry[0]['participantcansendmail'][0];
 				
-				// Checamos e-mails que não fazem parte do expresso.
+				// Checamos e-mails que nï¿½o fazem parte do expresso.
 				// Criamos um array temporario
 				$tmp_array = array();
 				if($result['memberuid_info'])
@@ -1489,7 +1491,7 @@ class ldap_functions
 				if($entry[0]['memberuid']) {
 					// Retira o count do array
 					array_shift($entry[0]['memberuid']);
-					// Vemos a diferença
+					// Vemos a diferenï¿½a
 					$array_diff = array_diff($entry[0]['memberuid'], $tmp_array);
 					// Incluimos no resultado			
 					foreach ($array_diff as $index=>$uid)
@@ -1568,7 +1570,7 @@ class ldap_functions
 					$i--;
 					$filter .= "))";
 					
-					$search = ldap_search($ldap_conn_following_ref, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+					$search = ldap_search($ldap_conn_following_ref, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 					$user_entry = ldap_get_entries($ldap_conn_following_ref, $search);
 									
 					for ($j=0; $j<$user_entry['count']; $j++)
@@ -1580,16 +1582,16 @@ class ldap_functions
 					}
 				}
 
-				// Emails não encontrados no ldap
+				// Emails nï¿½o encontrados no ldap
 				array_shift($entry[0]['mailforwardingaddress']); //Retira o count do array
 				$missing_emails = array_diff($entry[0]['mailforwardingaddress'], $result['mailForwardingAddress']);
 				
 				// Incluimos estes no resultado
 				foreach ($missing_emails as $index=>$mailforwardingaddress)
 				{
-					// Verifico se não é um uid ao inves de um email
+					// Verifico se nï¿½o ï¿½ um uid ao inves de um email
 					$filter="(&(phpgwAccountType=u)(uid=$mailforwardingaddress))";
-					$search = ldap_search($ldap_conn_following_ref, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+					$search = ldap_search($ldap_conn_following_ref, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 					$count_entries = ldap_count_entries($ldap_conn_following_ref, $search);
 					if (!$count_entries)
 					{
@@ -1639,7 +1641,7 @@ class ldap_functions
 				{
 					$justthese = array("cn", "uidnumber", "uid", "mail");
 					$filter="(&(phpgwAccountType=u)(mail=".$entry[0]['mailsenderaddress'][$i]."))";
-					$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+					$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 					$user_entry = ldap_get_entries($this->ldap, $search);
 			
 					$result['senders_info'][$user_entry[0]['mail'][0]]['uid'] = $user_entry[0]['uid'][0];
@@ -1655,7 +1657,7 @@ class ldap_functions
 	{
 		$justthese = array("cn");
 		$filter="(&(phpgwAccountType=g)(gidNumber=".$gidnumber."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 				
 		$entry = ldap_get_entries($this->ldap, $search);
 		if ($entry['count'] == 0)
@@ -1674,7 +1676,7 @@ class ldap_functions
 			foreach ($gidnumbers as $gidnumber)
 			{
 				$filter="(&(phpgwAccountType=g)(gidNumber=".$gidnumber."))";
-				$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+				$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 				
 				$entry = ldap_get_entries($this->ldap, $search);
 				if ($entry['count'] == 0)
@@ -1685,7 +1687,7 @@ class ldap_functions
 				$result['groups_info'][$i]['gidnumber'] = $gidnumber;
 			
 				/* o gerente pode excluir um grupo de um usuario onde este grupo esta em outra OU ? */
-				/* é o mesmo que o manager editar um grupo de outra OU */
+				/* ï¿½ o mesmo que o manager editar um grupo de outra OU */
 				$result['groups_info'][$i]['group_disabled'] = 'true';
 				foreach ($this->manager_contexts as $index=>$context)
 				{
@@ -1704,7 +1706,7 @@ class ldap_functions
 	function uidnumber2dn($uidnumber)
 	{
 		$filter ='(&(|(phpgwAccountType=u)(phpgwAccountType=l))(uidNumber='.$uidnumber.'))';
-		$search = ldap_search( $this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array() );
+		$search = ldap_search( $this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array() );
 		$entry  = ldap_get_entries( $this->ldap, $search );
 		return $entry[0]['dn'];
 	}
@@ -1713,7 +1715,7 @@ class ldap_functions
 	{
 		$justthese = array("uid");
 		$filter="(&(|(phpgwAccountType=u)(phpgwAccountType=l))(uidNumber=".$uidnumber."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		return $entry[0]['uid'][0];
 	}
@@ -1722,7 +1724,7 @@ class ldap_functions
 	{
 		$justthese = array("cn");
 		$filter="(&(|(phpgwAccountType=u)(phpgwAccountType=l)(phpgwAccountType=s))(uid=".$uid."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		return $entry[0]['cn'][0];
 	}
@@ -1731,7 +1733,7 @@ class ldap_functions
 	{
 		$justthese = array("mail");
 		$filter="(&(|(phpgwAccountType=u)(phpgwAccountType=l))(uidNumber=".$uidnumber."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		return $entry[0]['mail'][0];
 	}
@@ -1752,7 +1754,7 @@ class ldap_functions
 		);
 		foreach ( $params as $obj => $attrs ) {
 			$filter  = '(&(objectclass='.$obj.')('.$attrs['attr'].'='.$attrs['old_val'].'))';
-			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array( 'dn' ) ) );
+			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array( 'dn' ) ) );
 			for ( $i = 0; $i < $entries['count']; $i++ ) {
 				ldap_mod_del( $this->ldap, $entries[$i]['dn'], array( $attrs['attr'] => array( $attrs['old_val'] ) ) );
 				ldap_mod_add( $this->ldap, $entries[$i]['dn'], array( $attrs['attr'] => array( $attrs['new_val'] ) ) );
@@ -1806,7 +1808,7 @@ class ldap_functions
 	{
 		$justthese = array("userPassword");
 		$filter="(&(phpgwAccountType=u)(uid=".$uid."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 	    $entry = ldap_get_entries($this->ldap, $search);
 		$dn = $entry[0]['dn'];
 		$userPassword = $entry[0]['userpassword'][0];
@@ -1817,7 +1819,7 @@ class ldap_functions
 	
 	function delete_user($user_info)
 	{
-		// Verifica acesso do gerente (OU) ao tentar deletar um usuário.
+		// Verifica acesso do gerente (OU) ao tentar deletar um usuï¿½rio.
 		$manager_access = false;
 		foreach ($this->manager_contexts as $index=>$context)
 		{
@@ -1847,7 +1849,7 @@ class ldap_functions
 		);
 		foreach ( $params as $obj => $attrs ) {
 			$filter  = '(&(objectclass='.$obj.')'.$attrs['filter'].'('.$attrs['attr'].'='.$attrs['value'].'))';
-			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array( 'dn' ) ) );
+			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array( 'dn' ) ) );
 			for ( $i = 0; $i < $entries['count']; $i++ ) {
 				ldap_mod_del( $this->ldap, $entries[$i]['dn'], array( $attrs['attr'] => array( $attrs['value'] ) ) );
 			}
@@ -1859,7 +1861,7 @@ class ldap_functions
 		
 		$justthese = array("dn");
 		$filter="(&(phpgwAccountType=i)(mailforwardingaddress=".$user_info['mail']."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 	    $entries = ldap_get_entries($this->ldap, $search);
 		
 		for ($i=0; $i<$entries['count']; $i++)
@@ -1891,7 +1893,7 @@ class ldap_functions
 				$uid = $maillists_info['uid'];
 				$justthese = array("dn");
 				$filter="(&(phpgwAccountType=l)(uid=".$uid."))";
-				$search = ldap_search($ldapMasterConnect, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+				$search = ldap_search($ldapMasterConnect, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 	    		$entry = ldap_get_entries($ldapMasterConnect, $search);
 				$dn = $entry[0]['dn'];
 			
@@ -1933,7 +1935,7 @@ class ldap_functions
 		
 		// remove listas dentro de listas
 		$filter="(&(phpgwAccountType=l)(mailForwardingAddress=".$mail."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entry = ldap_get_entries($this->ldap, $search);
 		$attrs['mailForwardingAddress'] = $mail;
 		for ($i=0; $i<=$entry['count']; $i++)
@@ -1943,7 +1945,7 @@ class ldap_functions
 	    }
 		
 		$filter="(&(phpgwAccountType=l)(uidnumber=".$uidnumber."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
    		$entry = ldap_get_entries($this->ldap, $search);
 		$dn = $entry[0]['dn'];
 		
@@ -1962,7 +1964,7 @@ class ldap_functions
 		
 		$justthese = array("dn");
 		$filter="(&(phpgwAccountType=g)(gidnumber=".$gidnumber."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
    		$entry = ldap_get_entries($this->ldap, $search);
 		$dn = $entry[0]['dn'];
 		
@@ -2014,7 +2016,7 @@ class ldap_functions
 		$justthese = array("dn");
 		$filter="(&(phpgwAccountType=u)(uid=$uid))";
 		
-		$search = ldap_search($ldapMasterConnect, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($ldapMasterConnect, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$count_entries = @ldap_count_entries($ldapMasterConnect, $search);
 		
 		if ($count_entries)
@@ -2026,7 +2028,7 @@ class ldap_functions
 	function rename_uid( $old_uid, $new_uid )
 	{
 		$filter  = '(&(phpgwAccountType=u)(uid='.$old_uid.'))';
-		$entry   = ldap_get_entries($this->ldap, ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array( 'dn' ) ) );
+		$entry   = ldap_get_entries($this->ldap, ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array( 'dn' ) ) );
 		$old_dn  = $entry[0]['dn'];
 		$context = preg_replace( '/^[^,]*,/', '', $old_dn );
 		$new_dn  = 'uid='.$new_uid.','.$context;
@@ -2046,7 +2048,7 @@ class ldap_functions
 		);
 		foreach ( $params as $obj => $attrs ) {
 			$filter  = '(&(objectclass='.$obj.')'.$attrs['filter'].'('.$attrs['attr'].'='.$attrs['old_val'].'))';
-			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, array( 'dn' ) ) );
+			$entries = ldap_get_entries( $this->ldap, ldap_search( $this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, array( 'dn' ) ) );
 			for ( $i = 0; $i < $entries['count']; $i++ ) {
 				ldap_mod_del( $this->ldap, $entries[$i]['dn'], array( $attrs['attr'] => array( $attrs['old_val'] ) ) );
 				ldap_mod_add( $this->ldap, $entries[$i]['dn'], array( $attrs['attr'] => array( $attrs['new_val'] ) ) );
@@ -2061,7 +2063,7 @@ class ldap_functions
 		
 		$justthese = array("dn");
 		$filter="(&(phpgwAccountType=g)(uid=".$cn."))";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 	    $entry = ldap_get_entries($this->ldap, $search);
 		$dn = $entry[0]['dn'];
 		
@@ -2099,10 +2101,10 @@ class ldap_functions
 		return false;
 	}
 	
-	// Primeiro nivel de organização.
+	// Primeiro nivel de organizaï¿½ï¿½o.
 	function exist_sambadomains_in_context($params)
 	{
-		$dn = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$dn = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		$array_dn = ldap_explode_dn ( $dn, 0 );
 		
 		$context = $params['context'];
@@ -2146,7 +2148,7 @@ class ldap_functions
 	}
 	function exist_domain_name_sid($sambadomainname, $sambasid)
 	{
-		$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 
 		$justthese = array("dn","sambaDomainName");
 		$filter="(&(objectClass=sambaDomain)(sambaSID=$sambasid)(sambaDomainName=$sambadomainname))";
@@ -2182,7 +2184,7 @@ class ldap_functions
 	{
 		$return['status'] = true;
 		$filter="(sambaDomainName=$sambadomainname)";
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter);
 	    $entry = ldap_get_entries($this->ldap, $search);
 	 
 	 	if ($entry['count'] != 0)
@@ -2203,7 +2205,7 @@ class ldap_functions
 	{
 		$search = $params['search'];
 		$justthese = array("cn","uid", "mail");
-    	$users_list=ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], "(&(phpgwAccountType=u) (|(cn=*$search*)(mail=$search*)) )", $justthese);
+    	$users_list=ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], "(&(phpgwAccountType=u) (|(cn=*$search*)(mail=$search*)) )", $justthese);
     	
     	if (ldap_count_entries($this->ldap, $users_list) == 0)
     	{
@@ -2282,7 +2284,7 @@ class ldap_functions
 
 		$filter = "(mail=".$params['mail'].")";
 		$justthese = array("cn");
-		$search = @ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = @ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = @ldap_get_entries($this->ldap,$search);
 		if ($entries['count'] != 0)
 		{
@@ -2392,7 +2394,7 @@ class ldap_functions
 
 		$filter = "(mail=".$params['mail'].")";
 		$justthese = array("cn");
-		$search = @ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = @ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = @ldap_get_entries($this->ldap,$search);
 		
 		if ( ($entries['count'] > 1) || (($entries['count'] == 1) && ( trim(strtolower($entries[0]['dn'])) != $anchor)) )
@@ -2511,7 +2513,7 @@ class ldap_functions
 		$uid = $params['uid'];
 		//$justthese = array("accountStatus", "phpgwAccountVisible", "cn", "mail", "mailForwardingAddress", "description");
 				
-    	$institutional_accounts = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], ("(&(phpgwAccountType=i)(uid=$uid))"));
+    	$institutional_accounts = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], ("(&(phpgwAccountType=i)(uid=$uid))"));
     	$entrie = ldap_get_entries($this->ldap, $institutional_accounts);
 		
 		if ($entrie['count'] != 1)
@@ -2640,7 +2642,7 @@ class ldap_functions
                        
 		$filter = "(mail=".$params['mail'].")";
 		$justthese = array("cn");
-		$search = @ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = @ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = @ldap_get_entries($this->ldap,$search);
 		
 		if ( ($entries['count'] > 1) || (($entries['count'] == 1) && ($entries[0]['dn'] != $anchor)) )
@@ -2705,7 +2707,7 @@ class ldap_functions
 		
 		$uid = $params['uid'];
 
-	   	$shared_accounts = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], ("(&(phpgwAccountType=s)(uid=$uid))"));
+	   	$shared_accounts = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], ("(&(phpgwAccountType=s)(uid=$uid))"));
 	   	$entrie = ldap_get_entries($this->ldap, $shared_accounts);
 		
 		if ($entrie['count'] != 1)
@@ -2735,7 +2737,7 @@ class ldap_functions
 	function mailforwardingaddress2uidnumber($mail)
 	{
 		$justthese = array("uidnumber","cn");
-    	$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], ("(&(phpgwAccountType=u)(mail=$mail))"), $justthese);
+    	$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], ("(&(phpgwAccountType=u)(mail=$mail))"), $justthese);
     	$entrie = ldap_get_entries($this->ldap, $search);
 		if ($entrie['count'] != 1)
 			return false;
@@ -2758,7 +2760,7 @@ class ldap_functions
 		$uid = $params['uid'];
 		$return['status'] = true;
 		$justthese = array("cn");
-	   	$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], "(&(phpgwAccountType=s)(uid=$uid))", $justthese);
+	   	$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], "(&(phpgwAccountType=s)(uid=$uid))", $justthese);
 	   	$entrie = ldap_get_entries($this->ldap, $search);
 	       
 		if ($entrie['count'] > 1)
@@ -2797,7 +2799,7 @@ class ldap_functions
 		$return['status'] = true;
 				
 		$justthese = array("cn");
-    	$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], ("(&(phpgwAccountType=i)(uid=$uid))"), $justthese);
+    	$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], ("(&(phpgwAccountType=i)(uid=$uid))"), $justthese);
     	$entrie = ldap_get_entries($this->ldap, $search);
 		if ($entrie['count'] > 1)
 		{
@@ -2828,7 +2830,7 @@ class ldap_functions
 	{
 		$filter = "(&(phpgwAccountType=i)(mailforwardingaddress=$oldMail))";
 		$justthese = array("dn");
-		$search = ldap_search($this->ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+		$search = ldap_search($this->ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 		$entries = ldap_get_entries($this->ldap, $search);
 		$return['status'] = true;
 		for ($i=0; $i<$entries['count']; $i++)
@@ -2850,7 +2852,7 @@ class ldap_functions
 	
 	function manager_exist($uid)
 	{
-		$context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 
 		$justthese = array("uid");
 		$filter="(&(phpgwaccounttype=u)(uid=$uid))";

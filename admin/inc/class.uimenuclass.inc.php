@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Administration                                              *
   * http://www.egroupware.org                                                *
@@ -17,14 +19,14 @@
 		
 		function uimenuclass()
 		{
-			$this->t = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('admin'));
+			$this->t = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('admin'));
 
 			$this->t->set_file(array('menurow' => 'menurow.tpl'));
 			$this->t->set_block('menurow','menu_links','menu_links');
 			$this->t->set_block('menurow','link_row','link_row');
 
-			$this->rowColor[0] = $GLOBALS['phpgw_info']['theme']['row_on'];
-			$this->rowColor[1] = $GLOBALS['phpgw_info']['theme']['row_off'];
+			$this->rowColor[0] = GlobalService::get('phpgw_info')['theme']['row_on'];
+			$this->rowColor[1] = GlobalService::get('phpgw_info')['theme']['row_off'];
 		}
 
 		function section_item($pref_link='',$pref_text='', $bgcolor)
@@ -51,17 +53,17 @@
 			{
 				if (!empty($value['extradata']))
 				{
-					$link = $GLOBALS['phpgw']->link($value['url'],'account_id=' . get_var('account_id',array('GET','POST')) . '&' . $value['extradata']);
+					$link = GlobalService::get('phpgw')->link($value['url'],'account_id=' . get_var('account_id',array('GET','POST')) . '&' . $value['extradata']);
 				}
 				else
 				{
-					$link = $GLOBALS['phpgw']->link($value['url'],'account_id=' . get_var('account_id',array('GET','POST')));
+					$link = GlobalService::get('phpgw')->link($value['url'],'account_id=' . get_var('account_id',array('GET','POST')));
 				}
 				$this->section_item($link,lang($value['description']),$this->rowColor[($i % 2)]);
 				$i++;
 			}
 
-			$this->t->set_var('th_bg',$GLOBALS['phpgw_info']['theme']['th_bg']);
+			$this->t->set_var('th_bg',GlobalService::get('phpgw_info')['theme']['th_bg']);
 
 			if(strpos($_menuData[0]['extradata'],'user'))
 			{
@@ -71,7 +73,7 @@
 			{
 				$destination = 'groups';
 			}
-			$this->t->set_var('link_done',$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_'.$destination));
+			$this->t->set_var('link_done',GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_'.$destination));
 			$this->t->set_var('lang_done',lang('Back'));
 
 			$this->t->set_var('row_on',$this->rowColor[0]);
@@ -87,28 +89,28 @@
 			switch ($_hookname)
 			{
 				case 'edit_user':
-					$GLOBALS['menuData'][] = array(
+					GlobalService::get('menuData')[] = array(
 						'description' => 'User Data',
 						'url'         => '/index.php',
 						'extradata'   => 'menuaction=admin.uiaccounts.edit_user'
 					);
 					break;
 				case 'view_user':
-					$GLOBALS['menuData'][] = array(
+					GlobalService::get('menuData')[] = array(
 						'description' => 'User Data',
 						'url'         => '/index.php',
 						'extradata'   => 'menuaction=admin.uiaccounts.view_user'
 					);
 					break;
 				case 'edit_group':
-					$GLOBALS['menuData'][] = array(
+					GlobalService::get('menuData')[] = array(
 						'description' => 'Edit Group',
 						'url'         => '/index.php',
 						'extradata'   => 'menuaction=admin.uiaccounts.edit_group'
 					);
 					break;
 				case 'group_manager':
-					$GLOBALS['menuData'][] = array(
+					GlobalService::get('menuData')[] = array(
 						'description' => 'Group Manager',
 						'url'         => '/index.php',
 						'extradata'   => 'menuaction=admin.uiaccounts.group_manager'
@@ -116,18 +118,18 @@
 					break;
 			}
 
-			$GLOBALS['phpgw']->hooks->process($_hookname);
-			if (count($GLOBALS['menuData']) >= 1) 
+			GlobalService::get('phpgw')->hooks->process($_hookname);
+			if (count(GlobalService::get('menuData')) >= 1) 
 			{
-				$result = $this->display_section($GLOBALS['menuData']);
+				$result = $this->display_section(GlobalService::get('menuData'));
 				//clear $menuData
-				$GLOBALS['menuData'] = '';
+				GlobalService::set('menuData','');
 				return $result;
 			}
 			else
 			{
 				// clear $menuData
-				$GLOBALS['menuData'] = '';
+				GlobalService::set('menuData','');
 				return '';
 			}
 		}

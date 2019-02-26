@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* eGroupWare - uilog                                                        *
 	* http://www.egroupware.org                                                 *
@@ -25,9 +27,9 @@
 
 		function uilog()
 		{
-			if ($GLOBALS['phpgw']->acl->check('error_log_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('error_log_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 			
 			$_cols    = $_POST['_cols'];
@@ -39,7 +41,7 @@
 
 			$this->bolog    = CreateObject('admin.bolog',True);
 			$this->html     = createobject('admin.html_tables');
-			$this->t        = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('admin'));
+			$this->t        = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('admin'));
 			$this->lastid   = '';
 			$this->editmode = False;
 
@@ -78,20 +80,20 @@
 
 				// Save the fields_inc values in Session and User Preferences...
 				$data = array('fields_inc'=>$this->fields_inc,'layout'=>$layout);
-				$GLOBALS['phpgw']->session->appsession('session_data','log',$data);
-				$GLOBALS['phpgw']->preferences->read_repository();
-				$GLOBALS['phpgw']->preferences->delete('log','fields_inc');
-				$GLOBALS['phpgw']->preferences->add('log','fields_inc',$this->fields_inc);
-				$GLOBALS['phpgw']->preferences->delete('log','layout');
-				$GLOBALS['phpgw']->preferences->add('log','layout',$this->layout);
-				$GLOBALS['phpgw']->preferences->save_repository();
+				GlobalService::get('phpgw')->session->appsession('session_data','log',$data);
+				GlobalService::get('phpgw')->preferences->read_repository();
+				GlobalService::get('phpgw')->preferences->delete('log','fields_inc');
+				GlobalService::get('phpgw')->preferences->add('log','fields_inc',$this->fields_inc);
+				GlobalService::get('phpgw')->preferences->delete('log','layout');
+				GlobalService::get('phpgw')->preferences->add('log','layout',$this->layout);
+				GlobalService::get('phpgw')->preferences->save_repository();
 			}
 
 			// Make sure that $this->fields_inc is filled
 			if ( !isset($this->field_inc))
 			{
 				// Need to fill from Session Data...
-				$data = $GLOBALS['phpgw']->session->appsession('session_data','log');
+				$data = GlobalService::get('phpgw')->session->appsession('session_data','log');
 				if (isset($data) && isset($data['fields_inc']))
 				{
 					$this->fields_inc = $data['fields_inc'];
@@ -99,15 +101,15 @@
 				}
 				else
 				{
-					$GLOBALS['phpgw']->preferences->read_repository();
+					GlobalService::get('phpgw')->preferences->read_repository();
 					// Get From User Profile...
-					if (@$GLOBALS['phpgw_info']['user']['preferences']['log']['fields_inc'])
+					if (@GlobalService::get('phpgw_info')['user']['preferences']['log']['fields_inc'])
 					{
-						$fields_inc = $GLOBALS['phpgw_info']['user']['preferences']['log']['fields_inc'];
+						$fields_inc = GlobalService::get('phpgw_info')['user']['preferences']['log']['fields_inc'];
 						$this->fields_inc = $fields_inc;
-						$layout = $GLOBALS['phpgw_info']['user']['preferences']['log']['layout'];
+						$layout = GlobalService::get('phpgw_info')['user']['preferences']['log']['layout'];
 						$this->layout = $layout;
-						$GLOBALS['phpgw']->session->appsession('session_data','log',array('fields_inc'=>$fields_inc,'layout'=>$layout));
+						GlobalService::get('phpgw')->session->appsession('session_data','log',array('fields_inc'=>$fields_inc,'layout'=>$layout));
 					}
 					else
 					{
@@ -130,7 +132,7 @@
 						$this->layout[]= array(0,1,2,3,4,5,6,7,10,11);
 
 						// Store defaults in session data...
-						$GLOBALS['phpgw']->session->appsession(
+						GlobalService::get('phpgw')->session->appsession(
 							'session_data',
 							'log',
 							array(
@@ -155,42 +157,42 @@
 			{
 				// Test 1: single Error line immedeately to errorlog 
 				// (could be type Debug, Info, Warning, or Error)
-				$GLOBALS['phpgw']->log->write(array('text'=>'I-TestWrite, write: %1','p1'=>'This message should appear in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->write(array('text'=>'I-TestWrite, write: %1','p1'=>'This message should appear in log','file'=>__FILE__,'line'=>__LINE__));
 
 				// Test 2: A message should appear in log even if clearstack is called
-				$GLOBALS['phpgw']->log->message(array('text'=>'I-TestMsg, msg: %1','p1'=>'This message should appear in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should not be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->clearstack();
-				$GLOBALS['phpgw']->log->commit();  // commit error stack to log...
+				GlobalService::get('phpgw')->log->message(array('text'=>'I-TestMsg, msg: %1','p1'=>'This message should appear in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should not be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->clearstack();
+				GlobalService::get('phpgw')->log->commit();  // commit error stack to log...
 
 				// Test 3: one debug message
-				$GLOBALS['phpgw']->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->commit();  // commit error stack to log...
+				GlobalService::get('phpgw')->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->commit();  // commit error stack to log...
 
 				// Test 3: debug and one informational
-				$GLOBALS['phpgw']->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->commit();  // commit error stack to log...
+				GlobalService::get('phpgw')->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->commit();  // commit error stack to log...
 
 				// Test 4: an informational and a Warning
-				$GLOBALS['phpgw']->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->commit();  // commit error stack to log...
+				GlobalService::get('phpgw')->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->commit();  // commit error stack to log...
 
 				// Test 5: and an error
-				$GLOBALS['phpgw']->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'E-TestError, err: %1','p1'=>'This is a test Error','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->commit();  // commit error stack to log...
+				GlobalService::get('phpgw')->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'E-TestError, err: %1','p1'=>'This is a test Error','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->commit();  // commit error stack to log...
 
 				// Test 6: and finally a fatal...
-				$GLOBALS['phpgw']->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'E-TestError, err: %1','p1'=>'This is a test Error','file'=>__FILE__,'line'=>__LINE__));
-				$GLOBALS['phpgw']->log->error(array('text'=>'F-Abend, abort: %1','p1'=>'Force abnormal termination','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'D-Debug, dbg: %1','p1'=>'This debug statment should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'I-TestInfo, info: %1','p1'=>'This Informational should be in log','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'W-TestWarn, warn: %1','p1'=>'This is a test Warning','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'E-TestError, err: %1','p1'=>'This is a test Error','file'=>__FILE__,'line'=>__LINE__));
+				GlobalService::get('phpgw')->log->error(array('text'=>'F-Abend, abort: %1','p1'=>'Force abnormal termination','file'=>__FILE__,'line'=>__LINE__));
 			}
 			$this->t->set_file(array('log_list_t' => 'log.tpl'));
 
@@ -259,13 +261,13 @@
 			$table = $this->html->hash_table($rows,$header,$this, 'format_row');
 			$this->t->set_var('event_list',$table);
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.($this->editmode?lang('Edit Table format') : lang('View error log'));
-			if(!@is_object($GLOBALS['phpgw']->js))
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.($this->editmode?lang('Edit Table format') : lang('View error log'));
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 			$this->t->pfp('out','log_list_t');
 //			$this->set_app_langs();

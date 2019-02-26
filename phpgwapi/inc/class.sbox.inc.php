@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Select Box                                              *
 	* This file written by Marc Logemann <loge@phpgroupware.org>               *
@@ -77,7 +79,7 @@
 			for ($i=0; $i<24; $i++)
 			{
 				$s .= '<option value="' . $i . '"' . $t_s[$i] . '>'
-					. $GLOBALS['phpgw']->common->formattime($i+1,"00") . '</option>' . "\n";
+					. GlobalService::get('phpgw')->common->formattime($i+1,"00") . '</option>' . "\n";
 			}
 			$s .= "</select>";
 

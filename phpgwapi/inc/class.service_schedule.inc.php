@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Services Abstraction Class                              *
   * This file written by Miles Lott <milosch@groupwhere.org>                 *
@@ -25,7 +27,7 @@
 	{
 		function service_contacts()
 		{
-			$this->provider = $GLOBALS['phpgw_info']['schedule_service'] ? $GLOBALS['phpgw_info']['schedule_service'] : 'calendar';
+			$this->provider = GlobalService::get('phpgw_info')['schedule_service'] ? GlobalService::get('phpgw_info')['schedule_service'] : 'calendar';
 			$this->svc = $this->provider . '.bo' . $this->provider;
 			$type = $this->type ? $this->type : 'xmlrpc';
 			$this->function_map = ExecMethod($this->svc . '.list_methods',$type);

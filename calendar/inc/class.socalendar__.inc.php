@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -13,12 +15,12 @@
   \**************************************************************************/
 
 
-	if (@$GLOBALS['phpgw_info']['flags']['included_classes']['socalendar__'])
+	if (@GlobalService::get('phpgw_info')['flags']['included_classes']['socalendar__'])
 	{
 		return;
 	}
 
-	$GLOBALS['phpgw_info']['flags']['included_classes']['socalendar__'] = True;
+	GlobalService::get('phpgw_info')['flags']['included_classes']['socalendar__'] = True;
 
 	/*	include(PHPGW_SERVER_ROOT.'/calendar/setup/setup.inc.php');	*/
 

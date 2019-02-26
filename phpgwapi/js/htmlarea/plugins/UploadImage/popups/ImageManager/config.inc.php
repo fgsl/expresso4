@@ -1,13 +1,15 @@
 <?
 
+use Expresso\Core\GlobalService;
+
 //************************** BEGIN CONFIGURATION *****************************//
 
 //example, this is the actual file system path
 //of the web server document root. e.g.
 // Filesystem == /home/web/www.yourdomain.com 
-$BASE_DIR = $GLOBALS[UploadImageBaseDir];
-$BASE_URL = $GLOBALS[UploadImageBaseURL];
-$BASE_ROOT = $GLOBALS[UploadImageRelativePath];
+$BASE_DIR = GlobalService::get(UploadImageBaseDir);
+$BASE_URL = GlobalService::get(UploadImageBaseURL);
+$BASE_ROOT = GlobalService::get(UploadImageRelativePath);
 
 var_dump($BASE_DIR);
 var_dump($BASE_URL);

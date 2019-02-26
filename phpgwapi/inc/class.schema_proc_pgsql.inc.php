@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Setup                                                       *
   * http://www.egroupware.org                                                *
@@ -455,7 +457,7 @@
 
 		function GetSequenceForTable($oProc,$table,&$sSequenceName)
 		{
-			if($GLOBALS['DEBUG']) { echo '<br>GetSequenceForTable: ' . $table; }
+			if(GlobalService::get('DEBUG')) { echo '<br>GetSequenceForTable: ' . $table; }
 
 			$oProc->m_odb->query("SELECT relname FROM pg_class WHERE NOT relname ~ 'pg_.*' AND relname LIKE 'seq_$table' AND relkind='S' ORDER BY relname",__LINE__,__FILE__);
 			$oProc->m_odb->next_record();
@@ -468,7 +470,7 @@
 
 		function GetSequenceFieldForTable($oProc,$table,&$sField)
 		{
-			if($GLOBALS['DEBUG']) { echo '<br>GetSequenceFieldForTable: You rang?'; }
+			if(GlobalService::get('DEBUG')) { echo '<br>GetSequenceFieldForTable: You rang?'; }
 
 			$oProc->m_odb->query("SELECT a.attname FROM pg_attribute a, pg_class c, pg_attrdef d WHERE c.relname='$table' AND c.oid=d.adrelid AND d.adsrc LIKE '%seq_$table%' AND a.attrelid=c.oid AND d.adnum=a.attnum");
 			$oProc->m_odb->next_record();
@@ -491,7 +493,7 @@
 
 		function DropSequenceForTable($oProc,$table)
 		{
-			if($GLOBALS['DEBUG']) { echo '<br>DropSequenceForTable: ' . $table; }
+			if(GlobalService::get('DEBUG')) { echo '<br>DropSequenceForTable: ' . $table; }
 
 			$this->GetSequenceForTable($oProc,$table,$sSequenceName);
 			if($sSequenceName)
@@ -503,7 +505,7 @@
 
 		function DropIndexesForTable($oProc,$table)
 		{
-			if($GLOBALS['DEBUG']) { echo '<br>DropSequenceForTable: ' . $table; }
+			if(GlobalService::get('DEBUG')) { echo '<br>DropSequenceForTable: ' . $table; }
 
 			$this->GetIndexesForTable($oProc,$table,$sIndexNames);
 			if(@is_array($sIndexNames))
@@ -525,7 +527,7 @@
 
 		function DropColumn($oProc, &$aTables, $sTableName, $aNewTableDef, $sColumnName, $bCopyData = true)
 		{
-			if($GLOBALS['DEBUG'])
+			if(GlobalService::get('DEBUG'))
 			{
 				echo '<br>DropColumn: table=' . $sTableName . ', column=' . $sColumnName;
 			}
@@ -564,15 +566,15 @@
 
 		function RenameTable($oProc, &$aTables, $sOldTableName, $sNewTableName)
 		{
-			if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): Fetching old sequence for: ' . $sOldTableName; }
+			if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): Fetching old sequence for: ' . $sOldTableName; }
 			$this->GetSequenceForTable($oProc,$sOldTableName,$sSequenceName);
 
-			if($GLOBALS['DEBUG']) { echo ' - ' . $sSequenceName; }
+			if(GlobalService::get('DEBUG')) { echo ' - ' . $sSequenceName; }
 
-			if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): Fetching sequence field for: ' . $sOldTableName; }
+			if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): Fetching sequence field for: ' . $sOldTableName; }
 			$this->GetSequenceFieldForTable($oProc,$sOldTableName,$sField);
 
-			if($GLOBALS['DEBUG']) { echo ' - ' . $sField; }
+			if(GlobalService::get('DEBUG')) { echo ' - ' . $sField; }
 
 			if($sSequenceName)
 			{
@@ -580,7 +582,7 @@
 				$oProc->m_odb->next_record();
 				$lastval = $oProc->m_odb->f(0);
 
-				if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): dropping old sequence: ' . $sSequenceName . ' used on field: ' . $sField; }
+				if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): dropping old sequence: ' . $sSequenceName . ' used on field: ' . $sField; }
 				$this->DropSequenceForTable($oProc,$sOldTableName);
 
 				if($lastval)
@@ -588,19 +590,19 @@
 					$lastval = ' start ' . $lastval;
 				}
 				$this->GetSequenceSQL($sNewTableName,$sSequenceSQL);
-				if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): Making new sequence using: ' . $sSequenceSQL . $lastval; }
+				if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): Making new sequence using: ' . $sSequenceSQL . $lastval; }
 				$oProc->m_odb->query($sSequenceSQL . $lastval,__LINE__,__FILE__);
-				if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): Altering column default for: ' . $sField; }
+				if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): Altering column default for: ' . $sField; }
 				$oProc->m_odb->query("ALTER TABLE $sOldTableName ALTER $sField SET DEFAULT nextval('seq_" . $sNewTableName . "')",__LINE__,__FILE__);
 			}
 			// renameing existing indexes and primary keys
 			$indexes = $oProc->m_odb->Link_ID->MetaIndexes($sOldTableName,True);
-			if($GLOBALS['DEBUG']) { echo '<br>RenameTable(): Fetching indexes: '; _debug_array($indexes); }
+			if(GlobalService::get('DEBUG')) { echo '<br>RenameTable(): Fetching indexes: '; _debug_array($indexes); }
 			foreach($indexes as $name => $data)
 			{
 				$new_name = str_replace($sOldTableName,$sNewTableName,$name);
 				$sql = "ALTER TABLE $name RENAME TO $new_name";
-				if($GLOBALS['DEBUG']) { echo "<br>RenameTable(): Renaming the index '$name': $sql"; }
+				if(GlobalService::get('DEBUG')) { echo "<br>RenameTable(): Renaming the index '$name': $sql"; }
 				$oProc->m_odb->query($sql);
 			}
 			return !!($oProc->m_odb->query("ALTER TABLE $sOldTableName RENAME TO $sNewTableName"));
@@ -704,7 +706,7 @@
 			if ($oDb->next_record() && $oDb->f(0))
 			{
 				$sql = "SELECT setval('seq_$sTableName',".(1 + $oDb->f(0)).")";
-				if($GLOBALS['DEBUG']) { echo "<br>Updating sequence 'seq_$sTableName' using: $sql"; }
+				if(GlobalService::get('DEBUG')) { echo "<br>Updating sequence 'seq_$sTableName' using: $sql"; }
 				return $oDb->query($sql,__LINE__,__FILE__);
 			}
 			return True;
@@ -723,7 +725,7 @@
 				/* create sequence first since it will be needed for default */
 				if($bCreateSequence && $sSequenceSQL != '')
 				{
-					if($GLOBALS['DEBUG']) { echo '<br>Making sequence using: ' . $sSequenceSQL; }
+					if(GlobalService::get('DEBUG')) { echo '<br>Making sequence using: ' . $sSequenceSQL; }
 					$oProc->m_odb->query($sSequenceSQL);
 				}
 

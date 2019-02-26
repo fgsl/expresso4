@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - administration                                              *
   * http://www.egroupware.org                                                *
@@ -16,7 +18,7 @@
 
 		function soapplications()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 		}
 
 		function read($app_name)
@@ -27,7 +29,7 @@
 			$this->db->next_record();
 			$app_info = array(
 				$this->db->f('app_name'),
-				$GLOBALS['phpgw_info']['apps'][$this->db->f('app_name')]['title'],
+				GlobalService::get('phpgw_info')['apps'][$this->db->f('app_name')]['title'],
 				$this->db->f('app_enabled'),
 				$this->db->f('app_name'),
 				$this->db->f('app_order')
@@ -43,7 +45,7 @@
 				while ($this->db->next_record())
 				{
 					$app = $this->db->f('app_name');
-					$title = @$GLOBALS['phpgw_info']['apps'][$app]['title'];
+					$title = @GlobalService::get('phpgw_info')['apps'][$app]['title'];
 					if (empty($title))
 					{
 						$title = lang($app) == $app.'*' ? $app : lang($app);

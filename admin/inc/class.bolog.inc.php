@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* eGroupWare - log                                                          *
 	* http://www.egroupware.org                                                 *
@@ -67,11 +69,11 @@
 			while(list($rno,$r)=each($rows))
 			{
 				unset($r['acount_pwd']);	// remove the accounts_pwd
-				$r['log_date_e']['value']               = $GLOBALS['phpgw']->common->show_date($GLOBALS['phpgw']->db->from_timestamp($r['log_date']['value']));
-				$r['log_msg_date_e']['value']           = $GLOBALS['phpgw']->common->show_date($GLOBALS['phpgw']->db->from_timestamp($r['log_msg_date']['value']));
+				$r['log_date_e']['value']               = GlobalService::get('phpgw')->common->show_date(GlobalService::get('phpgw')->db->from_timestamp($r['log_date']['value']));
+				$r['log_msg_date_e']['value']           = GlobalService::get('phpgw')->common->show_date(GlobalService::get('phpgw')->db->from_timestamp($r['log_msg_date']['value']));
 				$r['log_full_name']['value']            = $r['account_lastname']['value'] . ', ' .$r['account_firstname']['value'];
-				$r['account_lastlogin_e']['value']      = $GLOBALS['phpgw']->common->show_date($GLOBALS['phpgw']->db->from_timestamp($r['account_lastlogin']['value']));
-				$r['account_lastpwd_change_e']['value'] = $GLOBALS['phpgw']->common->show_date($GLOBALS['phpgw']->db->from_timestamp($r['account_lastpwd_change']['value']));
+				$r['account_lastlogin_e']['value']      = GlobalService::get('phpgw')->common->show_date(GlobalService::get('phpgw')->db->from_timestamp($r['account_lastlogin']['value']));
+				$r['account_lastpwd_change_e']['value'] = GlobalService::get('phpgw')->common->show_date(GlobalService::get('phpgw')->db->from_timestamp($r['account_lastpwd_change']['value']));
 				$r['account_lastloginfrom_e']['value']  = 'www.nowhere.com'; 
 
 				$r['log_msg_text']['value'] = lang($r['log_msg_msg']['value'],explode('|',$r['log_msg_parms']['value']));

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* phpGroupWare API - database support via ADOdb                            *
 	* ------------------------------------------------------------------------ *
@@ -20,9 +22,9 @@
 	 * @license LGPL
 	 */
 
-	if(empty($GLOBALS['phpgw_info']['server']['db_type']))
+	if(empty(GlobalService::get('phpgw_info')['server']['db_type']))
 	{
-		$GLOBALS['phpgw_info']['server']['db_type'] = 'mysql';
+		GlobalService::get('phpgw_info')['server']['db_type'] = 'mysql';
 	}
 	include_once(PHPGW_API_INC.'/adodb/adodb.inc.php');
 
@@ -175,7 +177,7 @@
 			}
 			elseif (!$this->Type)
 			{
-				$this->Type = $GLOBALS['phpgw_info']['server']['db_type'];
+				$this->Type = GlobalService::get('phpgw_info')['server']['db_type'];
 			}
 
 			if (!$this->Link_ID)
@@ -203,29 +205,29 @@
 						break;
 				}
 
-				if ( ! isset( $GLOBALS[ 'phpgw' ] ) )
+				if ( ! isset( GlobalService::get( 'phpgw' ) ) )
 				{
-					$GLOBALS[ 'phpgw' ] = new stdClass;
-					$GLOBALS[ 'phpgw' ]->ADOdb = NULL;
+					GlobalService::set( 'phpgw' , new \stdClass);
+					GlobalService::get( 'phpgw' )->ADOdb = NULL;
 				}
 				
 				if (
 					// we have no connection so far
-					( !( isset( $GLOBALS['phpgw']->ADOdb ) && is_object( $GLOBALS['phpgw']->ADOdb ) ) ) || (
+					( !( isset( GlobalService::get('phpgw')->ADOdb ) && is_object( GlobalService::get('phpgw')->ADOdb ) ) ) || (
 						// we connect to a different db, then the global one
-						isset( $GLOBALS['phpgw']->db ) &&
-						is_object( $GLOBALS['phpgw']->db ) && (
-							$this->Type     != $GLOBALS['phpgw']->db->Type     ||
-							$this->Database != $GLOBALS['phpgw']->db->Database ||
-							$this->User     != $GLOBALS['phpgw']->db->User     ||
-							$this->Host     != $GLOBALS['phpgw']->db->Host     ||
-							$this->Port     != $GLOBALS['phpgw']->db->Port
+						isset( GlobalService::get('phpgw')->db ) &&
+						is_object( GlobalService::get('phpgw')->db ) && (
+							$this->Type     != GlobalService::get('phpgw')->db->Type     ||
+							$this->Database != GlobalService::get('phpgw')->db->Database ||
+							$this->User     != GlobalService::get('phpgw')->db->User     ||
+							$this->Host     != GlobalService::get('phpgw')->db->Host     ||
+							$this->Port     != GlobalService::get('phpgw')->db->Port
 						)
 					)
 				) {
-					if ( !( isset( $GLOBALS['phpgw']->ADOdb ) && is_object( $GLOBALS['phpgw']->ADOdb ) ) )	// use the global object to store the connection
+					if ( !( isset( GlobalService::get('phpgw')->ADOdb ) && is_object( GlobalService::get('phpgw')->ADOdb ) ) )	// use the global object to store the connection
 					{
-						$this->Link_ID = &$GLOBALS['phpgw']->ADOdb;
+						$this->Link_ID = &GlobalService::get('phpgw')->ADOdb;
 					}
 					else
 					{
@@ -237,13 +239,13 @@
 						$this->halt("No ADOdb support for '$type' !!!");
 						return 0;	// in case error-reporting = 'no'
 					}
-					$connect = ( isset( $GLOBALS['phpgw_info']['server']['db_persistent'] ) && $GLOBALS['phpgw_info']['server']['db_persistent'] ) ? 'PConnect' : 'Connect';
+					$connect = ( isset( GlobalService::get('phpgw_info')['server']['db_persistent'] ) && GlobalService::get('phpgw_info')['server']['db_persistent'] ) ? 'PConnect' : 'Connect';
 					if (!$this->Link_ID->$connect($Host, $User, $Password, $Database))
 					{
 						$this->halt("ADOdb::$connect($Host, $User, \$Password, $Database) failed.");
 						return 0;	// in case error-reporting = 'no'
 					}
-					//echo "new ADOdb connection<pre>".print_r($GLOBALS['phpgw']->ADOdb,True)."</pre>\n";
+					//echo "new ADOdb connection<pre>".print_r(GlobalService::get('phpgw')->ADOdb,True)."</pre>\n";
 
 					if ($this->Type == 'mssql')
 					{
@@ -256,7 +258,7 @@
 				}
 				else
 				{
-					$this->Link_ID = &$GLOBALS['phpgw']->ADOdb;
+					$this->Link_ID = &GlobalService::get('phpgw')->ADOdb;
 				}
 			}
 			return $this->Link_ID;
@@ -269,7 +271,7 @@
 		{
 			if (!$this->privat_Link_ID)
 			{
-				unset($GLOBALS['phpgw']->ADOdb);
+				unset(GlobalService::get('phpgw')->ADOdb);
 			}
 			unset($this->Link_ID);
 			$this->Link_ID = 0;
@@ -348,7 +350,7 @@
 		* @param mixed $line the line method was called from - use __LINE__
 		* @param string $file the file method was called from - use __FILE__
 		* @param int $offset row to start from
-		* @param int $num_rows number of rows to return (optional), if unset will use $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs']
+		* @param int $num_rows number of rows to return (optional), if unset will use GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs']
 		* @return int current query id if sucesful and null if fails
 		*/
 		function query($Query_String, $line = '', $file = '', $offset=0, $num_rows=-1)
@@ -373,7 +375,7 @@
 			}
 			if (! $num_rows)
 			{
-				$num_rows = $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'];
+				$num_rows = GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'];
 			}
 			if ($num_rows > 0)
 			{
@@ -401,7 +403,7 @@
 		* @param int $offset row to start from
 		* @param mixed $line the line method was called from - use __LINE__
 		* @param string $file the file method was called from - use __FILE__
-		* @param int $num_rows number of rows to return (optional), if unset will use $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs']
+		* @param int $num_rows number of rows to return (optional), if unset will use GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs']
 		* @return int current query id if sucesful and null if fails
 		*/
 		function limit_query($Query_String, $offset, $line = '', $file = '', $num_rows = '')
@@ -699,9 +701,9 @@
 			if ($this->Halt_On_Error != "report")
 			{
 				echo "<p><b>Session halted.</b>";
-				if (is_object($GLOBALS['phpgw']->common))
+				if (is_object(GlobalService::get('phpgw')->common))
 				{
- 					$GLOBALS['phpgw']->common->phpgw_exit(True);
+ 					GlobalService::get('phpgw')->common->phpgw_exit(True);
 	 			}
 				else	// happens eg. in setup
 				{
@@ -1071,7 +1073,7 @@
 		/**
 		* reads the table-definitions from the app's setup/tables_current.inc.php file
 		*
-		* The already read table-definitions are shared between all db-instances via $GLOBALS['phpgw_info']['apps'][$app]['table_defs']
+		* The already read table-definitions are shared between all db-instances via GlobalService::get('phpgw_info')['apps'][$app]['table_defs']
 		*
 		* @author RalfBecker<at>outdoor-training.de
 		*
@@ -1083,11 +1085,11 @@
 		{
 			if (!$app)
 			{
-				$app = $this->app ? $this->app : $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$app = $this->app ? $this->app : GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
-			if (isset($GLOBALS['phpgw_info']['apps']))	// dont set it, if it does not exist!!!
+			if (isset(GlobalService::get('phpgw_info')['apps']))	// dont set it, if it does not exist!!!
 			{
-				$this->app_data = &$GLOBALS['phpgw_info']['apps'][$app];
+				$this->app_data = &GlobalService::get('phpgw_info')['apps'][$app];
 			}
 			// this happens during the eGW startup or in setup
 			else
@@ -1168,7 +1170,7 @@
 		* @param $line int line-number to pass to query
 		* @param $file string file-name to pass to query
 		* @param $app mixed string with name of app or False to use the current-app
-		* @return the return-value of the call to db::query
+		* @return string return-value of the call to db::query
 		*/
 		function update($table,$data,$where,$line,$file,$app=False)
 		{
@@ -1190,7 +1192,7 @@
 		* @param $line int line-number to pass to query
 		* @param $file string file-name to pass to query
 		* @param $app mixed string with name of app or False to use the current-app
-		* @return the return-value of the call to db::query
+		* @return integer the return-value of the call to db::query
 		*/
 		function delete($table,$where,$line,$file,$app=False)
 		{

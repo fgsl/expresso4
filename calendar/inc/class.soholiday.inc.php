@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Holiday                                                     *
   * http://www.egroupware.org                                                *
@@ -18,7 +20,7 @@
 
 		function soholiday()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 			$this->table = 'phpgw_cal_holidays';
 			$this->table_definition = $this->db->get_table_definitions('calendar',$this->table);
 			$this->db->set_column_definitions($this->table_definition['fd']);
@@ -55,7 +57,7 @@
 				$holidays[] = Array(
 					'index'			=> $this->db->f('hol_id'),
 					'locale'		=> $this->db->f('locale'),
-					'name'			=> $GLOBALS['phpgw']->strip_html($this->db->f('name')),
+					'name'			=> GlobalService::get('phpgw')->strip_html($this->db->f('name')),
 					'day'			=> (int)$this->db->f('mday'),
 					'month'			=> (int)$this->db->f('month_num'),
 					'occurence'		=> (int)$this->db->f('occurence'),

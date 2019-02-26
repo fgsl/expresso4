@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* ExpressoLivre - Setup                                                     *
 	* http://www.expressolivre.org                                              *
@@ -16,7 +18,7 @@
 	}
 	$test[] = '1.234';
 	function expressoMail1_2_upgrade1_234() {
-    	$oProc = $GLOBALS['phpgw_setup']->oProc;            
+    	$oProc = GlobalService::get('phpgw_setup')->oProc;            
             $oProc->CreateTable('phpgw_certificados',array(
 			'fd' => array(
 				'email' => array( 'type' => 'varchar', 'precision' => 60, 'nullable' => false),
@@ -32,8 +34,8 @@
 			'uc' => array()
 			)
 		);
-		$GLOBALS['setup_info']['expressoMail1_2']['currentver'] = '1.235';
-        return $GLOBALS['setup_info']['expressoMail1_2']['currentver'];
+		GlobalService::get('setup_info')['expressoMail1_2']['currentver'] = '1.235';
+        return GlobalService::get('setup_info')['expressoMail1_2']['currentver'];
 	}
 	$test[] = '1.235';
 	function expressoMail1_2_upgrade1_235() {

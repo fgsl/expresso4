@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Translation class for SQL                               *
   * This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -51,10 +53,10 @@
 			{
 				$this->placeholders[] = '%'.$i;
 			}
-			$this->db = is_object($GLOBALS['phpgw']->db) ? $GLOBALS['phpgw']->db : $GLOBALS['phpgw_setup']->db;
-			if (!isset($GLOBALS['phpgw_setup']))
+			$this->db = is_object(GlobalService::get('phpgw')->db) ? GlobalService::get('phpgw')->db : GlobalService::get('phpgw_setup')->db;
+			if (!isset(GlobalService::get('phpgw_setup')))
 			{
-				$this->system_charset = @$GLOBALS['phpgw_info']['server']['system_charset'];
+				$this->system_charset = @GlobalService::get('phpgw_info')['server']['system_charset'];
 			}
 			else
 			{
@@ -86,37 +88,37 @@
 				return $this->system_charset;
 			}
 			// if no translations are loaded (system-startup) use a default, else lang('charset')
-			return !is_array(@$GLOBALS['lang']) ? 'iso-8859-1' : strtolower($this->translate('charset'));
+			return !is_array(@GlobalService::get('lang')) ? 'iso-8859-1' : strtolower($this->translate('charset'));
 		}
 
 		function init()
 		{
-			// post-nuke and php-nuke are using $GLOBALS['lang'] too
+			// post-nuke and php-nuke are using GlobalService::get('lang') too
 			// but not as array!
 			// this produces very strange results
-			if (!is_array(@$GLOBALS['lang']))
+			if (!is_array(@GlobalService::get('lang')))
 			{
-				$GLOBALS['lang'] = array();
+				GlobalService::get('lang') = array();
 			}
 
-			if ($GLOBALS['phpgw_info']['user']['preferences']['common']['lang'])
+			if (GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'])
 			{
-				$this->userlang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+				$this->userlang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 			}
-			elseif($GLOBALS['_SERVER']['HTTP_ACCEPT_LANGUAGE'])
+			elseif(GlobalService::get('_SERVER')['HTTP_ACCEPT_LANGUAGE'])
                         {
-                            //$this->userlang = $GLOBALS['_SERVER']['HTTP_ACCEPT_LANGUAGE'];
-                            $aux = explode(';',$GLOBALS['_SERVER']['HTTP_ACCEPT_LANGUAGE']);
+                            //$this->userlang = GlobalService::get('_SERVER')['HTTP_ACCEPT_LANGUAGE'];
+                            $aux = explode(';',GlobalService::get('_SERVER')['HTTP_ACCEPT_LANGUAGE']);
                             $aux = explode(',',$aux[0]);
                             $this->userlang = $aux[0];
                         }
 			$this->add_app('common');
-			if (!count($GLOBALS['lang']))
+			if (!count(GlobalService::get('lang')))
 			{
 				$this->userlang = 'en';
 				$this->add_app('common');
 			}
-			$this->add_app($GLOBALS['phpgw_info']['flags']['currentapp']);
+			$this->add_app(GlobalService::get('phpgw_info')['flags']['currentapp']);
 		}
 
 		/*!
@@ -126,24 +128,24 @@
 		*/
 		function translate($key, $vars=false, $not_found='*' )
 		{
-			if (!is_array(@$GLOBALS['lang']) || !count($GLOBALS['lang']))
+			if (!is_array(@GlobalService::get('lang')) || !count(GlobalService::get('lang')))
 			{
 				$this->init();
 			}
 			$ret = $key.$not_found;	// save key if we dont find a translation
 
-			if (isset($GLOBALS['lang'][$key]))
+			if (isset(GlobalService::get('lang')[$key]))
 			{
-				$ret = $GLOBALS['lang'][$key];
+				$ret = GlobalService::get('lang')[$key];
 			}
 			else
 			{
 				$new_key = strtolower(trim(substr($key,0,MAX_MESSAGE_ID_LENGTH)));
 
-				if (isset($GLOBALS['lang'][$new_key]))
+				if (isset(GlobalService::get('lang')[$new_key]))
 				{
 					// we save the original key for performance
-					$ret = $GLOBALS['lang'][$key] = $GLOBALS['lang'][$new_key];
+					$ret = GlobalService::get('lang')[$key] = GlobalService::get('lang')[$new_key];
 				}
 			}
 			if (is_array($vars) && count($vars))
@@ -215,7 +217,7 @@
 				$this->db->query($sql,__LINE__,__FILE__);
 				while ($this->db->next_record())
 				{
-					$GLOBALS['lang'][strtolower ($this->db->f('message_id'))] = $this->db->f('content');
+					GlobalService::get('lang')[strtolower ($this->db->f('message_id'))] = $this->db->f('content');
 				}
 				$this->loaded_apps[$app] = $lang;
 			}
@@ -383,12 +385,12 @@
 		{
 			@set_time_limit(0);	// we might need some time
 
-			if (!isset($GLOBALS['phpgw_info']['server']) && $upgrademethod != 'dumpold')
+			if (!isset(GlobalService::get('phpgw_info')['server']) && $upgrademethod != 'dumpold')
 			{
 				$this->db->query("SELECT * FROM phpgw_config WHERE config_app='phpgwapi' AND config_name='lang_ctimes'",__LINE__,__FILE__);
 				if ($this->db->next_record())
 				{
-					$GLOBALS['phpgw_info']['server']['lang_ctimes'] = unserialize(stripslashes($this->db->f('config_value')));
+					GlobalService::get('phpgw_info')['server']['lang_ctimes'] = unserialize(stripslashes($this->db->f('config_value')));
 				}
 			}
 
@@ -403,7 +405,7 @@
 				// dont delete the custom main- & loginscreen messages every time
 				$this->db->query("DELETE FROM phpgw_lang WHERE app_name != 'mainscreen' AND app_name != 'loginscreen'",__LINE__,__FILE__);
 				//echo '<br>Test: dumpold';
-				$GLOBALS['phpgw_info']['server']['lang_ctimes'] = array();
+				GlobalService::get('phpgw_info')['server']['lang_ctimes'] = array();
 			}
 			foreach($langs as $lang)
 			{
@@ -424,13 +426,13 @@
 				if ($addlang && $upgrademethod == 'addonlynew' || $upgrademethod != 'addonlynew')
 				{
 					//echo '<br>Test: loop above file()';
-					if (!is_object($GLOBALS['phpgw_setup']))
+					if (!is_object(GlobalService::get('phpgw_setup')))
 					{
-						$GLOBALS['phpgw_setup'] = CreateObject('phpgwapi.setup');
-						$GLOBALS['phpgw_setup']->db = $this->db;
+						GlobalService::get('phpgw_setup') = CreateObject('phpgwapi.setup');
+						GlobalService::get('phpgw_setup')->db = $this->db;
 					}
-					$setup_info = $GLOBALS['phpgw_setup']->detection->get_versions();
-					$setup_info = $GLOBALS['phpgw_setup']->detection->get_db_versions($setup_info);
+					$setup_info = GlobalService::get('phpgw_setup')->detection->get_versions();
+					$setup_info = GlobalService::get('phpgw_setup')->detection->get_db_versions($setup_info);
 					$raw = array();
 					$apps = $only_app ? array($only_app) : array_keys($setup_info);
 					// Visit each app/setup dir, look for a phpgw_lang file
@@ -438,7 +440,7 @@
 					{
 						$appfile = PHPGW_SERVER_ROOT . SEP . $app . SEP . 'setup' . SEP . 'phpgw_' . strtolower($lang) . '.lang';
 						//echo '<br>Checking in: ' . $app['name'];
-						if($GLOBALS['phpgw_setup']->app_registered($app) && file_exists($appfile))
+						if(GlobalService::get('phpgw_setup')->app_registered($app) && file_exists($appfile))
 						{
 							//echo '<br>Including: ' . $appfile;
 							$lines = file($appfile);
@@ -461,7 +463,7 @@
 								$app_name = chop($app_name);
 								$raw[$app_name][$message_id] = $content;
 							}
-							$GLOBALS['phpgw_info']['server']['lang_ctimes'][$lang][$app] = filectime($appfile);
+							GlobalService::get('phpgw_info')['server']['lang_ctimes'][$lang][$app] = filectime($appfile);
 						}
 					}
 					$charset = strtolower(@$raw['common']['charset'] ? $raw['common']['charset'] : $this->charset($lang));
@@ -530,7 +532,7 @@
 			// update the ctimes of the installed langsfiles for the autoloading of the lang-files
 			//
 			$config =  CreateObject('phpgwapi.config.save_value');
-			$config->save_value('lang_ctimes',$GLOBALS['phpgw_info']['server']['lang_ctimes'],'phpgwapi');
+			$config->save_value('lang_ctimes',GlobalService::get('phpgw_info')['server']['lang_ctimes'],'phpgwapi');
 		}
 
 		/*!
@@ -540,14 +542,14 @@
 		function autoload_changed_langfiles()
 		{
 			//echo "<h1>check_langs()</h1>\n";
-			if ($GLOBALS['phpgw_info']['server']['lang_ctimes'] && !is_array($GLOBALS['phpgw_info']['server']['lang_ctimes']))
+			if (GlobalService::get('phpgw_info')['server']['lang_ctimes'] && !is_array(GlobalService::get('phpgw_info')['server']['lang_ctimes']))
 			{
-				$GLOBALS['phpgw_info']['server']['lang_ctimes'] = unserialize($GLOBALS['phpgw_info']['server']['lang_ctimes']);
+				GlobalService::get('phpgw_info')['server']['lang_ctimes'] = unserialize(GlobalService::get('phpgw_info')['server']['lang_ctimes']);
 			}
-			//_debug_array($GLOBALS['phpgw_info']['server']['lang_ctimes']);
+			//_debug_array(GlobalService::get('phpgw_info')['server']['lang_ctimes']);
 
-			$lang = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
-			$apps = $GLOBALS['phpgw_info']['user']['apps'];
+			$lang = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
+			$apps = GlobalService::get('phpgw_info')['user']['apps'];
 			$apps['phpgwapi'] = True;	// check the api too
 			foreach($apps as $app => $data)
 			{
@@ -557,7 +559,7 @@
 				{
 					$ctime = filectime($fname);
 					/* This is done to avoid string offset error at least in php5 */
-					$tmp = $GLOBALS['phpgw_info']['server']['lang_ctimes'][$lang];
+					$tmp = GlobalService::get('phpgw_info')['server']['lang_ctimes'][$lang];
 					$ltime = (int)$tmp[$app];
 					unset($tmp);
 					//echo "checking lang='$lang', app='$app', ctime='$ctime', ltime='$ltime'<br>\n";

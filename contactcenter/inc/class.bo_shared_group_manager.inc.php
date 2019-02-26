@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -45,7 +47,7 @@
 
 	function find($what, $rules=false, $other=false)
 		{
-			$so_contact = CreateObject('contactcenter.so_contact',  $GLOBALS['phpgw_info']['user']['account_id']);
+			$so_contact = CreateObject('contactcenter.so_contact',  GlobalService::get('phpgw_info')['user']['account_id']);
 			$relacionados = $so_contact->get_relations();
 			
 			$array_retorno = array();
@@ -55,9 +57,9 @@
 			foreach($relacionados as $uid_relacionado => $tipo_relacionamento) {
 				$aclTemp = CreateObject("phpgwapi.acl",$uid_relacionado); 
 				$aclTemp->read();
-				//	Preciso verificar as permissões que o contato relacionado deu para o atual
-				$perms_relacao = $aclTemp->get_specific_rights($GLOBALS['phpgw_info']['user']['account_id'],'contactcenter'); 
-				//	Se não tiver permissão de leitura, nem se preocupe em listá-los
+				//	Preciso verificar as permissï¿½es que o contato relacionado deu para o atual
+				$perms_relacao = $aclTemp->get_specific_rights(GlobalService::get('phpgw_info')['user']['account_id'],'contactcenter'); 
+				//	Se nï¿½o tiver permissï¿½o de leitura, nem se preocupe em listï¿½-los
 				if(!(($perms_relacao&1) && $tipo_relacionamento == 1)) {									
 					continue;
 				}
@@ -172,7 +174,7 @@
 			array_push($search_rules, array(
 					'field' => 'group.owner',
 					'type'  => '=',
-					'value' => $GLOBALS['phpgw_info']['user']['account_id']
+					'value' => GlobalService::get('phpgw_info')['user']['account_id']
 				));			
 
 			$result_i = $this->find($search_fields, $search_rules, $search_other);
@@ -197,14 +199,14 @@
 			
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{

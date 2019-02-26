@@ -5,7 +5,7 @@
 /** 
 * Download de Arquivos
 *  
-* Formul�rios
+* Formulários
 * <code>
 * include '../lib/config.php';
 * include '../includes/classes/Download.class.php';
@@ -76,7 +76,7 @@ class Download {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base: </b> ' . $this->_pathBase . '<br>';
             } else {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base Invalida: </b> [' . $base . ']<br>';
-                throw new exception('Base [' . $base . '] � invalido.');
+                throw new \Exception('Base [' . $base . '] � invalido.');
             }
             
             /*if(!is_dir($this->_pathBase . $this->_pathFolder)){
@@ -84,7 +84,7 @@ class Download {
                 throw new exception(' Caminho n�o corresponde a uma pasta valida: </b> [' . $this->_pathBase . $this->_pathFolder . '].');
             } */
             
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             
             $this->sysError = '<b>Erro: </b>' . $e->getMessage() . '<br>';
             $this->sysDebug .= '<b>Thows Construtor Exit</b> <br>';
@@ -121,7 +121,7 @@ class Download {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File Name: </b> [' . $this->_file . ']<br>';
             } else {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base Invalida: </b> [' . $file . ']<br>';
-                throw new exception(' Arquivo [' . $file . '] � invalido.');
+                throw new \Exception(' Arquivo [' . $file . '] � invalido.');
             }
             
             
@@ -132,17 +132,17 @@ class Download {
             
             if($this->_fileExtension == 'php'){
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formato de Arquivo invalido: </b> [' . $this->_fileExtension . ']<br>';
-                throw new exception('Arquivo invalido.');
+                throw new \Exception('Arquivo invalido.');
             }
             
             if(strstr( $this->_pathBase . $this->_pathFolder . $this->_file, '../' )){
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pasta contem caracteres invalidos: </b> [' . $this->_pathBase . $this->_pathFolder . $this->_file . ']<br>';
-                throw new exception(' caminho [' . $this->_pathBase . $this->_pathFolder . $this->_file . '] � invalido.');
+                throw new \Exception(' caminho [' . $this->_pathBase . $this->_pathFolder . $this->_file . '] � invalido.');
             }
             
             if(!file_exists($this->_pathBase . $this->_pathFolder . $this->_file)){
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arquivo n�o encontrado: </b> [' . $this->_pathBase . $this->_pathFolder . $this->_file . ']<br>';
-                throw new exception('Arquivo n�o encontrado.');
+                throw new \Exception('Arquivo n�o encontrado.');
             }
             
             $sizeFile = filesize($this->_pathBase . $this->_pathFolder . $this->_file);
@@ -151,7 +151,7 @@ class Download {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arquivo com tamanho </b> [' . $this->_fileSize . '] bytes<br>';
             } else {
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arquivo com tamanho 0 bytes: </b><br>';
-                throw new exception('Arquivo truncado.');
+                throw new \Exception('Arquivo truncado.');
             }
             
             $arrExtensions = array();
@@ -189,7 +189,7 @@ class Download {
             
             if(! in_array($this->_fileExtension, $arrExtensions) ){
                 $this->sysDebug .= '<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extens�o de arquivo n�o permitida</b><br>';
-                throw new exception('Extens�o invalida [' . $this->_fileExtension . '].');
+                throw new \Exception('Extens�o invalida [' . $this->_fileExtension . '].');
             }
            
             switch($this->_fileExtension) {
@@ -289,7 +289,7 @@ class Download {
             header('Content-type: ' . $this->_fileMime . ';');
             //header('Content-Description: ' . $this->_file . ';');
             */
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             $this->sysError = '<b>Erro: </b>' . $e->getMessage() . '<br>';
             $this->sysDebug .= '<b>Thows UPLOAD Exit</b> <br>';
  

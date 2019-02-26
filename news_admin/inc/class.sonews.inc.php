@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - News                                                        *
 	* http://www.egroupware.org                                                *
@@ -19,7 +21,7 @@
 
 		function sonews()
 		{
-			copyobj($GLOBALS['phpgw']->db,$this->db);
+			copyobj(GlobalService::get('phpgw')->db,$this->db);
 		}
 
 		function get_newslist($cat_id, $start, $order,$sort,$limit=0,$activeonly,&$total)
@@ -65,13 +67,13 @@
 			while($this->db->next_record())
 			{
 				$news[$this->db->f('news_id')] = array(
-					'subject' => @htmlspecialchars($this->db->f('news_subject', True),ENT_COMPAT,$GLOBALS['phpgw']->translation->charset()),
+					'subject' => @htmlspecialchars($this->db->f('news_subject', True),ENT_COMPAT,GlobalService::get('phpgw')->translation->charset()),
 					'submittedby' => $this->db->f('news_submittedby'),
 					'date'    => $this->db->f('news_date'),
 					'id'      => $this->db->f('news_id'),
 					'begin'   => $this->db->f('news_begin'),
 					'end'     => $this->db->f('news_end'),
-					'teaser'  => @htmlspecialchars($this->db->f('news_teaser', True),ENT_COMPAT,$GLOBALS['phpgw']->translation->charset()),
+					'teaser'  => @htmlspecialchars($this->db->f('news_teaser', True),ENT_COMPAT,GlobalService::get('phpgw')->translation->charset()),
 					'content' => $this->db->f('news_content',True),
 					'is_html' => ($this->db->f('is_html') ? True : False),
 				);
@@ -105,7 +107,7 @@
 		{
 			$add_array = array(
 				'news_date'			=> (int)$news['date'],
-				'news_submittedby'	=> $GLOBALS['phpgw_info']['user']['account_id'],
+				'news_submittedby'	=> GlobalService::get('phpgw_info')['user']['account_id'],
 				'news_content'		=> $news['content'],
 				'news_subject'		=> $news['subject'],
 				'news_begin'		=> (int)$news['begin'],

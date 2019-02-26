@@ -3,10 +3,10 @@ class LogoutResource extends ExpressoAdapter {
 
 	public function setDocumentation() {
 
-		$this->setResource("Expresso","Logout","Desloga o usuário, invalidando a chave de autenticação.",array("POST"));
+		$this->setResource("Expresso","Logout","Desloga o usuï¿½rio, invalidando a chave de autenticaï¿½ï¿½o.",array("POST"));
 		$this->setIsMobile(true);
 
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
+		$this->addResourceParam("auth","string",true,"Chave de autenticaï¿½ï¿½o do Usuï¿½rio.",false);
 
 	}
 
@@ -15,20 +15,20 @@ class LogoutResource extends ExpressoAdapter {
 		parent::post($request);
 		
 		if($this-> isLoggedIn())
-		{	if ($_SESSION['phpgw_session']['session_id'] && file_exists($GLOBALS['phpgw_info']['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id']))	
+		{	if ($_SESSION['phpgw_session']['session_id'] && file_exists(GlobalService::get('phpgw_info')['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id']))	
 			{
-				$dh = opendir($GLOBALS['phpgw_info']['server']['temp_dir']. SEP . $_SESSION['phpgw_session']['session_id']);
+				$dh = opendir(GlobalService::get('phpgw_info')['server']['temp_dir']. SEP . $_SESSION['phpgw_session']['session_id']);
 				while ($file = readdir($dh)) 
 				{
 					if ($file != '.' && $file != '..') 
 					{
-						unlink($GLOBALS['phpgw_info']['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id'].SEP.$file);
+						unlink(GlobalService::get('phpgw_info')['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id'].SEP.$file);
 					}
 				}
-				rmdir($GLOBALS['phpgw_info']['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id']);
+				rmdir(GlobalService::get('phpgw_info')['server']['temp_dir'].SEP.$_SESSION['phpgw_session']['session_id']);
 			}
-			$GLOBALS['phpgw']->hooks->process('logout');
-			$GLOBALS['phpgw']->session->destroy($_SESSION['phpgw_session']['session_id'], $GLOBALS['kp3']);
+			GlobalService::get('phpgw')->hooks->process('logout');
+			GlobalService::get('phpgw')->session->destroy($_SESSION['phpgw_session']['session_id'], GlobalService::get('kp3']);
 			$this->setResult(true);
 		}
 		

@@ -1,5 +1,7 @@
 <?php
 
+	use Expresso\Core\GlobalService;
+
 	include_once('class.abo_catalog.inc.php');
 	class bo_shared_people_manager extends abo_catalog {
 		var $fields = array(
@@ -48,7 +50,7 @@
 		*/
 		function find($what, $rules=false, $other=false)
 		{
-			$so_contact = CreateObject('contactcenter.so_contact',  $GLOBALS['phpgw_info']['user']['account_id']);
+			$so_contact = CreateObject('contactcenter.so_contact',  GlobalService::get('phpgw_info')['user']['account_id']);
 			$relacionados = $so_contact->get_relations();
 			$array_retorno = array();
 			$array_map = array();
@@ -57,9 +59,9 @@
 			foreach($relacionados as $uid_relacionado => $tipo_relacionamento) {
 				$aclTemp = CreateObject("phpgwapi.acl",$uid_relacionado); 
 				$aclTemp->read();
-				$perms_relacao = $aclTemp->get_specific_rights($GLOBALS['phpgw_info']['user']['account_id'],'contactcenter'); //Preciso verificar as permissões que o contato relacionado deu para o atual
+				$perms_relacao = $aclTemp->get_specific_rights(GlobalService::get('phpgw_info')['user']['account_id'],'contactcenter'); //Preciso verificar as permissï¿½es que o contato relacionado deu para o atual
 				
-				if(!($perms_relacao&1)) //Se não tiver permissão de leitura, nem se preocupe em listá-los
+				if(!($perms_relacao&1)) //Se nï¿½o tiver permissï¿½o de leitura, nem se preocupe em listï¿½-los
 					continue;
 				if($tipo_relacionamento == 1) {
 					if (is_array($what) and count($what))
@@ -154,14 +156,14 @@
 		{	
 			if (!is_array($fields)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_single_entry parameters type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else 
 				{
@@ -294,14 +296,14 @@
 		{
 			if (!is_array($id_contacts) or !is_array($fields) or ($other_data != false and !is_array($other_data)))
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, wrong get_multiple_entry parameter type.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else {
 					exit('Argument Error on: <br>File:'.__FILE__.'<br>Line:'.__LINE__.'<br>');
@@ -1000,7 +1002,7 @@
 									$company = CreateObject('contactcenter.so_company');
 									$company->reset_values();
 									$company->set_company_name($company_fields['company_name']);
-									$company->set_field('id_company_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+									$company->set_field('id_company_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 									$company_fields['id_company'] = $company->commit();
 								}
 							}
@@ -1065,7 +1067,7 @@
 				{	
 					$contact->set_field('id_owner',$owner);
 				}else
-					$contact->set_field('id_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+					$contact->set_field('id_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 				return $contact->commit();
 			}
 			
@@ -1354,7 +1356,7 @@
 									$company = CreateObject('contactcenter.so_company');
 									$company->reset_values();
 									$company->set_company_name($company_fields['company_name']);
-									$company->set_field('id_company_owner',$GLOBALS['phpgw_info']['user']['account_id']);
+									$company->set_field('id_company_owner',GlobalService::get('phpgw_info')['user']['account_id']);
 									$company_fields['id_company'] = $company->commit();
 								}
 							}

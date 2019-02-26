@@ -1,6 +1,8 @@
 <?php
 
 
+use Expresso\Core\GlobalService;
+
 class CatalogAdapter extends ExpressoAdapter {	
 	private $minArgumentSearch;
 	private $userId;
@@ -8,7 +10,7 @@ class CatalogAdapter extends ExpressoAdapter {
 
 	public function __construct($id){
 		parent::__construct($id);
-		$prefs = $GLOBALS['phpgw']->preferences->read();
+		$prefs = GlobalService::get('phpgw')->preferences->read();
 		$this-> setMinArgumentSearch($prefs['expressoMail']['search_characters_number'] ? $prefs['expressoMail']['search_characters_number'] : "4");
 	}
 	
@@ -35,13 +37,13 @@ class CatalogAdapter extends ExpressoAdapter {
 	}
 	
 	protected function getUserId(){
-		return $GLOBALS['phpgw_info']['user']['account_id'];
+		return GlobalService::get('phpgw_info')['user']['account_id'];
 	}		
 
 	protected function getLdapCatalog(){
 		if(!$this->ldapCatalog)
 		{
-			$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+			$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 			
 			$this->ldapCatalog = CreateObject("expressoMail1_2.ldap_functions");
 		}
@@ -50,13 +52,13 @@ class CatalogAdapter extends ExpressoAdapter {
 	}
 	
 	protected function getDb(){
-		return $GLOBALS['phpgw']->db;
+		return GlobalService::get('phpgw')->db;
 	}	
 	
 	protected function getUserLdapAttrs($mail)
 	{
 		$filter="(&(phpgwAccountType=u)(mail=".$mail."))";
-		$ldap_context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$ldap_context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 		$justthese = array("dn", 'jpegPhoto','givenName', 'sn', 'uidNumber','telephonenumber'); 
 		$ds = $this->getLdapCatalog()->ds;
 		if ($ds){

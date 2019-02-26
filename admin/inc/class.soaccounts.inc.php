@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - account administration                                      *
 	* http://www.egroupware.org                                                *
@@ -26,7 +28,7 @@
 				$userData['account_email'] = $userData['email'];
 			}
 					
-			$GLOBALS['phpgw']->db->lock(
+			GlobalService::get('phpgw')->db->lock(
 				Array(
 					'phpgw_accounts',
 					'phpgw_nextid',
@@ -39,9 +41,9 @@
 				)
 			);
 
-			$GLOBALS['phpgw']->accounts->create($userData);
+			GlobalService::get('phpgw')->accounts->create($userData);
 
-			$userData['account_id'] = $GLOBALS['phpgw']->accounts->name2id($userData['account_lid']);
+			$userData['account_id'] = GlobalService::get('phpgw')->accounts->name2id($userData['account_lid']);
 			
 			$apps = CreateObject('phpgwapi.applications',$userData['account_id']);
 			$apps->read_installed_apps();
@@ -88,7 +90,7 @@
 
 			if ($userData['changepassword'])
 			{
-				$GLOBALS['phpgw']->acl->add_repository('preferences','changepassword',$userData['account_id'],1);
+				GlobalService::get('phpgw')->acl->add_repository('preferences','changepassword',$userData['account_id'],1);
 			}
 			// Assign user to groups
 			if ($userData['account_groups'])
@@ -96,14 +98,14 @@
 				$c_acct_groups = count($userData['account_groups']);
 				for ($i=0;$i<$c_acct_groups;$i++)
 				{
-					$GLOBALS['phpgw']->acl->add_repository('phpgw_group',$userData['account_groups'][$i],$userData['account_id'],1);
+					GlobalService::get('phpgw')->acl->add_repository('phpgw_group',$userData['account_groups'][$i],$userData['account_id'],1);
 				}
 			}
 
 			$apps->account_apps = array(array());
 			$apps_after = array(array());
 
-			$GLOBALS['phpgw']->db->unlock();
+			GlobalService::get('phpgw')->db->unlock();
 
 			return $userData['account_id'];
 		}

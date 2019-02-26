@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - Administration                                              *
 * http://www.egroupware.org                                                *
@@ -23,8 +25,8 @@ class uicurrentsessions
 	
 	public function uicurrentsessions()
 	{
-		if ( $GLOBALS['phpgw']->acl->check( 'current_sessions_access', 1, 'admin' ) )
-			$GLOBALS['phpgw']->redirect_link( '/index.php' );
+		if ( GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 1, 'admin' ) )
+			GlobalService::get('phpgw')->redirect_link( '/index.php' );
 		$this->template = CreateObject( 'phpgwapi.Template', PHPGW_APP_TPL );
 		$this->bo       = CreateObject( 'admin.bocurrentsessions' );
 	}
@@ -37,9 +39,9 @@ class uicurrentsessions
 		$order          = ( isset( $_GET['order'] ) && $_GET['order'] == 'session' );
 		$itens_per_page = ( isset( $_GET['per_page'] ) && in_array( (int)$_GET['per_page'], $per_page_nums ) )? (int)$_GET['per_page'] : 50;
 		
-		$can_kill = !$GLOBALS['phpgw']->acl->check( 'current_sessions_access', 8, 'admin' );
+		$can_kill = !GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 8, 'admin' );
 		
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang( 'Admin' ).' - '.lang( 'List of current users' );
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang( 'Admin' ).' - '.lang( 'List of current users' );
 		
 		$js_submit = '$(event.currentTarget).parents(\'form:first\').submit();';
 		
@@ -132,7 +134,7 @@ class uicurrentsessions
 	
 	public function kill_all()
 	{
-		if ( $GLOBALS['phpgw']->acl->check( 'current_sessions_access', 8, 'admin' ) )
+		if ( GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 8, 'admin' ) )
 			$this->_setResponse( array( 'error' => lang( 'permission denied' ) ), 404 );
 		
 		$filter = ( isset( $_GET['filter'] ) && strlen( str_replace( ' ', '', $_GET['filter'] ) ) > 2 )? str_replace( ' ', '', $_GET['filter'] ) : false;
@@ -146,15 +148,15 @@ class uicurrentsessions
 	
 	private function _header()
 	{
-		if ( !( isset( $GLOBALS['phpgw']->js ) && is_object( $GLOBALS['phpgw']->js ) ) ) $GLOBALS['phpgw']->js = CreateObject( 'phpgwapi.javascript' );
-		$GLOBALS['phpgw']->js->validate_file( 'jscode', 'openwindow', 'admin' );
-		$GLOBALS['phpgw']->common->phpgw_header();
+		if ( !( isset( GlobalService::get('phpgw')->js ) && is_object( GlobalService::get('phpgw')->js ) ) ) GlobalService::get('phpgw')->js = CreateObject( 'phpgwapi.javascript' );
+		GlobalService::get('phpgw')->js->validate_file( 'jscode', 'openwindow', 'admin' );
+		GlobalService::get('phpgw')->common->phpgw_header();
 		echo parse_navbar();
 	}
 	
 	private function _kill_session( $id, $sid_part, $batch = false )
 	{
-		if ( $GLOBALS['phpgw']->acl->check( 'current_sessions_access', 8, 'admin' ) )
+		if ( GlobalService::get('phpgw')->acl->check( 'current_sessions_access', 8, 'admin' ) )
 			$this->_setResponse( array( 'error' => lang( 'permission denied' ) ), 404 );
 		
 		if ( $id === '' ) $this->_setResponse( array( 'error' => lang( 'parameter not found' ) ), 404 );

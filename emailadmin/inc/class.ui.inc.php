@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***************************************************************************\
 	* EGroupWare - EMailAdmin                                                   *
 	* http://www.egroupware.org                                                 *
@@ -167,17 +169,17 @@ class ui
 	function addProfile()
 	{
 		// Header Page
-		$GLOBALS['phpgw']->common->phpgw_header();
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang("Add new profile Server Express");
+		GlobalService::get('phpgw')->common->phpgw_header();
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang("Add new profile Server Express");
 		echo parse_navbar();
 
 		// Get Form Profile;
 		$this->formProfile();
 
 		$this->template->set_var(array(
-			"action_url" 		=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.saveProfile'),
+			"action_url" 		=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.saveProfile'),
 			"lang_save"			=> lang("add"),
-			"link_back_page"	=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
+			"link_back_page"	=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
 		));
 
 		// Clear;
@@ -209,16 +211,16 @@ class ui
 		if( count($profileData) )
 		{	
 			// Header Page
-			$GLOBALS['phpgw']->common->phpgw_header();
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('edit') . " - " . $profileData['description'];
+			GlobalService::get('phpgw')->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('edit') . " - " . $profileData['description'];
 			echo parse_navbar();
 		
 			// Get Form Profile;
 			$this->formProfile();
 
 			$this->template->set_var( array(
-				"action_url" 		=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.saveProfile'),
-				"link_back_page"	=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
+				"action_url" 		=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.saveProfile'),
+				"link_back_page"	=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
 				"lang_save"			=> lang("save"),									
 			));
 
@@ -349,7 +351,7 @@ class ui
 			}
 			
 			$s = CreateObject('phpgwapi.sector_search_ldap');
-			$return['organization_units'] = $s->get_organizations( $GLOBALS['phpgw_info']['server']['ldap_context'], '', false, true, false, true );
+			$return['organization_units'] = $s->get_organizations( GlobalService::get('phpgw_info')['server']['ldap_context'], '', false, true, false, true );
 			
 			echo json_encode( $return );
 		}
@@ -360,8 +362,8 @@ class ui
 	function listDomains()
 	{
 		// Header Page
-		$GLOBALS['phpgw']->common->phpgw_header();
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin') .' - ' . lang('domain list');		
+		GlobalService::get('phpgw')->common->phpgw_header();
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin') .' - ' . lang('domain list');		
 		echo parse_navbar();
 
 		$this->template->set_file(array("body" => "listDomains.tpl"));
@@ -400,7 +402,7 @@ class ui
 			}
 		}
 		$this->template->set_var( array( 
-			"action_url"			=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listDomains'),
+			"action_url"			=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listDomains'),
 			"countDomains"			=> $countDomains,
 			"lang_add"				=> lang("add"),
 			"lang_remove"				=> lang("remove"),
@@ -432,7 +434,7 @@ class ui
 			"lang_search"			=> lang("search"),
 			"lang_search_domain"	=> lang("search domain"),
 			"lang_profile"			=> lang("profile"),
-			"link_back_page" 		=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listConfigurations'),
+			"link_back_page" 		=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listConfigurations'),
 			"rowsTable"				=> $rowsTable,
 			'extras_vars_keys_json' => preg_replace( '/^{/', '{ ', json_encode( array(
 				'defaultUserQuota'     => utf8_encode( lang( 'defaultUserQuota' ) ),
@@ -450,8 +452,8 @@ class ui
 	function listConfigurations()
 	{
 		// Header Page
-		$GLOBALS['phpgw']->common->phpgw_header();
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin') .' - ' . lang('Site Configuration');
+		GlobalService::get('phpgw')->common->phpgw_header();
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin') .' - ' . lang('Site Configuration');
 		echo parse_navbar();
 		
 		$this->template->set_file(array("body" => "listConfigurations.tpl"));
@@ -461,9 +463,9 @@ class ui
 			"lang_manage_profile"	=> lang("Manage Profile"),
 			"lang_profile_server" 	=> lang("Profile Server"),
 			"lang_server_mx"		=> lang("Server MX"),
-			"link_back_page"		=> $GLOBALS['phpgw']->link('/admin/index.php'),				
-			"link_profile_server"	=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
-			"link_server_mx"		=> $GLOBALS['phpgw']->link('/index.php','menuaction=emailadmin.ui.listDomains'),
+			"link_back_page"		=> GlobalService::get('phpgw')->link('/admin/index.php'),				
+			"link_profile_server"	=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listProfiles'),
+			"link_server_mx"		=> GlobalService::get('phpgw')->link('/index.php','menuaction=emailadmin.ui.listDomains'),
 		));
 
 		$this->template->set_block("body","main");
@@ -476,8 +478,8 @@ class ui
 	function listProfiles()
 	{
 		// Header Page
-		$GLOBALS['phpgw']->common->phpgw_header();
-		$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin') .' - ' . lang('profile list');
+		GlobalService::get('phpgw')->common->phpgw_header();
+		GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin') .' - ' . lang('profile list');
 		echo parse_navbar();
 		
 		$this->template->set_file(array("body" => "listProfiles.tpl"));
@@ -517,8 +519,8 @@ class ui
 				$rowsTable .= '<td>'.$profileList[$key]['description'].'</a></td>';
 				$rowsTable .= '<td>'.$profileList[$key]['smtpserver'].'</a></td>';
 				$rowsTable .= '<td>'.$profileList[$key]['imapserver'].'</a></td>';
-				$rowsTable .= '<td class="td_list_profiles"><a href="'.$GLOBALS['phpgw']->link('/index.php',$linkEdit).'">'.lang('Edit').'</a></td>';
-				$rowsTable .= '<td class="td_list_profiles"><a href="'.$GLOBALS['phpgw']->link('/index.php',$linkRemove).'" onClick="return confirm(\''.lang('Do you really want to delete this Profile').'\')">'.lang('delete').'</a></td>';
+				$rowsTable .= '<td class="td_list_profiles"><a href="'.GlobalService::get('phpgw')->link('/index.php',$linkEdit).'">'.lang('Edit').'</a></td>';
+				$rowsTable .= '<td class="td_list_profiles"><a href="'.GlobalService::get('phpgw')->link('/index.php',$linkRemove).'" onClick="return confirm(\''.lang('Do you really want to delete this Profile').'\')">'.lang('delete').'</a></td>';
 				$rowsTable .= "</tr>";
 			}
 		}
@@ -537,10 +539,10 @@ class ui
 			'lang_previous'		=> lang("previous"),
 			'lang_next'			=> lang("next"),
 			'lang_remove'		=> lang("delete"),
-			'link_add_new'		=> $GLOBALS['phpgw']->link('/index.php', 'menuaction=emailadmin.ui.addProfile'),
-			'link_back_page'	=> $GLOBALS['phpgw']->link('/index.php', 'menuaction=emailadmin.ui.listConfigurations'),
-			'link_previous'		=> $GLOBALS['phpgw']->link('/index.php', 'menuaction=emailadmin.ui.listProfiles&previous='.$previous.'&next='.$next.'&action=previous'),
-			'link_next'			=> $GLOBALS['phpgw']->link('/index.php', 'menuaction=emailadmin.ui.listProfiles&previous='.$previous.'&next='.$next.'&action=next')
+			'link_add_new'		=> GlobalService::get('phpgw')->link('/index.php', 'menuaction=emailadmin.ui.addProfile'),
+			'link_back_page'	=> GlobalService::get('phpgw')->link('/index.php', 'menuaction=emailadmin.ui.listConfigurations'),
+			'link_previous'		=> GlobalService::get('phpgw')->link('/index.php', 'menuaction=emailadmin.ui.listProfiles&previous='.$previous.'&next='.$next.'&action=previous'),
+			'link_next'			=> GlobalService::get('phpgw')->link('/index.php', 'menuaction=emailadmin.ui.listProfiles&previous='.$previous.'&next='.$next.'&action=next')
 		));
 		
 		$this->template->parse("out","main");

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - errorlog                                                    *
 	* http://www.egroupware.org                                                *
@@ -105,12 +107,12 @@
 		{
 			// jakjr: where I disable the log event.
 			return true;
-			$db = $GLOBALS['phpgw']->db;
+			$db = GlobalService::get('phpgw')->db;
 //			$db->lock('phpgw_log');
 			$db->query("insert into phpgw_log (log_date, log_user, log_app, log_severity) values "
-				."('". $GLOBALS['phpgw']->db->to_timestamp(time())
-				."','".(int)$GLOBALS['phpgw']->session->account_id
-				."','".$GLOBALS['phpgw_info']['flags']['currentapp']."'"
+				."('". GlobalService::get('phpgw')->db->to_timestamp(time())
+				."','".(int)GlobalService::get('phpgw')->session->account_id
+				."','".GlobalService::get('phpgw_info')['flags']['currentapp']."'"
 				.",'".$this->severity()."'"
 				.")"
 				,__LINE__,__FILE__
@@ -131,7 +133,7 @@
 					."log_msg_code, log_msg_msg, log_msg_parms, log_msg_file, log_msg_line) values "
 					."(" . $log_id
 					."," . $i
-					.", '" . $GLOBALS['phpgw']->db->to_timestamp($err->timestamp)
+					.", '" . GlobalService::get('phpgw')->db->to_timestamp($err->timestamp)
 					."', '". $err->severity . "'"
 					.", '". $err->code . "'"
 					.", '". $db->db_addslashes($err->msg) . "'"
@@ -195,7 +197,7 @@
 
 				$html .= "\t<tr bgcolor=".'"'.$color.'"'.">\n";
 				$html .= "\t\t<td align=center>".$i."</td>\n";
-				$html .= "\t\t<td>".$GLOBALS['phpgw']->common->show_date($err->timestamp)."</td>\n";
+				$html .= "\t\t<td>".GlobalService::get('phpgw')->common->show_date($err->timestamp)."</td>\n";
 				$html .= "\t\t<td>".$err->app."&nbsp </td>\n";
 				$html .= "\t\t<td align=center>".$err->severity."</td>\n";
 				$html .= "\t\t<td>".$err->code."</td>\n";

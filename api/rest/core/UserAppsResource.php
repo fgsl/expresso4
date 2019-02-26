@@ -15,7 +15,7 @@ class UserAppsResource extends ExpressoAdapter {
 
  		$user_id = $this->getParam('user');
 
- 		$account_id = $GLOBALS['phpgw']->accounts->name2id($user_id);
+ 		$account_id = GlobalService::get('phpgw')->accounts->name2id($user_id);
 
 		if ($account_id == "") { 
 			Errors::runException(2200);

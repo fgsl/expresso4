@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Webpage News Admin                                          *
 	* http://www.egroupware.org                                                *
@@ -36,15 +38,15 @@
 		}
 	}
 
-	$menu_title = $GLOBALS['phpgw_info']['apps'][$appname]['title'] . ' '. lang('Menu');	
+	$menu_title = GlobalService::get('phpgw_info')['apps'][$appname]['title'] . ' '. lang('Menu');	
 	if( $permited_add ) {
-		$file = Array( 'read news' => $GLOBALS['phpgw']->link('/news_admin/index.php'),
-						'Add New Article' => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uinews.add')
+		$file = Array( 'read news' => GlobalService::get('phpgw')->link('/news_admin/index.php'),
+						'Add New Article' => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uinews.add')
 		);
 		
 	} else {
 		$file = Array(
-		'read news' => $GLOBALS['phpgw']->link('/news_admin/index.php')		
+		'read news' => GlobalService::get('phpgw')->link('/news_admin/index.php')		
 		);
 	}
 	display_sidebox($appname,$menu_title,$file);
@@ -52,25 +54,25 @@
 	
  	$title = lang('Preferences');
 	$file = array(
-		'Preferences'     => $GLOBALS['phpgw']->link('/preferences/preferences.php','appname='.$appname),
+		'Preferences'     => GlobalService::get('phpgw')->link('/preferences/preferences.php','appname='.$appname),
 	);
 	display_sidebox($appname,$title,$file);
 
-	if ($GLOBALS['phpgw_info']['user']['apps']['admin'])
+	if (GlobalService::get('phpgw_info')['user']['apps']['admin'])
 	{
         $title = lang('Administration');
         $file = Array(
-                'News Administration'  => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uinews.write_news'),
-                'global categories' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uicategories.index&appname=' . $appname),
-                'configure access permissions' => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uiacl.acllist'),
-                'configure rss exports' => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uiexport.exportlist')
+                'News Administration'  => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uinews.write_news'),
+                'global categories' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uicategories.index&appname=' . $appname),
+                'configure access permissions' => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uiacl.acllist'),
+                'configure rss exports' => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uiexport.exportlist')
         );
 
 		display_sidebox($appname,$title,$file);
 	} else if($permited_add){
 		 $title = lang('Administration');
 	     $file = Array(
-	                'News Administration'  => $GLOBALS['phpgw']->link('/index.php','menuaction=news_admin.uinews.write_news')
+	                'News Administration'  => GlobalService::get('phpgw')->link('/index.php','menuaction=news_admin.uinews.write_news')
 	     );
 	     display_sidebox($appname,$title,$file);
 	}

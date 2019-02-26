@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Admin config                                                *
   * Written by Miles Lott <milosch@phpwhere.org>                             *
@@ -17,9 +19,9 @@
 
 		function index()
 		{
-			if ($GLOBALS['phpgw']->acl->check('site_config_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('site_config_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 
 			if(get_magic_quotes_gpc() && is_array($_POST['newsettings']))
@@ -44,7 +46,7 @@
 				case 'phpgwapi':
 				case '':
 					/* This keeps the admin from getting into what is a setup-only config */
-					$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+					GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 					break;
 				default:
 					$appname = $_GET['appname'];
@@ -52,7 +54,7 @@
 					break;
 			}
 
-			$t = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir($appname));
+			$t = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir($appname));
 			$t->set_unknowns('keep');
 			$t->set_file(array('config' => 'config.tpl'));
 			$t->set_block('config','header','header');
@@ -67,15 +69,15 @@
 				$current_config = $c->config_data;
 			}
 
-			if ($_POST['cancel'] || $_POST['submit'] && $GLOBALS['phpgw']->acl->check('site_config_access',2,'admin'))
+			if ($_POST['cancel'] || $_POST['submit'] && GlobalService::get('phpgw')->acl->check('site_config_access',2,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+				GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 			}
 
 			if ($_POST['submit'])
 			{
 				/* Load hook file with functions to validate each config (one/none/all) */
-				$GLOBALS['phpgw']->hooks->single('config_validate',$appname);
+				GlobalService::get('phpgw')->hooks->single('config_validate',$appname);
 				
 				if ( $appname === 'admin' && !isset($_POST['newsettings']['my_org_units']) ) $_POST['newsettings']['my_org_units'] = array();
 				
@@ -83,13 +85,13 @@
 				{
 					if ($config)
 					{
-						if($GLOBALS['phpgw_info']['server']['found_validation_hook'] && function_exists($key))
+						if(GlobalService::get('phpgw_info')['server']['found_validation_hook'] && function_exists($key))
 						{
 							call_user_func($key,$config);
-							if($GLOBALS['config_error'])
+							if(GlobalService::get('config_error'))
 							{
-								$errors .= lang($GLOBALS['config_error']) . '&nbsp;';
-								$GLOBALS['config_error'] = False;
+								$errors .= lang(GlobalService::get('config_error')) . '&nbsp;';
+								GlobalService::get('config_error') = False;
 							}
 							else
 							{
@@ -110,22 +112,22 @@
 						}
 					}
 				}
-				if($GLOBALS['phpgw_info']['server']['found_validation_hook'] && function_exists('final_validation'))
+				if(GlobalService::get('phpgw_info')['server']['found_validation_hook'] && function_exists('final_validation'))
 				{
 					final_validation($newsettings);
-					if($GLOBALS['config_error'])
+					if(GlobalService::get('config_error'))
 					{
-						$errors .= lang($GLOBALS['config_error']) . '&nbsp;';
-						$GLOBALS['config_error'] = False;
+						$errors .= lang(GlobalService::get('config_error')) . '&nbsp;';
+						GlobalService::get('config_error') = False;
 					}
-					unset($GLOBALS['phpgw_info']['server']['found_validation_hook']);
+					unset(GlobalService::get('phpgw_info')['server']['found_validation_hook']);
 				}
 
 				$c->save_repository();
 
 				if(!$errors)
 				{
-					$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+					GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 				}
 			}
 
@@ -134,33 +136,33 @@
 				$t->set_var('error',lang('Error') . ': ' . $errors);
 				$t->set_var('th_err','#FF8888');
 				unset($errors);
-				unset($GLOBALS['config_error']);
+				unset(GlobalService::get('config_error'));
 			}
 			else
 			{
 				$t->set_var('error','');
-				$t->set_var('th_err',$GLOBALS['phpgw_info']['theme']['th_bg']);
+				$t->set_var('th_err',GlobalService::get('phpgw_info')['theme']['th_bg']);
 			}
 
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
-			$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->js->validate_file('jscode','selectBox','admin');
+			GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
+			GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->js->validate_file('jscode','selectBox','admin');
 
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
 			if($appname=="expressoAdmin1_2") {
-				/* Varre a pasta inc do admin do expresso procurando scripts de geração de login automático
+				/* Varre a pasta inc do admin do expresso procurando scripts de geraï¿½ï¿½o de login automï¿½tico
 				   (classes com nomes iniciados pela string 'login', procedida da string '_' mais o nome
 				   do algoritmo.
 				*/
 				
-				$dir = $GLOBALS['phpgw']->common->get_app_dir($appname) . "/inc";
+				$dir = GlobalService::get('phpgw')->common->get_app_dir($appname) . "/inc";
 				$options = ' ';
 				if (is_dir($dir))
 				{
@@ -205,23 +207,23 @@
 				$oFCKeditor = new FCKeditor('newsettings[agree_term]');//CreateObject('news_admin.fckeditor','newsettings[agree_term]');
 				$oFCKeditor->BasePath = 'prototype/library/fckeditor/'; 
 				$oFCKeditor->ToolbarSet = 'Basic';
-				$oFCKeditor->Value = isset($GLOBALS['phpgw_info']['server']['agree_term']) ? $GLOBALS['phpgw_info']['server']['agree_term'] : '';
+				$oFCKeditor->Value = isset(GlobalService::get('phpgw_info')['server']['agree_term']) ? GlobalService::get('phpgw_info')['server']['agree_term'] : '';
 				$t->set_var('agree_term_input',$oFCKeditor->Create());
 			}
 			$t->set_var('title',lang('Site Configuration'));
 			$t->set_var('lang_Value_exceeds_the_PHP_upload_limit_for_this_server', lang('Value exceeds the PHP upload limit for this server'));
-			$t->set_var('action_url',$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname));
-			$t->set_var('th_bg',     $GLOBALS['phpgw_info']['theme']['th_bg']);
-			$t->set_var('th_text',   $GLOBALS['phpgw_info']['theme']['th_text']);
-			$t->set_var('row_on',    $GLOBALS['phpgw_info']['theme']['row_on']);
-			$t->set_var('row_off',   $GLOBALS['phpgw_info']['theme']['row_off']);
+			$t->set_var('action_url',GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiconfig.index&appname=' . $appname));
+			$t->set_var('th_bg',     GlobalService::get('phpgw_info')['theme']['th_bg']);
+			$t->set_var('th_text',   GlobalService::get('phpgw_info')['theme']['th_text']);
+			$t->set_var('row_on',    GlobalService::get('phpgw_info')['theme']['row_on']);
+			$t->set_var('row_off',   GlobalService::get('phpgw_info')['theme']['row_off']);
 			$t->set_var('php_upload_limit',str_replace('M','',ini_get('upload_max_filesize')));
 			
 			$t->pparse('out','header');
 
 			$vars = $t->get_undefined('body');
 
-			$GLOBALS['phpgw']->hooks->single('config',$appname);
+			GlobalService::get('phpgw')->hooks->single('config',$appname);
 
 			foreach($vars as $value)
 			{
@@ -297,7 +299,7 @@
 
 			$t->pfp('out','body');
 
-			$t->set_var('lang_submit', $GLOBALS['phpgw']->acl->check('site_config_access',2,'admin') ? lang('Cancel') : lang('Save'));
+			$t->set_var('lang_submit', GlobalService::get('phpgw')->acl->check('site_config_access',2,'admin') ? lang('Cancel') : lang('Save'));
 			$t->set_var('lang_cancel', lang('Cancel'));
 			$t->pfp('out','footer');
 		}

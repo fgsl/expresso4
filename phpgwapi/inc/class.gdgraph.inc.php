@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/*******************************************************************\
 	* eGroupWare - GD Graph                                             *
 	* http://www.egroupware.org                                       *
@@ -218,7 +220,7 @@
 					if($this->debug)
 					{
 						echo 'PRO sdate >= date! pro_sdate = ' . $line['sdate'] . ', pro_edate = ' . $line['edate'] . '<br>';
-						echo 'PRO sdate >= date! pro_sdate_formatted = ' . $GLOBALS['phpgw']->common->show_date($line['sdate'],$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']) . ', pro_edate_formatted = ' . $GLOBALS['phpgw']->common->show_date($line['edate'],$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']) . '<br>';
+						echo 'PRO sdate >= date! pro_sdate_formatted = ' . GlobalService::get('phpgw')->common->show_date($line['sdate'],GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']) . ', pro_edate_formatted = ' . GlobalService::get('phpgw')->common->show_date($line['edate'],GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']) . '<br>';
 						echo 'x sdate: ' . $this->line_captions_x[0]['date'] . ', x edate: ' . $this->line_captions_x[$largest]['date'] . '<br><br>';
 					}
 
@@ -240,7 +242,7 @@
 					if($this->debug)
 					{
 						echo 'PRO edate >= x edate! pro_edate = ' . $line['edate'] . '<br>';
-						echo 'PRO edate >= x edate! pro_edate_formatted = ' . $GLOBALS['phpgw']->common->show_date($line['edate'],$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']) . '<br>';
+						echo 'PRO edate >= x edate! pro_edate_formatted = ' . GlobalService::get('phpgw')->common->show_date($line['edate'],GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']) . '<br>';
 						echo 'x edate: ' . $this->line_captions_x[$largest]['date'] . '<br>';
 					}
 
@@ -289,9 +291,9 @@
 		{
 			print('<script language="JavaScript">');
 			print('window.open(\'main.php3?menuAction=boGraph.Show&');
-			if(strstr($GLOBALS['HTTP_USER_AGENT'],'MSIE'))
+			if(strstr(GlobalService::get('HTTP_USER_AGENT'),'MSIE'))
 			{
-				print('DCLINFO=' . $GLOBALS['DCLINFO'] . '&');
+				print('DCLINFO=' . GlobalService::get('DCLINFO') . '&');
 			}
 			print($this->ToURL() . '\', \'graph\', \'width=' . ($this->graph_width + 20) . ',height=' . ($this->graph_height + 20) . ',resizable=yes,scrollbars=yes\');');
 			print('</script>');
@@ -305,28 +307,28 @@
 
 		function FromURL()
 		{
-			$this->title = $GLOBALS['title'];
-			$this->caption_x = $GLOBALS['caption_x'];
-			$this->caption_y = $GLOBALS['caption_y'];
-			$this->num_lines_x = $GLOBALS['num_lines_x'];
-			$this->num_lines_y = $GLOBALS['num_lines_y'];
-			$this->line_captions_x = explode(',', $GLOBALS['line_captions_x']);
+			$this->title = GlobalService::get('title');
+			$this->caption_x = GlobalService::get('caption_x');
+			$this->caption_y = GlobalService::get('caption_y');
+			$this->num_lines_x = GlobalService::get('num_lines_x');
+			$this->num_lines_y = GlobalService::get('num_lines_y');
+			$this->line_captions_x = explode(',', GlobalService::get('line_captions_x'));
 
-			$dataURL = explode('~', $GLOBALS['data']);
+			$dataURL = explode('~', GlobalService::get('data'));
 			$this->data = array();
 			while (list($junk, $line) = each($dataURL))
 			{
 				$this->data[] = explode(',', $line);
 			}
 
-			$this->colors = explode(',', $GLOBALS['colors']);
-			$this->color_legend = explode(',', $GLOBALS['color_legend']);
-			$this->graph_width = $GLOBALS['graph_width'];
-			$this->graph_height = $GLOBALS['graph_height'];
-			$this->margin_top = $GLOBALS['margin_top'];
-			$this->margin_left = $GLOBALS['margin_left'];
-			$this->margin_bottom = $GLOBALS['margin_bottom'];
-			$this->margin_right = $GLOBALS['margin_right'];
+			$this->colors = explode(',', GlobalService::get('colors'));
+			$this->color_legend = explode(',', GlobalService::get('color_legend'));
+			$this->graph_width = GlobalService::get('graph_width');
+			$this->graph_height = GlobalService::get('graph_height');
+			$this->margin_top = GlobalService::get('margin_top');
+			$this->margin_left = GlobalService::get('margin_left');
+			$this->margin_bottom = GlobalService::get('margin_bottom');
+			$this->margin_right = GlobalService::get('margin_right');
 		}
 
 		function ToURL()

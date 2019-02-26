@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -20,32 +22,32 @@
 		'nofooter'	=>	True
 	);
 
-	$GLOBALS['phpgw_info']['flags'] = $phpgw_flags;
+	GlobalService::get('phpgw_info')['flags'] = $phpgw_flags;
 
 	$d1 = strtolower(substr(PHPGW_APP_INC,0,3));
 	if($d1 == 'htt' || $d1 == 'ftp' )
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>'."\n";
-		$GLOBALS['phpgw']->common->phpgw_exit();
+		GlobalService::get('phpgw')->common->phpgw_exit();
 	}
 	unset($d1);
 
-	$showevents = (int)$GLOBALS['phpgw_info']['user']['preferences']['calendar']['mainscreen_showevents'];
+	$showevents = (int)GlobalService::get('phpgw_info')['user']['preferences']['calendar']['mainscreen_showevents'];
 	if($showevents>0)
 	{
-		$GLOBALS['phpgw']->translation->add_app('calendar');
-		if(!is_object($GLOBALS['phpgw']->datetime))
+		GlobalService::get('phpgw')->translation->add_app('calendar');
+		if(!is_object(GlobalService::get('phpgw')->datetime))
 		{
-			$GLOBALS['phpgw']->datetime = CreateObject('phpgwapi.date_time');
+			GlobalService::get('phpgw')->datetime = CreateObject('phpgwapi.date_time');
 		}
 
-		$GLOBALS['date'] = date('Ymd',$GLOBALS['phpgw']->datetime->users_localtime);
-		$GLOBALS['g_year'] = substr($GLOBALS['date'],0,4);
-		$GLOBALS['g_month'] = substr($GLOBALS['date'],4,2);
-		$GLOBALS['g_day'] = substr($GLOBALS['date'],6,2);
-		$GLOBALS['owner'] = $GLOBALS['phpgw_info']['user']['account_id'];
-		$GLOBALS['css'] = "\n".'<style type="text/css">'."\n".'<!--'."\n"
-			. ExecMethod('calendar.uicalendar.css').'-->'."\n".'</style>';
+		GlobalService::set('date',date('Ymd',GlobalService::get('phpgw')->datetime->users_localtime));
+		GlobalService::set('g_year',substr(GlobalService::get('date'),0,4));
+		GlobalService::set('g_month',substr(GlobalService::get('date'),4,2));
+		GlobalService::set('g_day',substr(GlobalService::get('date'),6,2));
+		GlobalService::set('owner',GlobalService::get('phpgw_info')['user']['account_id']);
+		GlobalService::set('css',"\n".'<style type="text/css">'."\n".'<!--'."\n"
+			. ExecMethod('calendar.uicalendar.css').'-->'."\n".'</style>');
 
 		if($showevents==2)
 		{
@@ -53,13 +55,13 @@
 		}
 		else
 		{
-			$page_ = explode('.',$GLOBALS['phpgw_info']['user']['preferences']['calendar']['defaultcalendar']);
+			$page_ = explode('.',GlobalService::get('phpgw_info')['user']['preferences']['calendar']['defaultcalendar']);
 			$_page = substr($page_[0],0,7);	// makes planner from planner_{user|category}
 			if ($_page=='index' || ($_page != 'day' && $_page != 'week' && $_page != 'month' && $_page != 'year' && $_page != 'planner'))
 			{
 				$_page = 'month';
-//			$GLOBALS['phpgw']->preferences->add('calendar','defaultcalendar','month');
-//			$GLOBALS['phpgw']->preferences->save_repository();
+//			GlobalService::get('phpgw')->preferences->add('calendar','defaultcalendar','month');
+//			GlobalService::get('phpgw')->preferences->save_repository();
 			}
 		}
 
@@ -74,17 +76,17 @@
 		$portalbox = CreateObject('phpgwapi.listbox',
 			Array(
 				'title'	=> $title,
-				'primary'	=> $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-				'secondary'	=> $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-				'tertiary'	=> $GLOBALS['phpgw_info']['theme']['navbar_bg'],
+				'primary'	=> GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+				'secondary'	=> GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+				'tertiary'	=> GlobalService::get('phpgw_info')['theme']['navbar_bg'],
 				'width'	=> '100%',
 				'outerborderwidth'	=> '0',
-				'header_background_image'	=> $GLOBALS['phpgw']->common->image('phpgwapi/templates/default','bg_filler')
+				'header_background_image'	=> GlobalService::get('phpgw')->common->image('phpgwapi/templates/default','bg_filler')
 			)
 		);
 
-		$app_id = $GLOBALS['phpgw']->applications->name2id('calendar');
-		$GLOBALS['portal_order'][] = $app_id;
+		$app_id = GlobalService::get('phpgw')->applications->name2id('calendar');
+		GlobalService::get('portal_order')[] = $app_id;
 		$var = Array(
 			'up'	=> Array('url'	=> '/set_box.php', 'app'	=> $app_id),
 			'down'	=> Array('url'	=> '/set_box.php', 'app'	=> $app_id),
@@ -100,7 +102,7 @@
 
 		$portalbox->data = Array();
 
-		echo "\n".'<!-- BEGIN Calendar info -->'."\n".$portalbox->draw($GLOBALS['extra_data'])."\n".'<!-- END Calendar info -->'."\n";
+		echo "\n".'<!-- BEGIN Calendar info -->'."\n".$portalbox->draw(GlobalService::get('extra_data'))."\n".'<!-- END Calendar info -->'."\n";
 		unset($cal);
 	}
 	flush();

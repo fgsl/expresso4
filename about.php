@@ -1,3 +1,6 @@
+<?php
+use Expresso\Core\GlobalService;
+?>
 	<?php
 	/**************************************************************************\
 	* eGroupWare                                                               *
@@ -9,10 +12,10 @@
 	*  option) any later version.                                              *
 	\**************************************************************************/
 
-	$GLOBALS['phpgw_info'] = array();
-	$GLOBALS['phpgw_info']['flags']['currentapp'] = 'about';
-	$GLOBALS['phpgw_info']['flags']['disable_Template_class'] = True;
-	$GLOBALS['phpgw_info']['flags']['noheader'] = True;
+	GlobalService::get('phpgw_info') = array();
+	GlobalService::get('phpgw_info')['flags']['currentapp'] = 'about';
+	GlobalService::get('phpgw_info')['flags']['disable_Template_class'] = True;
+	GlobalService::get('phpgw_info')['flags']['noheader'] = True;
 	include('header.inc.php');
 
 	$app = $_GET['app'];
@@ -20,15 +23,15 @@
 	
 	if ($app)
 	{
-		if ( !($included = $GLOBALS['phpgw']->hooks->single('about',$app)) )
+		if ( !($included = GlobalService::get('phpgw')->hooks->single('about',$app)) )
 		{
 			function about_app()
 			{
 				global $app;
-				$icon = $GLOBALS['phpgw']->common->image($app,array('navbar','nonav'));
+				$icon = GlobalService::get('phpgw')->common->image($app,array('navbar','nonav'));
 				include (PHPGW_INCLUDE_ROOT . "/$app/setup/setup.inc.php");
 				$info = $setup_info[$app];
-				$info['title'] = $GLOBALS['phpgw_info']['apps'][$app]['title'];
+				$info['title'] = GlobalService::get('phpgw_info')['apps'][$app]['title'];
 				$other_infos = array(
 					'author'     => lang('Author'),
 					'maintainer' => lang('Maintainer'),
@@ -100,15 +103,15 @@
 		}
 	}
 
-	$tpl = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('phpgwapi'));
+	$tpl = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('phpgwapi'));
 	$tpl->set_file(array(
 		'phpgw_about'            => 'about.tpl',
 		'phpgw_about_egroupware' => 'about_egroupware.tpl'
 	));
 
-	$title = isset($GLOBALS['phpgw_info']['apps'][$app]) ? $GLOBALS['phpgw_info']['apps'][$app]['title'] : 'eGroupWare';
-	$GLOBALS['phpgw_info']['flags']['app_header'] = lang('About %1',$title);
-	$GLOBALS['phpgw']->common->phpgw_header();
+	$title = isset(GlobalService::get('phpgw_info')['apps'][$app]) ? GlobalService::get('phpgw_info')['apps'][$app]['title'] : 'eGroupWare';
+	GlobalService::get('phpgw_info')['flags']['app_header'] = lang('About %1',$title);
+	GlobalService::get('phpgw')->common->phpgw_header();
 
 	if ($included)
 	{
@@ -117,12 +120,12 @@
 	}
 	else
 	{
-		$tpl->set_var('phpgw_logo',$GLOBALS['phpgw']->common->image('phpgwapi','logo.gif'));
-		$tpl->set_var('phpgw_version',lang('eGroupWare API version %1',$GLOBALS['phpgw_info']['server']['versions']['phpgwapi']));
+		$tpl->set_var('phpgw_logo',GlobalService::get('phpgw')->common->image('phpgwapi','logo.gif'));
+		$tpl->set_var('phpgw_version',lang('eGroupWare API version %1',GlobalService::get('phpgw_info')['server']['versions']['phpgwapi']));
 		$tpl->set_var('phpgw_message',lang('%1eGroupWare%2 is a multi-user, web-based groupware suite written in %3PHP%4.',
 		'<a href="http://www.eGroupWare.org" target="_blank">','</a>','<a href="http://www.php.net" target="_blank">','</a>'));
 		$tpl->pparse('out','phpgw_about_egroupware');
 	}
 
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

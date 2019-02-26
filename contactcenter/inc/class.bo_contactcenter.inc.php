@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -33,8 +35,8 @@
 
 		function bo_contactcenter($catalog=false)
 		{
-			$this->tree = $GLOBALS['phpgw']->session->appsession('bo_contactcenter.tree','contactcenter');
-			$this->catalog_level = $GLOBALS['phpgw']->session->appsession('bo_contactcenter.catalog_level','contactcenter');
+			$this->tree = GlobalService::get('phpgw')->session->appsession('bo_contactcenter.tree','contactcenter');
+			$this->catalog_level = GlobalService::get('phpgw')->session->appsession('bo_contactcenter.catalog_level','contactcenter');
 			$this->security = CreateObject('contactcenter.bo_security_manager');
 			
 			if ($catalog)
@@ -59,7 +61,7 @@
 		/*
 		 *
 		 * @function is_external
-		 * @author Mário César Kolling <mario.kolling@serpro.gov.br>
+		 * @author Mï¿½rio Cï¿½sar Kolling <mario.kolling@serpro.gov.br>
 		 * @abstract Verify if a catalog is external
 		 * @param (mixed) an catalog array or a catalog tree level, a string in the form 0.sublevel.subsublevel
 		 * @return (boolean) true if it is an external catalog false otherwise
@@ -217,7 +219,7 @@
 				catalog-entity-view tree and their respective
 				values and types
 			@author Raphael Derosso Pereira
-			@author Mário César Kolling (external catalogs and optimizations)
+			@author Mï¿½rio Cï¿½sar Kolling (external catalogs and optimizations)
 
 			@param (string)  $level The level to be taken
 			@param (boolean) $recursive Retrive the whole tree from
@@ -307,7 +309,7 @@
 							return false;
 						}
 					}
-					$GLOBALS['phpgw']->session->appsession('bo_contactcenter.tree','contactcenter',$this->tree);
+					GlobalService::get('phpgw')->session->appsession('bo_contactcenter.tree','contactcenter',$this->tree);
 					
 					return $branch;
 				}
@@ -436,7 +438,7 @@
 					$i++;
 				}
 			}	
-			$GLOBALS['phpgw']->session->appsession('bo_contactcenter.tree','contactcenter',$this->tree);
+			GlobalService::get('phpgw')->session->appsession('bo_contactcenter.tree','contactcenter',$this->tree);
 			return $this->tree['branches'];
 		}
 
@@ -619,7 +621,7 @@
 				case 'catalog_group':
 				case 'mixed_catalog_group':
 					$this->catalog_level = array($level);
-					$GLOBALS['phpgw']->session->appsession('bo_contactcenter.catalog_level','contactcenter', $this->catalog_level);
+					GlobalService::get('phpgw')->session->appsession('bo_contactcenter.catalog_level','contactcenter', $this->catalog_level);
 					$call = '$this->catalog = CreateObject('.'\'contactcenter.'.$catalog['class'].'\'';
 					if ($catalog['class_args'])
 					{

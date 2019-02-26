@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 class ldap_functions
 {
 	var $conn;
@@ -9,17 +11,17 @@ class ldap_functions
 	{
 		$common = new common();
 		if (
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-			(!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw']))
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+			(!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']))
 		) {
 			$this->conn = $common->ldapConnect(
-				$GLOBALS['phpgw_info']['server']['ldap_master_host'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-				$GLOBALS['phpgw_info']['server']['ldap_master_root_pw']
+				GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+				GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']
 			);
 		} else $this->conn = $common->ldapConnect();
-		$this->context = $GLOBALS['phpgw_info']['server']['ldap_context'];
+		$this->context = GlobalService::get('phpgw_info')['server']['ldap_context'];
 	}
 	
 	function listOU()

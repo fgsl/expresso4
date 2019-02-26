@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - account administration                                      *
 	* http://www.egroupware.org                                                *
@@ -76,7 +78,7 @@
 
 		function delete_group()
 		{
-			if (!@isset($_POST['account_id']) || !@$_POST['account_id'] || $GLOBALS['phpgw']->acl->check('group_access',32,'admin'))
+			if (!@isset($_POST['account_id']) || !@$_POST['account_id'] || GlobalService::get('phpgw')->acl->check('group_access',32,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_groups');
 				return False;
@@ -84,7 +86,7 @@
 			
 			$account_id = (int)$_POST['account_id'];
 
-			$GLOBALS['phpgw']->db->lock(
+			GlobalService::get('phpgw')->db->lock(
 				Array(
 					'phpgw_accounts',
 					'phpgw_app_sessions',
@@ -92,18 +94,18 @@
 				)
 			);
 				
-			$old_group_list = $GLOBALS['phpgw']->acl->get_ids_for_location($account_id,1,'phpgw_group');
+			$old_group_list = GlobalService::get('phpgw')->acl->get_ids_for_location($account_id,1,'phpgw_group');
 
 			@reset($old_group_list);
 			while($old_group_list && $id = each($old_group_list))
 			{
-				$GLOBALS['phpgw']->acl->delete_repository('phpgw_group',$account_id,(int)$id[1]);
-				$GLOBALS['phpgw']->session->delete_cache((int)$id[1]);
+				GlobalService::get('phpgw')->acl->delete_repository('phpgw_group',$account_id,(int)$id[1]);
+				GlobalService::get('phpgw')->session->delete_cache((int)$id[1]);
 			}
 
-			$GLOBALS['phpgw']->acl->delete_repository('%%','run',$account_id);
+			GlobalService::get('phpgw')->acl->delete_repository('%%','run',$account_id);
 
-			if (! @rmdir($GLOBALS['phpgw_info']['server']['files_dir'].SEP.'groups'.SEP.$GLOBALS['phpgw']->accounts->id2name($account_id)))
+			if (! @rmdir(GlobalService::get('phpgw_info')['server']['files_dir'].SEP.'groups'.SEP.GlobalService::get('phpgw')->accounts->id2name($account_id)))
 			{
 				$cd = 38;
 			}
@@ -112,17 +114,17 @@
 				$cd = 32;
 			}
 
-			$GLOBALS['phpgw']->accounts->delete($account_id);
+			GlobalService::get('phpgw')->accounts->delete($account_id);
 
-			$GLOBALS['phpgw']->db->unlock();
+			GlobalService::get('phpgw')->db->unlock();
 
-			Header('Location: '.$GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
-			$GLOBALS['phpgw']->common->phpgw_exit();
+			Header('Location: '.GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
+			GlobalService::get('phpgw')->common->phpgw_exit();
 		}
 
 		function delete_user()
 		{
-			if (isset($_POST['cancel']) || $GLOBALS['phpgw']->acl->check('account_access',32,'admin'))
+			if (isset($_POST['cancel']) || GlobalService::get('phpgw')->acl->check('account_access',32,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_users');
 				return False;
@@ -133,14 +135,14 @@
 				settype($account_id,'integer');
 				$account_id = get_account_id($accountid);
 				// make this information also in hook available
-				$lid = $GLOBALS['phpgw']->accounts->id2name($account_id);
+				$lid = GlobalService::get('phpgw')->accounts->id2name($account_id);
 
-				$GLOBALS['hook_values']['account_id'] = $account_id;
-				$GLOBALS['hook_values']['account_lid'] = $lid;
+				GlobalService::get('hook_values')['account_id'] = $account_id;
+				GlobalService::get('hook_values')['account_lid'] = $lid;
 				
-				$singleHookValues = $GLOBALS['hook_values']+array('location' => 'deleteaccount');
+				$singleHookValues = GlobalService::get('hook_values')+array('location' => 'deleteaccount');
 
-				$db = $GLOBALS['phpgw']->db;
+				$db = GlobalService::get('phpgw')->db;
 				$db->query('SELECT app_name,app_order FROM phpgw_applications WHERE app_enabled!=0 ORDER BY app_order',__LINE__,__FILE__);
 				if($db->num_rows())
 				{
@@ -150,15 +152,15 @@
 
 						if($appname <> 'admin' || $appname <> 'preferences')
 						{
-							$GLOBALS['phpgw']->hooks->single($singleHookValues, $appname);
+							GlobalService::get('phpgw')->hooks->single($singleHookValues, $appname);
 						}
 					}
 				}
 
-				$GLOBALS['phpgw']->hooks->single('deleteaccount','preferences');
-				$GLOBALS['phpgw']->hooks->single('deleteaccount','admin');
+				GlobalService::get('phpgw')->hooks->single('deleteaccount','preferences');
+				GlobalService::get('phpgw')->hooks->single('deleteaccount','admin');
 
-				$basedir = $GLOBALS['phpgw_info']['server']['files_dir'] . SEP . 'users' . SEP;
+				$basedir = GlobalService::get('phpgw_info')['server']['files_dir'] . SEP . 'users' . SEP;
 
 				if (! @rmdir($basedir . $lid))
 				{
@@ -176,7 +178,7 @@
 
 		function add_group()
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',4,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',4,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_groups');
 				return False;
@@ -212,7 +214,7 @@
 
 			$this->validate_group($group_info);
 
-			$GLOBALS['phpgw']->db->lock(
+			GlobalService::get('phpgw')->db->lock(
 				Array(
 					'phpgw_accounts',
 					'phpgw_nextid',
@@ -264,26 +266,26 @@
 					$acl->add_repository('phpgw_group',$group_info['account_id'],$user_id,1);
 	
 					$docommit = False;
-					$GLOBALS['pref'] = CreateObject('phpgwapi.preferences',$user_id);
-					$t = $GLOBALS['pref']->read_repository();
+					GlobalService::get('pref') = CreateObject('phpgwapi.preferences',$user_id);
+					$t = GlobalService::get('pref')->read_repository();
 					@reset($new_apps);
 					while(is_array($new_apps) && list($app_key,$app_name) = each($new_apps))
 					{
 						if (!$t[($app_name=='admin'?'common':$app_name)])
 						{
-							$GLOBALS['phpgw']->hooks->single('add_def_pref', $app_name);
+							GlobalService::get('phpgw')->hooks->single('add_def_pref', $app_name);
 							$docommit = True;
 						}
 					}
 					if ($docommit)
 					{
-						$GLOBALS['pref']->save_repository();
+						GlobalService::get('pref')->save_repository();
 					}
 				}
 	
 				$acl->save_repository();
 	
-				$basedir = $GLOBALS['phpgw_info']['server']['files_dir'] . SEP . 'groups' . SEP;
+				$basedir = GlobalService::get('phpgw_info')['server']['files_dir'] . SEP . 'groups' . SEP;
 				$cd = 31;
 				umask(000);
 				if (! @mkdir ($basedir . $group_info['account_name'], 0707))
@@ -291,7 +293,7 @@
 					$cd = 37;
 				}
 	
-				$GLOBALS['phpgw']->db->unlock();
+				GlobalService::get('phpgw')->db->unlock();
 			}
 			ExecMethod('admin.uiaccounts.list_groups');
 			
@@ -300,16 +302,16 @@
 
 		function add_user()
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',4,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('account_access',4,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_users');
 				return False;
 			}
 			
 			$accountPrefix = '';
-			if(isset($GLOBALS['phpgw_info']['server']['account_prefix']))
+			if(isset(GlobalService::get('phpgw_info')['server']['account_prefix']))
 			{
-				$accountPrefix = $GLOBALS['phpgw_info']['server']['account_prefix'];
+				$accountPrefix = GlobalService::get('phpgw_info')['server']['account_prefix'];
 			}
 
 			if ($_POST['submit'])
@@ -363,15 +365,15 @@
 				{
 					if ($userData['anonymous']) 
 					{
-						$GLOBALS['phpgw']->acl->add_repository('phpgwapi','anonymous',$account_id,1);
+						GlobalService::get('phpgw')->acl->add_repository('phpgwapi','anonymous',$account_id,1);
 					}
 					else
 					{
-						$GLOBALS['phpgw']->acl->delete_repository('phpgwapi','anonymous',$account_id);
+						GlobalService::get('phpgw')->acl->delete_repository('phpgwapi','anonymous',$account_id);
 					}
 					// make this information for the hooks available
-					$GLOBALS['hook_values'] = $userData + array('new_passwd' => $userData['account_passwd']);
-					$GLOBALS['phpgw']->hooks->process($GLOBALS['hook_values']+array(
+					GlobalService::get('hook_values') = $userData + array('new_passwd' => $userData['account_passwd']);
+					GlobalService::get('phpgw')->hooks->process(GlobalService::get('hook_values')+array(
 						'location' => 'addaccount'
 					),False,True);	// called for every app now, not only enabled ones
 
@@ -393,7 +395,7 @@
 
 		function edit_group()
 		{
-			if ($GLOBALS['phpgw']->acl->check('group_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('group_access',16,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_groups');
 				return False;
@@ -430,7 +432,7 @@
 			$this->validate_group($group_info);
 
 			// Lock tables
-			$GLOBALS['phpgw']->db->lock(
+			GlobalService::get('phpgw')->db->lock(
 				Array(
 					'phpgw_accounts',
 					'phpgw_preferences',
@@ -471,7 +473,7 @@
 				$group->data['account_lid'] = $group_info['account_name'];
 				$group->data['firstname'] = $group_info['account_name'];
 
-				$basedir = $GLOBALS['phpgw_info']['server']['files_dir'] . SEP . 'groups' . SEP;
+				$basedir = GlobalService::get('phpgw_info')['server']['files_dir'] . SEP . 'groups' . SEP;
 				if (! @rename($basedir . $old_group_info['account_lid'], $basedir . $group_info['account_name']))
 				{
 					$cd = 39;
@@ -496,10 +498,10 @@
 				if(!$group_info['account_user'][$user_id])
 				{
 					// If the user is logged in, it will force a refresh of the session_info
-					$GLOBALS['phpgw']->db->query("update phpgw_sessions set session_action='' "
-						."where session_lid='" . $GLOBALS['phpgw']->accounts->id2name($user_id)
-						. '@' . $GLOBALS['phpgw_info']['user']['domain'] . "'",__LINE__,__FILE__);
-					$GLOBALS['phpgw']->session->delete_cache($user_id);
+					GlobalService::get('phpgw')->db->query("update phpgw_sessions set session_action='' "
+						."where session_lid='" . GlobalService::get('phpgw')->accounts->id2name($user_id)
+						. '@' . GlobalService::get('phpgw_info')['user']['domain'] . "'",__LINE__,__FILE__);
+					GlobalService::get('phpgw')->session->delete_cache($user_id);
 				}
 			}
 
@@ -513,32 +515,32 @@
 				$acl->add_repository('phpgw_group',$group_info['account_id'],$user_id,1);
 
 				// If the user is logged in, it will force a refresh of the session_info
-				$GLOBALS['phpgw']->db->query("update phpgw_sessions set session_action='' "
-					."where session_lid='" . $GLOBALS['phpgw']->accounts->id2name($user_id)
-					. '@' . $GLOBALS['phpgw_info']['user']['domain'] . "'",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->query("update phpgw_sessions set session_action='' "
+					."where session_lid='" . GlobalService::get('phpgw')->accounts->id2name($user_id)
+					. '@' . GlobalService::get('phpgw_info')['user']['domain'] . "'",__LINE__,__FILE__);
 					
-				$GLOBALS['phpgw']->session->delete_cache($user_id);
+				GlobalService::get('phpgw')->session->delete_cache($user_id);
 				
 				// The following sets any default preferences needed for new applications..
 				// This is smart enough to know if previous preferences were selected, use them.
 				$docommit = False;
 				if($new_apps)
 				{
-					$GLOBALS['pref'] = CreateObject('phpgwapi.preferences',$user_id);
-					$t = $GLOBALS['pref']->read_repository();
+					GlobalService::set('pref',CreateObject('phpgwapi.preferences',$user_id));
+					$t = GlobalService::get('pref')->read_repository();
 					@reset($new_apps);
 					while(list($app_key,$app_name) = each($new_apps))
 					{
 						if (!$t[($app_name=='admin'?'common':$app_name)])
 						{
-							$GLOBALS['phpgw']->hooks->single('add_def_pref', $app_name);
+							GlobalService::get('phpgw')->hooks->single('add_def_pref', $app_name);
 							$docommit = True;
 						}
 					}
 				}
 				if ($docommit)
 				{
-					$GLOBALS['pref']->save_repository();
+					GlobalService::get('pref')->save_repository();
 				}
 			}
 
@@ -546,7 +548,7 @@
 			// for LDAP to update the memberuid attribute
 			$group->save_repository();
 
-			$GLOBALS['phpgw']->db->unlock();
+			GlobalService::get('phpgw')->db->unlock();
 
 			ExecMethod('admin.uiaccounts.list_groups');
 			return False;
@@ -554,16 +556,16 @@
 
 		function edit_user()
 		{
-			if ($GLOBALS['phpgw']->acl->check('account_access',16,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('account_access',16,'admin'))
 			{
 				ExecMethod('admin.uiaccounts.list_users');
 				return False;
 			}
 			
 			$accountPrefix = '';
-			if(isset($GLOBALS['phpgw_info']['server']['account_prefix']))
+			if(isset(GlobalService::get('phpgw_info')['server']['account_prefix']))
 			{
-				$accountPrefix = $GLOBALS['phpgw_info']['server']['account_prefix'];
+				$accountPrefix = GlobalService::get('phpgw_info')['server']['account_prefix'];
 			}
 
 			if ($_POST['submit'])
@@ -601,8 +603,8 @@
 				if (!$errors = $this->validate_user($userData))
 				{
 					$this->save_user($userData);
-					$GLOBALS['hook_values'] = $userData;
-					$GLOBALS['phpgw']->hooks->process($GLOBALS['hook_values']+array(
+					GlobalService::set('hook_values',$userData);
+					GlobalService::get('phpgw')->hooks->process(GlobalService::get('hook_values')+array(
 						'location' => 'editaccount'
 					),False,True);	// called for every app now, not only enabled ones)
 
@@ -630,16 +632,16 @@
 
 		function set_group_managers()
 		{
-			if($GLOBALS['phpgw']->acl->check('group_access',16,'admin') || $_POST['cancel'])
+			if(GlobalService::get('phpgw')->acl->check('group_access',16,'admin') || $_POST['cancel'])
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
-				$GLOBALS['phpgw']->common->phpgw_exit();
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 			elseif($_POST['submit'])
 			{
 				$acl = CreateObject('phpgwapi.acl',(int)$_POST['account_id']);
 				
-				$users = $GLOBALS['phpgw']->accounts->member($_POST['account_id']);
+				$users = GlobalService::get('phpgw')->accounts->member($_POST['account_id']);
 				@reset($users);
 				while($managers && list($key,$user) = each($users))
 				{
@@ -652,8 +654,8 @@
 					$acl->add_repository('phpgw_group',(int)$_POST['account_id'],$manager,(1 + PHPGW_ACL_GROUP_MANAGERS));
 				}
 			}
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
-			$GLOBALS['phpgw']->common->phpgw_exit();
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_groups'));
+			GlobalService::get('phpgw')->common->phpgw_exit();
 		}
 
 		function validate_group($group_info)
@@ -686,7 +688,7 @@
 			{
 				$ui = createobject('admin.uiaccounts');
 				$ui->create_edit_group($group_info,$errors);
-				$GLOBALS['phpgw']->common->phpgw_exit();
+				GlobalService::get('phpgw')->common->phpgw_exit();
 			}
 		}
 
@@ -698,7 +700,7 @@
 		{
 			$totalerrors = 0;
 
-			if ($GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap' && 
+			if (GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap' && 
 				(!$_userData['account_lastname'] && !$_userData['lastname']))
 			{
 				$error[$totalerrors] = lang('You must enter a lastname');
@@ -719,9 +721,9 @@
 			
 			if ($_userData['old_loginid'] != $_userData['account_lid']) 
 			{
-			   if ($GLOBALS['phpgw']->accounts->exists($_userData['account_lid']))
+			   if (GlobalService::get('phpgw')->accounts->exists($_userData['account_lid']))
 				{
-				   if ($GLOBALS['phpgw']->accounts->exists($_userData['account_lid']) && $GLOBALS['phpgw']->accounts->get_type($_userData['account_lid'])=='g')
+				   if (GlobalService::get('phpgw')->accounts->exists($_userData['account_lid']) && GlobalService::get('phpgw')->accounts->get_type($_userData['account_lid'])=='g')
 				   {
 					  $error[$totalerrors] = lang('There already is a group with this name. Userid\'s can not have the same name as a groupid');
 				   }
@@ -804,11 +806,11 @@
 			{
 				$auth = CreateObject('phpgwapi.auth_egw');
 				$auth->change_password($old_passwd, $_userData['account_passwd'], $_userData['account_id']);
-				$GLOBALS['hook_values']['account_id'] = $_userData['account_id'];
-				$GLOBALS['hook_values']['old_passwd'] = $old_passwd;
-				$GLOBALS['hook_values']['new_passwd'] = $_userData['account_passwd'];
+				GlobalService::get('hook_values')['account_id'] = $_userData['account_id'];
+				GlobalService::get('hook_values')['old_passwd'] = $old_passwd;
+				GlobalService::get('hook_values')['new_passwd'] = $_userData['account_passwd'];
 
-				$GLOBALS['phpgw']->hooks->process($GLOBALS['hook_values']+array(
+				GlobalService::get('phpgw')->hooks->process(GlobalService::get('hook_values')+array(
 					'location' => 'changepassword'
 				),False,True);	// called for every app now, not only enabled ones)
 			}
@@ -867,18 +869,18 @@
 			}
 			if ($_userData['changepassword']) 
 			{
-				$GLOBALS['phpgw']->acl->add_repository('preferences','changepassword',$_userData['account_id'],1);
+				GlobalService::get('phpgw')->acl->add_repository('preferences','changepassword',$_userData['account_id'],1);
 			}
 			else
 			{
-				$GLOBALS['phpgw']->acl->delete_repository('preferences','changepassword',$_userData['account_id']);
+				GlobalService::get('phpgw')->acl->delete_repository('preferences','changepassword',$_userData['account_id']);
 			}
-			$GLOBALS['phpgw']->session->delete_cache((int)$_userData['account_id']);
+			GlobalService::get('phpgw')->session->delete_cache((int)$_userData['account_id']);
 		}
 
 		function load_group_users($account_id)
 		{
-			$temp_user = $GLOBALS['phpgw']->acl->get_ids_for_location($account_id,1,'phpgw_group');
+			$temp_user = GlobalService::get('phpgw')->acl->get_ids_for_location($account_id,1,'phpgw_group');
 			if(!$temp_user)
 			{
 				return Array();
@@ -898,7 +900,7 @@
 
 		function load_group_managers($account_id)
 		{
-			$temp_user = $GLOBALS['phpgw']->acl->get_ids_for_location($account_id,PHPGW_ACL_GROUP_MANAGERS,'phpgw_group');
+			$temp_user = GlobalService::get('phpgw')->acl->get_ids_for_location($account_id,PHPGW_ACL_GROUP_MANAGERS,'phpgw_group');
 			if(!$temp_user)
 			{
 				return Array();

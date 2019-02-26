@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -187,7 +189,7 @@
 		
 		function init()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 			$this->security = CreateObject('contactcenter.security_manager');
 		}
 
@@ -297,7 +299,7 @@
 				exit('Error');
 			}
 			
-			$tables_def = $GLOBALS['phpgw']->db->get_table_definitions('contactcenter');
+			$tables_def = GlobalService::get('phpgw')->db->get_table_definitions('contactcenter');
 			
 			$query_select = 'SELECT ';
 			$query_from = array();
@@ -781,14 +783,14 @@
 		{
 			if (!is_bool($all)) 
 			{
-				if (is_object($GLOBALS['phpgw']->log)) 
+				if (is_object(GlobalService::get('phpgw')->log)) 
 				{
-					$GLOBALS['phpgw']->log->message(array(
+					GlobalService::get('phpgw')->log->message(array(
 						'text' => 'F-BadcontactcenterParam, get_contact_fields parameter must be boolean.',
 						'line' => __LINE__,
 						'file' => __FILE__));
 					
-					$GLOBALS['phpgw']->log->commit();
+					GlobalService::get('phpgw')->log->commit();
 				}
 				else {
 					exit('Argument Error on: <br>File:'.__FILE__.'<br>Line:'.__LINE__.'<br>');

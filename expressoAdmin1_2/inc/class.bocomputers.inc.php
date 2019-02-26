@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************************\
-	* Expresso Administração                 								              *
+	* Expresso Administraï¿½ï¿½o                 								              *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	  *
 	* ------------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			  *
@@ -40,7 +42,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$c = CreateObject('phpgwapi.config','expressoAdmin1_2');
 			$c->read_repository();
 			$current_config = $c->config_data;
-			// Leio o ID a ser usado na criação do objecto.
+			// Leio o ID a ser usado na criaï¿½ï¿½o do objecto.
 			// Esta funcao ja incrementa o ID
 			$next_id = $this->db_functions->get_next_id();
 			if ((!is_numeric($next_id['id'])) || (!$next_id['status']))
@@ -60,7 +62,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$computer_info['uid']					= $_POST['computer_cn'] . '$';
 			$computer_info['cn']					= $_POST['computer_cn'];
 			$computer_info['uidnumber']				= $id;
-			$computer_info['gidNumber']				= $current_config['expressoAdmin_sambaGIDcomputers']; /* nas configurações globais */
+			$computer_info['gidNumber']				= $current_config['expressoAdmin_sambaGIDcomputers']; /* nas configuraï¿½ï¿½es globais */
 			$computer_info['homeDirectory']			= '/dev/null';
 			$computer_info['objectClass'][0]		= 'posixAccount';
 			$computer_info['objectClass'][1]		= 'account';
@@ -101,8 +103,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 			
 			// Volta para o ListGroups
-			$url = ($GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
-			$GLOBALS['phpgw']->redirect($url);
+			$url = (GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
+			GlobalService::get('phpgw')->redirect($url);
 		}
 		
 		function save_computer()
@@ -112,7 +114,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$new_context	= $_POST['sector_context']; 
 			$new_dn 		= $new_rdn . ',' . $new_context;
 
-			//Verifica se a descrição do computador foi alterada.
+			//Verifica se a descriï¿½ï¿½o do computador foi alterada.
 			if (($_POST['computer_description'] == '') && ($_POST['old_computer_description'] == '')){}
 			elseif ($_POST['computer_description'] == $_POST['old_computer_description']){}
 			elseif (($_POST['old_computer_description'] != '') && ($_POST['computer_description'] == ''))
@@ -171,8 +173,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
                 }
 
 			// Volta para o ListGroups
-			$url = ($GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
-			$GLOBALS['phpgw']->redirect($url);
+			$url = (GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
+			GlobalService::get('phpgw')->redirect($url);
 		}
 		
 		function delete_computer()
@@ -186,8 +188,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 			
 			// Volta para o ListGroups
-			$url = ($GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
-			$GLOBALS['phpgw']->redirect($url);
+			$url = (GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'));
+			GlobalService::get('phpgw')->redirect($url);
 		}
 		
 		function delete( $params )

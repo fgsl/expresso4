@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/************************************************************************************\
-	* Expresso Administração                 										    *
+	* Expresso Administraï¿½ï¿½o                 										    *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)   *
 	* ----------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			*
@@ -32,15 +34,15 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$c->read_repository();
 			$this->config = $c->config_data;
 			
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
 			
 			/* save lang and session */
 			if (empty($_SESSION['phpgw_info']['expressoAdmin']['lang']))
 			{
-				$fn = './expressoAdmin1_2/setup/phpgw_'.$GLOBALS['phpgw_info']['user']['preferences']['common']['lang'].'.lang';
+				$fn = './expressoAdmin1_2/setup/phpgw_'.GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'].'.lang';
 				if (file_exists($fn))
 				{
 					$fp = fopen($fn,'r');
@@ -54,14 +56,14 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				
 			}
 			
-			$GLOBALS['phpgw']->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
-			$GLOBALS['phpgw']->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
-			$GLOBALS['phpgw']->js->validate_file('jscode','managers','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
+			GlobalService::get('phpgw')->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','managers','expressoAdmin1_2');
 		}
 
 		function row_action($lang,$link,$manager_lid,$context)
 		{	
-			return '<a href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+			return '<a href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 				'menuaction' => 'expressoAdmin1_2.uimanagers.'.$link,
 				'action'		=>	$lang,
 				'manager_lid' => $manager_lid,
@@ -72,14 +74,14 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		function list_managers()
 		{
 			// Caso nao seja admin, sai.
-			if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
 			// Imprime o NavBar
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('List Managers');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('List Managers');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			// Seta o template
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -90,9 +92,9 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$tpl_vars = $p->get_undefined('body');
 
 			$var = Array(
-				'action' 			=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.add_managers'),
+				'action' 			=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.add_managers'),
 				'tr_color'			=> '#DDDDDD',
-				'th_bg'         	=> $GLOBALS['phpgw_info']['theme']['th_bg']
+				'th_bg'         	=> GlobalService::get('phpgw_info')['theme']['th_bg']
 			);
 
 			// Cria dinamicamente os langs
@@ -107,12 +109,12 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 
 			// Le BD para pegar os administradors.
 			$query = 'SELECT manager_lid,context FROM phpgw_expressoadmin ORDER by manager_lid';
-			$GLOBALS['phpgw']->db->query($query);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query($query);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
-				$managers[] = $GLOBALS['phpgw']->db->row();
+				$managers[] = GlobalService::get('phpgw')->db->row();
 			}
-			$ldap_conn = $GLOBALS['phpgw']->common->ldapConnect();
+			$ldap_conn = GlobalService::get('phpgw')->common->ldapConnect();
 			$justthese = array("cn");
 			// Loop para listar os administradores
 			if (count($managers))
@@ -128,7 +130,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 					}
 					
 					$filter="(&(phpgwAccountType=u)(uid=".$array_managers['manager_lid']."))";
-					$ldap_search = ldap_search($ldap_conn, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+					$ldap_search = ldap_search($ldap_conn, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 					$ldap_result = ldap_get_entries($ldap_conn, $ldap_search);
 					$p->set_var('manager_lid', $array_managers[manager_lid]);
 					$p->set_var('manager_cn', $ldap_result[0]['cn'][0] == '' ? '<font color=red>NAO ENCONTRADO NO LDAP</font>' : $ldap_result[0]['cn'][0]);
@@ -148,9 +150,9 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		function add_managers()
 		{
 			// Caso nao seja admin, sai.
-			if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
 			
 			// Seta o template
@@ -160,12 +162,12 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$tpl_vars = $p->get_undefined('form');
 
 			// Imprime o NavBar
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Add Managers');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Add Managers');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			
-			// Seta variaveis javascript necessárias
-			$webserver_url = $GLOBALS['phpgw_info']['server']['webserver_url'];
+			// Seta variaveis javascript necessï¿½rias
+			$webserver_url = GlobalService::get('phpgw_info')['server']['webserver_url'];
 			$scripts_java = '<script type="text/javascript" src="'.$webserver_url.'/expressoAdmin1_2/js/jscode/expressoadmin.js"></script>';
 			
 			// App, create list of available apps
@@ -182,13 +184,13 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				$input_context_fields = '<input type="text" size=60></input><br>';
 			*/
 			
-			$options_context = $this->functions->get_organizations($GLOBALS['phpgw_info']['server']['ldap_context'], '', false, true, false, true);
+			$options_context = $this->functions->get_organizations(GlobalService::get('phpgw_info')['server']['ldap_context'], '', false, true, false, true);
 			
 			// Seta variaveis que estao no TPL
 			$var = Array(
 				'scripts_java'			=>	$scripts_java,	
-				//'action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.validate'),
-				//'action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.bomanagers.add_managers'),
+				//'action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.validate'),
+				//'action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.bomanagers.add_managers'),
 				'display_samba_suport'	=> $this->config['expressoAdmin_samba_support'] == 'true' ? '' : 'display:none',
 				'type'					=> "add",
 				'color_bg1'				=> "#E8F0F0",
@@ -226,24 +228,24 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 	
 		function delete_managers()
 		{
-			// Criar uma verificação e jogar a query para o BO.
+			// Criar uma verificaï¿½ï¿½o e jogar a query para o BO.
 			$context = $_GET['context'];
 			$manager_lid = $_GET['manager_lid'];
 			
 			$query = "DELETE FROM phpgw_expressoadmin WHERE manager_lid = '".$manager_lid."' AND context = '" . $context ."'";
-			$GLOBALS['phpgw']->db->query($query);
+			GlobalService::get('phpgw')->db->query($query);
 			
 			// Remove Gerente da tabela dos apps
 			$query = "DELETE FROM phpgw_expressoadmin_apps WHERE "
 			. "manager_lid = '".$manager_lid."' AND "
 			. "context = '".$context."'";
-			$GLOBALS['phpgw']->db->query($query);		
+			GlobalService::get('phpgw')->db->query($query);		
 			
 			// Remove Gerente na ACL do expressoadmin
 			$accounts = CreateObject('phpgwapi.accounts');
 			$manager_id = $accounts->name2id($_GET['manager_lid']);
 			$sql = "DELETE FROM phpgw_acl WHERE acl_appname = 'expressoadmin' AND acl_account = '" . $manager_id . "'"; 
-			$GLOBALS['phpgw']->db->query($sql);			
+			GlobalService::get('phpgw')->db->query($sql);			
 			
 			ExecMethod('expressoAdmin1_2.uimanagers.list_managers');
 		}
@@ -251,9 +253,9 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		function edit_managers()
 		{
 			// Caso nao seja admin, sai.
-			if (!$GLOBALS['phpgw']->acl->check('run',1,'admin'))
+			if (!GlobalService::get('phpgw')->acl->check('run',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			}
 			
 			// Verifica se eh a primeira entrada, ai eu tenho o get, senao pego o post.
@@ -278,12 +280,12 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				$manager_acl = array_flip( ACL_Managers::getPerms( $manager['acl'] ) );
 				//Pesquisa no Banco e pega os valores dos apps.
 				$query = "SELECT * FROM phpgw_expressoadmin_apps WHERE manager_lid = '" . $_GET['manager_lid'] . "' AND context = '" . $_GET['context'] . "'";
-				$GLOBALS['phpgw']->db->query($query);
+				GlobalService::get('phpgw')->db->query($query);
 				$i=0;
 				$manager[0]['apps'] = array();
-				while($GLOBALS['phpgw']->db->next_record())
+				while(GlobalService::get('phpgw')->db->next_record())
 				{
-					$tmp[$i] = $GLOBALS['phpgw']->db->row();
+					$tmp[$i] = GlobalService::get('phpgw')->db->row();
 					$_POST['applications_list'][$tmp[$i]['app']] = 1;
 					$manager[0]['apps'][$tmp[$i]['app']] = 1;
 					$i++;
@@ -297,12 +299,12 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$tpl_vars = $p->get_undefined('form');
 			
 			// Imprime o NavBar
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Managers');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Managers');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
-			// Seta variaveis javas necessárias
-			$webserver_url = $GLOBALS['phpgw_info']['server']['webserver_url'];
+			// Seta variaveis javas necessï¿½rias
+			$webserver_url = GlobalService::get('phpgw_info')['server']['webserver_url'];
 			$scripts_java = '<script type="text/javascript" src="'.$webserver_url.'/expressoAdmin1_2/js/jscode/expressoadmin.js"></script>';
 
 			// App, create list of available apps
@@ -311,7 +313,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$a_context = explode("%", $_POST['context']);
 			foreach ($a_context as $context)
 				$input_context_fields .= '<div><input disabled type="text" value="'.$context.'" size=60></input><span onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="cursor:pointer"> -</span></div>';
-			$options_context = $this->functions->get_organizations($GLOBALS['phpgw_info']['server']['ldap_context'], '', false, true, false, true);
+			$options_context = $this->functions->get_organizations(GlobalService::get('phpgw_info')['server']['ldap_context'], '', false, true, false, true);
 
 			$acl_control_fields = array(
 				array(
@@ -426,7 +428,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 
 			$var = Array(
 				'scripts_java'				=> $scripts_java,
-				'action'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.validate'),
+				'action'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uimanagers.validate'),
 				'display_samba_suport'		=> $this->config['expressoAdmin_samba_support'] == 'true' ? '' : 'display:none',
 				'color_bg1'					=> "#E8F0F0",
 				'color_bg2'					=> "#D3DCE3",
@@ -472,7 +474,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$this->nextmatchs = createobject('phpgwapi.nextmatchs');
 			$apps = CreateObject('phpgwapi.applications',$_account_id);
 			$db_perms = $apps->read_account_specific();
-			$availableApps = $GLOBALS['phpgw_info']['apps'];
+			$availableApps = GlobalService::get('phpgw_info')['apps'];
 			
 			uasort($availableApps,create_function('$a,$b','return strcasecmp($a["title"],$b["title"]);'));
 			

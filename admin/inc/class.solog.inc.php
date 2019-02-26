@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - solog                                                       *
 	* http://www.egroupware.org                                                *
@@ -28,7 +30,7 @@
 
 		function solog()
 		{
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 		}
 
 		function get_error_cols()

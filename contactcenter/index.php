@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -13,17 +15,17 @@
   *  option) any later version.                                               *
   \***************************************************************************/
 
-	$GLOBALS['phpgw_info'] = array();
+	GlobalService::get('phpgw_info') = array();
 
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'contactcenter',
 		'noheader'   => true,
 		//'nonavbar'   => true
 	);
 	include('../header.inc.php');
 
-	$_SESSION['phpgw_info']['user']['preferences']['contactcenter']['telephone_number'] = $GLOBALS['phpgw_info']['user']['telephonenumber'];
-	$_SESSION['phpgw_info']['server']['temp_dir'] = $GLOBALS['phpgw_info']['server']['temp_dir'];
+	$_SESSION['phpgw_info']['user']['preferences']['contactcenter']['telephone_number'] = GlobalService::get('phpgw_info')['user']['telephonenumber'];
+	$_SESSION['phpgw_info']['server']['temp_dir'] = GlobalService::get('phpgw_info')['server']['temp_dir'];
 
 	$prefs = CreateObject('contactcenter.ui_preferences');
 	$actual = $prefs->get_preferences();
@@ -39,12 +41,12 @@
 	//Enable/Disable VoIP Service -> Voip Server Config
 	$_SESSION['phpgw_info']['user']['preferences']['contactcenter']['voip_enabled'] = false;	
 	$voip_groups = array();
-	if($GLOBALS['phpgw_info']['server']['voip_groups']) {
-		foreach(explode(",",$GLOBALS['phpgw_info']['server']['voip_groups']) as $i => $voip_group){
+	if(GlobalService::get('phpgw_info')['server']['voip_groups']) {
+		foreach(explode(",",GlobalService::get('phpgw_info')['server']['voip_groups']) as $i => $voip_group){
 			$a_voip = explode(";",$voip_group);			
 			$voip_groups[] = $a_voip[1];
 		}		
-		foreach($GLOBALS['phpgw']->accounts->membership() as $idx => $group){			
+		foreach(GlobalService::get('phpgw')->accounts->membership() as $idx => $group){			
 			if(array_search($group['account_name'],$voip_groups) !== FALSE){		 
 				$_SESSION['phpgw_info']['user']['preferences']['contactcenter']['voip_enabled'] = true;
 				break;
@@ -52,11 +54,11 @@
 		}
 	}
 
-	// Verificar se há contatos compartilhados para o usuario logado
-	$acl = CreateObject("phpgwapi.acl",$GLOBALS['phpgw_info']['user']['account_id']); 
+	// Verificar se hï¿½ contatos compartilhados para o usuario logado
+	$acl = CreateObject("phpgwapi.acl",GlobalService::get('phpgw_info')['user']['account_id']); 
 	$grants = $acl->get_grants("contactcenter");
 	foreach($grants as $id => $rights){
-		if ($id != $GLOBALS['phpgw_info']['user']['account_id']) {
+		if ($id != GlobalService::get('phpgw_info')['user']['account_id']) {
 			$_SESSION['phpgw_info']['user']['preferences']['contactcenter']['shared_contacts'] = true;		
 		}
 	}
@@ -68,5 +70,5 @@
 		$obj->index();
        
    	
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

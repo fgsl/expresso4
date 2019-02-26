@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Commononly used functions                               *
 	* This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -51,17 +53,17 @@
 
 		function date_time()
 		{
-			$this->tz_offset = 3600 * (int)@$GLOBALS['phpgw_info']['user']['preferences']['common']['tz_offset'];
+			$this->tz_offset = 3600 * (int)@GlobalService::get('phpgw_info')['user']['preferences']['common']['tz_offset'];
 			print_debug('datetime::datetime::gmtnow',$this->gmtnow,'api');
 
 			$error_occured = True;
 			// If we already have a GMT time, no need to do this again.
 			if(!$this->gmtnow)
 			{
-				if(isset($GLOBALS['phpgw_info']['server']['tz_offset']))
+				if(isset(GlobalService::get('phpgw_info')['server']['tz_offset']))
 				{
-					$this->gmtnow = time() - ((int)$GLOBALS['phpgw_info']['server']['tz_offset'] * 3600);
-					print_debug('datetime::datetime::tz_offset',"set via tz_offset=".$GLOBALS['phpgw_info']['server']['tz_offset'].": gmtnow=".date('Y/m/d H:i',$this->gmtnow),'api');
+					$this->gmtnow = time() - ((int)GlobalService::get('phpgw_info')['server']['tz_offset'] * 3600);
+					print_debug('datetime::datetime::tz_offset',"set via tz_offset=".GlobalService::get('phpgw_info')['server']['tz_offset'].": gmtnow=".date('Y/m/d H:i',$this->gmtnow),'api');
 				}
 				else
 				{
@@ -75,16 +77,16 @@
 		function getntpoffset()
 		{
 			$error_occured = False;
-			if(!@is_object($GLOBALS['phpgw']->network))
+			if(!@is_object(GlobalService::get('phpgw')->network))
 			{
-				$GLOBALS['phpgw']->network = createobject('phpgwapi.network');
+				GlobalService::get('phpgw')->network = createobject('phpgwapi.network');
 			}
 			$server_time = time();
 
-			if($GLOBALS['phpgw']->network->open_port('129.6.15.28',13,5))
+			if(GlobalService::get('phpgw')->network->open_port('129.6.15.28',13,5))
 			{
-				$line = $GLOBALS['phpgw']->network->bs_read_port(64);
-				$GLOBALS['phpgw']->network->close_port();
+				$line = GlobalService::get('phpgw')->network->bs_read_port(64);
+				GlobalService::get('phpgw')->network->close_port();
 
 				$array = explode(' ',$line);
 				// host: 129.6.15.28
@@ -122,14 +124,14 @@
 		function gethttpoffset()
 		{
 			$error_occured = False;
-			if(!@is_object($GLOBALS['phpgw']->network))
+			if(!@is_object(GlobalService::get('phpgw')->network))
 			{
-				$GLOBALS['phpgw']->network = createobject('phpgwapi.network');
+				GlobalService::get('phpgw')->network = createobject('phpgwapi.network');
 			}
 			$server_time = time();
 
 			$filename = 'http://132.163.4.213/timezone.cgi?GMT';
-			$file = $GLOBALS['phpgw']->network->gethttpsocketfile($filename);
+			$file = GlobalService::get('phpgw')->network->gethttpsocketfile($filename);
 			if(!$file)
 			{
 				return $this->getbestguess();
@@ -212,7 +214,7 @@
 		function get_weekday_start($year,$month,$day)
 		{
 			$weekday = $this->day_of_week($year,$month,$day);
-			switch($GLOBALS['phpgw_info']['user']['preferences']['calendar']['weekdaystarts'])
+			switch(GlobalService::get('phpgw_info')['user']['preferences']['calendar']['weekdaystarts'])
 			{
 				// Saturday is for arabic support
 				case 'Saturday':
@@ -447,16 +449,16 @@
 		{
 			$date = Array('raw','day','month','year','full','dow','dm','bd');
 			$date['raw'] = $localtime;
-			$date['year'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'Y');
-			$date['month'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'m');
-			$date['day'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'d');
-			$date['full'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'Ymd');
+			$date['year'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'Y');
+			$date['month'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'m');
+			$date['day'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'d');
+			$date['full'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'Ymd');
 			$date['bd'] = mktime(0,0,0,$date['month'],$date['day'],$date['year']);
-			$date['dm'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'dm');
+			$date['dm'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'dm');
 			$date['dow'] = $this->day_of_week($date['year'],$date['month'],$date['day']);
-			$date['hour'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'H');
-			$date['minute'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'i');
-			$date['second'] = (int)$GLOBALS['phpgw']->common->show_date($date['raw'],'s');
+			$date['hour'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'H');
+			$date['minute'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'i');
+			$date['second'] = (int)GlobalService::get('phpgw')->common->show_date($date['raw'],'s');
 		
 			return $date;
 		}

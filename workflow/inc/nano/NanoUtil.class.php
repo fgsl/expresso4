@@ -49,11 +49,11 @@ class NanoUtil
      * Enter description here...
      *
      * @param array $array
-     * @param unknown_type $key
-     * @param unknown_type $fallback_array
-     * @param unknown_type $fallback_key
-     * @param unknown_type $default
-     * @return unknown
+     * @param string unknown_type $key
+     * @param string unknown_type $fallback_array
+     * @param string unknown_type $fallback_key
+     * @param string unknown_type $default
+     * @return string unknown
      */
     static public function getParamFallback( $array, $key, $fallback_array, $fallback_key, $default = '' )
     {
@@ -65,11 +65,11 @@ class NanoUtil
     /**
      * Enter description here...
      *
-     * @param unknown_type $object
-     * @param unknown_type $property
-     * @param unknown_type $key
-     * @param unknown_type $default
-     * @return unknown
+     * @param string unknown_type $object
+     * @param string unknown_type $property
+     * @param string unknown_type $key
+     * @param string unknown_type $default
+     * @return string unknown
      */
     static public function getProp( $object, $property, $key, $default = '' )
     {
@@ -89,7 +89,7 @@ class NanoUtil
     /**
      * Enter description here...
      *
-     * @return unknown
+     * @return string unknown
      */
     static public function getThisScript()
     {
@@ -99,7 +99,7 @@ class NanoUtil
     /**
      * Enter description here...
      *
-     * @return unknown
+     * @return string unknown
      */
     static public function getCurrentScriptWithPath()
     {
@@ -109,7 +109,7 @@ class NanoUtil
     /**
      * Enter description here...
      *
-     * @return unknown
+     * @return string unknown
      */
     static public function getFullUri()
     {

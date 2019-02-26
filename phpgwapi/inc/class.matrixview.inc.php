@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Matrix View Generator                                   *
 	* This file written by Marc Logemann <loge@phpgroupware.org>               *
@@ -67,7 +69,7 @@
 
 			$this->month = $month_int;
 			$this->year = $year_int;
-			$this->set1PixelGif($GLOBALS['phpgw']->common->get_image_path('todo').'/pix.gif');
+			$this->set1PixelGif(GlobalService::get('phpgw')->common->get_image_path('todo').'/pix.gif');
 		}
 
 		/**

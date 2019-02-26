@@ -394,7 +394,7 @@ class ExportEml
 			$errors = imap_errors();
 			if(is_array($errors)){
 				if( preg_match('/SECURITY PROBLEM: insecure server advertised AUTH=PLAIN/i', $errors[0]) === false){
-				  throw new Exception('IMAP error detected');
+				  throw new \Exception('IMAP error detected');
 				}
 			}
 			imap_close( $this->_imap_stream );

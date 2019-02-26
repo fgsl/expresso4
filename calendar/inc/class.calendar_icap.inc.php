@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - ICal Calendar                                               *
   * http://www.egroupware.org                                                *
@@ -11,13 +13,13 @@
   \**************************************************************************/
 
 
-	if (isset($GLOBALS['phpgw_info']['flags']['included_classes']['calendar_']) &&
-		$GLOBALS['phpgw_info']['flags']['included_classes']['calendar_'] == True)
+	if (isset(GlobalService::get('phpgw_info')['flags']['included_classes']['calendar_']) &&
+		GlobalService::get('phpgw_info')['flags']['included_classes']['calendar_'] == True)
 	{
 		return;
 	}
 
-	$GLOBALS['phpgw_info']['flags']['included_classes']['calendar_'] = True;
+	GlobalService::get('phpgw_info')['flags']['included_classes']['calendar_'] = True;
 
 	class calendar_ extends calendar__
 	{
@@ -25,11 +27,11 @@
 		{
 			if($user=='')
 			{
-				$user = $GLOBALS['phpgw_info']['user']['account_lid'];
+				$user = GlobalService::get('phpgw_info')['user']['account_lid'];
 			}
 			elseif(is_int($user))
 			{
-				$this->user = $GLOBALS['phpgw']->accounts->id2name($user);
+				$this->user = GlobalService::get('phpgw')->accounts->id2name($user);
 			}
 			elseif(is_string($user))
 			{
@@ -37,11 +39,11 @@
 			}
 			if($options != '')
 			{
-				$this->stream = mcal_open('{'.$GLOBALS['phpgw_info']['server']['icap_server'].'/'.$GLOBALS['phpgw_info']['server']['icap_type'].'}'.$calendar,$this->user,$passwd,$options);
+				$this->stream = mcal_open('{'.GlobalService::get('phpgw_info')['server']['icap_server'].'/'.GlobalService::get('phpgw_info')['server']['icap_type'].'}'.$calendar,$this->user,$passwd,$options);
 			}
 			else
 			{
-				$this->stream = mcal_open('{'.$GLOBALS['phpgw_info']['server']['icap_server'].'/'.$GLOBALS['phpgw_info']['server']['icap_type'].'}'.$calendar,$this->user,$passwd);
+				$this->stream = mcal_open('{'.GlobalService::get('phpgw_info')['server']['icap_server'].'/'.GlobalService::get('phpgw_info')['server']['icap_type'].'}'.$calendar,$this->user,$passwd);
 			}
 		}
 
@@ -49,11 +51,11 @@
 		{
 			if($user=='')
 			{
-				$this->user = $GLOBALS['phpgw_info']['user']['account_lid'];
+				$this->user = GlobalService::get('phpgw_info')['user']['account_lid'];
 			}
 			elseif(is_int($user))
 			{
-				$this->user = $GLOBALS['phpgw']->accounts->id2name($user);
+				$this->user = GlobalService::get('phpgw')->accounts->id2name($user);
 			}
 			elseif(is_string($user))
 			{
@@ -61,11 +63,11 @@
 			}
 			if($options != '')
 			{
-				$this->stream = mcal_popen('{'.$GLOBALS['phpgw_info']['server']['icap_server'].'/'.$GLOBALS['phpgw_info']['server']['icap_type'].'}'.$calendar,$this->user,$passwd,$options);
+				$this->stream = mcal_popen('{'.GlobalService::get('phpgw_info')['server']['icap_server'].'/'.GlobalService::get('phpgw_info')['server']['icap_type'].'}'.$calendar,$this->user,$passwd,$options);
 			}
 			else
 			{
-				$this->stream = mcal_popen('{'.$GLOBALS['phpgw_info']['server']['icap_server'].'/'.$GLOBALS['phpgw_info']['server']['icap_type'].'}'.$calendar,$this->user,$passwd);
+				$this->stream = mcal_popen('{'.GlobalService::get('phpgw_info')['server']['icap_server'].'/'.GlobalService::get('phpgw_info')['server']['icap_type'].'}'.$calendar,$this->user,$passwd);
 			}
 		}
 

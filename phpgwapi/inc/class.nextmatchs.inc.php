@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - nextmatchs                                              *
 	* Written by Joseph Engo <jengo@phpgroupware.org>                          *
@@ -53,10 +55,10 @@
 				$this->template->set_block('_nextmatchs','cats_search_filter');
 			}
 
-			if(isset($GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs']) &&
-				(int)$GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'] > 0)
+			if(isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs']) &&
+				(int)GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'] > 0)
 			{
-				$this->maxmatches = (int)$GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'];
+				$this->maxmatches = (int)GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'];
 			}
 			else
 			{
@@ -72,9 +74,9 @@
 				if ( !( is_string( $this->$var ) && preg_match( '/^[a-z0-9_. -]*$/i', $this->$var ) ) )
 					$this->$var = '';
 			}
-			if (!is_object($GLOBALS['phpgw']->html))
+			if (!is_object(GlobalService::get('phpgw')->html))
 			{
-				$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+				GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 			}
 		}
 
@@ -89,7 +91,7 @@
 		{
 			$var = array(
 				'align'  => $align,
-				'img'    => $GLOBALS['phpgw']->common->image('phpgwapi',$img),
+				'img'    => GlobalService::get('phpgw')->common->image('phpgwapi',$img),
 				'label'  => lang($label),
 				'border' => 0
 			);
@@ -119,7 +121,7 @@
 				$extras = "&".implode($t_extras,'&');
 			}
 
-			return $GLOBALS['phpgw']->link('/index.php','menuaction='.$this->_menuaction.$extras);
+			return GlobalService::get('phpgw')->link('/index.php','menuaction='.$this->_menuaction.$extras);
 		}
 
 		/*!
@@ -134,10 +136,10 @@
 		{
 			$var = Array(
 				'align'     => $align,
-				'action'    => ($this->_menuaction?$this->page($extravars):$GLOBALS['phpgw']->link($link)),
+				'action'    => ($this->_menuaction?$this->page($extravars):GlobalService::get('phpgw')->link($link)),
 				'form_name' => $img,
-				'hidden'    => $GLOBALS['phpgw']->html->input_hidden($extravars),
-				'img'       => $GLOBALS['phpgw']->common->image('phpgwapi',$img),
+				'hidden'    => GlobalService::get('phpgw')->html->input_hidden($extravars),
+				'img'       => GlobalService::get('phpgw')->common->image('phpgwapi',$img),
 				'label'     => $alt,
 				'border'    => 0,
 				'start'     => $extravars['start']
@@ -161,30 +163,30 @@
 		*/
 		function show_tpl($sn,$localstart,$total,$extra, $twidth, $bgtheme,$search_obj=0,$filter_obj=1,$showsearch=1,$yours=0,$cat_id=0,$cat_field='fcat_id')
 		{
-			if (!is_object($GLOBALS['phpgw']->categories))
+			if (!is_object(GlobalService::get('phpgw')->categories))
 			{
-				$GLOBALS['phpgw']->categories = CreateObject('phpgwapi.categories');
+				GlobalService::get('phpgw')->categories = CreateObject('phpgwapi.categories');
 			}
 			$extravars = $this->split_extras($extravars,$extra);
 
 			$var = array(
-				'form_action'   => ($this->_menuaction?$this->page($extra):$GLOBALS['phpgw']->link($sn, $extra)),
+				'form_action'   => ($this->_menuaction?$this->page($extra):GlobalService::get('phpgw')->link($sn, $extra)),
 				'lang_category' => lang('Category'),
 				'lang_all'      => lang('All'),
 				'lang_select'   => lang('Select'),
 				'cat_field'     => $cat_field,
-				'categories'    => $GLOBALS['phpgw']->categories->formated_list('select','all',$cat_id,'True'),
-				'hidden'       => $GLOBALS['phpgw']->html->input_hidden(array(
+				'categories'    => GlobalService::get('phpgw')->categories->formated_list('select','all',$cat_id,'True'),
+				'hidden'       => GlobalService::get('phpgw')->html->input_hidden(array(
 					'filter' => $this->_filter,
 					'qfield' => $this->_qfield,
 					'start'  => (int)$localstart,
 					'order'  => $this->_order,
 					'sort'   => $this->_sort,
-					'query'  => $GLOBALS['query'],
+					'query'  => GlobalService::get('query'),
 				)),
-				'query_value'   => $GLOBALS['phpgw']->html->htmlspecialchars($GLOBALS['query']),
+				'query_value'   => GlobalService::get('phpgw')->html->htmlspecialchars(GlobalService::get('query')),
 				'table_width'   => $twidth,
-				'th_bg'         => $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg'         => GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'left'          => $this->left($sn,(int)$localstart,$total,$extra),
 				'search'        => ($showsearch?$this->search($search_obj):''),
 				'filter'        => ($filter_obj?$this->filter($filter_obj,$yours):''),
@@ -247,7 +249,7 @@
 				'filter'  => $this->_filter,
 				'q_field' => $this->_qfield,
 				'sort'    => $this->_sort,
-				'query'   => urlencode(stripslashes(@$GLOBALS['query']))
+				'query'   => urlencode(stripslashes(@GlobalService::get('query')))
 			);
 
 			$extravars = $this->split_extras($extravars,$extradata);
@@ -293,7 +295,7 @@
 				'filter'  => $this->_filter,
 				'q_field' => $this->_qfield,
 				'sort'    => $this->_sort,
-				'query'   => urlencode(stripslashes(@$GLOBALS['query']))
+				'query'   => urlencode(stripslashes(@GlobalService::get('query')))
 			);
 
 			$extravars = $this->split_extras($extravars,$extradata);
@@ -326,15 +328,15 @@
 		function search_filter($search_obj=0,$filter_obj=1,$yours=0,$link='',$extra='')
 		{
 			$var = array(
-				'form_action'  => ($this->_menuaction?$this->page($extra):$GLOBALS['phpgw']->link($sn, $extra)),
-				'th_bg'        => $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'hidden'       => $GLOBALS['phpgw']->html->input_hidden(array(
+				'form_action'  => ($this->_menuaction?$this->page($extra):GlobalService::get('phpgw')->link($sn, $extra)),
+				'th_bg'        => GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'hidden'       => GlobalService::get('phpgw')->html->input_hidden(array(
 					'filter' => $this->_filter,
 					'qfield' => $this->_qfield,
 					'start'  => 0,
 					'order'  => $this->_order,
 					'sort'   => $this->_sort,
-					'query'  => $GLOBALS['query'],
+					'query'  => GlobalService::get('query'),
 				)),
 				'search'       => $this->search($search_obj),
 				'filter'       => ($filter_obj?$this->filter($filter_obj,$yours):'')
@@ -350,26 +352,26 @@
 		*/
 		function cats_search_filter($search_obj=0,$filter_obj=1,$yours=0,$cat_id=0,$cat_field='fcat_id',$link='',$extra='')
 		{
-			if (!is_object($GLOBALS['phpgw']->categories))
+			if (!is_object(GlobalService::get('phpgw')->categories))
 			{
-				$GLOBALS['phpgw']->categories  = CreateObject('phpgwapi.categories');
+				GlobalService::get('phpgw')->categories  = CreateObject('phpgwapi.categories');
 			}
 			$var = array(
-				'form_action'   => ($this->_menuaction?$this->page($extra):$GLOBALS['phpgw']->link($sn, $extra)),
+				'form_action'   => ($this->_menuaction?$this->page($extra):GlobalService::get('phpgw')->link($sn, $extra)),
 				'lang_category' => lang('Category'),
 				'lang_all'      => lang('All'),
 				'lang_select'   => lang('Select'),
 				'cat_field'     => $cat_field,
-				'categories'    => $GLOBALS['phpgw']->categories->formated_list('select','all',(int)$cat_id,'True'),
-				'hidden'       => $GLOBALS['phpgw']->html->input_hidden(array(
+				'categories'    => GlobalService::get('phpgw')->categories->formated_list('select','all',(int)$cat_id,'True'),
+				'hidden'       => GlobalService::get('phpgw')->html->input_hidden(array(
 					'filter' => $this->_filter,
 					'qfield' => $this->_qfield,
 					'start'  => 0,
 					'order'  => $this->_order,
 					'sort'   => $this->_sort,
-					'query'  => $GLOBALS['query'],
+					'query'  => GlobalService::get('query'),
 				)),
-				'th_bg'         => $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg'         => GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'search'        => $this->search($search_obj),
 				'filter'        => ($filter_obj?$this->filter($filter_obj,$yours):'')
 			);
@@ -392,7 +394,7 @@
 			}
 			else
 			{
-				$_query = stripslashes($GLOBALS['query']);
+				$_query = stripslashes(GlobalService::get('query'));
 			}
 
 			// If they place a '"' in their search, it will mess everything up
@@ -403,7 +405,7 @@
 			}
 			$var = array
 			(
-				'query_value'   => $GLOBALS['phpgw']->html->htmlspecialchars($_query),
+				'query_value'   => GlobalService::get('phpgw')->html->htmlspecialchars($_query),
 				'lang_search' => lang('Search')
 			);
 
@@ -428,12 +430,12 @@
 			$filter_obj = array(array('none','show all'));
 			$index = 0;
 
-			$GLOBALS['phpgw']->db->query("SELECT $idxfieldname, $strfieldname FROM $filtertable",__LINE__,__FILE__);
-			while($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->query("SELECT $idxfieldname, $strfieldname FROM $filtertable",__LINE__,__FILE__);
+			while(GlobalService::get('phpgw')->db->next_record())
 			{
 				$index++;
-				$filter_obj[$index][0] = $GLOBALS['phpgw']->db->f($idxfieldname);
-				$filter_obj[$index][1] = $GLOBALS['phpgw']->db->f($strfieldname);
+				$filter_obj[$index][0] = GlobalService::get('phpgw')->db->f($idxfieldname);
+				$filter_obj[$index][1] = GlobalService::get('phpgw')->db->f($strfieldname);
 			}
 
 			return $filter_obj;
@@ -481,7 +483,7 @@
 			{
 				if ($filter_obj == 1)
 				{
-					//  $user_groups = $GLOBALS['phpgw']->accounts->membership($GLOBALS['phpgw_info']['user']['account_id']);
+					//  $user_groups = GlobalService::get('phpgw')->accounts->membership(GlobalService::get('phpgw_info')['user']['account_id']);
 					$indexlimit = count($user_groups);
 
 					if ($yours)
@@ -606,19 +608,19 @@
 		{
 			if (! $currentcolor)
 			{
-				$currentcolor = @$GLOBALS['tr_color'];
+				$currentcolor = @GlobalService::get('tr_color');
 			}
 
-			if ($currentcolor == $GLOBALS['phpgw_info']['theme']['row_on'])
+			if ($currentcolor == GlobalService::get('phpgw_info')['theme']['row_on'])
 			{
-				$GLOBALS['tr_color'] = $GLOBALS['phpgw_info']['theme'][$class='row_off'];
+				GlobalService::set('tr_color',GlobalService::get('phpgw_info')['theme'][$class='row_off']);
 			}
 			else
 			{
-				$GLOBALS['tr_color'] = $GLOBALS['phpgw_info']['theme'][$class='row_on'];
+				GlobalService::set('tr_color',GlobalService::get('phpgw_info')['theme'][$class='row_on']);
 			}
 
-			return $do_class ? $class : $GLOBALS['tr_color'];
+			return $do_class ? $class : GlobalService::get('tr_color');
 		}
 
 		// If you are using the common bgcolor="{tr_color}"
@@ -649,7 +651,7 @@
 			{
 				$sort = $sort == 'ASC' ? 'DESC' : 'ASC';
 
-				$text = '<b>'.$text.'</b> <img border="0" src="'.$GLOBALS['phpgw']->common->image('phpgwapi',$sort=='ASC'?'up':'down').'">';
+				$text = '<b>'.$text.'</b> <img border="0" src="'.GlobalService::get('phpgw')->common->image('phpgwapi',$sort=='ASC'?'up':'down').'">';
 			}
 			else
 			{
@@ -661,9 +663,9 @@
 				$extra = $this->extras_to_string($extra);
 			}
 
-			$extravar = 'order='.$var.'&sort='.$sort.'&filter='.$this->_filter.'&qfield='.$this->_qfield.'&start='.$this->_start.'&query='.urlencode(stripslashes(@$GLOBALS['query'])).$extra;
+			$extravar = 'order='.$var.'&sort='.$sort.'&filter='.$this->_filter.'&qfield='.$this->_qfield.'&start='.$this->_start.'&query='.urlencode(stripslashes(@GlobalService::get('query'))).$extra;
 
-			$link = ($this->_menuaction?$this->page($extravar):$GLOBALS['phpgw']->link($program,$extravar));
+			$link = ($this->_menuaction?$this->page($extravar):GlobalService::get('phpgw')->link($program,$extravar));
 
 			if ($build_a_href)
 			{
@@ -737,7 +739,7 @@
 
 			$extravar = 'order='.$our_order.'&sort='.$new_sort.$extra;
 
-			$link = ($this->_menuaction?$this->page($extravar):$GLOBALS['phpgw']->link($program,$extravar));
+			$link = ($this->_menuaction?$this->page($extravar):GlobalService::get('phpgw')->link($program,$extravar));
 			return '<a href="' .$link .'">' .$text .'</a>';
 		}
 
@@ -839,14 +841,14 @@
 		*/
 		function set_link_imap($align,$img,$alt_text,$out_vars)
 		{
-			$img_full = $GLOBALS['phpgw']->common->image('phpgwapi',$img);
+			$img_full = GlobalService::get('phpgw')->common->image('phpgwapi',$img);
 			$image_part = '<img src="'.$img_full.'" border="0" alt="'.$alt_text.'" width="12" height="12">';
 			return '<a href="'.$out_vars['common_uri'].'&start='.$out_vars['start'].'">'.$image_part.'</a>';
 		}
 
 		function set_icon_imap($align,$img,$alt_text)
 		{
-			$img_full = $GLOBALS['phpgw']->common->image('phpgwapi',$img);
+			$img_full = GlobalService::get('phpgw')->common->image('phpgwapi',$img);
 			return '<img src="'.$img_full.'" border="0" width="12" height="12" alt="'.$alt_text.'">'."\r\n";
 		}
 	} // End of nextmatchs class

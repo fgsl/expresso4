@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Template class                                          *
   * (C) Copyright 1999-2000 NetUSE GmbH Kristian Koehntopp                   *
@@ -69,7 +71,7 @@
 			{
 				echo "<p>Template::set_root('$root')</p>\n";
 			}
-			if (!is_dir($root))
+			if (!is_dir($root)) 
 			{
 				$this->halt("set_root: $root is not a directory.");
 				return false;
@@ -398,9 +400,9 @@
 				}
 				else
 				{
-//					$new_root = str_replace($GLOBALS['phpgw_info']['server']['template_set'],'default',$root);
-//					$new_root = substr($root, 0, strrpos($root, $GLOBALS['phpgw_info']['server']['template_set'])).'default';
-					$new_root = substr($root, 0, strlen($root) - strlen($GLOBALS['phpgw_info']['server']['template_set'])) . 'default';
+//					$new_root = str_replace(GlobalService::get('phpgw_info')['server']['template_set'],'default',$root);
+//					$new_root = substr($root, 0, strrpos($root, GlobalService::get('phpgw_info')['server']['template_set'])).'default';
+					$new_root = substr($root, 0, strlen($root) - strlen(GlobalService::get('phpgw_info')['server']['template_set'])) . 'default';
 					$new_filename = $this->filename(str_replace($root.'/','',$new_filename),$new_root,2);
 				}
 			}
@@ -469,7 +471,7 @@
 				echo('<b>Halted.</b>');
 			}
 
-			$GLOBALS['phpgw']->common->phpgw_exit(True);
+			GlobalService::get('phpgw')->common->phpgw_exit(True);
 		}
 
 		/* public, override: haltmsg($msg)

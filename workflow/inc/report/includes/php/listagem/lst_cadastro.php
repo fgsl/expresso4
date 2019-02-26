@@ -238,7 +238,7 @@ if ($lstoid == "") { $lstoid = $_GET['lstoid']; }
                                                    
                                               //     echo $sql;
                     $result = pg_query($conn,$sql);
-                    if (!$result) { throw new Exception("ERRO: Inserindo listagem."); }
+                    if (!$result) { throw new \Exception("ERRO: Inserindo listagem."); }
                     
                     $sql = "SELECT max(lstoid) as lstoid from listagem.listagem ";
                     $result = pg_query($conn,$sql);
@@ -279,13 +279,13 @@ if ($lstoid == "") { $lstoid = $_GET['lstoid']; }
                                                 lstexclusao = $flstexclusao
                                         WHERE lstoid = $lstoid";
                     $result = pg_query($conn,$sql);
-                    if (!$result) { throw new Exception("ERRO: Inserindo listagem."); }
+                    if (!$result) { throw new \Exception("ERRO: Inserindo listagem."); }
                     $msg = "Registro Atualizado com Sucesso!";
                 }
                 
                 pg_query($conn,"COMMIT;");
             
-            } catch (exception $e) {
+            } catch (\Exception $e) {
             	$msg = $e->getMessage();
                 pg_query($conn,"ROLLBACK;");
             }

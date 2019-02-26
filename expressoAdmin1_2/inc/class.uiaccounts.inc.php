@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***********************************************************************************\
 	* Expresso Administraï¿½ï¿½o															*
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	*
@@ -44,20 +46,20 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$c->read_repository();
 			$this->current_config = $c->config_data;
 			
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
 			
-			$GLOBALS['phpgw']->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
-			$GLOBALS['phpgw']->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
-			$GLOBALS['phpgw']->js->validate_file('jscode','tabs','expressoAdmin1_2');
-			$GLOBALS['phpgw']->js->validate_file('jscode','users','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','connector','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
+			GlobalService::get('phpgw')->js->validate_file('jscode','expressoadmin','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','tabs','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','users','expressoAdmin1_2');
 		}
 
 		function list_users()
 		{
-			$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$acl = $this->functions->read_acl($account_lid);
 			$raw_context = $acl['raw_context'];
 			$contexts = $acl['contexts'];
@@ -68,7 +70,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Verifica se o administrador tem acesso.
 			if (!$this->functions->check_acl( $account_lid, ACL_Managers::GRP_VIEW_USERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 
 			if(isset($_POST['query']))
@@ -76,14 +78,14 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				// limit query to limit characters
 				if(preg_match('/^[a-z_0-9_-].+$/i',$_POST['query'])) 
 				{
-					$GLOBALS['query'] = $_POST['query'];
+					GlobalService::set('query',$_POST['query']);
 				}
 			}
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('User accounts');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('User accounts');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(Array('accounts' => 'accounts.tpl'));
@@ -92,11 +94,11 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$p->set_block('accounts','row_empty');
 
 			$var = Array(
-				'bg_color'					=> $GLOBALS['phpgw_info']['theme']['bg_color'],
-				'th_bg'						=> $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'accounts_url'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.list_users'),
-				'back_url'					=> $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php'),
-				'add_action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.add_users'),
+				'bg_color'					=> GlobalService::get('phpgw_info')['theme']['bg_color'],
+				'th_bg'						=> GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'accounts_url'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.list_users'),
+				'back_url'					=> GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php'),
+				'add_action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.add_users'),
 				'create_user_disabled'		=> $this->functions->check_acl( $account_lid, ACL_Managers::ACL_ADD_USERS ) ? '' : 'disabled',
 				'context'					=> $raw_context,
 				'context_display'			=> $context_display,
@@ -104,15 +106,15 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$p->set_var($var);
 			$p->set_var($this->functions->make_dinamic_lang($p, 'body'));
 
-			$p->set_var('query', $GLOBALS['query']);
+			$p->set_var('query', GlobalService::get('query'));
 			
 			//Admin make a search
-			if ($GLOBALS['query'] != '')
+			if (GlobalService::get('query') != '')
 			{
-				$account_info = $this->functions->get_list('accounts', $GLOBALS['query'], $contexts);
+				$account_info = $this->functions->get_list('accounts', GlobalService::get('query'), $contexts);
 			}
 			
-			if (!count($account_info) && $GLOBALS['query'] != '')
+			if (!count($account_info) && GlobalService::get('query') != '')
 			{
 				$p->set_var('message',lang('No matches found'));
 				$p->parse('rows','row_empty',True);
@@ -220,19 +222,19 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		function add_users()
 		{
 			$radius_conf = $this->ldap_functions->getRadiusConf();
-			$GLOBALS['phpgw']->js->validate_file('jscode','users','expressoAdmin1_2');
+			GlobalService::get('phpgw')->js->validate_file('jscode','users','expressoAdmin1_2');
 
-			$GLOBALS['phpgw']->js->set_onload('get_available_groups(document.forms[0].context.value);');
-			$GLOBALS['phpgw']->js->set_onload('get_available_maillists(document.forms[0].context.value);');
+			GlobalService::get('phpgw')->js->set_onload('get_available_groups(document.forms[0].context.value);');
+			GlobalService::get('phpgw')->js->set_onload('get_available_maillists(document.forms[0].context.value);');
 			if ($this->current_config['expressoAdmin_samba_support'] == 'true')
-				$GLOBALS['phpgw']->js->set_onload('get_available_sambadomains(document.forms[0].context.value, \'create_user\');');
+				GlobalService::get('phpgw')->js->set_onload('get_available_sambadomains(document.forms[0].context.value, \'create_user\');');
 			
 			if ($radius_conf->enabled)
 			{
-				$GLOBALS['phpgw']->js->validate_file("jscode","radius","expressoAdmin1_2");
+				GlobalService::get('phpgw')->js->validate_file("jscode","radius","expressoAdmin1_2");
 			}
 
-			$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$acl = $this->functions->read_acl($manager_lid);
 			
 			$manager_contexts = $acl['contexts'];
@@ -240,27 +242,27 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $manager_lid, ACL_Managers::ACL_ADD_USERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 				
 			// Imprime nav_bar
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Create User');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Create User');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			
 			// Seta template
-			$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+			GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$t->set_file(array("body" => "accounts_form.tpl"));
 			$t->set_block('body','main');
 
-			// Pega combo das organizações e seleciona, caso seja um post, o setor que o usuario selecionou.
+			// Pega combo das organizaï¿½ï¿½es e seleciona, caso seja um post, o setor que o usuario selecionou.
 			foreach ($manager_contexts as $index=>$context)
 			{
 				$combo_manager_org .= $this->functions->get_organizations($context);
 			}
-			//$combo_all_orgs = $this->functions->get_organizations($GLOBALS['phpgw_info']['server']['ldap_context'], '', true, true, true);
+			//$combo_all_orgs = $this->functions->get_organizations(GlobalService::get('phpgw_info')['server']['ldap_context'], '', true, true, true);
 			
 			// Chama funcao para criar lista de aplicativos disponiveis.
 			$applications_list = $this->functions->make_list_app($manager_lid);
@@ -298,7 +300,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'color_bg1'				=> "#E8F0F0",
 				//'manager_context'		=> $manager_context,
 				'type'					=> 'create_user',
-				'back_url'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.list_users'),
+				'back_url'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.list_users'),
 				'disabled_access_button'=> 'disabled',
 				'display_access_log_button'	=> 'none',
 				'display_access_log_button'	=> 'none',
@@ -315,7 +317,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'disabled_passwd_expired'		=> 'disabled',
 				'changepassword_checked'		=> 'CHECKED',
 				'phpgwaccountstatus_checked'	=> 'CHECKED',
-				'photo_bin'						=> $GLOBALS['phpgw_info']['server']['webserver_url'].'/expressoAdmin1_2/templates/default/images/photo_celepar.png',
+				'photo_bin'						=> GlobalService::get('phpgw_info')['server']['webserver_url'].'/expressoAdmin1_2/templates/default/images/photo_celepar.png',
 				'display_picture'				=> $this->functions->check_acl( $manager_lid, ACL_Managers::ACL_MOD_USERS_PICTURE ) ? '' : 'none', 
 				'display_tr_default_password'	=> 'none',
 				'minimumSizeLogin'				=> $this->current_config['expressoAdmin_minimumSizeLogin'],
@@ -325,7 +327,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'readonly_password'				=> $this->current_config['expressoAdmin_usePasswordGenerator'] == 'true' ? 'readonly' : '',
 				'password_input_type'			=> $this->current_config['expressoAdmin_usePasswordGenerator'] == 'true' ? 'text' : 'password',
 				
-				'ldap_context'					=> ldap_dn2ufn($GLOBALS['phpgw_info']['server']['ldap_context']),
+				'ldap_context'					=> ldap_dn2ufn(GlobalService::get('phpgw_info')['server']['ldap_context']),
 				
 				// Corporative Information
 				'display_corporative_information' => $this->functions->check_acl( $manager_lid, ACL_Managers::ACL_MOD_USERS_CORPORATIVE ) ? '' : 'none',
@@ -397,7 +399,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function edit_user()
 		{
-			$manager_account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$acl = $this->functions->read_acl($manager_account_lid);
 			$raw_context = $acl['raw_context'];
 			$contexts = $acl['contexts'];		
@@ -420,26 +422,26 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				ACL_Managers::ACL_MOD_USERS_SAMBA_ATTRIBUTES,
 				ACL_Managers::ACL_MOD_USERS_CORPORATIVE,
 				ACL_Managers::ACL_MOD_USERS_PHONE_NUMBER
-			) ) $GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
-			// SOMENTE ALTERAÇÃO DE SENHA
+			) ) GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
+			// SOMENTE ALTERAï¿½ï¿½O DE SENHA
 			if ((!$this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS )) && ($this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_PASSWORD )))
 			{
 				$disabled = 'disabled';
 				$disabled_password = '';
 			}
-			// SOMENTE ALTERAÇÃO DOS ATRIBUTOS SAMBA
+			// SOMENTE ALTERAï¿½ï¿½O DOS ATRIBUTOS SAMBA
 			if ((!$this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS )) && ($this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_SAMBA_ATTRIBUTES )))
 			{
 				$disabled = 'disabled';
 				$disabled_samba = '';
 			}
-			// CRUD E ALTERAÇÃO DE TELEFONE
+			// CRUD E ALTERAï¿½ï¿½O DE TELEFONE
 			if ((!$this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS )) && ($this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_PHONE_NUMBER )))
 			{
 				$disabled = 'disabled';
 				$disabled_phonenumber = '';
 			}
-			// SOMENTE ALTERAÇÃO DE TELEFONE
+			// SOMENTE ALTERAï¿½ï¿½O DE TELEFONE
 			if (($this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_PHONE_NUMBER )))
 			{
 				$disabled = 'disabled';
@@ -494,7 +496,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				} 
 				if (strlen($user_info['corporative_information_cpf']) == 11)
 				{
-					// Compatível com o php4.
+					// Compatï¿½vel com o php4.
 					//$cpf_tmp = str_split($user_info['corporative_information_cpf'], 3);
 					$cpf_tmp[0] = $user_info['corporative_information_cpf'][0] . $user_info['corporative_information_cpf'][1] . $user_info['corporative_information_cpf'][2]; 
 					$cpf_tmp[1] = $user_info['corporative_information_cpf'][3] . $user_info['corporative_information_cpf'][4] . $user_info['corporative_information_cpf'][5];
@@ -504,22 +506,22 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				}
 			}
 			// JavaScript
-			$GLOBALS['phpgw']->js->validate_file("jscode","users","expressoAdmin1_2");
-			$GLOBALS['phpgw']->js->set_onload("get_available_groups(document.forms[0].context.value);");
-			$GLOBALS['phpgw']->js->set_onload("get_available_maillists(document.forms[0].context.value);");
-			$GLOBALS['phpgw']->js->set_onload("use_samba_attrs('".$user_info['sambaUser']."');");
+			GlobalService::get('phpgw')->js->validate_file("jscode","users","expressoAdmin1_2");
+			GlobalService::get('phpgw')->js->set_onload("get_available_groups(document.forms[0].context.value);");
+			GlobalService::get('phpgw')->js->set_onload("get_available_maillists(document.forms[0].context.value);");
+			GlobalService::get('phpgw')->js->set_onload("use_samba_attrs('".$user_info['sambaUser']."');");
 			
 			if ( $radius_conf->enabled )
 			{
-				$GLOBALS['phpgw']->js->validate_file("jscode","radius","expressoAdmin1_2");
+				GlobalService::get('phpgw')->js->validate_file("jscode","radius","expressoAdmin1_2");
 			}
 
 			// Seta header.
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit User');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit User');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			// Seta templates.
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -528,7 +530,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 							
 			foreach ($contexts as $index=>$context)
 				$combo_manager_org .= $this->functions->get_organizations($context, $user_info['context']);
-			//$combo_all_orgs = $this->functions->get_organizations($GLOBALS['phpgw_info']['server']['ldap_context'], $user_info['context'], true, true, true);			
+			//$combo_all_orgs = $this->functions->get_organizations(GlobalService::get('phpgw_info')['server']['ldap_context'], $user_info['context'], true, true, true);			
 
 			// GROUPS.
 			if (count($user_info['groups_info']) > 0)
@@ -540,7 +542,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				natcasesort($array_groups);
 				foreach ($array_groups as $gidnumber=>$cn)
 				{
-					// O memberUid do usuário está somente no Banco, então adicionamos o memberUid no Ldap.
+					// O memberUid do usuï¿½rio estï¿½ somente no Banco, entï¿½o adicionamos o memberUid no Ldap.
 					if (is_null($user_info['groups_ldap'][$gidnumber]))
 					{
 						$this->db_functions->remove_user2group($gidnumber, $_GET['account_id']);
@@ -562,7 +564,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 					}
 				}
 				
-				// O memberUid do usuário está somente no Ldap.
+				// O memberUid do usuï¿½rio estï¿½ somente no Ldap.
 				$groups_db = array_flip($user_info['groups']);
 				foreach ($user_info['groups_ldap'] as $gidnumber=>$cn)
 				{
@@ -571,8 +573,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 						/*
 						$this->ldap_functions->remove_user2group($gidnumber, $user_info['uid']);
 						if ($alert_warning == '')
-							$alert_warning = "O expressoAdmin corrigiu as seguintes inconsistências:\\n";
-						$alert_warning .= "Removido atributo memberUid do usuário do grupo $cn.\\n";
+							$alert_warning = "O expressoAdmin corrigiu as seguintes inconsistï¿½ncias:\\n";
+						$alert_warning .= "Removido atributo memberUid do usuï¿½rio do grupo $cn.\\n";
 						*/
 						$ea_select_user_groups_options .= "<option value=" . $gidnumber . ">" . $cn . " [".lang('only on ldap')."]</option>";
 					}
@@ -606,7 +608,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 			else
 			{
-				$photo_bin = $GLOBALS['phpgw_info']['server']['webserver_url'] . '/expressoAdmin1_2/templates/default/images/photo_celepar.png';
+				$photo_bin = GlobalService::get('phpgw_info')['server']['webserver_url'] . '/expressoAdmin1_2/templates/default/images/photo_celepar.png';
 				$disabled_delete_photo = 'disabled';
 			}
 
@@ -685,9 +687,9 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			if ($alert_warning != '')
 				$alert_warning = "alert('". $alert_warning ."')";
 			
-			if ( $user_info['passwd_expired'] > 0 && $GLOBALS['phpgw_info']['server']['max_pwd_age'] && $GLOBALS['phpgw_info']['server']['max_pwd_age'] > 0 ) {
+			if ( $user_info['passwd_expired'] > 0 && GlobalService::get('phpgw_info')['server']['max_pwd_age'] && GlobalService::get('phpgw_info')['server']['max_pwd_age'] > 0 ) {
 				
-				$expired_time = $user_info['passwd_expired'] + $GLOBALS['phpgw_info']['server']['max_pwd_age'] * 24 * 60 * 60;
+				$expired_time = $user_info['passwd_expired'] + GlobalService::get('phpgw_info')['server']['max_pwd_age'] * 24 * 60 * 60;
 				$printable_date = date('d/m/Y - H:i', $expired_time);
 				$password_expiration_message = ( ( $expired_time - time() > 0 )? lang('password will expire on') : lang('password expired on') ) . ' ' . $printable_date;
 			}
@@ -713,7 +715,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'row_on'					=> "#DDDDDD",
 				'row_off'					=> "#EEEEEE",
 				'color_bg1'					=> "#E8F0F0",
-				'action'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.validate_user_data_edit'),
+				'action'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uiaccounts.validate_user_data_edit'),
 				'back_url'					=> './index.php?menuaction=expressoAdmin1_2.uiaccounts.list_users',
 				'disabled'					=> $disabled,
 				'disabled_password'			=> $disabled_password,
@@ -726,7 +728,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'readonly_password'				=> $this->current_config['expressoAdmin_usePasswordGenerator'] == 'true' ? 'readonly' : '',
 				'password_input_type'		=> $this->current_config['expressoAdmin_usePasswordGenerator'] == 'true' ? 'text' : 'password',
 				'defaultDomain'					=> $this->current_config['expressoAdmin_defaultDomain'],
-				'ldap_context'					=> ldap_dn2ufn($GLOBALS['phpgw_info']['server']['ldap_context']),
+				'ldap_context'					=> ldap_dn2ufn(GlobalService::get('phpgw_info')['server']['ldap_context']),
 				
 				// Display ABAS
 				'display_corporative_information'=> $this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_CORPORATIVE ) ? '' : 'none',
@@ -848,7 +850,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function row_action($action,$type,$account_id)
 		{
-			return '<a href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+			return '<a href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 				'menuaction' => 'expressoAdmin1_2.uiaccounts.'.$action.'_'.$type,
 				'account_id' => $account_id
 			)).'"> '.lang($action).' </a>';
@@ -925,10 +927,10 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function get_photo($uidNumber)
 		{
-			$ldap_conn	= $GLOBALS['phpgw']->common->ldapConnect();
+			$ldap_conn	= GlobalService::get('phpgw')->common->ldapConnect();
 			$filter		= "(&(phpgwAccountType=u)(uidNumber=".$uidNumber."))";
 			$justthese	= array("jpegphoto");
-			$search 	= ldap_search($ldap_conn, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $justthese);
+			$search 	= ldap_search($ldap_conn, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $justthese);
 			$entry 		= ldap_first_entry($ldap_conn, $search);
 			$jpeg_data 	= ldap_get_values_len($ldap_conn, $entry, "jpegphoto");
 			
@@ -939,22 +941,22 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		{	
 			$account_id = $_GET['account_id']; 
 			
-			$manager_account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$tmp = $this->functions->read_acl($manager_account_lid);
 			$manager_context = $tmp[0]['context'];
 			
 			// Verifica se tem acesso a este modulo
 			if ((!$this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS )) && (!$this->functions->check_acl( $manager_account_lid, ACL_Managers::ACL_MOD_USERS_PASSWORD )))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 
 			// Seta header.
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
 
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Access Log');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Access Log');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			// Seta templates.
 			$t = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -963,16 +965,16 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$t->set_block('body','row','row');
 
 			// GET access log from the user.
-			$GLOBALS['phpgw']->db->limit_query("select loginid,ip,li,lo,account_id,sessionid from phpgw_access_log WHERE account_id=".$account_id." order by li desc",$start,__LINE__,__FILE__);
-			while ($GLOBALS['phpgw']->db->next_record())
+			GlobalService::get('phpgw')->db->limit_query("select loginid,ip,li,lo,account_id,sessionid from phpgw_access_log WHERE account_id=".$account_id." order by li desc",$start,__LINE__,__FILE__);
+			while (GlobalService::get('phpgw')->db->next_record())
 			{
 				$records[] = array(
-					'loginid'    => $GLOBALS['phpgw']->db->f('loginid'),
-					'ip'         => $GLOBALS['phpgw']->db->f('ip'),
-					'li'         => $GLOBALS['phpgw']->db->f('li'),
-					'lo'         => $GLOBALS['phpgw']->db->f('lo'),
-					'account_id' => $GLOBALS['phpgw']->db->f('account_id'),
-					'sessionid'  => $GLOBALS['phpgw']->db->f('sessionid')
+					'loginid'    => GlobalService::get('phpgw')->db->f('loginid'),
+					'ip'         => GlobalService::get('phpgw')->db->f('ip'),
+					'li'         => GlobalService::get('phpgw')->db->f('li'),
+					'lo'         => GlobalService::get('phpgw')->db->f('lo'),
+					'account_id' => GlobalService::get('phpgw')->db->f('account_id'),
+					'sessionid'  => GlobalService::get('phpgw')->db->f('sessionid')
 				);
 			}
 
@@ -990,7 +992,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 
 			$var = Array(
-				'th_bg'			=> $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg'			=> GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'back_url'		=> "./index.php?menuaction=expressoAdmin1_2.uiaccounts.edit_user&account_id=$account_id",
 			);
 			$t->set_var($var);
@@ -1003,7 +1005,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			require_once( PHPGW_API_INC . '/class.activedirectory.inc.php' );
 			$result = array( 'status' => false );
 			if (
-				$this->functions->check_acl( $GLOBALS['phpgw']->accounts->data['account_lid'], ACL_Managers::ACL_SET_USERS_ACTIVE_DIRECTORY ) &&
+				$this->functions->check_acl( GlobalService::get('phpgw')->accounts->data['account_lid'], ACL_Managers::ACL_SET_USERS_ACTIVE_DIRECTORY ) &&
 				( $ad = ActiveDirectory::getInstance() ) && $ad->enabled
 			) {
 				$ad_status = 0;

@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Core class and functions for eGroupWare                 *
 	* This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -111,7 +113,7 @@
 		function redirect_forward( $url = '/home.php?cd=yes' )
 		{
 			list( $forward, $extra_vars ) = explode( '?', ( ( isset( $_GET['phpgw_forward'] ) ? urldecode( $_GET['phpgw_forward'] ) : @$_POST['phpgw_forward'] )?: $url ), 2 );
-			$GLOBALS['phpgw']->redirect_link( $forward, $extra_vars );
+			GlobalService::get('phpgw')->redirect_link( $forward, $extra_vars );
 			exit;
 		}
 
@@ -125,7 +127,7 @@
 		* @return bool	True if called previously, else False - call ok
 		* @see	session->is_repost()
 		* @syntax is_post()
-		* @example $repost = $GLOBALS['phpgwapi']->is_repost();
+		* @example $repost = GlobalService::get('phpgwapi']->is_repost();
 		* @author	Dave Hall
 		*/
 		function is_repost($display_error = False)
@@ -145,7 +147,7 @@
 		 */
 		function redirect($url = '')
 		{
-			$iis = @strpos($GLOBALS['HTTP_ENV_VARS']['SERVER_SOFTWARE'], 'IIS', 0);
+			$iis = @strpos(GlobalService::get('HTTP_ENV_VARS')['SERVER_SOFTWARE'], 'IIS', 0);
 
 			if(!$url)
 			{

@@ -12,7 +12,7 @@
 require_once 'class.JobDate.inc.php';
 
 /**
- * Classe para datas relativas ao final do mês
+ * Classe para datas relativas ao final do mï¿½s
  * @author Sidnei Augusto Drovetto Junior - drovetto@gmail.com
  * @version 1.0
  * @license http://www.gnu.org/copyleft/gpl.html GPL
@@ -22,16 +22,16 @@ require_once 'class.JobDate.inc.php';
 class RelativeDate extends JobDate
 {
 	/**
-	 * @var int $dayOffset O número de dias restantes para o final do mês (quando o Job deve ser executado)
+	 * @var int $dayOffset O nï¿½mero de dias restantes para o final do mï¿½s (quando o Job deve ser executado)
 	 * @access private
 	 */
 	private $dayOffset;
 
 	/**
 	 * Construtor da classe RelativeDate
-	 * @param object $startDate A data a partir da qual o Job é válido
-	 * @param array $interval O intervalo de execução do Job
-	 * @param int $dayOffset O número de dias restantes para o final do mês
+	 * @param object $startDate A data a partir da qual o Job ï¿½ vï¿½lido
+	 * @param array $interval O intervalo de execuï¿½ï¿½o do Job
+	 * @param int $dayOffset O nï¿½mero de dias restantes para o final do mï¿½s
 	 * @return object Objeto da classe RelativeDate
 	 * @access public
 	 */
@@ -43,9 +43,9 @@ class RelativeDate extends JobDate
 	}
 
 	/**
-	 * Verifica se um Job será executado na data fornecida
-	 * @param object $checkDate A data que será verificada
-	 * @return bool True caso o Job deva ser executado e false caso contrário
+	 * Verifica se um Job serï¿½ executado na data fornecida
+	 * @param object $checkDate A data que serï¿½ verificada
+	 * @return bool True caso o Job deva ser executado e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function checkMatchesInterval($checkDate)
@@ -58,7 +58,7 @@ class RelativeDate extends JobDate
 		if ((($check - $start) % $this->interval['value']) !== 0)
 			return false;
 
-		$model = new DateTime($checkDate->format('Y-n-1 G:i:00'));
+		$model = new \DateTime($checkDate->format('Y-n-1 G:i:00'));
 		$model->modify('+1 month');
 		$model->modify("-{$this->dayOffset} day");
 
@@ -66,8 +66,8 @@ class RelativeDate extends JobDate
 	}
 
 	/**
-	 * Define a quantidade de dias restantes para o final do mês (que é quando o Job deve ser executado)
-	 * @param int $dayOffset O número de dias restantes para o final do mês
+	 * Define a quantidade de dias restantes para o final do mï¿½s (que ï¿½ quando o Job deve ser executado)
+	 * @param int $dayOffset O nï¿½mero de dias restantes para o final do mï¿½s
 	 * @return void
 	 * @access public
 	 */

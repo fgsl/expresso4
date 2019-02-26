@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Administration                                              *
 	* http://www.egroupware.org                                                *
@@ -23,18 +25,18 @@
 		function uiaclmanager()
 		{
 			$this->account_id = (int)$_GET['account_id'];
-			if (!$this->account_id || $GLOBALS['phpgw']->acl->check('account_access',64,'admin'))
+			if (!$this->account_id || GlobalService::get('phpgw')->acl->check('account_access',64,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 			$this->template = createobject('phpgwapi.Template',PHPGW_APP_TPL);
 		}
 
 		function common_header()
 		{
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin') . ' - ' . lang('ACL Manager') .
-				': ' . $GLOBALS['phpgw']->common->grab_owner_name($this->account_id);
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin') . ' - ' . lang('ACL Manager') .
+				': ' . GlobalService::get('phpgw')->common->grab_owner_name($this->account_id);
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 		}
 
@@ -42,7 +44,7 @@
 		{
 			$this->common_header();
 
-			$GLOBALS['phpgw']->hooks->process('acl_manager',array('preferences'));
+			GlobalService::get('phpgw')->hooks->process('acl_manager',array('preferences'));
 
 			$this->template->set_file(array(
 				'app_list'   => 'acl_applist.tpl'
@@ -53,14 +55,14 @@
 			$this->template->set_block('app_list','link_row');
 			$this->template->set_block('app_list','spacer_row');
 
-			if (is_array($GLOBALS['acl_manager']))
+			if (is_array(GlobalService::get('acl_manager')))
 			{
-				foreach($GLOBALS['acl_manager'] as $app => $locations)
+				foreach(GlobalService::get('acl_manager') as $app => $locations)
 				{
-					$icon = $GLOBALS['phpgw']->common->image($app,array('navbar.gif',$app.'.gif'));
-					$this->template->set_var('icon_backcolor',$GLOBALS['phpgw_info']['theme']['row_off']);
-					$this->template->set_var('link_backcolor',$GLOBALS['phpgw_info']['theme']['row_off']);
-					$this->template->set_var('app_name',$GLOBALS['phpgw_info']['apps'][$app]['title']);
+					$icon = GlobalService::get('phpgw')->common->image($app,array('navbar.gif',$app.'.gif'));
+					$this->template->set_var('icon_backcolor',GlobalService::get('phpgw_info')['theme']['row_off']);
+					$this->template->set_var('link_backcolor',GlobalService::get('phpgw_info')['theme']['row_off']);
+					$this->template->set_var('app_name',GlobalService::get('phpgw_info')['apps'][$app]['title']);
 					$this->template->set_var('a_name',$appname);
 					$this->template->set_var('app_icon',$icon);
 	
@@ -84,7 +86,7 @@
 								'account_id' => $this->account_id
 							);
 		
-							$this->template->set_var('link_location',$GLOBALS['phpgw']->link('/index.php',$link_values));
+							$this->template->set_var('link_location',GlobalService::get('phpgw')->link('/index.php',$link_values));
 							$this->template->set_var('lang_location',lang($value['name']));
 							$this->template->fp('rows','link_row',True);
 						}
@@ -94,7 +96,7 @@
 				}
 			}
 			$this->template->set_var(array(
-				'cancel_action' => $GLOBALS['phpgw']->link('/index.php','menuaction=admin.uiaccounts.list_users'),
+				'cancel_action' => GlobalService::get('phpgw')->link('/index.php','menuaction=admin.uiaccounts.list_users'),
 				'lang_cancel'   => lang('Cancel')
 			));
 			$this->template->pfp('out','list');
@@ -118,27 +120,27 @@
 					}
 					if ($total_rights)
 					{
-						$GLOBALS['phpgw']->acl->add_repository($_GET['acl_app'], $location, $this->account_id, $total_rights);
+						GlobalService::get('phpgw')->acl->add_repository($_GET['acl_app'], $location, $this->account_id, $total_rights);
 					}
 					else	// we dont need to save 0 rights (= no restrictions)
 					{
-						$GLOBALS['phpgw']->acl->delete_repository($_GET['acl_app'], $location, $this->account_id);
+						GlobalService::get('phpgw')->acl->delete_repository($_GET['acl_app'], $location, $this->account_id);
 					}
 				}
 				$this->list_apps();
 				return;
 			}
-			$GLOBALS['phpgw']->hooks->single('acl_manager',$_GET['acl_app']);
-			$acl_manager = $GLOBALS['acl_manager'][$_GET['acl_app']][$location];
+			GlobalService::get('phpgw')->hooks->single('acl_manager',$_GET['acl_app']);
+			$acl_manager = GlobalService::get('acl_manager')[$_GET['acl_app']][$location];
 
 			$this->common_header();
 			$this->template->set_file('form','acl_manager_form.tpl');
 
 			$acc = createobject('phpgwapi.accounts',$this->account_id);
 			$acc->read_repository();
-			$afn = $GLOBALS['phpgw']->common->display_fullname($acc->data['account_lid'],$acc->data['firstname'],$acc->data['lastname']);
+			$afn = GlobalService::get('phpgw')->common->display_fullname($acc->data['account_lid'],$acc->data['firstname'],$acc->data['lastname']);
 
-			$this->template->set_var('lang_message',lang('Check items to <b>%1</b> to %2 for %3',lang($acl_manager['name']),$GLOBALS['phpgw_info']['apps'][$_GET['acl_app']]['title'],$afn));
+			$this->template->set_var('lang_message',lang('Check items to <b>%1</b> to %2 for %3',lang($acl_manager['name']),GlobalService::get('phpgw_info')['apps'][$_GET['acl_app']]['title'],$afn));
 			$link_values = array(
 				'menuaction' => 'admin.uiaclmanager.access_form',
 				'acl_app'    => $_GET['acl_app'],
@@ -150,7 +152,7 @@
 			$acl->read_repository();
 			$grants = $acl->get_rights($location,$_GET['acl_app']);
 
-			$this->template->set_var('form_action',$GLOBALS['phpgw']->link('/index.php',$link_values));
+			$this->template->set_var('form_action',GlobalService::get('phpgw')->link('/index.php',$link_values));
 
 			$total = 0;
 			foreach($acl_manager['rights'] as $name => $value)

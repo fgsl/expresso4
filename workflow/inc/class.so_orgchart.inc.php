@@ -18,13 +18,13 @@
 class so_orgchart
 {
 	/**
-	 * @var bool True se o usuário for administrador do expresso.
+	 * @var bool True se o usuï¿½rio for administrador do expresso.
 	 * @access private
 	 */
 	private $isAdmin;
 
 	/**
-	 * @var int ID do usuário logado no Expresso
+	 * @var int ID do usuï¿½rio logado no Expresso
 	 * @access private
 	 */
 	private $userID;
@@ -42,16 +42,16 @@ class so_orgchart
 	private $db;
 
 	/**
-	 * @var bool Indica se alguns métodos desta classe poderão ser chamados por métodos externos
+	 * @var bool Indica se alguns mï¿½todos desta classe poderï¿½o ser chamados por mï¿½todos externos
 	 * @access private
 	 */
 	private $externalCalls = false;
 
 	/**
-	 * Checa se o usuário possui acesso ao Organograma ou permissão para modificar determinada organização.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @param bool $checkType Indica se a checagem não depende do ID da organização.
-	 * @param bool $safeMethod Indica que a checagem pode ser ignorada quando chamada por outras partes do módulo Workflow
+	 * Checa se o usuï¿½rio possui acesso ao Organograma ou permissï¿½o para modificar determinada organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @param bool $checkType Indica se a checagem nï¿½o depende do ID da organizaÃ§Ã£o.
+	 * @param bool $safeMethod Indica que a checagem pode ser ignorada quando chamada por outras partes do mï¿½dulo Workflow
 	 * @return void
 	 * @access private
 	 */
@@ -77,12 +77,12 @@ class so_orgchart
 		}
 
 		if (!$authorized)
-			$this->endExecution("Você não tem permissão para executar este procedimento!");
+			$this->endExecution("Vocï¿½ nï¿½o tem permissï¿½o para executar este procedimento!");
 	}
 
 	/**
-	 * Finaliza a execução e envia uma mensagem serializada (para ser exibida no retorno do Ajax).
-	 * @param mixed A mensagem que será exibida. Pode ser uma array de mensagens ou uma string.
+	 * Finaliza a execuï¿½ï¿½o e envia uma mensagem serializada (para ser exibida no retorno do Ajax).
+	 * @param mixed A mensagem que serï¿½ exibida. Pode ser uma array de mensagens ou uma string.
 	 * @return void
 	 * @access private
 	 */
@@ -95,7 +95,7 @@ class so_orgchart
 	}
 
 	/**
-	 * Define que alguns métodos desta classe poderão ser chamados.
+	 * Define que alguns mï¿½todos desta classe poderï¿½o ser chamados.
 	 * @param bool $satus O status. true para permitir e false para restringir.
 	 * @return void
 	 * @access public
@@ -114,7 +114,7 @@ class so_orgchart
 	private function _checkError($result)
 	{
 		if ($result === false)
-			die(serialize("Ocorreu um erro ao se tentar executar a operação solicitada."));
+			die(serialize("Ocorreu um erro ao se tentar executar a operaÃ§Ã£o solicitada."));
 	}
 
 	/**
@@ -131,8 +131,8 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista todas as organizações do Organograma.
-	 * @return array Lista de organizações.
+	 * Lista todas as organizaï¿½ï¿½es do Organograma.
+	 * @return array Lista de organizaï¿½ï¿½es.
 	 * @access public
 	 */
 	function getOrganizations()
@@ -160,12 +160,12 @@ class so_orgchart
 	}
 
 	/**
-	 * Adiciona uma organização.
-	 * @param string $name O nome da organização.
-	 * @param string $description A descrição da organização.
-	 * @param string $imageURL O caminho da imagem que representa o organograma da organização.
-	 * @param char $active 'S' se a organização estiver ativa e 'N' caso contrário.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Adiciona uma organizaÃ§Ã£o.
+	 * @param string $name O nome da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o da organizaÃ§Ã£o.
+	 * @param string $imageURL O caminho da imagem que representa o organograma da organizaÃ§Ã£o.
+	 * @param string $active 'S' se a organizaÃ§Ã£o estiver ativa e 'N' caso contrï¿½rio.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addOrganization($name, $description, $imageURL, $active, $siteURL)
@@ -180,13 +180,13 @@ class so_orgchart
 	}
 
 	/**
-	 * Atualiza as informações sobre uma organização.
-	 * @param string $name O nome da organização.
-	 * @param string $description A descrição da organização.
-	 * @param string $imageURL O caminho da imagem que representa o organograma da organização.
-	 * @param char $active 'S' se a organização estiver ativa e 'N' caso contrário.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Atualiza as informaÃ§Ãµes sobre uma organizaÃ§Ã£o.
+	 * @param string $name O nome da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o da organizaÃ§Ã£o.
+	 * @param string $imageURL O caminho da imagem que representa o organograma da organizaÃ§Ã£o.
+	 * @param string $active 'S' se a organizaÃ§Ã£o estiver ativa e 'N' caso contrï¿½rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateOrganization($name, $description, $imageURL, $active, $organizationID, $siteURL)
@@ -201,9 +201,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Remove uma organização.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Remove uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeOrganization($organizationID)
@@ -218,9 +218,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista os possíveis status dos funcionários.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @return array Lista dos possíveis status dos empregados.
+	 * Lista os possï¿½veis status dos funcionï¿½rios.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @return array Lista dos possï¿½veis status dos empregados.
 	 * @access public
 	 */
 	function getEmployeeStatus($organizationID)
@@ -237,11 +237,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Adiciona um Status de funcionário.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @param string $description A descrição do status.
-	 * @param char $show 'S' se o funcionário será exibido na interface de organograma do usuário ou 'N' caso contrário.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Adiciona um Status de funcionÃ¡rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @param string $description A descriÃ§Ã£o do status.
+	 * @param string $show 'S' se o funcionÃ¡rio serÃ¡ exibido na interface de organograma do usuï¿½rio ou 'N' caso contrï¿½rio.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrÃ¡rio.
 	 * @access public
 	 */
 	function addEmployeeStatus($organizationID, $description, $show)
@@ -256,12 +256,12 @@ class so_orgchart
 	}
 
 	/**
-	 * Atualiza um Status de funcionário.
-	 * @param int $employeeStatusID O ID do status de funcionário.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @param string $description A descrição do status.
-	 * @param char $show 'S' se o funcionário será exibido na interface de organograma do usuário ou 'N' caso contrário.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Atualiza um Status de funcionÃ¡rio.
+	 * @param int $employeeStatusID O ID do status de funcionÃ¡rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @param string $description A descriÃ§Ã£o do status.
+	 * @param string $show 'S' se o funcionÃ¡rio serÃ¡ exibido na interface de organograma do usuï¿½rio ou 'N' caso contrï¿½rio.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateEmployeeStatus($employeeStatusID, $organizationID, $description, $show)
@@ -276,10 +276,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Remove um Status de funcionário.
-	 * @param int $employeeStatusID O ID do status de funcionário.
-	 * @param int $organizationID O ID da organização do Orgranograma.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Remove um Status de funcionï¿½rio.
+	 * @param int $employeeStatusID O ID do status de funcionï¿½rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o do Orgranograma.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeEmployeeStatus($employeeStatusID, $organizationID)
@@ -294,9 +294,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista as possíveis categorias de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista das possíveis categorias de uma organização.
+	 * Lista as possï¿½veis categorias de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista das possï¿½veis categorias de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getEmployeeCategory($organizationID)
@@ -317,9 +317,9 @@ class so_orgchart
 
 	/**
 	 * Adiciona uma categoria.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição da categoria.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o da categoria.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addEmployeeCategory($organizationID, $description)
@@ -336,9 +336,9 @@ class so_orgchart
 	/**
 	 * Atualiza uma categoria.
 	 * @param int $employeeCategoryID O ID da categoria.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição da categoria.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o da categoria.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateEmployeeCategory($employeeCategoryID, $organizationID, $description)
@@ -355,8 +355,8 @@ class so_orgchart
 	/**
 	 * Remove uma categoria.
 	 * @param int $employeeCategoryID O ID da categoria.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeEmployeeCategory($employeeCategoryID, $organizationID)
@@ -371,9 +371,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista os possíveis cargos de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista dos possíveis cargos de uma organização.
+	 * Lista os possï¿½veis cargos de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista dos possï¿½veis cargos de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getJobTitle($organizationID)
@@ -395,9 +395,9 @@ class so_orgchart
 
 	/**
 	 * Adiciona um cargo.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição do cargo.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o do cargo.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addJobTitle($organizationID, $description)
@@ -414,9 +414,9 @@ class so_orgchart
 	/**
 	 * Atualiza um cargo.
 	 * @param int $jobTitleID O ID do cargo.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição do cargo.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o do cargo.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateJobTitle($jobTitleID, $organizationID, $description)
@@ -433,8 +433,8 @@ class so_orgchart
 	/**
 	 * Remove um cargo.
 	 * @param int $jobTitleID O ID do cargo.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeJobTitle($jobTitleID, $organizationID)
@@ -449,9 +449,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista os possíveis status das áreas de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista dos possíveis status das áreas de uma organização.
+	 * Lista os possï¿½veis status das ï¿½reas de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista dos possï¿½veis status das ï¿½reas de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getAreaStatus($organizationID)
@@ -472,11 +472,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Adiciona um status de área.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição do status.
-	 * @param int $level O nível do status.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Adiciona um status de ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o do status.
+	 * @param int $level O nï¿½vel do status.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addAreaStatus($organizationID, $description, $level)
@@ -491,12 +491,12 @@ class so_orgchart
 	}
 
 	/**
-	 * Atualiza um status de área.
-	 * @param int $areaStatusID O ID do status da área.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição do status.
-	 * @param int $level O nível do status.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Atualiza um status de ï¿½rea.
+	 * @param int $areaStatusID O ID do status da ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o do status.
+	 * @param int $level O nï¿½vel do status.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateAreaStatus($areaStatusID, $organizationID, $description, $level)
@@ -511,10 +511,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Remove um status de área.
-	 * @param int $areaStatusID O ID do status da área.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Remove um status de ï¿½rea.
+	 * @param int $areaStatusID O ID do status da ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeAreaStatus($areaStatusID, $organizationID)
@@ -529,9 +529,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista os centros de custo de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista dos centros de custo de uma organização.
+	 * Lista os centros de custo de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista dos centros de custo de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getCostCenter($organizationID)
@@ -553,11 +553,11 @@ class so_orgchart
 
 	/**
 	 * Adiciona um centro de custo.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $number O número do centro de custo.
-	 * @param string $description A descrição do centro de custo.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $number O nï¿½mero do centro de custo.
+	 * @param string $description A descriÃ§Ã£o do centro de custo.
 	 * @param string $group O grupo do centro de custo.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addCostCenter($organizationID, $number, $description, $group)
@@ -573,12 +573,12 @@ class so_orgchart
 
 	/**
 	 * Atualiza um centro de custo.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $number O número do centro de custo.
-	 * @param string $description A descrição do centro de custo.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $number O nï¿½mero do centro de custo.
+	 * @param string $description A descriÃ§Ã£o do centro de custo.
 	 * @param string $group O grupo do centro de custo.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateCostCenter($organizationID, $number, $description, $group, $costCenterID)
@@ -595,8 +595,8 @@ class so_orgchart
 	/**
 	 * Remove um centro de custo.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeCostCenter($costCenterID, $organizationID)
@@ -611,9 +611,9 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista as localidade de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista das localidades de uma organização.
+	 * Lista as localidade de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista das localidades de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getLocal($organizationID)
@@ -638,10 +638,10 @@ class so_orgchart
 
 	/**
 	 * Adiciona uma localidade.
-	 * @param int $organizationID O ID da organização.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @param string $description A descrição da localidade.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param string $description A descriÃ§Ã£o da localidade.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addLocal($organizationID, $costCenter, $description, $company, $address, $complement, $zipCode, $neighborhood, $city, $state, $external )
@@ -657,11 +657,11 @@ class so_orgchart
 
 	/**
 	 * Atualiza uma localidade.
-	 * @param int $organizationID O ID da organização.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @param string $description A descrição da localidade.
+	 * @param string $description A descriÃ§Ã£o da localidade.
 	 * @param int $localID O ID da localidade.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateLocal($organizationID, $costCenter, $description, $localID, $company, $address, $complement, $zipCode, $neighborhood, $city, $state, $external )
@@ -677,9 +677,9 @@ class so_orgchart
 
 	/**
 	 * Remove uma localidade.
-	 * @param int $organizationID O ID da organização.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
 	 * @param int $localID O ID da localidade.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeLocal($localID, $organizationID)
@@ -694,10 +694,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista os funcionários de uma determinada área da organização.
-	 * @param int $areaID O ID da área.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista dos funcionários de uma determinada área da organização.
+	 * Lista os funcionï¿½rios de uma determinada ï¿½rea da organizaÃ§Ã£o.
+	 * @param int $areaID O ID da ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista dos funcionï¿½rios de uma determinada ï¿½rea da organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getAreaEmployee($areaID, $organizationID)
@@ -740,10 +740,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Procura por funcionários de acordo com um termo de busca.
-	 * @param string $searchTerm O termo de busca. Pode ser referente ao ID do funcionário ou ao nome do mesmo.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Lista dos funcionários que satisfazem o critério de busca.
+	 * Procura por funcionï¿½rios de acordo com um termo de busca.
+	 * @param string $searchTerm O termo de busca. Pode ser referente ao ID do funcionï¿½rio ou ao nome do mesmo.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Lista dos funcionï¿½rios que satisfazem o critï¿½rio de busca.
 	 * @access public
 	 */
 	function searchEmployee($searchTerm, $organizationID)
@@ -774,7 +774,7 @@ class so_orgchart
 		$ldap = &Factory::getInstance('WorkflowObjects')->getLDAP();
 		$list = @ldap_search($ldap, Factory::getInstance('WorkflowLDAP')->getLDAPContext(), $ldapSearch, array('uidnumber', 'cn', 'uid'));
 		if ($list === false)
-			die(serialize("O sistema de busca não pode ser utilizado nesta organização."));
+			die(serialize("O sistema de busca nï¿½o pode ser utilizado nesta organizaÃ§Ã£o."));
 		$entries = ldap_get_entries($ldap, $list);
 		for ($i=0; $i < $entries['count']; ++$i)
 			$unifiedResult[$entries[$i]['uidnumber'][0]] = array('name' => $entries[$i]['cn'][0], 'uid' => $entries[$i]['uid'][0], 'removed' => false);
@@ -810,8 +810,8 @@ class so_orgchart
 
 
 	/**
-	 * Valida se o formato da data está correto..
-	 * @param $date data a ser validada.
+	 * Valida se o formato da data estÃ¡ correto..
+	 * @param $date string data a ser validada.
 	 **/
 
 	function validateDate($date)
@@ -819,24 +819,24 @@ class so_orgchart
 		$date_pattern = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/[12][0-9]{3}$/';
 
 		if (!preg_match($date_pattern, $date))
-			$this->endExecution("Formato inválido para data (dd/mm/aaaa).");
+			$this->endExecution("Formato invÃ¡lido para data (dd/mm/aaaa).");
 	}
 
 	/**
-	 * Adiciona um funcionário.
-	 * @param int $employeeID O ID do funcionário.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $areaID O ID da área.
+	 * Adiciona um funcionÃ¡rio.
+	 * @param int $employeeID O ID do funcionpario.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $areaID O ID da Ã¡rea.
 	 * @param int $costCenterID O ID do centro de custo.
 	 * @param int $localID O ID da localidade.
-	 * @param int $employeeStatusID O ID do status do funcionário.
-	 * @param int $jobTitleID O ID do cargo do funcionário.
-	 * @param int $level O nível do cargo do funcionário.
-	 * @param int $title O título do funcionário.
- 	 * @param int $nickname O apelido do funcionário.
- 	 * @param int $jobDesc A descrição do cargo (função).
- 	 * @param int $admDate Data de admissão do funcionário.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $employeeStatusID O ID do status do funcionÃ¡rio.
+	 * @param int $jobTitleID O ID do cargo do funcionÃ¡rio.
+	 * @param int $level O nÃ­vel do cargo do funcionÃ¡rio.
+	 * @param int $title O tï¿½tulo do funcionï¿½rio.
+ 	 * @param int $nickname O apelido do funcionï¿½rio.
+ 	 * @param int $jobDesc A descriÃ§Ã£o do cargo (funï¿½ï¿½o).
+ 	 * @param int $admDate Data de admissï¿½o do funcionï¿½rio.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addEmployee($employeeID, $organizationID, $areaID, $costCenterID, $localID, $employeeStatusID, $jobTitleID, $level, $employeeCategoryID, $title, $nickname, $jobDesc, $admDate)
@@ -856,9 +856,9 @@ class so_orgchart
 		if (($row = $this->db->query($query, $employeeID)->fetchRow()))
 		{
 			$errors = array(
-				"O funcionário \"" . Factory::getInstance('WorkflowLDAP')->getName($employeeID) . "\" já pertença à área \"{$row['sigla']}\".",
+				"O funcionï¿½rio \"" . Factory::getInstance('WorkflowLDAP')->getName($employeeID) . "\" jï¿½ pertenï¿½a ï¿½ ï¿½rea \"{$row['sigla']}\".",
 				'-----------------',
-				'Caso você queira colocá-lo na área selecionada, siga o procedimento: faça uma busca por seu nome, clique para editá-lo e, troque pela área desejada.'
+				'Caso vocï¿½ queira colocï¿½-lo na ï¿½rea selecionada, siga o procedimento: faï¿½a uma busca por seu nome, clique para editï¿½-lo e, troque pela ï¿½rea desejada.'
 			);
 			$this->endExecution($errors);
 		}
@@ -871,21 +871,21 @@ class so_orgchart
 	}
 
 	/**
-	 * Atualiza o funcionário.
-	 * @param int $employeeID O ID do funcionário.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $areaID O ID da área.
+	 * Atualiza o funcionï¿½rio.
+	 * @param int $employeeID O ID do funcionï¿½rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $areaID O ID da ï¿½rea.
 	 * @param int $costCenterID O ID do centro de custo.
 	 * @param int $localID O ID da localidade.
-	 * @param int $employeeStatusID O ID do status do funcionário.
-	 * @param int $jobTitleID O ID do cargo do funcionário.
-	 * @param int $level O nível do cargo do funcionário.
-	 * @param int $employeeCategoryID O ID da categoria do funcionário.
-	 * @param int $title O título do funcionário.
- 	 * @param int $nickname O apelido do funcionário.
- 	 * @param int $jobDesc A descrição do cargo (função).
- 	 * @param int $admDate Data de admissão do funcionário.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $employeeStatusID O ID do status do funcionï¿½rio.
+	 * @param int $jobTitleID O ID do cargo do funcionï¿½rio.
+	 * @param int $level O nï¿½vel do cargo do funcionï¿½rio.
+	 * @param int $employeeCategoryID O ID da categoria do funcionï¿½rio.
+	 * @param int $title O tï¿½tulo do funcionï¿½rio.
+ 	 * @param int $nickname O apelido do funcionï¿½rio.
+ 	 * @param int $jobDesc A descriÃ§Ã£o do cargo (funï¿½ï¿½o).
+ 	 * @param int $admDate Data de admissï¿½o do funcionï¿½rio.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateEmployee($employeeID, $organizationID, $areaID, $costCenterID, $localID, $employeeStatusID, $jobTitleID, $level, $employeeCategoryID, $title, $nickname, $jobDesc, $admDate)
@@ -911,10 +911,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Remove um funcionário.
-	 * @param int $employeeID O ID do funcionário.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Remove um funcionï¿½rio.
+	 * @param int $employeeID O ID do funcionï¿½rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeEmployee($employeeID, $organizationID)
@@ -929,9 +929,9 @@ class so_orgchart
 		if (count($areas) > 0)
 		{
 			$errors = array(
-				"O funcionário \"" . Factory::getInstance('WorkflowLDAP')->getName($employeeID) . "\" é titular, substituto, já participou de substituição ou é auxiliar administrativo das seguintes áreas: " . implode(", ", $areas),
+				"O funcionï¿½rio \"" . Factory::getInstance('WorkflowLDAP')->getName($employeeID) . "\" ï¿½ titular, substituto, jï¿½ participou de substituiÃ§Ã£o ou ï¿½ auxiliar administrativo das seguintes ï¿½reas: " . implode(", ", $areas),
 				'-----------------',
-				'Se você quiser excluir este funcionário, precisa removê-lo dos "cargos" que ele possui nas áreas citadas.'
+				'Se vocï¿½ quiser excluir este funcionï¿½rio, precisa removï¿½-lo dos "cargos" que ele possui nas ï¿½reas citadas.'
 			);
 			$this->endExecution($errors);
 		}
@@ -944,11 +944,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista as áreas de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $areaID O ID da área. Por padrão, são recuperadas todas as áreas.
-	 * @param int $onlyActive Indica se devem ser recuperadas apenas as áreas ativas ou todas.
-	 * @return array Lista das áreas de uma organização.
+	 * Lista as ï¿½reas de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $areaID O ID da ï¿½rea. Por padrï¿½o, sï¿½o recuperadas todas as ï¿½reas.
+	 * @param int $onlyActive Indica se devem ser recuperadas apenas as ï¿½reas ativas ou todas.
+	 * @return array Lista das ï¿½reas de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getArea($organizationID, $areaID = -1, $onlyActive = 0)
@@ -993,11 +993,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista, hierarquicamente, as áreas de uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $parent O ID da área superior (ou NULL para buscar todas as áreas).
-	 * @param int $depth O nível hierárquico da área (profundidade do nó na árvore do Organograma).
-	 * @return array Lista hierárquica das áreas de uma organização.
+	 * Lista, hierarquicamente, as ï¿½reas de uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $parent O ID da ï¿½rea superior (ou NULL para buscar todas as ï¿½reas).
+	 * @param int $depth O nï¿½vel hierï¿½rquico da ï¿½rea (profundidade do nï¿½ na ï¿½rvore do Organograma).
+	 * @return array Lista hierï¿½rquica das ï¿½reas de uma organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getHierarchicalArea($organizationID, $parent, $depth)
@@ -1033,17 +1033,17 @@ class so_orgchart
 	}
 
 	/**
-	 * Adiciona uma área em uma organização.
+	 * Adiciona uma Ã¡rea em uma organizaÃ§Ã£o.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $areaStatusID O ID do status da área.
-	 * @param int $supervisorID O ID do funcionário que é superior da área.
-	 * @param int $superiorAreaID O ID da área que é superior a que está sendo adicionada (NULL caso não possua área superior).
-	 * @param string $acronym A sigla da área.
-	 * @param string $description A descrição da área.
-	 * @param char $active 'S' se a área estiver ativa e 'N' caso contrário.
-	 * @param int $assistantID O ID do funcionário que está auxiliando o superior da área.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $areaStatusID O ID do status da Ã¡rea.
+	 * @param int $supervisorID O ID do funcionÃ¡rio que Ã© superior da Ã¡rea.
+	 * @param int $superiorAreaID O ID da Ã¡rea que Ã© superior a que estÃ¡ sendo adicionada (NULL caso nÃ£o possua Ã¡rea superior).
+	 * @param string $acronym A sigla da Ã¡rea.
+	 * @param string $description A descriÃ§Ã£o da Ã¡rea.
+	 * @param string $active 'S' se a Ã¡rea estiver ativa e 'N' caso contrÃ¡rio.
+	 * @param int $assistantID O ID do funcionÃ¡rio que estÃ¡ auxiliando o superior da Ã¡rea.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrÃ¡rio.
 	 * @access public
 	 */
 	function addArea($costCenterID, $organizationID, $areaStatusID, $supervisorID, $superiorAreaID, $acronym, $description, $active, $assistantID)
@@ -1059,13 +1059,13 @@ class so_orgchart
 
 			$query = 'SELECT 1 FROM funcionario WHERE (funcionario_id = ?)';
 			if (!$this->db->query($query, $checkEmployee)->fetchRow())
-				$errors[] = "O funcionário \"" . Factory::getInstance('WorkflowLDAP')->getName($checkEmployee) . "\" não está vinculado a uma área.";
+				$errors[] = "O funcionÃ¡rio \"" . Factory::getInstance('WorkflowLDAP')->getName($checkEmployee) . "\" nÃ£o estÃ¡ vinculado a uma Ã¡rea.";
 		}
 
 		if (count($errors) > 0)
 		{
 			$errors[] = '-----------------';
-			$errors[] = 'Se você está iniciando a construção de um organograma, crie as áreas sem titulares/substitutos/auxiliares administrativos e, adicione os funcionários a elas. Só então, adicione os titulares, substitutos, etc. A razão disto, é que estes "cargos" só podem ser ocupados por pessoas que estão vinculadas a alguma área.';
+			$errors[] = 'Se vocÃª estÃ¡ iniciando a construÃ§Ã£o de um organograma, crie as Ã¡reas sem titulares/substitutos/auxiliares administrativos e, adicione os funcionÃ¡rios a elas. SÃ³ entÃ£o, adicione os titulares, substitutos, etc. A razÃ£o disto, Ã© que estes "cargos" sÃ³ podem ser ocupados por pessoas que estÃ£o vinculadas a alguma Ã¡rea.';
 			$this->endExecution($errors);
 		}
 
@@ -1077,18 +1077,18 @@ class so_orgchart
 	}
 
 	/**
-	 * Atualiza a área de uma organização.
+	 * Atualiza a Ã¡rea de uma organizaÃ§Ã£o.
 	 * @param int $costCenterID O ID do centro de custo.
-	 * @param int $organizationID O ID da organização.
-	 * @param int $areaStatusID O ID do status da área.
-	 * @param int $supervisorID O ID do funcionário que é superior da área.
-	 * @param int $superiorAreaID O ID da área que é superior a que está sendo atualizada (NULL caso não possua área superior).
-	 * @param string $acronym A sigla da área.
-	 * @param string $description A descrição da área.
-	 * @param char $active 'S' se a área estiver ativa e 'N' caso contrário.
-	 * @param int $areaID O ID da área.
-	 * @param int $assistantID O ID do funcionário que está auxiliando o superior da área.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param int $areaStatusID O ID do status da Ã¡rea.
+	 * @param int $supervisorID O ID do funcionÃ¡rio que Ã© superior da Ã¡rea.
+	 * @param int $superiorAreaID O ID da Ã¡rea que Ã© superior a que estÃ¡ sendo atualizada (NULL caso nï¿½o possua ï¿½rea superior).
+	 * @param string $acronym A sigla da Ã¡rea.
+	 * @param string $description A descriÃ§Ã£o da Ã¡rea.
+	 * @param string $active 'S' se a Ã¡rea estiver ativa e 'N' caso contrÃ¡rio.
+	 * @param int $areaID O ID da Ã¡rea.
+	 * @param int $assistantID O ID do funcionÃ¡rio que estÃ¡ auxiliando o superior da Ã¡rea.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluÃ­da com Ãªxito e FALSE caso contrÃ¡rio.
 	 * @access public
 	 */
 	function updateArea($costCenterID, $organizationID, $areaStatusID, $supervisorID, $superiorAreaID, $acronym, $description, $active, $assistantID, $areaID)
@@ -1104,13 +1104,13 @@ class so_orgchart
 
 			$query = 'SELECT 1 FROM funcionario WHERE (funcionario_id = ?)';
 			if (!$this->db->query($query, $checkEmployee)->fetchRow())
-				$errors[] = "O funcionário \"" . Factory::getInstance('WorkflowLDAP')->getName($checkEmployee) . "\" não está vinculado a uma área.";
+				$errors[] = "O funcionÃ¡rio \"" . Factory::getInstance('WorkflowLDAP')->getName($checkEmployee) . "\" nï¿½o estï¿½ vinculado a uma ï¿½rea.";
 		}
 
 		if (count($errors) > 0)
 		{
 			$errors[] = '-----------------';
-			$errors[] = 'Somente funcionários que estão vinculados a alguma área podem ser colocados na posição de titular ou auxiliar administrativo.';
+			$errors[] = 'Somente funcionï¿½rios que estï¿½o vinculados a alguma ï¿½rea podem ser colocados na posiÃ§Ã£o de titular ou auxiliar administrativo.';
 			$this->endExecution($errors);
 		}
 
@@ -1122,10 +1122,10 @@ class so_orgchart
 	}
 
 	/**
-	 * Remove a área de uma organização.
-	 * @param int $areaID O ID da área.
-	 * @param int $organizationID O ID da organização.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Remove a ï¿½rea de uma organizaÃ§Ã£o.
+	 * @param int $areaID O ID da ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeArea($areaID, $organizationID)
@@ -1140,11 +1140,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Busca informações sobre um funcionário.
-	 * @param array $params Uma array contendo o ID do funcionário cujas informações serão extraídas e de sua organização (Ajax).
-	 * @param int $employeeID O ID do funcionário.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Informações sobre o funcionário.
+	 * Busca informaï¿½ï¿½es sobre um funcionï¿½rio.
+	 * @param array $params Uma array contendo o ID do funcionï¿½rio cujas informaï¿½ï¿½es serï¿½o extraï¿½das e de sua organizaÃ§Ã£o (Ajax).
+	 * @param int $employeeID O ID do funcionï¿½rio.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Informaï¿½ï¿½es sobre o funcionï¿½rio.
 	 * @access public
 	 */
 	function getEmployeeInfo($employeeID, $organizationID)
@@ -1168,7 +1168,7 @@ class so_orgchart
 		$employeeEntry = $cachedLDAP->getEntryByID($employeeID);
 
 		if ($employeeEntry === false)
-			return array('error' => 'Funcionário não encontrado.');
+			return array('error' => 'Funcionï¿½rio nï¿½o encontrado.');
 
 		$employeeInfo				= $orgchart->getEmployee($employeeID);
 		$employeeStatusInfo			= $orgchart->getEmployeeStatus($employeeInfo['funcionario_status_id']);
@@ -1229,7 +1229,7 @@ class so_orgchart
 			'value' => ( ! empty( $employeeEntry['telephonenumber'] ) ? $employeeEntry['telephonenumber'] : '' ) );
 
 		$outputInfo[] = array(
-			'name' => 'Matrícula',
+			'name' => 'Matrï¿½cula',
 			'field' => 'employeenumber',
 			'value' => ( ! empty( $employeeNumber ) ? $employeeNumber : '' ) );
 
@@ -1247,7 +1247,7 @@ class so_orgchart
 		{
 			$categoryInfo = $orgchart->getEmployeeCategory($employeeInfo['funcionario_categoria_id']);
 			$outputInfo[] = array(
-				'name' => 'Vínculo',
+				'name' => 'Vï¿½nculo',
 				'field' => 'category',
 				'value' => $categoryInfo['descricao']);
 		}
@@ -1259,7 +1259,7 @@ class so_orgchart
 		}
 
 		$outputInfo[] = array(
-			'name' => 'Título',
+			'name' => 'Tï¿½tulo',
 			'field' => 'jobtitle',
 			'value' => ( $titulo ? $titulo : '' )
 		);
@@ -1288,24 +1288,24 @@ class so_orgchart
 		}
 
 		$outputInfo[] = array(
-			'name' => 'Nível',
+			'name' => 'Nï¿½vel',
 			'field' => 'level',
 			'value' => ( $nivel ? $nivel : '' )
 		);
 
 		$areaInfo = $orgchart->getArea($employeeInfo['area_id']);
 		$outputInfo[] = array(
-			'name' => 'Área',
+			'name' => 'ï¿½rea',
 			'field' => 'area',
 			'value' => $areaInfo['sigla']);
 
 		$outputInfo[] = array(
-			'name' => 'ÁreaDescricao',
+			'name' => 'ï¿½reaDescricao',
 			'field' => 'areadescription',
 			'value' => $areaInfo['descricao']);
 
 		$outputInfo[] = array(
-			'name' => 'ÁreaID',
+			'name' => 'ï¿½reaID',
 			'field' => 'areaid',
 			'value' => $employeeInfo['area_id']);
 
@@ -1321,7 +1321,7 @@ class so_orgchart
 			'value' => ( ! empty( $localInfo['empresa'] ) ? $localInfo['empresa'] : '') );;
 
 		$outputInfo[] = array(
-			'name' => 'Endereço',
+			'name' => 'Endereï¿½o',
 			'field' => 'address',
 			'value' => ( ! empty( $localInfo['endereco'] ) ? $localInfo['endereco'] : '') );
 
@@ -1375,11 +1375,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Busca informações sobre uma área.
-	 * @param array $params Uma array contendo o ID da área cujas informações serão extraídas e de sua organização (Ajax).
-	 * @param int $areaID O ID da área.
-	 * @param int $organizationID O ID da organização.
-	 * @return array Informações sobre o funcionário.
+	 * Busca informaï¿½ï¿½es sobre uma ï¿½rea.
+	 * @param array $params Uma array contendo o ID da ï¿½rea cujas informaï¿½ï¿½es serï¿½o extraï¿½das e de sua organizaÃ§Ã£o (Ajax).
+	 * @param int $areaID O ID da ï¿½rea.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @return array Informaï¿½ï¿½es sobre o funcionï¿½rio.
 	 * @access public
 	 */
 	function getAreaInfo($areaID, $organizationID)
@@ -1430,7 +1430,7 @@ class so_orgchart
 		}
 
 		$outputInfo[] = array(
-			'name' => 'No. de Funcionários',
+			'name' => 'No. de Funcionï¿½rios',
 			'value' => $this->db->GetOne("SELECT COUNT(*) FROM funcionario f, funcionario_status s WHERE (s.funcionario_status_id = f.funcionario_status_id) AND (s.exibir = 'S') AND (f.area_id = ?) AND (f.organizacao_id = ?)", array($areaID, $organizationID))
 		);
 
@@ -1438,8 +1438,8 @@ class so_orgchart
 	}
 
 	/**
-	 * Lista todos os telefones da organização.
-	 * @return array Lista de telefones da organização.
+	 * Lista todos os telefones da organizaÃ§Ã£o.
+	 * @return array Lista de telefones da organizaÃ§Ã£o.
 	 * @access public
 	 */
 	function getTelephones( $organizationID )
@@ -1460,11 +1460,11 @@ class so_orgchart
 	}
 
 	/**
-	 * Adiciona um telefone a uma organização.
-	 * @param int $organizationID O ID da organização.
-	 * @param string $description A descrição da localidade.
-	 * @param string $number String com os números de telefones.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * Adiciona um telefone a uma organizaÃ§Ã£o.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
+	 * @param string $description A descriÃ§Ã£o da localidade.
+	 * @param string $number String com os nï¿½meros de telefones.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function addTelephone( $organizationID, $description, $number )
@@ -1480,9 +1480,9 @@ class so_orgchart
 
 	/**
 	 * Remove um telefone.
-	 * @param int $organizationID O ID da organização.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
 	 * @param int $telephoneID O ID do telefone.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function removeTelephone( $organizationID, $telephoneID )
@@ -1498,11 +1498,11 @@ class so_orgchart
 
 	/**
 	 * Atualiza um telefone.
-	 * @param int $organizationID O ID da organização.
+	 * @param int $organizationID O ID da organizaÃ§Ã£o.
 	 * @param int $telephoneID O ID do telefone.
-	 * @param string $description A descrição do telefone.
-	 * @param string $number String com os números de telefones.
-	 * @return bool TRUE se a ação foi concluída com êxito e FALSE caso contrário.
+	 * @param string $description A descriÃ§Ã£o do telefone.
+	 * @param string $number String com os nï¿½meros de telefones.
+	 * @return bool TRUE se a aÃ§Ã£o foi concluï¿½da com ï¿½xito e FALSE caso contrï¿½rio.
 	 * @access public
 	 */
 	function updateTelephone( $organizationID, $telephoneID, $description, $number )
@@ -1535,22 +1535,22 @@ class so_orgchart
 		$date_pattern = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/[12][0-9]{3}$/';
 
 		if (!preg_match($date_pattern, $date_start))
-			$this->endExecution("Formato inválido para data de início.");
+			$this->endExecution("Formato invï¿½lido para data de inï¿½cio.");
 		if (!preg_match($date_pattern, $date_end))
-			$this->endExecution("Formato inválido para data de término. ");
+			$this->endExecution("Formato invï¿½lido para data de tï¿½rmino. ");
 
 		$date_start_arr = explode('/', $date_start);
 		$date_end_arr = explode('/', $date_end);
 
 		/* is it a gregorian date? */
 		if (!checkdate($date_start_arr[1], $date_start_arr[0], $date_start_arr[2]))
-			$this->endExecution("Data de início inválida.");
+			$this->endExecution("Data de inï¿½cio invï¿½lida.");
 		if (!checkdate($date_end_arr[1], $date_end_arr[0], $date_end_arr[2]))
-			$this->endExecution("Data de término inválida. ");
+			$this->endExecution("Data de tï¿½rmino invï¿½lida. ");
 
 		/* is date_end greater then date_start? */
 		if (mktime(0,0,0, $date_start_arr[1], $date_start_arr[0], $date_start_arr[2]) >= mktime(0,0,0, $date_end_arr[1], $date_end_arr[0], $date_end_arr[2]))
-			$this->endExecution("A data de término deve ser maior que a data de início.");
+			$this->endExecution("A data de tï¿½rmino deve ser maior que a data de inï¿½cio.");
 
 		/* preparing dates to database */
 		$date_start = implode('-', array_reverse($date_start_arr));
@@ -1575,7 +1575,7 @@ class so_orgchart
 		{
 			$row['data_inicio'] = implode('/', array_reverse(explode('-', $row['data_inicio'])));
 			$row['data_fim'] = implode('/', array_reverse(explode('-', $row['data_fim'])));
-			$this->endExecution('Já existe uma substituição no período de '. $row['data_inicio'] . ' a ' . $row['data_fim']);
+			$this->endExecution('JÃ¡ existe uma substituiÃ§Ã£o no perÃ­odo de '. $row['data_inicio'] . ' a ' . $row['data_fim']);
 		}
 		return true;
 	}

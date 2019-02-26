@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 class CalendarAdapter extends ExpressoAdapter {
 
 	var $bo;
@@ -10,15 +12,15 @@ class CalendarAdapter extends ExpressoAdapter {
 	}
 
 	protected function getUserId(){
-		return $GLOBALS['phpgw_info']['user']['account_id'];
+		return GlobalService::get('phpgw_info')['user']['account_id'];
 	}
 
 	protected function getDb(){
-		return $GLOBALS['phpgw']->db;
+		return GlobalService::get('phpgw')->db;
 	}
 
 	protected function getTimezoneOffset(){
-		return $GLOBALS['phpgw']->datetime->tz_offset;
+		return GlobalService::get('phpgw')->datetime->tz_offset;
 	
 	}
 
@@ -141,7 +143,7 @@ class CalendarAdapter extends ExpressoAdapter {
 	protected function addEvent($params)
 	{
 		$this->bo = CreateObject('calendar.bocalendar',1);
-		$GLOBALS['server'] = new xmlrpc_server();
+		GlobalService::set('server',new xmlrpc_server());
 		
 		$events = $this->bo->update($params);
 

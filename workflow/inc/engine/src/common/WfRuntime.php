@@ -815,7 +815,7 @@ class WfRuntime extends Base
   /**
    * Sets the instance status
    * 
-   * @param $status Desired status, it can be: 'completed', 'active', 'aborted' or 'exception'
+   * @param $status boolean Desired status, it can be: 'completed', 'active', 'aborted' or 'exception'
    * @return bool
    * @access public
    */
@@ -1074,7 +1074,7 @@ class WfRuntime extends Base
   function createChildInstance($activityName, $properties = false, $user = '*', $parentLock = true)
   {
     if ((!$this->activity->isInteractive()) && $parentLock)
-      $this->error[] = "createChildInstance: atividades não interativas não podem executar este método com travamento da instância pai";
+      $this->error[] = "createChildInstance: atividades nï¿½o interativas nï¿½o podem executar este mï¿½todo com travamento da instï¿½ncia pai";
 
     $activityID = $this->getOne('SELECT wf_activity_id FROM ' . GALAXIA_TABLE_PREFIX . 'activities WHERE (wf_name = ?) AND (wf_p_id = ?)', array($activityName, $this->activity->getProcessId()));
 

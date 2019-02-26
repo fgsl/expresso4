@@ -1,4 +1,6 @@
 <?php 
+use Expresso\Core\GlobalService;
+
 /*
  * FCKeditor - The text editor for internet
  * Copyright (C) 2003-2006 Frederico Caldeira Knabben
@@ -30,29 +32,29 @@ if ( !$Config['Enabled'] )
 	SendError( 1, 'This connector is disabled. Please check the "editor/filemanager/browser/default/connectors/php/config.php" file' ) ;
 
 // Get the "UserFiles" path.
-$GLOBALS["UserFilesPath"] = '' ;
+GlobalService::get("UserFilesPath") = '' ;
 
 if ( isset( $Config['UserFilesPath'] ) )
-	$GLOBALS["UserFilesPath"] = $Config['UserFilesPath'] ;
+	GlobalService::get("UserFilesPath") = $Config['UserFilesPath'] ;
 else if ( isset( $_GET['ServerPath'] ) )
-	$GLOBALS["UserFilesPath"] = $_GET['ServerPath'] ;
+	GlobalService::get("UserFilesPath") = $_GET['ServerPath'] ;
 else
-	$GLOBALS["UserFilesPath"] = '/UserFiles/' ;
+	GlobalService::get("UserFilesPath") = '/UserFiles/' ;
 
-if ( ! preg_match( '#/$#', $GLOBALS["UserFilesPath"] ) )
-	$GLOBALS["UserFilesPath"] .= '/' ;
+if ( ! preg_match( '#/$#', GlobalService::get("UserFilesPath") ) )
+	GlobalService::get("UserFilesPath") .= '/' ;
 
 if ( strlen( $Config['UserFilesAbsolutePath'] ) > 0 ) 
 {
-	$GLOBALS["UserFilesDirectory"] = $Config['UserFilesAbsolutePath'] ;
+	GlobalService::set("UserFilesDirectory",$Config['UserFilesAbsolutePath']) ;
 
-	if ( ! preg_match( '#/$#', $GLOBALS["UserFilesDirectory"] ) )
-		$GLOBALS["UserFilesDirectory"] .= '/' ;
+	if ( ! preg_match( '#/$#', GlobalService::get("UserFilesDirectory") ) )
+	    GlobalService::set("UserFilesDirectory", GlobalService::set("UserFilesDirectory"). '/');
 }
 else
 {
 	// Map the "UserFiles" path to a local directory.
-	$GLOBALS["UserFilesDirectory"] = GetRootPath() . $GLOBALS["UserFilesPath"] ;
+	GlobalService::set("UserFilesDirectory",GetRootPath() . GlobalService::get("UserFilesPath"));
 }
 
 DoResponse() ;

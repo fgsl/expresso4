@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**********************************************************************************\
 	* Expresso Administra��o                 									      *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br) *
@@ -78,7 +80,7 @@
 			$maillist_info['mail']					= $params['uid'] . "@" . $dominioListas;
 			$maillist_info['description']				= $params['description'];
 			
-			$expressoAdmin 						= $GLOBALS['phpgw_info']['server']['header_admin_user'];
+			$expressoAdmin 						= GlobalService::get('phpgw_info')['server']['header_admin_user'];
 			//Obtem uidnumber baseado no uid do usuario expresso-admin
 			$admUidnumber						= $this->ldap_functions->uid2uidnumber($expressoAdmin);
 			//Obten email baseado no uidnumber do usuario expresso-admin
@@ -93,7 +95,7 @@
 
 			//adiciona o expresso-admin como administrador padrao da lista no campo admlista 
 			$adm_info['admlista'][0] 				= $adminlista;
-//			system('echo "admlista: '.$GLOBALS['phpgw_info']['server']['header_admin_user'].'">>/tmp/teste.log');
+//			system('echo "admlista: '.GlobalService::get('phpgw_info')['server']['header_admin_user'].'">>/tmp/teste.log');
 			//adiciona o usuario corrente como administrador da lista
 			$adm_info['admlista'][1] 				= $mailUsuarioAtual;
 
@@ -121,10 +123,10 @@
 			$maillist_info['objectClass'][6]			= 'organizationalPerson';		
 			$maillist_info['objectClass'][7]                        = 'mailman';		
 			//$maillist_info['phpgwAccountExpires']		        = '-1';
-			//$maillist_info[$GLOBALS['phpgw_info']['server']['atributoexpiracao']] = '-1';
-			if(isset($GLOBALS['phpgw_info']['server']['atributoexpiracao']))
+			//$maillist_info[GlobalService::get('phpgw_info')['server']['atributoexpiracao']] = '-1';
+			if(isset(GlobalService::get('phpgw_info')['server']['atributoexpiracao']))
 					{
-					$maillist_info[$GLOBALS['phpgw_info']['server']['atributoexpiracao']] = '-1';
+					$maillist_info[GlobalService::get('phpgw_info')['server']['atributoexpiracao']] = '-1';
 					}
 				else
 					{
@@ -622,12 +624,12 @@
 		//Utiliza socket para disparar um HTTP Post remoto
 		function synchronize_mailman($dados_lista){
 			//porta do servidor de acesso via rede
-			$porta_mailman = $this->current_config['porta_mailman']; //$GLOBALS['phpgw_info']['server']['porta_mailman'];
+			$porta_mailman = $this->current_config['porta_mailman']; //GlobalService::get('phpgw_info')['server']['porta_mailman'];
 			//endere�o IP do servidor mailman
-			$host_mailman = $this->current_config['host_mailman']; //$GLOBALS['phpgw_info']['server']['host_mailman'];
+			$host_mailman = $this->current_config['host_mailman']; //GlobalService::get('phpgw_info')['server']['host_mailman'];
 			//endereco da URL para o script PHP que faz a atualizacao no recurso remoto
 			//$url_mailman = '/servidor-listas/mailman_request.php';
-			$url_mailman = $this->current_config['url_mailman']; //$GLOBALS['phpgw_info']['server']['url_mailman'];
+			$url_mailman = $this->current_config['url_mailman']; //GlobalService::get('phpgw_info')['server']['url_mailman'];
 			//o nome da lista passado como parametro no array associativo (algo tipo "uid=lista-X")
 			$lista_mailman = $dados_lista['uid'];
 			$op_mailman = $dados_lista['op'];

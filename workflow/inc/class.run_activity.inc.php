@@ -71,7 +71,7 @@
 		 */
 		var $conf = array();	
 		/**
-		 * @var $wf_template local activity template
+		 * @var $wf_template string local activity template
 		 * @access public
 		 */
 		var $wf_template;
@@ -178,7 +178,7 @@
 		 */
 		var $wf;                    
 		/**
-		 * @var $download_mode activates download mode
+		 * @var $download_mode boolean activates download mode
 		 * @access public
 		 */
 		var $download_mode;        
@@ -235,7 +235,7 @@
 		  * or automatic activities. this second case is the reason why we return some values
 		  * @param int $activityId is the activity_id it run
 		  * @param int $iid is the instance id it run for
-		  * @param $auto is true by default
+		  * @param $auto boolean is true by default
 		  * @return mixed AN ARRAY, or at least true or false. This array can contain :
 		  * a key 'failure' with an error string the engine will retrieve in instance error messages in case of
 		  *	failure (this will mark your execution as Bad),

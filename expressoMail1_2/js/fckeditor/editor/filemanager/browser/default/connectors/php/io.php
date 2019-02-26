@@ -1,4 +1,6 @@
 <?php 
+use Expresso\Core\GlobalService;
+
 /*
  * FCKeditor - The text editor for internet
  * Copyright (C) 2003-2006 Frederico Caldeira Knabben
@@ -21,9 +23,9 @@
 function GetUrlFromPath( $resourceType, $folderPath )
 {
 	if ( $resourceType == '' )
-		return RemoveFromEnd( $GLOBALS["UserFilesPath"], '/' ) . $folderPath ;
+		return RemoveFromEnd( GlobalService::get("UserFilesPath"), '/' ) . $folderPath ;
 	else
-		return $GLOBALS["UserFilesPath"] . $resourceType . $folderPath ;
+		return GlobalService::get("UserFilesPath") . $resourceType . $folderPath ;
 }
 
 function RemoveExtension( $fileName )
@@ -34,7 +36,7 @@ function RemoveExtension( $fileName )
 function ServerMapFolder( $resourceType, $folderPath )
 {
 	// Get the resource type directory.
-	$sResourceTypePath = $GLOBALS["UserFilesDirectory"] . $resourceType . '/' ;
+	$sResourceTypePath = GlobalService::get("UserFilesDirectory") . $resourceType . '/' ;
 
 	// Ensure that the directory exists.
 	CreateServerFolder( $sResourceTypePath ) ;

@@ -19,9 +19,9 @@ if (!defined('GALAXIA_LIBRARY')) {
 if (!function_exists('galaxia_show_error')) {
 	/**
 	* Show error messages from the engine
-	* @param $msg is the message to show
-	* @param $dying is true by default and will launch a terminal die command
-	* @param $log is trru by default and will emit a PHP WARNING if set to true
+	* @param $msg string is the message to show
+	* @param $dying boolean is true by default and will launch a terminal die command
+	* @param $log boolean is trru by default and will emit a PHP WARNING if set to true
 	* if not set to false.
 	*/
 	function galaxia_show_error($msg, $dying = true, $log=true)

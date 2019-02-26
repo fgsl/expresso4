@@ -20,13 +20,13 @@ require_once('class.bo_ajaxinterface.inc.php');
 class bo_userinterface extends bo_ajaxinterface
 {
 	/**
-	 * @var object Acesso à camada Model
+	 * @var object Acesso ï¿½ camada Model
 	 * @access public
 	 */
 	var $so;
 
 	/**
-	 * @var array Informações sobre a organização do usuário
+	 * @var array Informaï¿½ï¿½es sobre a organizaï¿½ï¿½o do usuï¿½rio
 	 * @access private
 	 */
 	private $organizationInfo;
@@ -44,7 +44,7 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Retorna os processos do usuário
+	 * Retorna os processos do usuï¿½rio
 	 * @access public
 	 * @return mixed retorna uma string com uma mensagem de erro ou um array com dados dos processos
 	 */
@@ -114,7 +114,7 @@ class bo_userinterface extends bo_ajaxinterface
 
 	/**
 	 * Informacoes sobre o processo
-	 * @param $params parametros
+	 * @param $params array parametros
 	 * @return array
 	 * @access public
 	 */
@@ -138,9 +138,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Fornece os dados para a contrução da interface de Tarefas Pendentes
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return array Contendo os dados para construção da interface ou uma mensagem de erro
+	 * Fornece os dados para a contruï¿½ï¿½o da interface de Tarefas Pendentes
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return array Contendo os dados para construï¿½ï¿½o da interface ou uma mensagem de erro
 	 * @access public
 	 */
 	function inbox($params)
@@ -251,8 +251,8 @@ class bo_userinterface extends bo_ajaxinterface
 					array('name' => 'grab', 'value' => $availableActions['grab'], 'text' => 'Capturar') :
 					array('name' => 'release', 'value' => $availableActions['release'], 'text' => 'Liberar Acesso');
 				$actionsArray[] = ($row['wf_status'] == 'active') ?
-					array('name' => 'exception', 'value' => $availableActions['exception'], 'text' => 'Colocar em Exceção') :
-					array('name' => 'resume', 'value' => $availableActions['resume'], 'text' => 'Retirar de Exceção');
+					array('name' => 'exception', 'value' => $availableActions['exception'], 'text' => 'Colocar em Exceï¿½ï¿½o') :
+					array('name' => 'resume', 'value' => $availableActions['resume'], 'text' => 'Retirar de Exceï¿½ï¿½o');
 				$actionsArray[] = array('name' => 'abort', 'value' => $availableActions['abort'], 'text' => 'Abortar');
 
 				$row['wf_actions'] = $actionsArray;
@@ -328,8 +328,8 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Fornece os dados para a contrução da interface de Tarefas Pendentes (quando os dados estão agrupados)
-	 * @return array Contendo os dados para construção da interface ou uma mensagem de erro
+	 * Fornece os dados para a contruï¿½ï¿½o da interface de Tarefas Pendentes (quando os dados estï¿½o agrupados)
+	 * @return array Contendo os dados para construï¿½ï¿½o da interface ou uma mensagem de erro
 	 * @access public
 	 */
 	function inbox_group()
@@ -360,9 +360,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Envia uma instância para próxima atividade
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Envia uma instï¿½ncia para prï¿½xima atividade
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionSend($params)
@@ -372,7 +372,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_send_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não está autorizado a enviar esta instância.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o estï¿½ autorizado a enviar esta instï¿½ncia.");
 
 		$this->disconnect_all();
 
@@ -380,9 +380,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Libera uma instância (atribui a instância para *)
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Libera uma instï¿½ncia (atribui a instï¿½ncia para *)
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionRelease($params)
@@ -392,7 +392,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_release_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não está autorizado a liberar esta instância.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o estï¿½ autorizado a liberar esta instï¿½ncia.");
 
 		$this->disconnect_all();
 
@@ -400,9 +400,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Captura uma instância (atribui a instância para o usuário atual)
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Captura uma instï¿½ncia (atribui a instï¿½ncia para o usuï¿½rio atual)
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionGrab($params)
@@ -412,7 +412,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_grab_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não tem permissão para capturar esta instância.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o tem permissï¿½o para capturar esta instï¿½ncia.");
 
 		$this->disconnect_all();
 
@@ -420,9 +420,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Transforma a instância em exceção
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Transforma a instï¿½ncia em exceï¿½ï¿½o
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionException($params)
@@ -432,7 +432,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_exception_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não tem permissão para transformar esta instância em exceção.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o tem permissï¿½o para transformar esta instï¿½ncia em exceï¿½ï¿½o.");
 
 		$this->disconnect_all();
 
@@ -440,9 +440,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Retira uma instância em exceção
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Retira uma instï¿½ncia em exceï¿½ï¿½o
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionResume($params)
@@ -452,7 +452,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_resume_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não tem permissão para retirar de exceção esta instância.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o tem permissï¿½o para retirar de exceï¿½ï¿½o esta instï¿½ncia.");
 
 		$this->disconnect_all();
 
@@ -460,9 +460,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Aborta uma instância
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Aborta uma instï¿½ncia
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionAbort($params)
@@ -472,7 +472,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$result = true;
 
 		if (!$GLOBALS['ajax']->gui->gui_abort_instance($activityID, $instanceID))
-			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Você não tem permissão para abortar esta instância.");
+			$result = array('error' => $GLOBALS['ajax']->gui->get_error(false) . "<br />Vocï¿½ nï¿½o tem permissï¿½o para abortar esta instï¿½ncia.");
 
 		$this->disconnect_all();
 
@@ -480,9 +480,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Visualiza dados de uma instância
-	 * @param $params Parâmetros advindos da chamada Ajax
-	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a ação foi feita com sucesso
+	 * Visualiza dados de uma instï¿½ncia
+	 * @param $params Parï¿½metros advindos da chamada Ajax
+	 * @return mixed Array contendo uma mensagem de erro ou um booleano (true) informando que a aï¿½ï¿½o foi feita com sucesso
 	 * @access public
 	 */
 	function inboxActionView($params)
@@ -776,18 +776,18 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Verifica se o usuário tem acesso ao Organograma (e se o mesmo está ativo)
-	 * @return mixed true em caso de sucesso ou uma array contendo mensagens sobre o problema (não cadastrado ou organograma não ativo)
+	 * Verifica se o usuï¿½rio tem acesso ao Organograma (e se o mesmo estï¿½ ativo)
+	 * @return mixed true em caso de sucesso ou uma array contendo mensagens sobre o problema (nï¿½o cadastrado ou organograma nï¿½o ativo)
 	 * @access private
 	 */
 	private function checkOrgchartAccess()
 	{
 		$this->organizationInfo = $this->so->getUserOrganization($_SESSION['phpgw_info']['workflow']['account_id']);
 		if ($this->organizationInfo === false)
-			return array('warning' => 'Você não está cadastrado em nenhuma organização');
+			return array('warning' => 'Vocï¿½ nï¿½o estï¿½ cadastrado em nenhuma organizaï¿½ï¿½o');
 
 		if ($this->organizationInfo['ativa'] == 'N')
-			return array('warning' => 'Organograma indisponível');
+			return array('warning' => 'Organograma indisponï¿½vel');
 
 		return true;
 	}
@@ -874,7 +874,7 @@ class bo_userinterface extends bo_ajaxinterface
 
 	/**
 	 * Return the area of employee
-	 * @param $params parameters
+	 * @param $params array parameters
 	 * @access public
 	 * @return array array of employees
 	 */
@@ -887,14 +887,14 @@ class bo_userinterface extends bo_ajaxinterface
 		$employees = $this->so->getAreaEmployees((int) $params['areaID'], $this->organizationInfo['organizacao_id']);
 
 		if ($employees === false)
-			return array('error' => 'Área não encontrada.');
+			return array('error' => 'Ãrea nÃ£o encontrada.');
 
 		return $employees;
 	}
 
 	/**
 	 * Return the area of employee
-	 * @param $params parameters
+	 * @param $params array parameters
 	 * @access public
 	 * @return array array of employees
 	 */
@@ -907,7 +907,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$employees = $this->so->getCategoryEmployees((int) $params['categoryID'], $this->organizationInfo['organizacao_id']);
 
 		if ($employees === false)
-			return array('error' => 'Categoria não encontrada.');
+			return array('error' => 'Categoria nï¿½o encontrada.');
 
 		usort($employees['employees'], create_function('$a,$b', 'return strcasecmp($a[\'cn\'],$b[\'cn\']);'));
 
@@ -923,7 +923,7 @@ class bo_userinterface extends bo_ajaxinterface
 	function searchEmployee($params)
 	{
 		if (!preg_match('/^([[:alnum:] -]+)$/', $params['searchTerm']))
-			return array('error' => 'Parâmetro de busca inválido');
+			return array('error' => 'Parï¿½metro de busca invï¿½lido');
 
 		if (strlen(str_replace(' ', '', $params['searchTerm'])) < 2)
 			return array('error' => 'Utilize ao menos duas letras em sua busca');
@@ -945,15 +945,15 @@ class bo_userinterface extends bo_ajaxinterface
 		if (!is_array($result['employees']) and
 			!is_array($result['bygroup']) and
 			!is_array($result['bytelephone']))
-			return array('error' => 'O sistema de busca não pode ser utilizado para sua organização');
+			return array('error' => 'O sistema de busca nï¿½o pode ser utilizado para sua organizaï¿½ï¿½o');
 
 		return $result;
 	}
 
 	/**
-	 * Busca informações sobre um funcionário.
-	 * @param array $params Uma array contendo o ID do funcionário cujas informações serão extraídas.
-	 * @return array Informações sobre o funcionário.
+	 * Busca informaï¿½ï¿½es sobre um funcionï¿½rio.
+	 * @param array $params Uma array contendo o ID do funcionï¿½rio cujas informaï¿½ï¿½es serï¿½o extraï¿½das.
+	 * @return array Informaï¿½ï¿½es sobre o funcionï¿½rio.
 	 * @access public
 	 */
 	function getEmployeeInfo($params)
@@ -978,9 +978,9 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Busca informações sobre uma área.
-	 * @param array $params Uma array contendo o ID da área cujas informações serão extraídas.
-	 * @return array Informações sobre a área.
+	 * Busca informaï¿½ï¿½es sobre uma ï¿½rea.
+	 * @param array $params Uma array contendo o ID da ï¿½rea cujas informaï¿½ï¿½es serï¿½o extraï¿½das.
+	 * @return array Informaï¿½ï¿½es sobre a ï¿½rea.
 	 * @access public
 	 */
 	function getAreaInfo($params)
@@ -993,7 +993,7 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Retorna a lista de telefones úteis da organização
+	 * Retorna a lista de telefones ï¿½teis da organizaï¿½ï¿½o
 	 * @return array Lista de telefones
 	 * @access public
 	 */
@@ -1007,8 +1007,8 @@ class bo_userinterface extends bo_ajaxinterface
 	}
 
 	/**
-	 * Retorna a lista as áreas com substituição de chefia
-	 * @return array Lista das áreas com substituição de chefia
+	 * Retorna a lista as ï¿½reas com substituiï¿½ï¿½o de chefia
+	 * @return array Lista das ï¿½reas com substituiï¿½ï¿½o de chefia
 	 * @access public
 	 */
 	function getAreaWithSubtituteBoss( )
@@ -1036,7 +1036,7 @@ class bo_userinterface extends bo_ajaxinterface
 
 	/**
 	 * Return the employees of a manning
-	 * @param $params parameters
+	 * @param $params array parameters
 	 * @access public
 	 * @return array array of employees
 	 */
@@ -1049,7 +1049,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$employees = $this -> so -> getManningEmployees( ( int ) $params[ 'locationID' ], $this -> organizationInfo[ 'organizacao_id' ] );
 
 		if ( $employees === false )
-			return array( 'error' => 'Localidade não encontrada.' );
+			return array( 'error' => 'Localidade nÃ£o encontrada.' );
 
 		return $employees;
 	}
@@ -1068,7 +1068,7 @@ class bo_userinterface extends bo_ajaxinterface
 		$employees = $this -> so -> getAlphabeticalEmployees( $this -> organizationInfo[ 'organizacao_id' ] );
 
 		if ( $employees === false )
-			return array( 'error' => 'Localidade não encontrada.' );
+			return array( 'error' => 'Localidade nï¿½o encontrada.' );
 
 		return $employees;
 	}

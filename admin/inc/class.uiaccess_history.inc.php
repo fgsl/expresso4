@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Administration                                              *
 	* http://www.egroupware.org                                                *
@@ -19,14 +21,14 @@
 
 		function uiaccess_history()
 		{
-			if ($GLOBALS['phpgw']->acl->check('access_log_access',1,'admin'))
+			if (GlobalService::get('phpgw')->acl->check('access_log_access',1,'admin'))
 			{
-				$GLOBALS['phpgw']->redirect_link('/index.php');
+				GlobalService::get('phpgw')->redirect_link('/index.php');
 			}
 			
 			$this->bo         = createobject('admin.boaccess_history');
 			$this->nextmatchs = createobject('phpgwapi.nextmatchs');
-			$this->template   = $GLOBALS['phpgw']->template;
+			$this->template   = GlobalService::get('phpgw')->template;
 			$this->template->set_file(
 				Array(
 					'accesslog' => 'accesslog.tpl'
@@ -44,19 +46,19 @@
 			$sort = get_var('sort',array('POST'),0);
 			$order = get_var('order',array('POST'),0);
 			
-			$GLOBALS['phpgw_info']['flags']['app_header'] = lang('Admin').' - '.lang('View access log');
-			if(!@is_object($GLOBALS['phpgw']->js))
+			GlobalService::get('phpgw_info')['flags']['app_header'] = lang('Admin').' - '.lang('View access log');
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','openwindow','admin');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw')->js->validate_file('jscode','openwindow','admin');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			echo parse_navbar();
 
 			$total_records = $this->bo->total($account_id);
 
 			$var = Array(
-				'th_bg'       => $GLOBALS['phpgw_info']['theme']['th_bg'],
+				'th_bg'       => GlobalService::get('phpgw_info')['theme']['th_bg'],
 				'nextmatchs_left'  => $this->nextmatchs->left('/index.php',$start,$total_records,'&menuaction=admin.uiaccess_history.list_history&account_id=' . $account_id),
 				'nextmatchs_right' => $this->nextmatchs->right('/index.php',$start,$total_records,'&menuaction=admin.uiaccess_history.list_history&account_id=' . $account_id),
 				'showing'          => $this->nextmatchs->show_hits($total_records,$start),
@@ -69,13 +71,13 @@
 
 			if ($account_id)
 			{
-				$var['link_return_to_view_account'] = '<a href="' . $GLOBALS['phpgw']->link('/index.php',
+				$var['link_return_to_view_account'] = '<a href="' . GlobalService::get('phpgw')->link('/index.php',
 					Array(
 						'menuaction' => 'admin.uiaccounts.view',
 						'account_id' => $account_id
 					)
 				) . '">' . lang('Return to view account') . '</a>';
-				$var['lang_last_x_logins'] = lang('Last %1 logins for %2',$total_records,$GLOBALS['phpgw']->common->grab_owner_name($account_id));
+				$var['lang_last_x_logins'] = lang('Last %1 logins for %2',$total_records,GlobalService::get('phpgw')->common->grab_owner_name($account_id));
 			}
 			else
 			{
@@ -119,7 +121,7 @@
 			}
 
 			$var = Array(
-				'bg_color'     => $GLOBALS['phpgw_info']['themes']['bg_color'],
+				'bg_color'     => GlobalService::get('phpgw_info')['themes']['bg_color'],
 				'footer_total' => lang('Total records') . ': ' . $total_records
 			);
 			if ($account_id)

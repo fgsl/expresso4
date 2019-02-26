@@ -356,7 +356,7 @@ function _unicode(&$string, &$i)
 {
 	++$i;
 	$add = '';
-	$tokens =& $GLOBALS['csstidy']['tokens'];
+	$tokens =& GlobalService::get('csstidy']['tokens'];
 	$replaced = false;
 
 	while($i < strlen($string) && (ctype_xdigit($string{$i}) || ctype_space($string{$i})) && strlen($add) < 6)
@@ -404,7 +404,7 @@ function _unicode(&$string, &$i)
  */
 function load_template($content, $from_file=true)
 {
-	$predefined_templates =& $GLOBALS['csstidy']['predefined_templates'];
+	$predefined_templates =& GlobalService::get('csstidy']['predefined_templates'];
 	if($content == 'high_compression' || $content == 'default' || $content == 'highest_compression' || $content == 'low_compression')
 	{
 		$this->template = $predefined_templates[$content];
@@ -444,7 +444,7 @@ function parse_from_url($url)
  */
 function is_token(&$string, $i)
 {
-	$tokens =& $GLOBALS['csstidy']['tokens'];
+	$tokens =& GlobalService::get('csstidy']['tokens'];
 	return (strpos($tokens, $string{$i}) !== false && !csstidy::escaped($string,$i));
 }
 
@@ -461,8 +461,8 @@ function parse($string) {
     $this->print = new csstidy_print($this);
     $this->optimise = new csstidy_optimise($this);
 
-    $all_properties =& $GLOBALS['csstidy']['all_properties'];
-    $at_rules =& $GLOBALS['csstidy']['at_rules'];
+    $all_properties =& GlobalService::get('csstidy']['all_properties'];
+    $at_rules =& GlobalService::get('csstidy']['at_rules'];
 
     $this->css = array();
     $this->print->input_css = $string;
@@ -782,13 +782,13 @@ function parse($string) {
                 $temp_add = "\\A ";
                 $this->log('Fixed incorrect newline in string','Warning');
             }
-            if (!($this->str_char == ')' && in_array($string{$i}, $GLOBALS['csstidy']['whitespace']) && !$this->str_in_str)) {
+            if (!($this->str_char == ')' && in_array($string{$i}, GlobalService::get('csstidy']['whitespace']) && !$this->str_in_str)) {
                 $this->cur_string .= $temp_add;
             }
             if($string{$i} == $this->str_char && !csstidy::escaped($string,$i) && !$this->str_in_str)
             {
                 $this->status = $this->from;
-                if (!preg_match('|[' . implode('', $GLOBALS['csstidy']['whitespace']) . ']|uis', $this->cur_string) && $this->property != 'content') {
+                if (!preg_match('|[' . implode('', GlobalService::get('csstidy']['whitespace']) . ']|uis', $this->cur_string) && $this->property != 'content') {
                     if ($this->str_char == '"' || $this->str_char == '\'') {
 						$this->cur_string = substr($this->cur_string, 1, -1);
 					} else if (strlen($this->cur_string) > 3 && ($this->cur_string[1] == '"' || $this->cur_string[1] == '\'')) /* () */ {
@@ -933,7 +933,7 @@ function merge_css_blocks($media,$selector,$css_add)
  */
 function is_important(&$value)
 {
-	return (!strcasecmp(substr(str_replace($GLOBALS['csstidy']['whitespace'],'',$value),-10,10),'!important'));
+	return (!strcasecmp(substr(str_replace(GlobalService::get('csstidy']['whitespace'],'',$value),-10,10),'!important'));
 }
 
 /**
@@ -967,7 +967,7 @@ function gvw_important($value)
  */
 function property_is_next($istring, $pos)
 {
-	$all_properties =& $GLOBALS['csstidy']['all_properties'];
+	$all_properties =& GlobalService::get('csstidy']['all_properties'];
 	$istring = substr($istring,$pos,strlen($istring)-$pos);
 	$pos = strpos($istring,':');
 	if($pos === false)
@@ -991,7 +991,7 @@ function property_is_next($istring, $pos)
  * @version 1.0
  */
 function property_is_valid($property) {
-    $all_properties =& $GLOBALS['csstidy']['all_properties'];
+    $all_properties =& GlobalService::get('csstidy']['all_properties'];
     return (isset($all_properties[$property]) && strpos($all_properties[$property],strtoupper($this->get_cfg('css_level'))) !== false );
 }
 

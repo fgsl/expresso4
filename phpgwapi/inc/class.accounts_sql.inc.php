@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Accounts manager for SQL                                *
 	* Written by Joseph Engo <jengo@phpgroupware.org>                          *
@@ -37,8 +39,8 @@
 
 		function accounts_()
 		{
-			//copyobj($GLOBALS['phpgw']->db,$this->db);
-			$this->db = is_object($GLOBALS['phpgw']->db) ? $GLOBALS['phpgw']->db : $GLOBALS['phpgw_setup']->db;
+			//copyobj(GlobalService::get('phpgw')->db,$this->db);
+			$this->db = is_object(GlobalService::get('phpgw')->db) ? GlobalService::get('phpgw')->db : GlobalService::get('phpgw_setup')->db;
 			
 			$this->table = 'phpgw_accounts';
 			$this->db->set_app('phpgwapi');	// to load the right table-definitions for insert, select, update, ...
@@ -303,7 +305,7 @@
 		{
 			$account_data = array(
 				'account_lid'			=> $account_info['account_lid'],
-				'account_pwd'			=> $GLOBALS['phpgw']->common->encrypt_password($account_info['account_passwd'],True),
+				'account_pwd'			=> GlobalService::get('phpgw')->common->encrypt_password($account_info['account_passwd'],True),
 				'account_firstname'		=> $account_info['account_firstname'],
 				'account_lastname'		=> $account_info['account_lastname'],
 				'account_status'		=> $account_info['account_status'],
@@ -327,15 +329,15 @@
 		{
 			if ($expiredate == 0)
 			{
-				if(isset($GLOBALS['phpgw_info']['server']['auto_create_expire']) == True)
+				if(isset(GlobalService::get('phpgw_info')['server']['auto_create_expire']) == True)
 				{
-					if($GLOBALS['phpgw_info']['server']['auto_create_expire'] == 'never')
+					if(GlobalService::get('phpgw_info')['server']['auto_create_expire'] == 'never')
 					{
 						$expires = -1;
 					}
 					else
 					{
-						$expiredate = time() + $GLOBALS['phpgw_info']['server']['auto_create_expire'];
+						$expiredate = time() + GlobalService::get('phpgw_info')['server']['auto_create_expire'];
 					}
 				}
 			}
@@ -350,35 +352,35 @@
 				$expires = mktime(2,0,0,date('n',$expiredate), (int)date('d',$expiredate), date('Y',$expiredate));
 			}
 
-			$default_group_id  = $this->name2id($GLOBALS['phpgw_info']['server']['default_group_lid']);
+			$default_group_id  = $this->name2id(GlobalService::get('phpgw_info')['server']['default_group_lid']);
 			if (!$default_group_id)
 			{
 				$default_group_id = (int) $this->name2id('Default');
 			}
-			$primary_group = $GLOBALS['auto_create_acct']['primary_group'] &&
-				$this->get_type((int)$GLOBALS['auto_create_acct']['primary_group']) == 'g' ?
-				(int) $GLOBALS['auto_create_acct']['primary_group'] : $default_group_id;
+			$primary_group = GlobalService::get('auto_create_acct')['primary_group'] &&
+				$this->get_type((int)GlobalService::get('auto_create_acct')['primary_group']) == 'g' ?
+				(int) GlobalService::get('auto_create_acct')['primary_group'] : $default_group_id;
 
 			$acct_info = array(
-				'account_id'        => (int) $GLOBALS['auto_create_acct']['id'],
+				'account_id'        => (int) GlobalService::get('auto_create_acct')['id'],
 				'account_lid'       => $accountname,
 				'account_type'      => 'u',
 				'account_passwd'    => $passwd,
-				'account_firstname' => $GLOBALS['auto_create_acct']['firstname'] ? $GLOBALS['auto_create_acct']['firstname'] : 'New',
-				'account_lastname'  => $GLOBALS['auto_create_acct']['lastname'] ? $GLOBALS['auto_create_acct']['lastname'] : 'User',
+				'account_firstname' => GlobalService::get('auto_create_acct')['firstname'] ? GlobalService::get('auto_create_acct')['firstname'] : 'New',
+				'account_lastname'  => GlobalService::get('auto_create_acct')['lastname'] ? GlobalService::get('auto_create_acct')['lastname'] : 'User',
 				'account_status'    => $account_status,
 				'account_expires'   => $expires,
 				'account_primary_group' => $primary_group,
 			);
 
 			/* attempt to set an email address */
-			if (isset($GLOBALS['auto_create_acct']['email']) == True && $GLOBALS['auto_create_acct']['email'] != '')
+			if (isset(GlobalService::get('auto_create_acct')['email']) == True && GlobalService::get('auto_create_acct')['email'] != '')
 			{
-				$acct_info['account_email'] = $GLOBALS['auto_create_acct']['email'];
+				$acct_info['account_email'] = GlobalService::get('auto_create_acct')['email'];
 			}
-			elseif(isset($GLOBALS['phpgw_info']['server']['mail_suffix']) == True && $GLOBALS['phpgw_info']['server']['mail_suffix'] != '')
+			elseif(isset(GlobalService::get('phpgw_info')['server']['mail_suffix']) == True && GlobalService::get('phpgw_info')['server']['mail_suffix'] != '')
 			{
-				$acct_info['account_email'] = $accountname . '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$acct_info['account_email'] = $accountname . '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
 
 			$this->db->transaction_begin();
@@ -397,35 +399,35 @@
 				}
 
 				/* if we have an mail address set it in the uesrs' email preference */
-				if (isset($GLOBALS['auto_create_acct']['email']) && $GLOBALS['auto_create_acct']['email'] != '')
+				if (isset(GlobalService::get('auto_create_acct')['email']) && GlobalService::get('auto_create_acct')['email'] != '')
 				{
-					$GLOBALS['phpgw']->acl->acl($accountid);	/* needed als preferences::save_repository calls acl */
-					$GLOBALS['phpgw']->preferences->preferences($accountid);
-					$GLOBALS['phpgw']->preferences->read_repository();
-					$GLOBALS['phpgw']->preferences->add('email','address',$GLOBALS['auto_create_acct']['email']);
-					$GLOBALS['phpgw']->preferences->save_repository();
+					GlobalService::get('phpgw')->acl->acl($accountid);	/* needed als preferences::save_repository calls acl */
+					GlobalService::get('phpgw')->preferences->preferences($accountid);
+					GlobalService::get('phpgw')->preferences->read_repository();
+					GlobalService::get('phpgw')->preferences->add('email','address',GlobalService::get('auto_create_acct')['email']);
+					GlobalService::get('phpgw')->preferences->save_repository();
 				}
 				/* use the default mail domain to set the uesrs' email preference  */
-				elseif(isset($GLOBALS['phpgw_info']['server']['mail_suffix']) && $GLOBALS['phpgw_info']['server']['mail_suffix'] != '') 
+				elseif(isset(GlobalService::get('phpgw_info')['server']['mail_suffix']) && GlobalService::get('phpgw_info')['server']['mail_suffix'] != '') 
 				{
-					$GLOBALS['phpgw']->acl->acl($accountid);	/* needed als preferences::save_repository calls acl */
-					$GLOBALS['phpgw']->preferences->preferences($accountid);
-					$GLOBALS['phpgw']->preferences->read_repository();
-					$GLOBALS['phpgw']->preferences->add('email','address', $accountname . '@' . $GLOBALS['phpgw_info']['server']['mail_suffix']);
-					$GLOBALS['phpgw']->preferences->save_repository();
+					GlobalService::get('phpgw')->acl->acl($accountid);	/* needed als preferences::save_repository calls acl */
+					GlobalService::get('phpgw')->preferences->preferences($accountid);
+					GlobalService::get('phpgw')->preferences->read_repository();
+					GlobalService::get('phpgw')->preferences->add('email','address', $accountname . '@' . GlobalService::get('phpgw_info')['server']['mail_suffix']);
+					GlobalService::get('phpgw')->preferences->save_repository();
 				}
 
 				/* commit the new account transaction */
 				$this->db->transaction_commit();
 
 				/* does anyone know what the heck this is required for? */
-				$GLOBALS['hook_values']['account_lid']	= $acct_info['account_lid'];
-				$GLOBALS['hook_values']['account_id']	= $accountid;
-				$GLOBALS['hook_values']['new_passwd']	= $acct_info['account_passwd'];
-				$GLOBALS['hook_values']['account_status'] = $acct_info['account_status'];
-				$GLOBALS['hook_values']['account_firstname'] = $acct_info['account_firstname'];
-				$GLOBALS['hook_values']['account_lastname'] =  $acct_info['account_lastname'];
-				$GLOBALS['phpgw']->hooks->process($GLOBALS['hook_values']+array(
+				GlobalService::get('hook_values')['account_lid']	= $acct_info['account_lid'];
+				GlobalService::get('hook_values')['account_id']	= $accountid;
+				GlobalService::get('hook_values')['new_passwd']	= $acct_info['account_passwd'];
+				GlobalService::get('hook_values')['account_status'] = $acct_info['account_status'];
+				GlobalService::get('hook_values')['account_firstname'] = $acct_info['account_firstname'];
+				GlobalService::get('hook_values')['account_lastname'] =  $acct_info['account_lastname'];
+				GlobalService::get('phpgw')->hooks->process(GlobalService::get('hook_values')+array(
 					'location' => 'addaccount'
 				),False,True);  /* called for every app now, not only enabled ones */
 

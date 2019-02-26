@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - eventlog                                                    *
 	* http://www.egroupware.org                                                *
@@ -83,17 +85,17 @@
 			$this->ismsg = $parms['ismsg'];
 			$this->fname = $fname;
 			$this->line  = $line;
-			$this->app   = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$this->app   = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			if (!$this->fname or !$this->line)
 			{
-				$GLOBALS['phpgw']->log->error(array(
+				GlobalService::get('phpgw')->log->error(array(
 					'text'=>'W-PGMERR, Programmer failed to pass __FILE__ and/or __LINE__ in next log message',
 					'file'=>__FILE__,'line'=>__LINE__
 				));
 			}
 
-			$GLOBALS['phpgw']->log->errorstack[] = $this;
+			GlobalService::get('phpgw')->log->errorstack[] = $this;
 			if ($this->severity == 'F')
 			{
 				// This is it...  Don't return
@@ -103,11 +105,11 @@
 				echo "<Center>";
 				echo "<h1>Fatal Error</h1>";
 				echo "<h2>Error Stack</h2>";
-				echo $GLOBALS['phpgw']->log->astable();
+				echo GlobalService::get('phpgw')->log->astable();
 				echo "</center>";
 				// Commit stack to log
-				$GLOBALS['phpgw']->log->commit();
-				$GLOBALS['phpgw']->common->phpgw_exit(True);
+				GlobalService::get('phpgw')->log->commit();
+				GlobalService::get('phpgw')->common->phpgw_exit(True);
 			}
 		}
 	}

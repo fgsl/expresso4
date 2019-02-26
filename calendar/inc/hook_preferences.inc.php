@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare                                                               *
   * http://www.egroupware.org                                                *
@@ -13,9 +15,9 @@
 // Only Modify the $file and $title variables.....
 	$title = $appname;
 	$file = array(
-		'Preferences'     => $GLOBALS['phpgw']->link('/preferences/preferences.php','appname='.$appname),
-		'Grant Access'    => $GLOBALS['phpgw']->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$appname),
-		'Edit Categories' => $GLOBALS['phpgw']->link('/index.php','menuaction=preferences.uicategories.index&cats_app='.$appname.'&cats_level=True&global_cats=True')
+		'Preferences'     => GlobalService::get('phpgw')->link('/preferences/preferences.php','appname='.$appname),
+		'Grant Access'    => GlobalService::get('phpgw')->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app='.$appname),
+		'Edit Categories' => GlobalService::get('phpgw')->link('/index.php','menuaction=preferences.uicategories.index&cats_app='.$appname.'&cats_level=True&global_cats=True')
 	);
 //Do not modify below this line
 	display_section($appname,$title,$file);

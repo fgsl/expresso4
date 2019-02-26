@@ -19,7 +19,7 @@ require_once(dirname(__FILE__) . SEP . 'class.ui_ajaxinterface.inc.php');
 class ui_monitors extends ui_ajaxinterface
 {
 	/**
-	 * @var $public_functions public functions
+	 * @var $public_functions array public functions
 	 * @access public
 	 */
 	var $public_functions = array(

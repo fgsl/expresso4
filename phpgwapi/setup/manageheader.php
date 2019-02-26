@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare                                                               *
   * http://www.egroupware.org                                                *
@@ -11,7 +13,7 @@
 
 
 	$phpgw_info = array();
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'nocachecontrol' => True,
 		'noheader' => True,
 		'nonavbar' => True,
@@ -20,8 +22,8 @@
 	);
 	include('./inc/functions.inc.php');
 
-	$GLOBALS['phpgw_info']['server']['versions']['current_header'] = $setup_info['phpgwapi']['versions']['current_header'];
-	$GLOBALS['phpgw_info']['server']['versions']['phpgwapi'] = $setup_info['phpgwapi']['version'];
+	GlobalService::get('phpgw_info')['server']['versions']['current_header'] = $setup_info['phpgwapi']['versions']['current_header'];
+	GlobalService::get('phpgw_info')['server']['versions']['phpgwapi'] = $setup_info['phpgwapi']['version'];
 	unset($setup_info);
 
 	/* Fetch the current real path.
@@ -97,7 +99,7 @@
 
 		if($errors)
 		{
-			$GLOBALS['phpgw_setup']->html->show_header('Error',True);
+			GlobalService::get('phpgw_setup')->html->show_header('Error',True);
 			echo $errors;
 			echo '<p><input type="submit" value="'.lang('Back to the previous screen').'" onClick="history.back()"></p>';
 			exit;
@@ -105,10 +107,10 @@
 	}
 
 	/* authentication phase */
-	$GLOBALS['phpgw_info']['setup']['stage']['header'] = $GLOBALS['phpgw_setup']->detection->check_header();
+	GlobalService::get('phpgw_info')['setup']['stage']['header'] = GlobalService::get('phpgw_setup')->detection->check_header();
 
 	// added these to let the app work, need to templatize still
-	$tpl_root = $GLOBALS['phpgw_setup']->html->setup_tpl_dir('setup');
+	$tpl_root = GlobalService::get('phpgw_setup')->html->setup_tpl_dir('setup');
 	$setup_tpl = CreateObject('setup.Template',$tpl_root);
 	$setup_tpl->set_file(array(
 		'T_head' => 'head.tpl',
@@ -124,50 +126,50 @@
 	$setup_tpl->set_block('T_setup_manage','domain','domain');
 
 	/* Detect current mode */
-	switch($GLOBALS['phpgw_info']['setup']['stage']['header'])
+	switch(GlobalService::get('phpgw_info')['setup']['stage']['header'])
 	{
 		case '1':
-			$GLOBALS['phpgw_info']['setup']['HeaderFormMSG'] = lang('Create your header.inc.php');
-			$GLOBALS['phpgw_info']['setup']['PageMSG'] = lang('You have not created your header.inc.php yet!<br> You can create it now.');
+			GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'] = lang('Create your header.inc.php');
+			GlobalService::get('phpgw_info')['setup']['PageMSG'] = lang('You have not created your header.inc.php yet!<br> You can create it now.');
 			break;
 		case '2':
-			$GLOBALS['phpgw_info']['setup']['HeaderFormMSG'] = lang('Your header admin password is NOT set. Please set it now!');
-			$GLOBALS['phpgw_info']['setup']['PageMSG'] = lang('Your header admin password is NOT set. Please set it now!');
+			GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'] = lang('Your header admin password is NOT set. Please set it now!');
+			GlobalService::get('phpgw_info')['setup']['PageMSG'] = lang('Your header admin password is NOT set. Please set it now!');
 			break;
 		case '3':
-			$GLOBALS['phpgw_info']['setup']['HeaderFormMSG'] = lang('You need to add some domains to your header.inc.php.');
-			$GLOBALS['phpgw_info']['setup']['PageMSG'] = lang('You need to add some domains to your header.inc.php.');
-			$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = lang('You need to add some domains to your header.inc.php.');
-			if(!$GLOBALS['phpgw_setup']->auth('Header'))
+			GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'] = lang('You need to add some domains to your header.inc.php.');
+			GlobalService::get('phpgw_info')['setup']['PageMSG'] = lang('You need to add some domains to your header.inc.php.');
+			GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = lang('You need to add some domains to your header.inc.php.');
+			if(!GlobalService::get('phpgw_setup')->auth('Header'))
 			{
-				$GLOBALS['phpgw_setup']->html->show_header('Please login',True);
-				$GLOBALS['phpgw_setup']->html->login_form();
-				$GLOBALS['phpgw_setup']->html->show_footer();
+				GlobalService::get('phpgw_setup')->html->show_header('Please login',True);
+				GlobalService::get('phpgw_setup')->html->login_form();
+				GlobalService::get('phpgw_setup')->html->show_footer();
 				exit;
 			}
 			break;
 		case '4':
-			$GLOBALS['phpgw_info']['setup']['HeaderFormMSG'] = lang('Your header.inc.php needs upgrading.');
-			$GLOBALS['phpgw_info']['setup']['PageMSG'] = lang('Your header.inc.php needs upgrading.<br><blink><b class="msg">WARNING!</b></blink><br><b>MAKE BACKUPS!</b>');
-			$GLOBALS['phpgw_info']['setup']['HeaderLoginMSG'] = lang('Your header.inc.php needs upgrading.');
-			if(!$GLOBALS['phpgw_setup']->auth('Header'))
+			GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'] = lang('Your header.inc.php needs upgrading.');
+			GlobalService::get('phpgw_info')['setup']['PageMSG'] = lang('Your header.inc.php needs upgrading.<br><blink><b class="msg">WARNING!</b></blink><br><b>MAKE BACKUPS!</b>');
+			GlobalService::get('phpgw_info')['setup']['HeaderLoginMSG'] = lang('Your header.inc.php needs upgrading.');
+			if(!GlobalService::get('phpgw_setup')->auth('Header'))
 			{
-				$GLOBALS['phpgw_setup']->html->show_header('Please login',True);
-				$GLOBALS['phpgw_setup']->html->login_form();
-				$GLOBALS['phpgw_setup']->html->show_footer();
+				GlobalService::get('phpgw_setup')->html->show_header('Please login',True);
+				GlobalService::get('phpgw_setup')->html->login_form();
+				GlobalService::get('phpgw_setup')->html->show_footer();
 				exit;
 			}
 			break;
 		case '10':
-			if(!$GLOBALS['phpgw_setup']->auth('Header'))
+			if(!GlobalService::get('phpgw_setup')->auth('Header'))
 			{
-				$GLOBALS['phpgw_setup']->html->show_header('Please login',True);
-				$GLOBALS['phpgw_setup']->html->login_form();
-				$GLOBALS['phpgw_setup']->html->show_footer();
+				GlobalService::get('phpgw_setup')->html->show_header('Please login',True);
+				GlobalService::get('phpgw_setup')->html->login_form();
+				GlobalService::get('phpgw_setup')->html->show_footer();
 				exit;
 			}
-			$GLOBALS['phpgw_info']['setup']['HeaderFormMSG'] = lang('Edit your header.inc.php');
-			$GLOBALS['phpgw_info']['setup']['PageMSG'] = lang('Edit your existing header.inc.php');
+			GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'] = lang('Edit your header.inc.php');
+			GlobalService::get('phpgw_info')['setup']['PageMSG'] = lang('Edit your existing header.inc.php');
 			break;
 	}
 
@@ -196,16 +198,16 @@
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-			$newheader = $GLOBALS['phpgw_setup']->html->generate_header();
+			$newheader = GlobalService::get('phpgw_setup')->html->generate_header();
 			echo $newheader;
 			break;
 		case 'view':
 			check_form_values();
 			$header_template = CreateObject('setup.Template','../');
-			$GLOBALS['phpgw_setup']->html->show_header('Generated header.inc.php', False, 'header');
+			GlobalService::get('phpgw_setup')->html->show_header('Generated header.inc.php', False, 'header');
 			echo '<table width="90%"><tr><td>';
 			echo '<br>' . lang('Save this text as contents of your header.inc.php') . '<br><hr>';
-			$newheader = $GLOBALS['phpgw_setup']->html->generate_header();
+			$newheader = GlobalService::get('phpgw_setup')->html->generate_header();
 			echo '<pre>';
 			echo htmlentities($newheader);
 			echo '</pre><hr>';
@@ -215,18 +217,18 @@
 			echo '<input type="submit" name="junk" value="'.lang('Continue').'">';
 			echo '</form>';
 			echo '</td></tr></table>';
-			$GLOBALS['phpgw_setup']->html->show_footer();
+			GlobalService::get('phpgw_setup')->html->show_footer();
 			break;
 		case 'write':
 			check_form_values();
 			$header_template = CreateObject('setup.Template','../');
 			if(is_writeable('../header.inc.php') || (!file_exists('../header.inc.php') && is_writeable('../')))
 			{
-				$newheader = $GLOBALS['phpgw_setup']->html->generate_header();
+				$newheader = GlobalService::get('phpgw_setup')->html->generate_header();
 				$fsetup = fopen('../header.inc.php','wb');
 				fwrite($fsetup,$newheader);
 				fclose($fsetup);
-				$GLOBALS['phpgw_setup']->html->show_header('Saved header.inc.php', False, 'header');
+				GlobalService::get('phpgw_setup')->html->show_header('Saved header.inc.php', False, 'header');
 				echo '<form action="index.php" method="post">';
  				echo '<br>' . lang('Created header.inc.php!');
 				echo '<input type="hidden" name="FormLogout" value="header">';
@@ -237,14 +239,14 @@
 			}
 			else
 			{
-				$GLOBALS['phpgw_setup']->html->show_header('Error generating header.inc.php', False, 'header');
+				GlobalService::get('phpgw_setup')->html->show_header('Error generating header.inc.php', False, 'header');
 				echo lang('Could not open header.inc.php for writing!') . '<br>' . "\n";
 				echo lang('Please check read/write permissions on directories, or back up and use another option.') . '<br>';
 				echo '</td></tr></table></body></html>';
 			}
 			break;
 		default:
-			$GLOBALS['phpgw_setup']->html->show_header($GLOBALS['phpgw_info']['setup']['HeaderFormMSG'], False, 'header');
+			GlobalService::get('phpgw_setup')->html->show_header(GlobalService::get('phpgw_info')['setup']['HeaderFormMSG'], False, 'header');
 			
 			$detected = '';
 
@@ -255,7 +257,7 @@
 
 			$detected .= '<table border="0" width="100%" cellspacing="0" cellpadding="0">' . "\n";
 
-			$detected .= '<tr><td colspan="2"><p>' . $GLOBALS['phpgw_info']['setup']['PageMSG'] . '<br />&nbsp;</p></td></tr>';
+			$detected .= '<tr><td colspan="2"><p>' . GlobalService::get('phpgw_info')['setup']['PageMSG'] . '<br />&nbsp;</p></td></tr>';
 			
 			$detected .= '<tr class="th"><td colspan="2">' . lang('Analysis') . '</td></tr><tr><td colspan="2">'. "\n";
 
@@ -356,13 +358,13 @@
 			if(file_exists('../header.inc.php') && is_file('../header.inc.php') && is_readable('../header.inc.php'))
 			{
 				$detected .= lang('Found existing configuration file. Loading settings from the file...') . '<br>' . "\n";
-				$GLOBALS['phpgw_info']['flags']['noapi'] = True;
+				GlobalService::get('phpgw_info')['flags']['noapi'] = True;
 				$no_guess = true;
 				/* This code makes sure the newer multi-domain supporting header.inc.php is being used */
-				if(!isset($GLOBALS['phpgw_domain']))
+				if(!isset(GlobalService::get('phpgw_domain')))
 				{
 					$detected .= lang('You need to add some domains to your header.inc.php.') . '<br>' . "\n";
-					$GLOBALS['phpgw_domain']['default'] = array();
+					GlobalService::get('phpgw_domain')['default'] = array();
 					$setup_tpl->set_var('lang_domain',lang('Domain'));
 					$setup_tpl->set_var('lang_delete',lang('Delete'));
 					$setup_tpl->set_var('db_domain','default');
@@ -384,49 +386,49 @@
 				}
 				else
 				{
-					if(@$GLOBALS['phpgw_info']['server']['header_version'] != @$GLOBALS['phpgw_info']['server']['current_header_version'])
+					if(@GlobalService::get('phpgw_info')['server']['header_version'] != @GlobalService::get('phpgw_info')['server']['current_header_version'])
 					{
 						$detected .= lang("You're using an old header.inc.php version...") . '<br>' . "\n";
 						$detected .= lang('Importing old settings into the new format....') . '<br>' . "\n";
 					}
-					reset($GLOBALS['phpgw_domain']);
-					$default_domain = each($GLOBALS['phpgw_domain']);
-					$GLOBALS['phpgw_info']['server']['default_domain'] = $default_domain[0];
+					reset(GlobalService::get('phpgw_domain'));
+					$default_domain = each(GlobalService::get('phpgw_domain'));
+					GlobalService::get('phpgw_info')['server']['default_domain'] = $default_domain[0];
 					unset($default_domain); // we kill this for security reasons
-					$GLOBALS['phpgw_info']['server']['config_passwd'] = $GLOBALS['phpgw_domain'][$GLOBALS['phpgw_info']['server']['default_domain']]['config_passwd'];
-					$GLOBALS['phpgw_info']['server']['config_user'] = $GLOBALS['phpgw_domain'][$GLOBALS['phpgw_info']['server']['default_domain']]['config_user'];
+					GlobalService::get('phpgw_info')['server']['config_passwd'] = GlobalService::get('phpgw_domain')[GlobalService::get('phpgw_info')['server']['default_domain']]['config_passwd'];
+					GlobalService::get('phpgw_info')['server']['config_user'] = GlobalService::get('phpgw_domain')[GlobalService::get('phpgw_info')['server']['default_domain']]['config_user'];
 
 					if(@$adddomain)
 					{
-						$GLOBALS['phpgw_domain'][lang('new')] = array();
+						GlobalService::get('phpgw_domain')[lang('new')] = array();
 					}
 
-					reset($GLOBALS['phpgw_domain']);
-					while(list($key,$val) = each($GLOBALS['phpgw_domain']))
+					reset(GlobalService::get('phpgw_domain'));
+					while(list($key,$val) = each(GlobalService::get('phpgw_domain')))
 					{
 						$setup_tpl->set_var('lang_domain',lang('Domain'));
 						$setup_tpl->set_var('lang_delete',lang('Delete'));
 						$setup_tpl->set_var('db_domain',$key);
-						$setup_tpl->set_var('db_host',$GLOBALS['phpgw_domain'][$key]['db_host']);
+						$setup_tpl->set_var('db_host',GlobalService::get('phpgw_domain')[$key]['db_host']);
 						/* Set default here if the admin didn't set a port yet */
-						$setup_tpl->set_var('db_port',$GLOBALS['phpgw_domain'][$key]['db_port']
-							? $GLOBALS['phpgw_domain'][$key]['db_port']
-							: @$default_db_ports[$GLOBALS['phpgw_domain'][$key]['db_type']]
+						$setup_tpl->set_var('db_port',GlobalService::get('phpgw_domain')[$key]['db_port']
+							? GlobalService::get('phpgw_domain')[$key]['db_port']
+							: @$default_db_ports[GlobalService::get('phpgw_domain')[$key]['db_type']]
 						);
-						$setup_tpl->set_var('db_name',$GLOBALS['phpgw_domain'][$key]['db_name']);
-						$setup_tpl->set_var('db_user',$GLOBALS['phpgw_domain'][$key]['db_user']);
-						$setup_tpl->set_var('db_pass',$GLOBALS['phpgw_domain'][$key]['db_pass']);
-						$setup_tpl->set_var('db_type',$GLOBALS['phpgw_domain'][$key]['db_type']);
-						if(!@isset($GLOBALS['phpgw_domain'][$key]['config_user']))
+						$setup_tpl->set_var('db_name',GlobalService::get('phpgw_domain')[$key]['db_name']);
+						$setup_tpl->set_var('db_user',GlobalService::get('phpgw_domain')[$key]['db_user']);
+						$setup_tpl->set_var('db_pass',GlobalService::get('phpgw_domain')[$key]['db_pass']);
+						$setup_tpl->set_var('db_type',GlobalService::get('phpgw_domain')[$key]['db_type']);
+						if(!@isset(GlobalService::get('phpgw_domain')[$key]['config_user']))
 						{
 							$setup_tpl->set_var('config_user','admin');
 						}
 						else
 						{
-							$setup_tpl->set_var('config_user',$GLOBALS['phpgw_domain'][$key]['config_user']);
+							$setup_tpl->set_var('config_user',GlobalService::get('phpgw_domain')[$key]['config_user']);
 						}
 						$setup_tpl->set_var('config_pass','');
-						$setup_tpl->set_var('config_password',$GLOBALS['phpgw_domain'][$key]['config_passwd']);
+						$setup_tpl->set_var('config_password',GlobalService::get('phpgw_domain')[$key]['config_passwd']);
 
 						$selected = '';
 						$dbtype_options = '';
@@ -434,7 +436,7 @@
 						@reset($supported_db);
 						while(list($k,$v) = @each($supported_db))
 						{
-							if($v == $GLOBALS['phpgw_domain'][$key]['db_type'])
+							if($v == GlobalService::get('phpgw_domain')[$key]['db_type'])
 							{
 								$selected = ' selected ';
 								$found_dbtype = true;
@@ -453,25 +455,25 @@
 				}
 				if(defined('PHPGW_SERVER_ROOT'))
 				{
-					$GLOBALS['phpgw_info']['server']['server_root']  = (PHPGW_SERVER_ROOT  == '..') ? $realpath : PHPGW_SERVER_ROOT;
-					$GLOBALS['phpgw_info']['server']['include_root'] = (PHPGW_INCLUDE_ROOT == '..') ? $realpath : PHPGW_SERVER_ROOT;
+					GlobalService::get('phpgw_info')['server']['server_root']  = (PHPGW_SERVER_ROOT  == '..') ? $realpath : PHPGW_SERVER_ROOT;
+					GlobalService::get('phpgw_info')['server']['include_root'] = (PHPGW_INCLUDE_ROOT == '..') ? $realpath : PHPGW_SERVER_ROOT;
 				}
-				elseif(!@isset($GLOBALS['phpgw_info']['server']['include_root']) && @$GLOBALS['phpgw_info']['server']['header_version'] <= 1.6)
+				elseif(!@isset(GlobalService::get('phpgw_info')['server']['include_root']) && @GlobalService::get('phpgw_info')['server']['header_version'] <= 1.6)
 				{
-					$GLOBALS['phpgw_info']['server']['include_root'] = @$GLOBALS['phpgw_info']['server']['server_root'];
+					GlobalService::get('phpgw_info')['server']['include_root'] = @GlobalService::get('phpgw_info')['server']['server_root'];
 				}
-				elseif(!@isset($GLOBALS['phpgw_info']['server']['header_version']) && @$GLOBALS['phpgw_info']['server']['header_version'] <= 1.6)
+				elseif(!@isset(GlobalService::get('phpgw_info')['server']['header_version']) && @GlobalService::get('phpgw_info')['server']['header_version'] <= 1.6)
 				{
-					$GLOBALS['phpgw_info']['server']['include_root'] = @$GLOBALS['phpgw_info']['server']['server_root'];
+					GlobalService::get('phpgw_info')['server']['include_root'] = @GlobalService::get('phpgw_info')['server']['server_root'];
 				}
 			}
 			else
 			{
 				$detected .= lang('Sample configuration not found. using built in defaults') . '<br>' . "\n";
-				$GLOBALS['phpgw_info']['server']['server_root']  = $realpath;
-				$GLOBALS['phpgw_info']['server']['include_root'] = $realpath;
+				GlobalService::get('phpgw_info')['server']['server_root']  = $realpath;
+				GlobalService::get('phpgw_info')['server']['include_root'] = $realpath;
 				/* This is the basic include needed on each page for eGroupWare application compliance */
-				$GLOBALS['phpgw_info']['flags']['htmlcompliant'] = True;
+				GlobalService::get('phpgw_info')['flags']['htmlcompliant'] = True;
 
 				/* These are the settings for the database system */
 				$setup_tpl->set_var('lang_domain',lang('Domain'));
@@ -501,9 +503,9 @@
 				$setup_tpl->set_var('comment_r',' -->');
 
 				/* These are a few of the advanced settings */
-				$GLOBALS['phpgw_info']['server']['db_persistent'] = True;
-				$GLOBALS['phpgw_info']['server']['mcrypt_enabled'] = extension_loaded('mcrypt');
-				$GLOBALS['phpgw_info']['server']['versions']['mcrypt'] = '';
+				GlobalService::get('phpgw_info')['server']['db_persistent'] = True;
+				GlobalService::get('phpgw_info')['server']['mcrypt_enabled'] = extension_loaded('mcrypt');
+				GlobalService::get('phpgw_info')['server']['versions']['mcrypt'] = '';
 
 				srand((double)microtime()*1000000);
 				$random_char = array(
@@ -515,7 +517,7 @@
 
 				for($i=0; $i<30; $i++)
 				{
-					$GLOBALS['phpgw_info']['server']['mcrypt_iv'] .= $random_char[rand(1,count($random_char))];
+					GlobalService::get('phpgw_info')['server']['mcrypt_iv'] .= $random_char[rand(1,count($random_char))];
 				}
 			}
 
@@ -525,28 +527,28 @@
 				$detected .= lang('Now guessing better values for defaults...') . '<br>' . "\n";
 				$this_dir = dirname($_SERVER['SCRIPT_FILENAME']);
 				$updir    = str_replace('/setup','',$this_dir);
-				$GLOBALS['phpgw_info']['server']['server_root'] = $updir; 
-				$GLOBALS['phpgw_info']['server']['include_root'] = $updir; 
+				GlobalService::get('phpgw_info')['server']['server_root'] = $updir; 
+				GlobalService::get('phpgw_info')['server']['include_root'] = $updir; 
 			}
 
 			$setup_tpl->set_var('detected',$detected);
 			/* End of detected settings, now display the form with the detected or prior values */
 
-			$setup_tpl->set_var('server_root',@$GLOBALS['phpgw_info']['server']['server_root']);
-			$setup_tpl->set_var('include_root',@$GLOBALS['phpgw_info']['server']['include_root']);
-			if(!@isset($GLOBALS['phpgw_info']['server']['header_admin_user']))
+			$setup_tpl->set_var('server_root',@GlobalService::get('phpgw_info')['server']['server_root']);
+			$setup_tpl->set_var('include_root',@GlobalService::get('phpgw_info')['server']['include_root']);
+			if(!@isset(GlobalService::get('phpgw_info')['server']['header_admin_user']))
 			{
 				$setup_tpl->set_var('header_admin_user','admin');
 			}
 			else
 			{
-				$setup_tpl->set_var('header_admin_user',@$GLOBALS['phpgw_info']['server']['header_admin_user']);
+				$setup_tpl->set_var('header_admin_user',@GlobalService::get('phpgw_info')['server']['header_admin_user']);
 			}
-			$setup_tpl->set_var('header_admin_pass',@$GLOBALS['phpgw_info']['server']['header_admin_password']);
+			$setup_tpl->set_var('header_admin_pass',@GlobalService::get('phpgw_info')['server']['header_admin_password']);
 			$setup_tpl->set_var('header_admin_password','');
 
 
-			if(@$GLOBALS['phpgw_info']['server']['db_persistent'])
+			if(@GlobalService::get('phpgw_info')['server']['db_persistent'])
 			{
 				$setup_tpl->set_var('db_persistent_yes',' selected');
 			}
@@ -559,7 +561,7 @@
 			$session_options = '';
 			while(list($k,$v) = each($supported_sessions_type))
 			{
-				if($v == @$GLOBALS['phpgw_info']['server']['sessions_type'])
+				if($v == @GlobalService::get('phpgw_info')['server']['sessions_type'])
 				{
 					$selected = ' selected ';
 				}
@@ -571,7 +573,7 @@
 			}
 			$setup_tpl->set_var('session_options',$session_options);
 
-			if(@$GLOBALS['phpgw_info']['server']['mcrypt_enabled'])
+			if(@GlobalService::get('phpgw_info')['server']['mcrypt_enabled'])
 			{
 				$setup_tpl->set_var('mcrypt_enabled_yes',' selected');
 			}
@@ -580,14 +582,14 @@
 				$setup_tpl->set_var('mcrypt_enabled_no',' selected');
 			}
 
-			$setup_tpl->set_var('mcrypt',$GLOBALS['phpgw_info']['server']['versions']['mcrypt']);
-			$setup_tpl->set_var('mcrypt_iv',$GLOBALS['phpgw_info']['server']['mcrypt_iv']);
+			$setup_tpl->set_var('mcrypt',GlobalService::get('phpgw_info')['server']['versions']['mcrypt']);
+			$setup_tpl->set_var('mcrypt_iv',GlobalService::get('phpgw_info')['server']['mcrypt_iv']);
 
 			$setup_tpl->set_var('lang_setup_acl',lang('Limit access to setup to the following addresses, networks or hostnames (e.g. 127.0.0.1,10.1.1,myhost.dnydns.org)'));
-			$setup_tpl->set_var('setup_acl',$GLOBALS['phpgw_info']['server']['setup_acl']);
+			$setup_tpl->set_var('setup_acl',GlobalService::get('phpgw_info')['server']['setup_acl']);
 
 			// ExpressoLivre
-			switch($GLOBALS['phpgw_info']['server']['use_https'])
+			switch(GlobalService::get('phpgw_info')['server']['use_https'])
 			{
 				case '0':
 					$setup_tpl->set_var('use_https_0',' checked');
@@ -599,14 +601,14 @@
 					$setup_tpl->set_var('use_https_2',' checked');
 					break;
 			}
-			if(@$GLOBALS['phpgw_info']['server']['sugestoes_email_to'])
+			if(@GlobalService::get('phpgw_info')['server']['sugestoes_email_to'])
 			{
-				$setup_tpl->set_var('sugestoes_email_to',$GLOBALS['phpgw_info']['server']['sugestoes_email_to']);
+				$setup_tpl->set_var('sugestoes_email_to',GlobalService::get('phpgw_info')['server']['sugestoes_email_to']);
 			}
 
-			if(@$GLOBALS['phpgw_info']['server']['domain_name'])
+			if(@GlobalService::get('phpgw_info')['server']['domain_name'])
 			{
-				$setup_tpl->set_var('domain_name',$GLOBALS['phpgw_info']['server']['domain_name']);
+				$setup_tpl->set_var('domain_name',GlobalService::get('phpgw_info')['server']['domain_name']);
 			}
 			
 			$errors = '';
@@ -614,7 +616,7 @@
 			{
 				/*
 				$errors .= '<br><font color="red">' . lang('Warning!') . '<br>'
-					. lang('The db_type in defaults (%1) is not supported on this server. using first supported type.',$GLOBALS['phpgw_info']['server']['db_type'])
+					. lang('The db_type in defaults (%1) is not supported on this server. using first supported type.',GlobalService::get('phpgw_info')['server']['db_type'])
 					. '</font>';
 				*/
 			}
@@ -634,12 +636,12 @@
 					. '</form>';
 			}
 			// set domain and password for the continue button
-			@reset($GLOBALS['phpgw_domain']);
-			list($firstDomain) = @each($GLOBALS['phpgw_domain']);
+			@reset(GlobalService::get('phpgw_domain'));
+			list($firstDomain) = @each(GlobalService::get('phpgw_domain'));
 			$setup_tpl->set_var(array(
 				'FormDomain' => $firstDomain,
-				'FormUser'   => $GLOBALS['phpgw_domain'][$firstDomain]['config_user'],
-				'FormPW'     => $GLOBALS['phpgw_domain'][$firstDomain]['config_passwd']
+				'FormUser'   => GlobalService::get('phpgw_domain')[$firstDomain]['config_user'],
+				'FormPW'     => GlobalService::get('phpgw_domain')[$firstDomain]['config_passwd']
 			));
 			$setup_tpl->set_var('errors',$errors);
 
@@ -682,7 +684,7 @@
 
 			$setup_tpl->pfp('out','manageheader');
 
-			$GLOBALS['phpgw_setup']->html->show_footer();
+			GlobalService::get('phpgw_setup')->html->show_footer();
 
 			break; // ending the switch default
 	}

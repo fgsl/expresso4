@@ -53,7 +53,7 @@ class NanoJsonConverter
     /**
      * return max input size (for unit tests only)
      *
-     * @return unknown
+     * @return mixed unknown
      */
     public function getMaxInputSize()
     {
@@ -76,7 +76,7 @@ class NanoJsonConverter
     /**
      * return current JSON input String (for testing only)
      *
-     * @return unknown
+     * @return mixed unknown
      */
     public function getJsonString()
     {

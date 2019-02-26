@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Contact Management Shared Routines                      *
 	* Written by Joseph Engo <jengo@phpgroupware.org>                          *
@@ -23,11 +25,11 @@
 	* Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA            *
 	\**************************************************************************/
 
-	if (!isset($GLOBALS['phpgw_info']['server']['contact_repository']))
+	if (!isset(GlobalService::get('phpgw_info')['server']['contact_repository']))
 	{
-		$GLOBALS['phpgw_info']['server']['contact_repository'] = 'sql';
+		GlobalService::get('phpgw_info')['server']['contact_repository'] = 'sql';
 	}
-	require_once(PHPGW_API_INC . '/class.contacts_'.$GLOBALS['phpgw_info']['server']['contact_repository'] . '.inc.php');
+	require_once(PHPGW_API_INC . '/class.contacts_'.GlobalService::get('phpgw_info')['server']['contact_repository'] . '.inc.php');
 
 	class contacts extends contacts_
 	{
@@ -116,7 +118,7 @@
 			{
 				foreach($_criteria as $criteriaKey => $criteriaValue)
 				{
-					if($GLOBALS['phpgw_info']['server']['contact_repository'] == 'ldap')
+					if(GlobalService::get('phpgw_info')['server']['contact_repository'] == 'ldap')
 					{
 						switch($criteriaKey)
 						{
@@ -324,7 +326,7 @@
 
 		function formatted_address($id, $business = True, $afont = '', $asize = '2')
 		{
-			$t = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('addressbook'));
+			$t = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('addressbook'));
 			$s = CreateObject('phpgwapi.sbox');
 
 			$fields = array(
@@ -348,7 +350,7 @@
 			list($address) = $this->read_single_entry($id,$fields);
 			foreach($address as $k => $val)
 			{
-				$address[$k] = $GLOBALS['phpgw']->strip_html($val);
+				$address[$k] = GlobalService::get('phpgw')->strip_html($val);
 			}
 
 			if ($address['title'])
@@ -385,7 +387,7 @@
 
 			if (! $country)
 			{
-				$country = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+				$country = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 			}
 
 			if (file_exists(PHPGW_SERVER_ROOT . SEP . 'addressbook' . SEP . 'templates' . SEP .'default' . SEP . 'format_' . strtolower($country) . '.tpl'))
@@ -399,7 +401,7 @@
 
 			if (!$afont)
 			{
-				$afont = $GLOBALS['phpgw_info']['theme']['font'];
+				$afont = GlobalService::get('phpgw_info')['theme']['font'];
 			}
 
 			$a .= $t->set_var('font',$afont);
@@ -411,7 +413,7 @@
 			$a .= $t->set_var('zip',$zip);
 			$a .= $t->set_var('state',$state);
 
-			if ($country != $GLOBALS['phpgw_info']['user']['preferences']['common']['country'])
+			if ($country != GlobalService::get('phpgw_info')['user']['preferences']['common']['country'])
 			{
 				$countryname = $s->get_full_name($country);
 				$a .= $t->set_var('country',lang($countryname));
@@ -423,7 +425,7 @@
 
 		function formatted_address_full($id, $business = True, $afont = '', $asize = '2')
 		{
-			$t = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('addressbook'));
+			$t = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('addressbook'));
 			$s = CreateObject('phpgwapi.sbox');
 
 			$fields = array(
@@ -453,7 +455,7 @@
 			list($address) = $this->read_single_entry($id,$fields);
 			foreach($address as $k => $val)
 			{
-				$address[$k] = $GLOBALS['phpgw']->strip_html($val);
+				$address[$k] = GlobalService::get('phpgw')->strip_html($val);
 			}
 
 			if($address['title'])
@@ -494,7 +496,7 @@
 
 			if(!$country)
 			{
-				$country = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+				$country = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 			}
 
 			if(file_exists(PHPGW_SERVER_ROOT . SEP . 'addressbook' . SEP . 'templates' . SEP .'default' . SEP . 'full_format_' . strtolower($country) . '.tpl'))
@@ -508,7 +510,7 @@
 
 			if(!$afont)
 			{
-				$afont = $GLOBALS['phpgw_info']['theme']['font'];
+				$afont = GlobalService::get('phpgw_info')['theme']['font'];
 			}
 
 			$a .= $t->set_var('font',$afont);
@@ -528,7 +530,7 @@
 			$a .= $t->set_var('fax',$address['tel_fax']);
 			$a .= $t->set_var('url',$address['url']);
 
-			if($country != $GLOBALS['phpgw_info']['user']['preferences']['common']['country'])
+			if($country != GlobalService::get('phpgw_info')['user']['preferences']['common']['country'])
 			{
 				$countryname = $s->get_full_name($country);
 				$a .= $t->set_var('country',lang($countryname));
@@ -540,7 +542,7 @@
 
 		function formatted_address_line($id, $business = True, $afont = '', $asize = '2')
 		{
-			$t = CreateObject('phpgwapi.Template',$GLOBALS['phpgw']->common->get_tpl_dir('addressbook'));
+			$t = CreateObject('phpgwapi.Template',GlobalService::get('phpgw')->common->get_tpl_dir('addressbook'));
 			$s = CreateObject('phpgwapi.sbox');
 
 			$fields = array(
@@ -563,7 +565,7 @@
 			list($address) = $this->read_single_entry($id,$fields);
 			foreach($address as $k => $val)
 			{
-				$address[$k] = $GLOBALS['phpgw']->strip_html($val);
+				$address[$k] = GlobalService::get('phpgw')->strip_html($val);
 			}
 
 			if($address['title'])
@@ -600,7 +602,7 @@
 
 			if(!$country)
 			{
-				$country = $GLOBALS['phpgw_info']['user']['preferences']['common']['country'];
+				$country = GlobalService::get('phpgw_info')['user']['preferences']['common']['country'];
 			}
 
 			if(file_exists(PHPGW_SERVER_ROOT . SEP . 'addressbook' . SEP . 'templates' . SEP .'default' . SEP . 'line_format_' . strtolower($country) . '.tpl'))
@@ -614,7 +616,7 @@
 
 			if(!$afont)
 			{
-				$afont = $GLOBALS['phpgw_info']['theme']['font'];
+				$afont = GlobalService::get('phpgw_info')['theme']['font'];
 			}
 
 			$a .= $t->set_var('font',$afont);
@@ -625,10 +627,10 @@
 			$a .= $t->set_var('zip',$zip);
 			$a .= $t->set_var('state',$state);
 
-			if($country != $GLOBALS['phpgw_info']['user']['preferences']['common']['country'])
+			if($country != GlobalService::get('phpgw_info')['user']['preferences']['common']['country'])
 			{
 				$countryname = $s->get_full_name($country);
-				$a .= $t->set_var('country','&nbsp;°&nbsp;' . lang($countryname));
+				$a .= $t->set_var('country','&nbsp;ï¿½&nbsp;' . lang($countryname));
 			}
 
 			$a .= $t->fp('out','address_format');

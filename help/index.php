@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - Online User manual                                          *
 	* http://www.eGroupWare.org                                                *
@@ -12,7 +14,7 @@
 
 	/* $Id: index.php,v 1.13 2004/04/13 08:19:10 ralfbecker Exp $ */
 
-$GLOBALS['phpgw_info']['flags'] = array(
+GlobalService::get('phpgw_info')['flags'] = array(
 					'currentapp' => 'help',
 					'nonavbar'   => true,
 					'noheader'   => true,
@@ -20,5 +22,5 @@ $GLOBALS['phpgw_info']['flags'] = array(
 
 include('../header.inc.php');
 ExecMethod('help.uihelp.viewHelp');
-//	$GLOBALS['phpgw']->common->phpgw_footer();
+//	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

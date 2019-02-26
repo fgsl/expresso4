@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare                                                               *
 	* http://www.egroupware.org                                                *
@@ -23,11 +25,11 @@ $invalidSession = false;
 $userAgent = array();
 
 // Update and Load DB information auth
-if ( isset( $GLOBALS['phpgw'] ) && !isset( $_SESSION['connection_db_info'] ) )
+if ( isset( GlobalService::get('phpgw') ) && !isset( $_SESSION['connection_db_info'] ) )
 {
-	$_SESSION['phpgw_info']['admin']['server']['sessions_checkip'] = $GLOBALS['phpgw_info']['server']['sessions_checkip'];
+	$_SESSION['phpgw_info']['admin']['server']['sessions_checkip'] = GlobalService::get('phpgw_info')['server']['sessions_checkip'];
 
-	if ( intval( $GLOBALS['phpgw_info']['server']['use_https'] ) == 1 )
+	if ( intval( GlobalService::get('phpgw_info')['server']['use_https'] ) == 1 )
 	{
 		$newIP = "";
 
@@ -39,9 +41,9 @@ if ( isset( $GLOBALS['phpgw'] ) && !isset( $_SESSION['connection_db_info'] ) )
 		$newIP = $newIP . $_SERVER['REMOTE_ADDR'];
 
 		$query = "UPDATE phpgw_access_log SET ip = '".$newIP."' " .
-				 "WHERE account_id <> 0 AND lo = 0 AND sessionid='".$GLOBALS['sessionid']."'";
+				 "WHERE account_id <> 0 AND lo = 0 AND sessionid='".GlobalService::get('sessionid')."'";
 
-		$GLOBALS['phpgw']->db->query( $query, __LINE__, __FILE__ );
+		GlobalService::get('phpgw')->db->query( $query, __LINE__, __FILE__ );
 		
 		unset( $newIP );
 
@@ -53,17 +55,17 @@ if ( isset( $GLOBALS['phpgw'] ) && !isset( $_SESSION['connection_db_info'] ) )
 	$query = "SELECT trim(sessionid)".$sessionsCheckip.",browser " .
 			 "FROM phpgw_access_log " .
 			 "WHERE account_id <> 0 AND lo = 0 " .
-			 "AND sessionid = '".$GLOBALS['sessionid']."' " .
+			 "AND sessionid = '".GlobalService::get('sessionid')."' " .
 			 "LIMIT 1";
 
-	$GLOBALS['phpgw']->db->query( $query, __LINE__, __FILE__ );
+	GlobalService::get('phpgw')->db->query( $query, __LINE__, __FILE__ );
 	
-	$GLOBALS['phpgw']->db->next_record();
+	GlobalService::get('phpgw')->db->next_record();
 	
-	if ( $GLOBALS['phpgw']->db->row() )
+	if ( GlobalService::get('phpgw')->db->row() )
 	{
 		$userAuth     = "";
-		$rows         = $GLOBALS['phpgw']->db->row();
+		$rows         = GlobalService::get('phpgw')->db->row();
 
 		if( isset( $rows['btrim'] ) )
 		{
@@ -149,9 +151,9 @@ if ( empty( $_SESSION['phpgw_session']['session_id'] ) || $invalidSession )
 	{
 		error_log( '[ INVALID SESSION ] >>>>'.$_SESSION['connection_db_info']['user_auth'].'<<<< - >>>>' . implode( '', $userAgent ), 0 );
 	
-		isset( $GLOBALS['phpgw']->session ) ? $GLOBALS['phpgw']->session->phpgw_setcookie( 'sessionid' ) : setcookie( 'sessionid', '', 0 );
+		isset( GlobalService::get('phpgw')->session ) ? GlobalService::get('phpgw')->session->phpgw_setcookie( 'sessionid' ) : setcookie( 'sessionid', '', 0 );
 	
-		$GLOBALS['phpgw']->redirect( $GLOBALS['phpgw_info']['server']['webserver_url'].'/login.php?cd=10' );
+		GlobalService::get('phpgw')->redirect( GlobalService::get('phpgw_info')['server']['webserver_url'].'/login.php?cd=10' );
 	}
 	
 	// Removing session cookie.

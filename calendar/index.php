@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -22,22 +24,22 @@
 		'nofooter'	=>	True
 	);
 
-	$GLOBALS['phpgw_info']['flags'] = $phpgw_flags;
+	GlobalService::get('phpgw_info')['flags'] = $phpgw_flags;
 	include('../header.inc.php');
-	if(!is_object($GLOBALS['phpgw']->datetime))
+	if(!is_object(GlobalService::get('phpgw')->datetime))
 	{
-		$GLOBALS['phpgw']->datetime = CreateObject('phpgwapi.date_time');
+		GlobalService::get('phpgw')->datetime = CreateObject('phpgwapi.date_time');
 	}
 
 	$parms = Array(
 # 		'menuaction'=> 'calendar.uicalendar.index',
-		'date'		=> date('Ymd',$GLOBALS['phpgw']->datetime->users_localtime)
+		'date'		=> date('Ymd',GlobalService::get('phpgw')->datetime->users_localtime)
 	);
 
-	//echo 'Local DateTime: '.date('Ymd H:i:s',$GLOBALS['phpgw']->datetime->users_localtime).'<br>'."\n";
+	//echo 'Local DateTime: '.date('Ymd H:i:s',GlobalService::get('phpgw')->datetime->users_localtime).'<br>'."\n";
 
-#	$GLOBALS['phpgw']->redirect_link('/index.php',$parms);
+#	GlobalService::get('phpgw')->redirect_link('/index.php',$parms);
 	ExecMethod('calendar.uicalendar.index',$parms);
-	$GLOBALS['phpgw']->common->phpgw_exit();
+	GlobalService::get('phpgw')->common->phpgw_exit();
 
 ?>

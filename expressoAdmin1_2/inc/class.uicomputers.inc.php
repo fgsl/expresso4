@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***********************************************************************************\
-	* Expresso Administração                 										   *
+	* Expresso Administraï¿½ï¿½o                 										   *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  *
 	* ---------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it		   *
@@ -42,16 +44,16 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			$c->read_repository();
 			$this->current_config = $c->config_data;
 
-			if(!@is_object($GLOBALS['phpgw']->js))
+			if(!@is_object(GlobalService::get('phpgw')->js))
 			{
-				$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+				GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 			}
-			$GLOBALS['phpgw']->js->validate_file('jscode','computers','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
+			GlobalService::get('phpgw')->js->validate_file('jscode','computers','expressoAdmin1_2');#diretorio, arquivo.js, aplicacao
 		}
 		
 		function list_computers()
 		{
-			$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$manager_acl = $this->functions->read_acl($manager_lid);
 			$manager_contexts = $manager_acl['contexts'];
 			foreach ($manager_acl['contexts_display'] as $index=>$tmp_context)
@@ -62,7 +64,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $manager_lid, ACL_Managers::GRP_VIEW_COMPUTERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 
 			if(isset($_POST['query']))
@@ -70,15 +72,15 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				// limit query to limit characters
 				if(preg_match('/^[a-z_0-9_-].+$/i',$_POST['query'])) 
 				{
-					$GLOBALS['query'] = $_POST['query'];
+					GlobalService::set('query',$_POST['query']);
 				}
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
 			
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Computers');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Computers');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 			$p->set_file(array('computers'   => 'computers.tpl'));
@@ -88,25 +90,25 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 
 			// Seta as variaveis padroes.
 			$var = Array(
-				'th_bg'						=> $GLOBALS['phpgw_info']['theme']['th_bg'],
-				'add_action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.add_computer'),
+				'th_bg'						=> GlobalService::get('phpgw_info')['theme']['th_bg'],
+				'add_action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.add_computer'),
 				'add_computers_disabled'	=> $this->functions->check_acl( $manager_lid, ACL_Managers::ACL_ADD_COMPUTERS ) ? '' : 'display:none',
-				'back_url'					=> $GLOBALS['phpgw']->link('/expressoAdmin1_2/index.php'),
+				'back_url'					=> GlobalService::get('phpgw')->link('/expressoAdmin1_2/index.php'),
 				'context_display'			=> $context_display,
 			);
 			$p->set_var($var);
 			$p->set_var($this->functions->make_dinamic_lang($p, 'body'));
 			
 			// Save query
-			$p->set_var('query', $GLOBALS['query']);
+			$p->set_var('query', GlobalService::get('query'));
 			
 			//Admin make a search
-			if ($GLOBALS['query'] != '')
+			if (GlobalService::get('query') != '')
 			{
-				$computers_info = $this->functions->get_list('computers', $GLOBALS['query'], $manager_contexts);
+				$computers_info = $this->functions->get_list('computers', GlobalService::get('query'), $manager_contexts);
 			}
 			
-			if (!count($computers_info) && $GLOBALS['query'] != '')
+			if (!count($computers_info) && GlobalService::get('query') != '')
 			{
 				$p->set_var('message',lang('No matches found'));
 				$p->parse('rows','row_empty',True);
@@ -151,20 +153,20 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function add_computer()
 		{
-			$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$manager_acl = $this->functions->read_acl($manager_lid);
 			$manager_contexts = $manager_acl['contexts'];
 			
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $manager_lid, ACL_Managers::ACL_ADD_COMPUTERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Create Computers');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Create Computers');
+			GlobalService::get('phpgw')->common->phpgw_header();
 			
 			// Set o template
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -204,8 +206,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			// Seta variaveis utilizadas pelo tpl.
 			$var = Array(
 				// LINKS
-				'back_url'						=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
-				'form_action'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_add'),
+				'back_url'						=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
+				'form_action'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_add'),
 
 				'combo_sectors'					=> $sectors,			
 				'row_on'						=> "#DDDDDD",
@@ -216,7 +218,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 
 				'sambadomainname_options'		=> $sambadomainname_options,
 
-				// Retorna os valores, quando da um erro na validação.
+				// Retorna os valores, quando da um erro na validaï¿½ï¿½o.
 				'computer_cn'					=> $_POST['computer_cn'],
 				'computer_description'			=> $_POST['computer_description'],
 								
@@ -282,21 +284,21 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function edit_computer()
 		{
-			$manager_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$manager_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$manager_acl = $this->functions->read_acl($manager_lid);
 			$manager_contexts = $manager_acl['contexts'];
 			
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $manager_lid, ACL_Managers::ACL_MOD_COMPUTERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 			
 			// Set o header
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Computer');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Edit Computer');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			// Set o template
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -353,8 +355,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 					'sambadomainname_options'	=> $sambadomainname_options,
 					
 					// LINKS
-					'back_url'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
-					'form_action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_edit')
+					'back_url'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
+					'form_action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_edit')
 				);
 				$p->set_var($var);
 				$p->set_var($this->functions->make_dinamic_lang($p, 'body'));
@@ -380,7 +382,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 			}
 			else // DEMAIS VEZES
 			{
-				// Pega combo das organizações e seleciona um dos setores em caso de um erro na validaçao dos dados.
+				// Pega combo das organizaï¿½ï¿½es e seleciona um dos setores em caso de um erro na validaï¿½ao dos dados.
 				foreach ($manager_contexts as $index=>$context)
 					$sectors .= $this->functions->get_organizations($context, trim(strtolower($_POST['sector_context'])));
 				//$sectors = $this->functions->get_organizations($manager_contexts);
@@ -404,20 +406,20 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				
 				$var = Array(
 					// LINKS
-					'back_url'						=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
-					'form_action'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_edit'),
+					'back_url'						=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
+					'form_action'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.validade_computers_data_edit'),
 
 					'row_on'						=> "#DDDDDD",
 					'row_off'						=> "#EEEEEE",
 					'color_bg1'						=> "#E8F0F0",
 
-					// Retorna os valores, quando da um erro na validação.
+					// Retorna os valores, quando da um erro na validaï¿½ï¿½o.
 					'uidnumber'						=> $_POST['uidnumber'],
 					'error_messages'				=> $_POST['error_messages'] == '' ? '' : "<script type='text/javascript'>alert('".$_POST['error_messages']."')</script>",
 
 					'display_tr_computer_password'	=> $_POST['sambaAcctFlags'] == '[I          ]' ? '' : 'display:none',
 
-					// Retorna os valores, quando da um erro na validação.
+					// Retorna os valores, quando da um erro na validaï¿½ï¿½o.
 					'computer_cn'					=> $_POST['computer_cn'],
 					'computer_description'			=> $_POST['computer_description'],
 					'combo_sectors'					=> $sectors,
@@ -471,20 +473,20 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function delete_computer()
 		{
-			$account_lid = $GLOBALS['phpgw']->accounts->data['account_lid'];
+			$account_lid = GlobalService::get('phpgw')->accounts->data['account_lid'];
 			$acl = $this->functions->read_acl($account_lid);
 			$manager_context = $acl[0]['context'];
 			
 			// Verifica se tem acesso a este modulo
 			if (!$this->functions->check_acl( $account_lid, ACL_Managers::ACL_DEL_COMPUTERS ))
 			{
-				$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/expressoAdmin1_2/inc/access_denied.php'));
+				GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/expressoAdmin1_2/inc/access_denied.php'));
 			}
 			
-			unset($GLOBALS['phpgw_info']['flags']['noheader']);
-			unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-			$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Delete Computer');
-			$GLOBALS['phpgw']->common->phpgw_header();
+			unset(GlobalService::get('phpgw_info')['flags']['noheader']);
+			unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+			GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Delete Computer');
+			GlobalService::get('phpgw')->common->phpgw_header();
 
 			// Set o template
 			$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
@@ -502,8 +504,8 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 				'computer_cn'				=> $computer_data['computer_cn'],
 				'computer_dn'				=> $computer_data['dn'],
 				'computer_description'		=> $computer_data['computer_description'],
-				'back_url'					=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
-				'delete_action'				=> $GLOBALS['phpgw']->link('/index.php','menuaction=expressoAdmin1_2.bocomputers.delete_computer'),
+				'back_url'					=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.uicomputers.list_computers'),
+				'delete_action'				=> GlobalService::get('phpgw')->link('/index.php','menuaction=expressoAdmin1_2.bocomputers.delete_computer'),
 			);
 			$p->set_var($var);
 			$p->set_var($this->functions->make_dinamic_lang($p, 'body'));
@@ -512,7 +514,7 @@ include_once(PHPGW_API_INC.'/class.aclmanagers.inc.php');
 		
 		function row_action($action,$type,$uidNumber)
 		{
-			return '<a href="'.$GLOBALS['phpgw']->link('/index.php',Array(
+			return '<a href="'.GlobalService::get('phpgw')->link('/index.php',Array(
 				'menuaction'		=> 'expressoAdmin1_2.uicomputers.'.$action.'_'.$type,
 				'uidnumber'			=> $uidNumber
 			)).'"> '.lang($action).' </a>';

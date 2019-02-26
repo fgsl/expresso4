@@ -1,6 +1,8 @@
 <?php
 	
-	$GLOBALS['phpgw_info']['flags'] = array(
+	use Expresso\Core\GlobalService;
+
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'noheader' => False,
 		'nonavbar' => False,
 		'currentapp' => 'expressoMail1_2',
@@ -8,11 +10,11 @@
 	);
 	
 	require_once('../header.inc.php');
-	$update_version = $GLOBALS['phpgw_info']['apps']['expressoMail1_2']['version'];
-	$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
-	$GLOBALS['phpgw']->css->validate_file('expressoMail1_2/templates/' . $GLOBALS['phpgw_info']['server']['template_set'] . '/main.css');
-	$GLOBALS['phpgw']->css->validate_file('phpgwapi/js/dftree/dftree.css');
-	echo $GLOBALS['phpgw']->css->get_css();
+	$update_version = GlobalService::get('phpgw_info')['apps']['expressoMail1_2']['version'];
+	$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];
+	GlobalService::get('phpgw')->css->validate_file('expressoMail1_2/templates/' . GlobalService::get('phpgw_info')['server']['template_set'] . '/main.css');
+	GlobalService::get('phpgw')->css->validate_file('phpgwapi/js/dftree/dftree.css');
+	echo GlobalService::get('phpgw')->css->get_css();
 	echo "<script type='text/javascript'>var template = '".$_SESSION['phpgw_info']['expressoMail1_2']['user']['preferences']['common']['template_set']."';</script>";
 	echo "<script src='js/modal/modal.js'></script>";
 	echo "<script src='js/globals.js?".$update_version."' type='text/javascript'></script>";
@@ -67,16 +69,16 @@
 	//Enable/Disable VoIP Service -> Voip Server Config
 	$voip_enabled = false;
 	$voip_groups = array();	
-	if($GLOBALS['phpgw_info']['server']['voip_groups']) {
+	if(GlobalService::get('phpgw_info')['server']['voip_groups']) {
 		$emailVoip = false;
-		foreach(explode(",",$GLOBALS['phpgw_info']['server']['voip_groups']) as $i => $voip_group){
+		foreach(explode(",",GlobalService::get('phpgw_info')['server']['voip_groups']) as $i => $voip_group){
 			$a_voip = explode(";",$voip_group);			
 			$voip_groups[] = $a_voip[1];
 		}
-		foreach($GLOBALS['phpgw']->accounts->membership() as $idx => $group){			
+		foreach(GlobalService::get('phpgw')->accounts->membership() as $idx => $group){			
 			if(array_search($group['account_name'],$voip_groups) !== FALSE){		 
 				$voip_enabled = true;
-				$emailVoip = $GLOBALS['phpgw_info']['server']['voip_email_redirect'];
+				$emailVoip = GlobalService::get('phpgw_info')['server']['voip_email_redirect'];
 				break;
 			}
 		}
@@ -95,44 +97,44 @@
     $current_config = $c->config_data;    
 
 	$_SESSION['phpgw_info']['expressomail']['email_server'] = CreateObject('emailadmin.bo')->getProfile();
-	$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
-	$_SESSION['phpgw_info']['expressomail']['user']['email'] = $GLOBALS['phpgw']->preferences->values['email'];
-	$_SESSION['phpgw_info']['server']['temp_dir'] = $GLOBALS['phpgw_info']['server']['temp_dir'];
+	$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
+	$_SESSION['phpgw_info']['expressomail']['user']['email'] = GlobalService::get('phpgw')->preferences->values['email'];
+	$_SESSION['phpgw_info']['server']['temp_dir'] = GlobalService::get('phpgw_info')['server']['temp_dir'];
 	
-	$preferences = $GLOBALS['phpgw']->preferences->read();
+	$preferences = GlobalService::get('phpgw')->preferences->read();
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail'] = $preferences['enable_local_messages']; 
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail'] = $preferences['expressoMail'];
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['voip_enabled'] = $voip_enabled;
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['voip_email_redirect'] = $emailVoip;
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['outoffice'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['outoffice'];
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['telephone_number'] = $GLOBALS['phpgw_info']['user']['telephonenumber'];
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['outoffice'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['outoffice'];
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['telephone_number'] = GlobalService::get('phpgw_info')['user']['telephonenumber'];
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_cache'] = $current_config['expressoMail_enable_cache'];
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_x_origin'] = $current_config['expressoMail_use_x_origin'];
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['number_of_contacts'] = $current_config['expressoMail_Number_of_dynamic_contacts'] ? $current_config['expressoMail_Number_of_dynamic_contacts'] : "0";
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['notification_domains'] = $current_config['expressoMail_notification_domains'];
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['googlegears_url'] = $current_config['expressoMail_googlegears_url'];
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_assinar_criptografar'] = $GLOBALS['phpgw_info']['server']['use_assinar_criptografar'] ?  $GLOBALS['phpgw_info']['server']['use_assinar_criptografar'] : "0";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital_cripto'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital_cripto'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital_cripto'] : "0";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital'] : "0";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] : "50";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['search_characters_number'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_characters_number'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_characters_number'] : "4";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['num_max_certs_to_cipher'] = $GLOBALS['phpgw_info']['server']['num_max_certs_to_cipher'] ?  $GLOBALS['phpgw_info']['server']['num_max_certs_to_cipher'] : "10";
-    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_cripto'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_cripto'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature_cripto'] : "0";
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'] : "0";
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['display_user_email'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['display_user_email'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['display_user_email'] : "";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_assinar_criptografar'] = GlobalService::get('phpgw_info')['server']['use_assinar_criptografar'] ?  GlobalService::get('phpgw_info')['server']['use_assinar_criptografar'] : "0";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital_cripto'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_digital_cripto'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_digital_cripto'] : "0";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_digital'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_digital'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_digital'] : "0";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_result_number'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_result_number'] : "50";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['search_characters_number'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_characters_number'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_characters_number'] : "4";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['num_max_certs_to_cipher'] = GlobalService::get('phpgw_info')['server']['num_max_certs_to_cipher'] ?  GlobalService::get('phpgw_info')['server']['num_max_certs_to_cipher'] : "10";
+    $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_signature_cripto'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_cripto'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature_cripto'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['keep_after_auto_archiving'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['keep_after_auto_archiving'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['keep_after_auto_archiving'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['display_user_email'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['display_user_email'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['display_user_email'] : "";
 
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['max_attachment_size'] = $current_config['expressoMail_Max_attachment_size'] ? $current_config['expressoMail_Max_attachment_size']."M" : ini_get('upload_max_filesize');
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['max_msg_size'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['max_msg_size'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['max_msg_size'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['max_msg_size'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['max_msg_size'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['max_msg_size'] : "0";
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['imap_max_folders'] = $current_config['expressoMail_imap_max_folders'];
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['max_email_per_page'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['max_email_per_page'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['max_email_per_page'] : "50";
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['extended_info'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['extended_info']?$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['extended_info'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['extended_info']:'0';
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'] : "0";
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['auto_create_local'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['auto_create_local'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['auto_create_local'] : "0";
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_SpellChecker'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_SpellChecker'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_SpellChecker'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['max_email_per_page'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['max_email_per_page'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['max_email_per_page'] : "50";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['extended_info'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['extended_info']?$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['extended_info'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['extended_info']:'0';
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['from_to_sent'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['from_to_sent'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['auto_create_local'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['auto_create_local'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['auto_create_local'] : "0";
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_SpellChecker'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_SpellChecker'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_SpellChecker'] : "0";
 	
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['quick_search_default'] = $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['quick_search_default'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['quick_search_default'] : 1;
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['quick_search_default'] = GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['quick_search_default'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['quick_search_default'] : 1;
 	// ACL for block edit Personal Data.
-	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['blockpersonaldata'] = $GLOBALS['phpgw']->acl->check('blockpersonaldata',1,'preferences');
+	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['blockpersonaldata'] = GlobalService::get('phpgw')->acl->check('blockpersonaldata',1,'preferences');
 
 	//SpellChecker
 	if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_SpellChecker'] !='0'){
@@ -155,7 +157,7 @@
 	$template->set_var("msg_number",$_GET['msgball']['msgnum'] ? $_GET['msgball']['msgnum'] : $_GET['to']);
 	$template->set_var("user_email",$_SESSION['phpgw_info']['expressomail']['user']['email']);
 	$acc = CreateObject('phpgwapi.accounts');
-	$template->set_var("user_organization", $acc->get_organization($GLOBALS['phpgw_info']['user']['account_dn']));
+	$template->set_var("user_organization", $acc->get_organization(GlobalService::get('phpgw_info')['user']['account_dn']));
 	$template->set_var("cyrus_delimiter",$_SESSION['phpgw_info']['expressomail']['email_server']['imapDelimiter']);	
 	// Fix problem with cyrus delimiter changes in preferences.
 	// Dots in names: enabled/disabled.
@@ -167,7 +169,7 @@
 	$template->set_file(Array('expressoMail' => 'index.tpl'));
 	$template->set_block('expressoMail','list');
 	$template->pfp('out','list');
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
     
     $_SESSION['phpgw_info']['server']['expressomail']['expressoMail_enable_log_messages'] = $current_config['expressoMail_enable_log_messages'];
 	
@@ -215,8 +217,8 @@
     $var_tokens = '';
     for($ii = 1; $ii < 11; $ii++)
     {
-        if($GLOBALS['phpgw_info']['server']['test_token' . $ii . '1'])
-            $var_tokens .= $GLOBALS['phpgw_info']['server']['test_token' . $ii . '1'] . ',';
+        if(GlobalService::get('phpgw_info')['server']['test_token' . $ii . '1'])
+            $var_tokens .= GlobalService::get('phpgw_info')['server']['test_token' . $ii . '1'] . ',';
     }
 
     if(!$var_tokens)
@@ -234,23 +236,23 @@
     var sentfolder = "'.$_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSentFolder'].'";
     var spamfolder = "'.$_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSpamFolder'].'";
     var token_param = "'.$var_tokens.'";
-    var locale = "'.$GLOBALS['phpgw']->common->getPreferredLanguage().'";
+    var locale = "'.GlobalService::get('phpgw')->common->getPreferredLanguage().'";
     </script>';
 
     // End Set Imap Folder names options
 	//User info
-	echo "<script language='javascript'> var account_id = ".$GLOBALS['phpgw_info']['user']['account_id'].";var expresso_offline = false;</script>";
+	echo "<script language='javascript'> var account_id = ".GlobalService::get('phpgw_info')['user']['account_id'].";var expresso_offline = false;</script>";
 
 	$obj = createobject("expressoMail1_2.functions");
 
 	// setting timezone preference
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['timezone'] =
-		$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['timezone'] ?
-		$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['timezone'] : 'America/Sao_Paulo';
+		GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['timezone'] ?
+		GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['timezone'] : 'America/Sao_Paulo';
 
 	// este arquivo deve ser carregado antes que
-	// os demais pois nele contem a função get_lang
-	// que é utilizada em diversas partes
+	// os demais pois nele contem a funï¿½ï¿½o get_lang
+	// que ï¿½ utilizada em diversas partes
 	echo $obj -> getFilesJs("js/common_functions.js",$update_version);
 	include("inc/load_lang.php");
 
@@ -259,7 +261,7 @@
 		echo "<script src='js/gears_init.js?".$update_version."'></script>";
 	
 	echo '<script src="../phpgwapi/js/dftree/dftree.js?'.$update_version.'"></script>';
-	echo '<script src="js/drag_area.js?'.$GLOBALS['phpgw_info']['apps']['expressoMail1_2']['version'].'"></script>';
+	echo '<script src="js/drag_area.js?'.GlobalService::get('phpgw_info')['apps']['expressoMail1_2']['version'].'"></script>';
 
 	$scripts = "js/abas.js," .
 				"js/main.js," .
@@ -275,13 +277,13 @@
 	echo $obj -> getFilesJs($scripts,$update_version);
 	echo '<script type="text/javascript">init();</script>';
 
-	if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_shortcuts'])
+	if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_shortcuts'])
 	{
 		echo $obj -> getFilesJs("js/shortcut.js", $update_version);
 	}
 
 	// Get Preferences or redirect to preferences page.
-	$GLOBALS['phpgw']->preferences->read_repository();
+	GlobalService::get('phpgw')->preferences->read_repository();
 	//print_r($_SESSION['phpgw_info']['user']['preferences']['expressoMail']);
 	unset($_SESSION['phpgw_info']['expressomail']['user']['preferences']);
 	unset($_SESSION['phpgw_info']['expressomail']['user']['acl']);
@@ -299,7 +301,7 @@
 	echo '<input type="hidden" name="motd_type_message" value="'.$current_config['expressoMail_motd_type_message'].'">';
 
 	// FullName Messenger
-	echo '<input type="hidden" name="messenger_fullName" value="'.$GLOBALS['phpgw_info']['user']['fullname'].'">';
+	echo '<input type="hidden" name="messenger_fullName" value="'.GlobalService::get('phpgw_info')['user']['fullname'].'">';
 
 	$user_is_blocked_to_send_email = 0;
 
@@ -321,8 +323,8 @@
 				array_push($arr_gid_numbers,$gid_number);
 			}
 		}
-		//VERIFICA SE O USUÁRIO ESTÁ FAZENDO PARTE DE ALGUM DOS GRUPOS BLOQUEADOS PARA ENVIO DE EMAIL
-		foreach($GLOBALS['phpgw']->accounts->membership() as $idx => $group){	
+		//VERIFICA SE O USUï¿½RIO ESTï¿½ FAZENDO PARTE DE ALGUM DOS GRUPOS BLOQUEADOS PARA ENVIO DE EMAIL
+		foreach(GlobalService::get('phpgw')->accounts->membership() as $idx => $group){	
 			if (in_array($group['account_name'],$arr_gid_numbers)) {
 				$user_is_blocked_to_send_email = 1;
 			}
@@ -333,20 +335,20 @@
 	echo '<input type="hidden" id="user_is_blocked_to_send_email" name="user_is_blocked_to_send_email" value="' . $user_is_blocked_to_send_email . '">';
 	echo '<input type="hidden" id="user_is_blocked_to_send_email_message" name="user_is_blocked_to_send_email_message" value="'.$current_config['expressoMail_block_send_email_error_message'].'">';
 
-	$delete_trash = isset( $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'] ) &&
-		((int)$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days']) > 0;
+	$delete_trash = isset( GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'] ) &&
+		((int)GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days']) > 0;
 
-	$delete_spam = isset( $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days'] ) &&
-		((int)$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days']) > 0;
+	$delete_spam = isset( GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days'] ) &&
+		((int)GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days']) > 0;
 
 	if ( $delete_trash || $delete_spam ) {
 		$imap = CreateObject('expressoMail1_2.imap_functions');
 		if ( $delete_spam ) {
-			$result = $imap->clean_folder( array( 'type' => 'spam', 'days' => (int)$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days'] ) );
+			$result = $imap->clean_folder( array( 'type' => 'spam', 'days' => (int)GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_spam_messages_after_n_days'] ) );
 			if ( $result['status']  ) echo '<script type="text/javascript"> $(document).ready( function() { write_msg( "'.utf8_decode( $result['message'] ).'" ); }); </script>';
 		}
 		if ( $delete_trash ) {
-			$result = $imap->clean_folder( array( 'type' => 'trash', 'days' => (int)$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'] ) );
+			$result = $imap->clean_folder( array( 'type' => 'trash', 'days' => (int)GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'] ) );
 			if ( $result['status']  ) echo '<script type="text/javascript"> $(document).ready( function() { write_msg( "'.utf8_decode( $result['message'] ).'" ); }); </script>';
 		}
 	}

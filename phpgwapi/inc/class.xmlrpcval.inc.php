@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	// by Edd Dumbill (C) 1999-2001
 	// <edd@usefulinc.com>
 	// xmlrpc.inc,v 1.18 2001/07/06 18:23:57 edmundd
@@ -34,15 +36,15 @@
 				{
 					$type='string';
 				}
-				if ($GLOBALS['xmlrpcTypes'][$type]==1)
+				if (GlobalService::get('xmlrpcTypes')[$type]==1)
 				{
 					$this->addScalar($val,$type);
 				}
-				elseif ($GLOBALS['xmlrpcTypes'][$type]==2)
+				elseif (GlobalService::get('xmlrpcTypes')[$type]==2)
 				{
 					$this->addArray($val);
 				}
-				elseif ($GLOBALS['xmlrpcTypes'][$type]==3)
+				elseif (GlobalService::get('xmlrpcTypes')[$type]==3)
 				{
 					$this->addStruct($val);
 				}
@@ -56,7 +58,7 @@
 				echo '<B>xmlrpcval</B>: scalar can have only one value<BR>';
 				return 0;
 			}
-			$typeof=$GLOBALS['xmlrpcTypes'][$type];
+			$typeof=GlobalService::get('xmlrpcTypes')[$type];
 			if ($typeof!=1)
 			{
 				echo '<B>xmlrpcval</B>: not a scalar type ('.$typeof.')<BR>';
@@ -101,7 +103,7 @@
 				return 0;
 			}
 
-			$this->mytype=$GLOBALS['xmlrpcTypes']['array'];
+			$this->mytype=GlobalService::get('xmlrpcTypes')['array'];
 			$this->me['array']=$vals;
 			return 1;
 		}
@@ -114,7 +116,7 @@
 				echo '<B>xmlrpcval</B>: already initialized as a [' . $this->kindOf() . ']<BR>';
 				return 0;
 			}
-			$this->mytype=$GLOBALS['xmlrpcTypes']['struct'];
+			$this->mytype=GlobalService::get('xmlrpcTypes')['struct'];
 			$this->me['struct']=$vals;
 			return 1;
 		}
@@ -158,7 +160,7 @@
 			$rs='';
 			if($typ)
 			{
-				switch($GLOBALS['xmlrpcTypes'][$typ])
+				switch(GlobalService::get('xmlrpcTypes')[$typ])
 				{
 					case 3:
 						// struct

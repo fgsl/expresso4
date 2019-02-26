@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Preferences                                             *
 	* This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -63,7 +65,7 @@
 		*/
 		function preferences($account_id = '')
 		{
-			$this->db         = is_object($GLOBALS['phpgw']->db) ? $GLOBALS['phpgw']->db : $GLOBALS['phpgw_setup']->db;
+			$this->db         = is_object(GlobalService::get('phpgw')->db) ? GlobalService::get('phpgw')->db : GlobalService::get('phpgw_setup')->db;
 			$this->account_id = get_account_id($account_id);
 		}
 
@@ -130,20 +132,20 @@
 		*/
 		function standard_substitutes()
 		{
-			if (!is_array(@$GLOBALS['phpgw_info']['user']['preferences']))
+			if (!is_array(@GlobalService::get('phpgw_info')['user']['preferences']))
 			{
-				$GLOBALS['phpgw_info']['user']['preferences'] = $this->data;	// else no lang()
+				GlobalService::get('phpgw_info')['user']['preferences'] = $this->data;	// else no lang()
 			}
 			// we cant use phpgw_info/user/fullname, as it's not set when we run
-			$GLOBALS['phpgw']->accounts->get_account_name($this->account_id,$lid,$fname,$lname);
+			GlobalService::get('phpgw')->accounts->get_account_name($this->account_id,$lid,$fname,$lname);
 
 			$this->values = array(	// standard notify replacements
-				'fullname'  => $GLOBALS['phpgw']->common->display_fullname('',$fname,$lname),
+				'fullname'  => GlobalService::get('phpgw')->common->display_fullname('',$fname,$lname),
 				'firstname' => $fname,
 				'lastname'  => $lname,
-				'domain'    => $GLOBALS['phpgw_info']['server']['mail_suffix'],
+				'domain'    => GlobalService::get('phpgw_info')['server']['mail_suffix'],
 				'email'     => $this->email_address($this->account_id),
-				'date'      => $GLOBALS['phpgw']->common->show_date('',$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']),
+				'date'      => GlobalService::get('phpgw')->common->show_date('',GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']),
 			);
 			// do this first, as it might be already contain some substitues
 			//
@@ -216,7 +218,7 @@
 		*/
 		function read_repository()
 		{
-			$this->session = $GLOBALS['phpgw']->session->appsession('preferences','preferences');
+			$this->session = GlobalService::get('phpgw')->session->appsession('preferences','preferences');
 			if (!is_array($this->session))
 			{
 				$this->session = array();
@@ -290,7 +292,7 @@
 			{
 				reset($this->data);
 			}
-			if (isset($this->debug) && substr($GLOBALS['phpgw_info']['flags']['currentapp'],0,3) != 'log')
+			if (isset($this->debug) && substr(GlobalService::get('phpgw_info')['flags']['currentapp'],0,3) != 'log')
 			{
 				echo 'user<pre>';     print_r($this->user); echo "</pre>\n";
 				echo 'forced<pre>';   print_r($this->forced); echo "</pre>\n";
@@ -343,7 +345,7 @@
 					if (!isset($this->forced[$app_name][$var]) || $this->forced[$app_name][$var] === '')
 					{
 						$this->session[$app_name][$var] = $this->data[$app_name][$var] = $value;
-						$GLOBALS['phpgw']->session->appsession('preferences','preferences',$this->session);
+						GlobalService::get('phpgw')->session->appsession('preferences','preferences',$this->session);
 					}
 					break;
 
@@ -554,7 +556,7 @@
 			}
 			//echo "<p>preferences::save_repository(,$type): account_id=$account_id, prefs="; print_r($prefs); echo "</p>\n";
 
-			if (! $GLOBALS['phpgw']->acl->check('session_only_preferences',1,'preferences'))
+			if (! GlobalService::get('phpgw')->acl->check('session_only_preferences',1,'preferences'))
 			{
 				$this->db->transaction_begin();
 				$this->db->query("DELETE FROM phpgw_preferences WHERE preference_owner='$account_id'",
@@ -583,14 +585,14 @@
 			}
 			else
 			{
-				$GLOBALS['phpgw_info']['user']['preferences'] = $this->data;
-				$GLOBALS['phpgw']->session->save_repositories();
+				GlobalService::get('phpgw_info')['user']['preferences'] = $this->data;
+				GlobalService::get('phpgw')->session->save_repositories();
 			}
 
-			if (($type == 'user' || !$type) && $GLOBALS['phpgw_info']['server']['cache_phpgw_info'] && $this->account_id == $GLOBALS['phpgw_info']['user']['account_id'])
+			if (($type == 'user' || !$type) && GlobalService::get('phpgw_info')['server']['cache_phpgw_info'] && $this->account_id == GlobalService::get('phpgw_info')['user']['account_id'])
 			{
-				$GLOBALS['phpgw']->session->delete_cache($this->account_id);
-				$GLOBALS['phpgw']->session->read_repositories(False);
+				GlobalService::get('phpgw')->session->delete_cache($this->account_id);
+				GlobalService::get('phpgw')->session->read_repositories(False);
 			}
 
 			return $this->data;
@@ -614,9 +616,9 @@
 					. $this->db->f('preference_value') . "')",__LINE__,__FILE__);
 			}
 
-			if ($GLOBALS['phpgw_info']['server']['cache_phpgw_info'] && $account_id == $GLOBALS['phpgw_info']['user']['account_id'])
+			if (GlobalService::get('phpgw_info')['server']['cache_phpgw_info'] && $account_id == GlobalService::get('phpgw_info')['user']['account_id'])
 			{
-				$GLOBALS['phpgw']->session->read_repositories(False);
+				GlobalService::get('phpgw')->session->read_repositories(False);
 			}
 		}
 
@@ -656,49 +658,49 @@
 		*/
 		function verify_basic_settings()
 		{
-			if (!@is_array($GLOBALS['phpgw_info']['user']['preferences']))
+			if (!@is_array(GlobalService::get('phpgw_info')['user']['preferences']))
 			{
-				$GLOBALS['phpgw_info']['user']['preferences'] = array();
+				GlobalService::get('phpgw_info')['user']['preferences'] = array();
 			}
 			/* This takes care of new users who don't have proper default prefs setup */
-			if (!isset($GLOBALS['phpgw_info']['flags']['nocommon_preferences']) || 
-				!$GLOBALS['phpgw_info']['flags']['nocommon_preferences'])
+			if (!isset(GlobalService::get('phpgw_info')['flags']['nocommon_preferences']) || 
+				!GlobalService::get('phpgw_info')['flags']['nocommon_preferences'])
 			{
 				$preferences_update = False;
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'])
 				{
 					$this->add('common','maxmatchs',15);
 					$preferences_update = True;
 				}
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['theme']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['theme'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['theme']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['theme'])
 				{
 					$this->add('common','theme','default');
 					$preferences_update = True;
 				}
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['template_set']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['template_set'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['template_set'])
 				{
 					$this->add('common','template_set','default');
 					$preferences_update = True;
 				}
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'])
 				{
 					$this->add('common','dateformat','m/d/Y');
 					$preferences_update = True;
 				}
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['timeformat']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['timeformat'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['timeformat']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['timeformat'])
 				{
 					$this->add('common','timeformat',12);
 					$preferences_update = True;
 				}
-				if (!isset($GLOBALS['phpgw_info']['user']['preferences']['common']['lang']) || 
-					!$GLOBALS['phpgw_info']['user']['preferences']['common']['lang'])
+				if (!isset(GlobalService::get('phpgw_info')['user']['preferences']['common']['lang']) || 
+					!GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'])
 				{
-					$this->add('common','lang',$GLOBALS['phpgw']->common->getPreferredLanguage());
+					$this->add('common','lang',GlobalService::get('phpgw')->common->getPreferredLanguage());
 					$preferences_update = True;
 				}
 				if ($preferences_update)
@@ -787,14 +789,14 @@
 		*/
 		function sub_default_userid($account_id='')
 		{
-			if ($GLOBALS['phpgw_info']['server']['mail_login_type'] == 'vmailmgr')
+			if (GlobalService::get('phpgw_info')['server']['mail_login_type'] == 'vmailmgr')
 			{
-				$prefs_email_userid = $GLOBALS['phpgw']->accounts->id2name($account_id)
-					. '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$prefs_email_userid = GlobalService::get('phpgw')->accounts->id2name($account_id)
+					. '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
 			else
 			{
-				$prefs_email_userid = $GLOBALS['phpgw']->accounts->id2name($account_id);
+				$prefs_email_userid = GlobalService::get('phpgw')->accounts->id2name($account_id);
 			}
 			return $prefs_email_userid;
 		}
@@ -816,14 +818,14 @@
 				return $this->data['email']['address'];
 			}
 			// if email-address is set in the account, return it
-			if ($email = $GLOBALS['phpgw']->accounts->id2name($account_id,'account_email'))
+			if ($email = GlobalService::get('phpgw')->accounts->id2name($account_id,'account_email'))
 			{
 				return $email;
 			}
-			$prefs_email_address = $GLOBALS['phpgw']->accounts->id2name($account_id);
+			$prefs_email_address = GlobalService::get('phpgw')->accounts->id2name($account_id);
 			if (strstr($prefs_email_address,'@') === False)
 			{
-				$prefs_email_address .= '@' . $GLOBALS['phpgw_info']['server']['mail_suffix'];
+				$prefs_email_address .= '@' . GlobalService::get('phpgw_info')['server']['mail_suffix'];
 			}
 			return $prefs_email_address;
 		}
@@ -838,10 +840,10 @@
 		@abstract create email preferences
 		@param $account_id -optional defaults to : get_account_id()
 		@discussion fills a local copy of ['email'][] prefs array which is then returned to the calling
-		function, which the calling function generally tacks onto the $GLOBALS['phpgw_info'] array as such:
-			$GLOBALS['phpgw_info']['user']['preferences'] = $GLOBALS['phpgw']->preferences->create_email_preferences();
+		function, which the calling function generally tacks onto the GlobalService::get('phpgw_info') array as such:
+			GlobalService::get('phpgw_info')['user']['preferences'] = GlobalService::get('phpgw')->preferences->create_email_preferences();
 		which fills an array based at:
-			$GLOBALS['phpgw_info']['user']['preferences']['email'][prefs_are_elements_here]
+			GlobalService::get('phpgw_info')['user']['preferences']['email'][prefs_are_elements_here]
 		Reading the raw preference DB data and comparing to the email preference schema defined in 
 		/email/class.bopreferences.inc.php (see discussion there and below) to create default preference values 
 		for the  in the ['email'][] pref data array in cases where the user has not supplied 
@@ -906,16 +908,16 @@
 			// ---  [server][mail_server_type]  ---
 			// Set API Level Server Mail Type if not defined
 			// if for some reason the API didnot have a mail server type set during initialization
-			if (empty($GLOBALS['phpgw_info']['server']['mail_server_type']))
+			if (empty(GlobalService::get('phpgw_info')['server']['mail_server_type']))
 			{
-				$GLOBALS['phpgw_info']['server']['mail_server_type'] = 'imap';
+				GlobalService::get('phpgw_info')['server']['mail_server_type'] = 'imap';
 			}
 
 			// ---  [server][mail_folder]  ---
 			// ====  UWash Mail Folder Location used to be "mail", now it's changeable, but keep the
 			// ====  default to "mail" so upgrades happen transparently
 			// ---  TEMP MAKE DEFAULT UWASH MAIL FOLDER ~/mail (a.k.a. $HOME/mail)
-			$GLOBALS['phpgw_info']['server']['mail_folder'] = 'mail';
+			GlobalService::get('phpgw_info')['server']['mail_folder'] = 'mail';
 			// ---  DELETE THE ABOVE WHEN THIS OPTION GETS INTO THE SYSTEM SETUP
 			// pick up custom "mail_folder" if it exists (used for UWash and UWash Maildir servers)
 			// else use the system default (which we temporarily hard coded to "mail" just above here)
@@ -933,7 +935,7 @@
 			// the user does not directly manipulate this pref for the default email account
 			if ((string)$acctnum == '0')
 			{
-				$prefs['email']['fullname'] = $GLOBALS['phpgw_info']['user']['fullname'];
+				$prefs['email']['fullname'] = GlobalService::get('phpgw_info')['user']['fullname'];
 			}
 
 			// = = = =  SIMPLER PREFS  = = = =
@@ -1166,17 +1168,17 @@
 			// ---  mail_server  ---
 			if (!isset($prefs['email']['mail_server']))
 			{
-				$prefs['email']['mail_server'] = $GLOBALS['phpgw_info']['server']['mail_server'];
+				$prefs['email']['mail_server'] = GlobalService::get('phpgw_info')['server']['mail_server'];
 			}
 			// ---  mail_server_type  ---
 			if (!isset($prefs['email']['mail_server_type']))
 			{
-				$prefs['email']['mail_server_type'] = $GLOBALS['phpgw_info']['server']['mail_server_type'];
+				$prefs['email']['mail_server_type'] = GlobalService::get('phpgw_info')['server']['mail_server_type'];
 			}
 			// ---  imap_server_type  ---
 			if (!isset($prefs['email']['imap_server_type']))
 			{
-				$prefs['email']['imap_server_type'] = $GLOBALS['phpgw_info']['server']['imap_server_type'];
+				$prefs['email']['imap_server_type'] = GlobalService::get('phpgw_info')['server']['imap_server_type'];
 			}
 			// ---  mail_folder  ---
 			// because of the way this option works, an empty string IS ACTUALLY a valid value
@@ -1185,7 +1187,7 @@
 			if (!isset($prefs['email']['use_custom_settings']))
 			{
 				// we are NOT using custom settings so this MUST be the server default
-				$prefs['email']['mail_folder'] = $GLOBALS['phpgw_info']['server']['mail_folder'];
+				$prefs['email']['mail_folder'] = GlobalService::get('phpgw_info')['server']['mail_folder'];
 			}
 			else
 			{

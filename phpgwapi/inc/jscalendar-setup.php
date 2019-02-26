@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - API jsCalendar setup (set up jsCalendar with user prefs)    *
 * http://www.eGroupWare.org                                                *
@@ -13,7 +15,7 @@
 \**************************************************************************/
 
 
-$GLOBALS['phpgw_info']['flags'] = Array(
+GlobalService::get('phpgw_info')['flags'] = Array(
 	'currentapp'  => 'home',		// can't be phpgwapi, nor jscalendar (no own directory)
 	'noheader'    => True,
 	'nonavbar'    => True,
@@ -24,10 +26,10 @@ $GLOBALS['phpgw_info']['flags'] = Array(
 );
 
 include('../../header.inc.php');
-header('Content-type: text/javascript; charset='.$GLOBALS['phpgw']->translation->charset());
-$GLOBALS['phpgw']->translation->add_app('jscalendar');
+header('Content-type: text/javascript; charset='.GlobalService::get('phpgw')->translation->charset());
+GlobalService::get('phpgw')->translation->add_app('jscalendar');
 
-$dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+$dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 $jsDateFormat = str_replace(array('Y','d','m','M'),array('%Y','%d','%m','%b'),$dateformat);
 $dayFirst = strpos($dateformat,'d') < strpos($dateformat,'m');
 $jsLongDateFormat = '%a, '.($dayFirst ? '%e' : '%b').($dateformat[1] == '.' ? '. ' : ' ').($dayFirst ? '%b' : '%e');
@@ -116,7 +118,7 @@ Calendar.setup = function (params) {
 	param_default("disableFirstDowChange", true);
 	param_default("firstDay",       <?php // was 0 defaults to "Sunday" first
 	$day2int = array('Sunday'=>0,'Monday'=>1,'Tuesday'=>2,'Wednesday'=>3,'Thursday'=>4,'Friday'=>5,'Saturday'=>6);
-	echo (int) @$day2int[$GLOBALS['phpgw_info']['user']['preferences']['calendar']['weekdaystarts']]; ?>); // <?php echo $GLOBALS['phpgw_info']['user']['preferences']['calendar']['weekdaystarts']."\n"; ?>
+	echo (int) @$day2int[GlobalService::get('phpgw_info')['user']['preferences']['calendar']['weekdaystarts']]; ?>); // <?php echo GlobalService::get('phpgw_info')['user']['preferences']['calendar']['weekdaystarts']."\n"; ?>
 	param_default("align",          "Bl");
 	param_default("range",          [1900, 2999]);
 	param_default("weekNumbers",    true);
@@ -131,7 +133,7 @@ Calendar.setup = function (params) {
 	param_default("onUpdate",       null);
 	param_default("date",           null);
 	param_default("showsTime",      false);
-	param_default("timeFormat",     "<?php /* was 24 */ echo $GLOBALS['phpgw_info']['user']['preferences']['common']['timeformat']; ?>");
+	param_default("timeFormat",     "<?php /* was 24 */ echo GlobalService::get('phpgw_info')['user']['preferences']['common']['timeformat']; ?>");
 	param_default("electric",       true);
 	param_default("step",           2);
 	param_default("position",       null);

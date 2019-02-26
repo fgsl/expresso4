@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Accounts manager shared functions                       *
 	* Written by Joseph Engo <jengo@phpgroupware.org>                          *
@@ -23,18 +25,18 @@
 	* Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA            *
 	\**************************************************************************/
 
-	if (empty($GLOBALS['phpgw_info']['server']['account_repository']))
+	if (empty(GlobalService::get('phpgw_info')['server']['account_repository']))
 	{
-		if (!empty($GLOBALS['phpgw_info']['server']['auth_type']))
+		if (!empty(GlobalService::get('phpgw_info')['server']['auth_type']))
 		{
-			$GLOBALS['phpgw_info']['server']['account_repository'] = $GLOBALS['phpgw_info']['server']['auth_type'];
+			GlobalService::get('phpgw_info')['server']['account_repository'] = GlobalService::get('phpgw_info')['server']['auth_type'];
 		}
 		else
 		{
-			$GLOBALS['phpgw_info']['server']['account_repository'] = 'sql';
+			GlobalService::get('phpgw_info')['server']['account_repository'] = 'sql';
 		}
 	}
-	include_once(PHPGW_API_INC . '/class.accounts_' . $GLOBALS['phpgw_info']['server']['account_repository'] . '.inc.php');
+	include_once(PHPGW_API_INC . '/class.accounts_' . GlobalService::get('phpgw_info')['server']['account_repository'] . '.inc.php');
 
 	/*
 	  Dont know where to put this (seek3r)
@@ -42,7 +44,7 @@
 	  This is where it ended up (milosch)
 	  Moved again at least temporarily since sql and ldap use it.
 	*/
-	$GLOBALS['phpgw_info']['server']['global_denied_users'] = array(
+	GlobalService::get('phpgw_info')['server']['global_denied_users'] = array(
 		'root'     => True, 'bin'      => True, 'daemon'   => True,
 		'adm'      => True, 'lp'       => True, 'sync'     => True,
 		'shutdown' => True, 'halt'     => True, 'ldap'     => True,
@@ -61,7 +63,7 @@
 		'backup'    => True
 	);
 
-	$GLOBALS['phpgw_info']['server']['global_denied_groups'] = array(
+	GlobalService::get('phpgw_info')['server']['global_denied_groups'] = array(
 		'root'      => True, 'bin'       => True, 'daemon'    => True,
 		'sys'       => True, 'adm'       => True, 'tty'       => True,
 		'disk'      => True, 'lp'        => True, 'mem'       => True,
@@ -99,9 +101,9 @@
 		function accounts($account_id = '', $account_type='')
 		{
 			// enable the caching in the session onyl for ldap
-			$this->use_session_cache = $GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap';
+			$this->use_session_cache = GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap';
 
-			$this->db = $GLOBALS['phpgw']->db;
+			$this->db = GlobalService::get('phpgw')->db;
 
 			if($account_id != '')
 			{
@@ -147,18 +149,18 @@
 		function setup_cache()
 		{
 			if ($this->use_session_cache &&		// are we supposed to use a session-cache
-				!@$GLOBALS['phpgw_info']['accounts']['session_cache_setup'] &&	// is it already setup
+				!@GlobalService::get('phpgw_info')['accounts']['session_cache_setup'] &&	// is it already setup
 				// is the account-class ready (startup !)
-				is_object($GLOBALS['phpgw']->session) && $GLOBALS['phpgw']->session->account_id)
+				is_object(GlobalService::get('phpgw')->session) && GlobalService::get('phpgw')->session->account_id)
 			{
 				// setting up the session-cache
-				$GLOBALS['phpgw_info']['accounts']['cache'] = $GLOBALS['phpgw']->session->appsession('accounts_cache','phpgwapi');
-				$GLOBALS['phpgw_info']['accounts']['session_cache_setup'] = True;
-				//echo "accounts::setup_cache() cache=<pre>".print_r($GLOBALS['phpgw_info']['accounts']['cache'],True)."</pre>\n";
+				GlobalService::get('phpgw_info')['accounts']['cache'] = GlobalService::get('phpgw')->session->appsession('accounts_cache','phpgwapi');
+				GlobalService::get('phpgw_info')['accounts']['session_cache_setup'] = True;
+				//echo "accounts::setup_cache() cache=<pre>".print_r(GlobalService::get('phpgw_info')['accounts']['cache'],True)."</pre>\n";
 			}
 			if (!isset($this->cache))
 			{
-				$this->cache = &$GLOBALS['phpgw_info']['accounts']['cache'];
+				$this->cache = &GlobalService::get('phpgw_info')['accounts']['cache'];
 			}
 		}
 
@@ -170,11 +172,11 @@
 		function save_session_cache()
 		{
 			if ($this->use_session_cache &&		// are we supposed to use a session-cache
-				$GLOBALS['phpgw_info']['accounts']['session_cache_setup'] &&	// is it already setup
+				GlobalService::get('phpgw_info')['accounts']['session_cache_setup'] &&	// is it already setup
 				// is the account-class ready (startup !)
-				is_object($GLOBALS['phpgw']->session))
+				is_object(GlobalService::get('phpgw')->session))
 			{
-				$GLOBALS['phpgw']->session->appsession('accounts_cache','phpgwapi',$GLOBALS['phpgw_info']['accounts']['cache']);
+				GlobalService::get('phpgw')->session->appsession('accounts_cache','phpgwapi',GlobalService::get('phpgw_info')['accounts']['cache']);
 			}
 		}
 
@@ -260,13 +262,13 @@
 					}
 					if ($group)
 					{
-						$members = $group > 0 ? $GLOBALS['phpgw']->acl->get_ids_for_location($group, 1, 'phpgw_group') :
-							$GLOBALS['phpgw']->acl->get_location_list_for_id('phpgw_group', 1,$GLOBALS['phpgw_info']['user']['account_id']);
+						$members = $group > 0 ? GlobalService::get('phpgw')->acl->get_ids_for_location($group, 1, 'phpgw_group') :
+							GlobalService::get('phpgw')->acl->get_location_list_for_id('phpgw_group', 1,GlobalService::get('phpgw_info')['user']['account_id']);
 						if (!$members) $members = array();
 						$valid = !$app ? $members : array_intersect($valid,$members);	// use the intersection
 					}
 					//echo "<p>limiting result to app='app' and/or group=$group valid-ids=".print_r($valid,true)."</p>\n";
-					$offset = $param['offset'] ? $param['offset'] : $GLOBALS['phpgw_info']['user']['preferences']['common']['maxmatchs'];
+					$offset = $param['offset'] ? $param['offset'] : GlobalService::get('phpgw_info')['user']['preferences']['common']['maxmatchs'];
 					$stop = $start + $offset;
 					$n = 0;
 					$account_search[$serial]['data'] = array();
@@ -354,7 +356,7 @@
 		function cache_invalidate($account_id)
 		{
 			//echo "<p>accounts::cache_invalidate($account_id)</p>\n";
-			$GLOBALS['phpgw_info']['accounts']['cache'] = array();
+			GlobalService::get('phpgw_info')['accounts']['cache'] = array();
 		}
 
 		function save_repository()
@@ -369,7 +371,7 @@
 			accounts_::delete($accountid);
 			
 			// delete all acl_entries belonging to that user or group
-			$GLOBALS['phpgw']->acl->delete_account($accountid);
+			GlobalService::get('phpgw')->acl->delete_account($accountid);
 		}
 
 		function create($account_info,$default_prefs=True)
@@ -426,7 +428,7 @@
 			}
 
 			$security_equals = Array();
-			$security_equals = $GLOBALS['phpgw']->acl->get_location_list_for_id('phpgw_group', 1, $account_id);
+			$security_equals = GlobalService::get('phpgw')->acl->get_location_list_for_id('phpgw_group', 1, $account_id);
 
 			if ($security_equals == False)
 			{
@@ -479,8 +481,8 @@
 		// NOTE: to my knowledge this is not used any more RalfBecker 2004/06/15
 		function get_nextid($account_type='u')
 		{
-			$min = $GLOBALS['phpgw_info']['server']['account_min_id'] ? $GLOBALS['phpgw_info']['server']['account_min_id'] : 0;
-			$max = $GLOBALS['phpgw_info']['server']['account_max_id'] ? $GLOBALS['phpgw_info']['server']['account_max_id'] : 0;
+			$min = GlobalService::get('phpgw_info')['server']['account_min_id'] ? GlobalService::get('phpgw_info')['server']['account_min_id'] : 0;
+			$max = GlobalService::get('phpgw_info')['server']['account_max_id'] ? GlobalService::get('phpgw_info')['server']['account_max_id'] : 0;
 
 			if ($account_type == 'g')
 			{
@@ -490,7 +492,7 @@
 			{
 				$type = 'accounts';
 			}
-			$nextid = (int)$GLOBALS['phpgw']->common->last_id($type,$min,$max);
+			$nextid = (int)GlobalService::get('phpgw')->common->last_id($type,$min,$max);
 
 			/* Loop until we find a free id */
 			$free = 0;
@@ -500,7 +502,7 @@
 				//echo '<br>calling search for id: '.$nextid;
 				if ($this->exists($nextid))
 				{
-					$nextid = (int)$GLOBALS['phpgw']->common->next_id($type,$min,$max);
+					$nextid = (int)GlobalService::get('phpgw')->common->next_id($type,$min,$max);
 				}
 				else
 				{
@@ -508,7 +510,7 @@
 					/* echo '<br>calling search for lid: '.$account_lid . '(from account_id=' . $nextid . ')'; */
 					if ($this->exists($account_lid))
 					{
-						$nextid = (int)$GLOBALS['phpgw']->common->next_id($type,$min,$max);
+						$nextid = (int)GlobalService::get('phpgw')->common->next_id($type,$min,$max);
 					}
 					else
 					{
@@ -516,8 +518,8 @@
 					}
 				}
 			}
-			if	($GLOBALS['phpgw_info']['server']['account_max_id'] &&
-				($nextid > $GLOBALS['phpgw_info']['server']['account_max_id']))
+			if	(GlobalService::get('phpgw_info')['server']['account_max_id'] &&
+				($nextid > GlobalService::get('phpgw_info')['server']['account_max_id']))
 			{
 				return False;
 			}
@@ -533,7 +535,7 @@
 		* @param $use string what should be returned only an array with id's of either 'accounts' or 'groups'.
 		*	Or an array with arrays for 'both' under the keys 'groups' and 'accounts' or 'merge' for accounts
 		*	and groups merged into one array
-		* @return see $use
+		* @return string $use
 		*/
 		function split_accounts($app_users,$use='both')
 		{
@@ -546,7 +548,7 @@
 				{
 					return $cache;
 				}
-				$app_users = $GLOBALS['phpgw']->acl->get_ids_for_location('run',1,$app_users);
+				$app_users = GlobalService::get('phpgw')->acl->get_ids_for_location('run',1,$app_users);
 			}
 			$accounts = array(
 				'accounts' => array(),
@@ -554,11 +556,11 @@
 			);
 			foreach($app_users as $id)
 			{
-				$type = $GLOBALS['phpgw']->accounts->get_type($id);
+				$type = GlobalService::get('phpgw')->accounts->get_type($id);
 				if($type == 'g')
 				{
 					$accounts['groups'][$id] = $id;
-					foreach((array)$GLOBALS['phpgw']->acl->get_ids_for_location($id,1,'phpgw_group') as $id)
+					foreach((array)GlobalService::get('phpgw')->acl->get_ids_for_location($id,1,'phpgw_group') as $id)
 					{
 						$accounts['accounts'][$id] = $id;
 					}

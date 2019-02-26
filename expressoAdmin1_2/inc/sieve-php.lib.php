@@ -483,7 +483,7 @@ class sieve {
    * function does _not_ automatically make the script the active script.
    *
    * @param $scriptname string The name of the SIEVE script.
-   * @param $script The script to be uploaded.
+   * @param $script string The script to be uploaded.
    * @return boolean Returns true if script has been successfully uploaded.
    */
   function sieve_sendscript($scriptname, $script) {
@@ -547,7 +547,7 @@ class sieve {
    * '.'.
    *
    * @param $scriptname string The name of the SIEVE script.
-   * @return arr SIEVE script data.
+   * @return array SIEVE script data.
    */
   function sieve_getscript($scriptname) {
     unset($this->script);

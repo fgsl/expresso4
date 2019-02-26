@@ -3,7 +3,7 @@ require_once('class.utils.php');
 
 /**
  * Generates XML from vectors and vice-versa
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @author Enderlin Ivan <enderlin.ivan@firegates.com> Classe Clean XML To Array
  * @link http://www.phpclasses.org/browse/package/3598.html Classe Clean XML To Array
  * @author Johnny Brochard <johnny.brochard@libertysurf.fr> Classe Array 2 XML
@@ -67,7 +67,7 @@ class XmlUtils extends Utils
 
 	/**
 	 * DOM document instance
-	 * @var DomDocument
+	 * @var \DomDocument
 	 * @access private
 	 * @see XmlUtils::toXML
 	 */
@@ -110,7 +110,7 @@ class XmlUtils extends Utils
 			curl_close($curl);
 		}
 		else {
-			$this->raiseError('O analisador XML precisa de informações', __FILE__, __LINE__);
+			$this->raiseError('O analisador XML precisa de informaï¿½ï¿½es', __FILE__, __LINE__);
 		}
 		// parse $data;
 		$parse = xml_parse($this->parser, $data);

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - Access Control List                                     *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -61,12 +63,12 @@
 		*/
 		function acl($account_id = '')
 		{
-			$this->db = clone($GLOBALS['phpgw']->db);
+			$this->db = clone(GlobalService::get('phpgw')->db);
 			$this->db->set_app('phpgwapi');
 
 			if ((int)$this->account_id != (int)$account_id)
 			{
-				$this->account_id = get_account_id((int)$account_id,@$GLOBALS['phpgw_info']['user']['account_id']);
+				$this->account_id = get_account_id((int)$account_id,@GlobalService::get('phpgw_info')['user']['account_id']);
 			}
 		}
 
@@ -182,7 +184,7 @@
 		*/
 		function add($appname,$location,$rights)
 		{
-			if (!$appname) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$appname) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$this->data[] = array(
 				'appname'  => $appname, 
@@ -210,7 +212,7 @@
 		*/
 		function delete($appname, $location)
 		{
-			if (!$appname) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$appname) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			foreach($this->data as $idx => $value)
 			{
@@ -275,9 +277,9 @@
 			{
 				$this->read_repository();
 			}
-			if (!$appname) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$appname) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
-			if (!count($this->data) && $GLOBALS['phpgw_info']['server']['acl_default'] != 'deny')
+			if (!count($this->data) && GlobalService::get('phpgw_info')['server']['acl_default'] != 'deny')
 			{
 				return True;
 			}
@@ -320,9 +322,9 @@
 		*/
 		function get_specific_rights($location, $appname = False)
 		{
-			if (!$appname) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$appname) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
-			if (!count($this->data) && $GLOBALS['phpgw_info']['server']['acl_default'] != 'deny')
+			if (!count($this->data) && GlobalService::get('phpgw_info')['server']['acl_default'] != 'deny')
 			{
 				return True;
 			}
@@ -365,10 +367,11 @@
 		/**
 		 * add repository information / rights for app/location/account_id
 		 *
-		 * @param $app appname
-		 * @param $location location
-		 * @param $account_id account id
-		 * @param $rights rights
+		 * @param $app string appname
+		 * @param $location string location
+		 * @param $account_id integer account id
+		 * @param $rights string rights
+		 * @return boolean
 		 */
 		function add_repository($app, $location, $account_id, $rights)
 		{
@@ -503,7 +506,7 @@
 		*/
 		function get_ids_for_location($location, $required, $app = False)
 		{
-			if (!$app) $app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$app) $app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$this->db->select($this->table_name,array('acl_account','acl_rights'),array(
 				'acl_appname'  => $app,
@@ -541,7 +544,7 @@
 				$cache_accountid[$accountid] = $account_id;
 			}
 			$memberships = array($account_id);
-			foreach((array)$GLOBALS['phpgw']->accounts->membership($account_id) as $group)
+			foreach((array)GlobalService::get('phpgw')->accounts->membership($account_id) as $group)
 			{
 				$memberships[] = $group['account_id'];
 			}
@@ -570,10 +573,10 @@
 		*/
 		function get_grants($app='')
 		{
-			if (!$app) $app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$app) $app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$memberships = array($this->account_id);
-			foreach((array)$GLOBALS['phpgw']->accounts->membership($this->account_id) as $group)
+			foreach((array)GlobalService::get('phpgw')->accounts->membership($this->account_id) as $group)
 			{
 				$memberships[] = $group['account_id'];
 			}
@@ -628,7 +631,7 @@
 					$grants[$grantors] |= $rights;
 				}
 			}
-			$grants[$GLOBALS['phpgw_info']['user']['account_id']] = ~0;
+			$grants[GlobalService::get('phpgw_info')['user']['account_id']] = ~0;
 
 			return $grants;
 		}
@@ -636,9 +639,9 @@
 		function get_rights_and_owners($user,$appname = False)
 		{
 			
-			if (!$appname) $appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			if (!$appname) $appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
-			if (!count($this->data) && $GLOBALS['phpgw_info']['server']['acl_default'] != 'deny')
+			if (!count($this->data) && GlobalService::get('phpgw_info')['server']['acl_default'] != 'deny')
 			{
 				return True;
 			}

@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar: CSV - Import                                      *
   * http://www.egroupware.org                                                *
@@ -11,49 +13,49 @@
   \**************************************************************************/
 
 
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'calendar',
 		'noheader'   => True
 	);
 	include('../header.inc.php');
 
-	if (!isset($GLOBALS['phpgw_info']['user']['apps']['admin']) ||
-	    !$GLOBALS['phpgw_info']['user']['apps']['admin'])		// no admin
+	if (!isset(GlobalService::get('phpgw_info')['user']['apps']['admin']) ||
+	    !GlobalService::get('phpgw_info')['user']['apps']['admin'])		// no admin
 	{
-		$GLOBALS['phpgw']->redirect_link('/home.php');
+		GlobalService::get('phpgw')->redirect_link('/home.php');
 	}
 	if (isset($_FILES['csvfile']['tmp_name']))
 	{
-		$csvfile = $GLOBALS['phpgw_info']['server']['temp_dir'].'/calendar_import_'.basename($csvfile);
-		$GLOBALS['phpgw']->session->appsession('csvfile','',$csvfile);
+		$csvfile = GlobalService::get('phpgw_info')['server']['temp_dir'].'/calendar_import_'.basename($csvfile);
+		GlobalService::get('phpgw')->session->appsession('csvfile','',$csvfile);
 		$_POST['action'] = move_uploaded_file($_FILES['csvfile']['tmp_name'],$csvfile) ?
 			'download' : '';
 	}
 	else
 	{
-		$csvfile = $GLOBALS['phpgw']->session->appsession('csvfile');
+		$csvfile = GlobalService::get('phpgw')->session->appsession('csvfile');
 	}
 	if ($_POST['cancel'])
 	{
 		@unlink($csvfile);
-		$GLOBALS['phpgw']->redirect_link('/admin/index.php');
+		GlobalService::get('phpgw')->redirect_link('/admin/index.php');
 	}
-	$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['calendar']['title'].' - '.lang('Import CSV-File');
-	$GLOBALS['phpgw']->common->phpgw_header();
+	GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['calendar']['title'].' - '.lang('Import CSV-File');
+	GlobalService::get('phpgw')->common->phpgw_header();
 
-	$GLOBALS['phpgw']->template->set_file(array('import_t' => 'csv_import.tpl'));
-	$GLOBALS['phpgw']->template->set_block('import_t','filename','filenamehandle');
-	$GLOBALS['phpgw']->template->set_block('import_t','fheader','fheaderhandle');
-	$GLOBALS['phpgw']->template->set_block('import_t','fields','fieldshandle');
-	$GLOBALS['phpgw']->template->set_block('import_t','ffooter','ffooterhandle');
-	$GLOBALS['phpgw']->template->set_block('import_t','imported','importedhandle');
-	$GLOBALS['phpgw']->template->set_block('import_t','import','importhandle');
+	GlobalService::get('phpgw')->template->set_file(array('import_t' => 'csv_import.tpl'));
+	GlobalService::get('phpgw')->template->set_block('import_t','filename','filenamehandle');
+	GlobalService::get('phpgw')->template->set_block('import_t','fheader','fheaderhandle');
+	GlobalService::get('phpgw')->template->set_block('import_t','fields','fieldshandle');
+	GlobalService::get('phpgw')->template->set_block('import_t','ffooter','ffooterhandle');
+	GlobalService::get('phpgw')->template->set_block('import_t','imported','importedhandle');
+	GlobalService::get('phpgw')->template->set_block('import_t','import','importhandle');
 
 	if(($_POST['action'] == 'download' || $_POST['action'] == 'continue') && (!$_POST['fieldsep'] || !$csvfile || !($fp=fopen($csvfile,'rb'))))
 	{
 		$_POST['action'] = '';
 	}
-	$GLOBALS['phpgw']->template->set_var("action_url",$GLOBALS['phpgw']->link("/calendar/csv_import.php"));
+	GlobalService::get('phpgw')->template->set_var("action_url",GlobalService::get('phpgw')->link("/calendar/csv_import.php"));
 
 	$PSep = '||'; // Pattern-Separator, separats the pattern-replacement-pairs in trans
 	$ASep = '|>'; // Assignment-Separator, separats pattern and replacesment
@@ -102,18 +104,18 @@
 			}
 			else
 			{
-				if (!is_object($GLOBALS['phpgw']->categories))
+				if (!is_object(GlobalService::get('phpgw')->categories))
 				{
-					$GLOBALS['phpgw']->categories = createobject('phpgwapi.categories');
+					GlobalService::get('phpgw')->categories = createobject('phpgwapi.categories');
 				}
-				if ($id = $GLOBALS['phpgw']->categories->name2id( addslashes($cat) ))
+				if ($id = GlobalService::get('phpgw')->categories->name2id( addslashes($cat) ))
 				{	// cat exists
 					$cat2id[$cat] = $ids[$cat] = $id;
 				}
 				else
 				{	// create new cat
-					$GLOBALS['phpgw']->categories->add( array('name' => $cat,'descr' => $cat ));
-					$cat2id[$cat] = $ids[$cat] = $GLOBALS['phpgw']->categories->name2id( addslashes($cat) );
+					GlobalService::get('phpgw')->categories->add( array('name' => $cat,'descr' => $cat ));
+					$cat2id[$cat] = $ids[$cat] = GlobalService::get('phpgw')->categories->name2id( addslashes($cat) );
 				}
 			}
 		}
@@ -126,45 +128,45 @@
 		return  $id_str;
 	}
 
-	if (!is_object($GLOBALS['phpgw']->html))
+	if (!is_object(GlobalService::get('phpgw')->html))
 	{
-		$GLOBALS['phpgw']->html = CreateObject('phpgwapi.html');
+		GlobalService::get('phpgw')->html = CreateObject('phpgwapi.html');
 	}
 
 	if ($_POST['next']) $_POST['action'] = 'next';
 	switch ($_POST['action'])
 	{
 	case '':	// Start, ask Filename
-		$GLOBALS['phpgw']->template->set_var('lang_csvfile',lang('CSV-Filename'));
-		$GLOBALS['phpgw']->template->set_var('lang_fieldsep',lang('Fieldseparator'));
-		$GLOBALS['phpgw']->template->set_var('lang_charset',lang('Charset of file'));
-		$GLOBALS['phpgw']->template->set_var('select_charset',
-			$GLOBALS['phpgw']->html->select('charset','',
-			$GLOBALS['phpgw']->translation->get_installed_charsets()+
+		GlobalService::get('phpgw')->template->set_var('lang_csvfile',lang('CSV-Filename'));
+		GlobalService::get('phpgw')->template->set_var('lang_fieldsep',lang('Fieldseparator'));
+		GlobalService::get('phpgw')->template->set_var('lang_charset',lang('Charset of file'));
+		GlobalService::get('phpgw')->template->set_var('select_charset',
+			GlobalService::get('phpgw')->html->select('charset','',
+			GlobalService::get('phpgw')->translation->get_installed_charsets()+
 			array('utf-8' => 'utf-8 (Unicode)'),True));
-		$GLOBALS['phpgw']->template->set_var('fieldsep',$_POST['fieldsep'] ? $_POST['fieldsep'] : ',');
-		$GLOBALS['phpgw']->template->set_var('submit',lang('Import'));
-		$GLOBALS['phpgw']->template->set_var('enctype','ENCTYPE="multipart/form-data"');
+		GlobalService::get('phpgw')->template->set_var('fieldsep',$_POST['fieldsep'] ? $_POST['fieldsep'] : ',');
+		GlobalService::get('phpgw')->template->set_var('submit',lang('Import'));
+		GlobalService::get('phpgw')->template->set_var('enctype','ENCTYPE="multipart/form-data"');
 
-		$GLOBALS['phpgw']->template->parse('rows','filename');
+		GlobalService::get('phpgw')->template->parse('rows','filename');
 		break;
 
 	case 'continue':
 	case 'download':
-		$GLOBALS['phpgw']->preferences->read_repository();
-		$defaults = $GLOBALS['phpgw_info']['user']['preferences']['calendar']['cvs_import'];
+		GlobalService::get('phpgw')->preferences->read_repository();
+		$defaults = GlobalService::get('phpgw_info')['user']['preferences']['calendar']['cvs_import'];
 		if (!is_array($defaults))
 		{
 			$defaults = array();
 		}
-		$GLOBALS['phpgw']->template->set_var('lang_csv_fieldname',lang('CSV-Fieldname'));
-		$GLOBALS['phpgw']->template->set_var('lang_info_fieldname',lang('calendar-Fieldname'));
-		$GLOBALS['phpgw']->template->set_var('lang_translation',lang("Translation").' <a href="#help">'.lang('help').'</a>');
-		$GLOBALS['phpgw']->template->set_var('submit',
-			$GLOBALS['phpgw']->html->submit_button('convert','Import') . '&nbsp;'.
-			$GLOBALS['phpgw']->html->submit_button('cancel','Cancel'));
-		$GLOBALS['phpgw']->template->set_var('lang_debug',lang('Test Import (show importable records <u>only</u> in browser)'));
-		$GLOBALS['phpgw']->template->parse('rows','fheader');
+		GlobalService::get('phpgw')->template->set_var('lang_csv_fieldname',lang('CSV-Fieldname'));
+		GlobalService::get('phpgw')->template->set_var('lang_info_fieldname',lang('calendar-Fieldname'));
+		GlobalService::get('phpgw')->template->set_var('lang_translation',lang("Translation").' <a href="#help">'.lang('help').'</a>');
+		GlobalService::get('phpgw')->template->set_var('submit',
+			GlobalService::get('phpgw')->html->submit_button('convert','Import') . '&nbsp;'.
+			GlobalService::get('phpgw')->html->submit_button('cancel','Cancel'));
+		GlobalService::get('phpgw')->template->set_var('lang_debug',lang('Test Import (show importable records <u>only</u> in browser)'));
+		GlobalService::get('phpgw')->template->parse('rows','fheader');
 
 		$cal_names = array(
 			'title'		=> 'Title varchar(80)',
@@ -197,41 +199,41 @@
 		$cal_name_options = "<option value=\"\">none\n";
 		foreach($cal_names as $field => $name)
 		{
-			$cal_name_options .= "<option value=\"$field\">".$GLOBALS['phpgw']->strip_html($name)."\n";
+			$cal_name_options .= "<option value=\"$field\">".GlobalService::get('phpgw')->strip_html($name)."\n";
 		}
 		$csv_fields = fgetcsv($fp,8000,$_POST['fieldsep']);
-		$csv_fields = $GLOBALS['phpgw']->translation->convert($csv_fields,$_POST['charset']);
+		$csv_fields = GlobalService::get('phpgw')->translation->convert($csv_fields,$_POST['charset']);
 		$csv_fields[] = 'no CSV 1';					// eg. for static assignments
 		$csv_fields[] = 'no CSV 2';
 		$csv_fields[] = 'no CSV 3';
 		foreach($csv_fields as $csv_idx => $csv_field)
 		{
-			$GLOBALS['phpgw']->template->set_var('csv_field',$csv_field);
-			$GLOBALS['phpgw']->template->set_var('csv_idx',$csv_idx);
+			GlobalService::get('phpgw')->template->set_var('csv_field',$csv_field);
+			GlobalService::get('phpgw')->template->set_var('csv_idx',$csv_idx);
 			if ($def = $defaults[$csv_field])
 			{
 				list( $info,$trans ) = explode($PSep,$def,2);
-				$GLOBALS['phpgw']->template->set_var('trans',$trans);
-				$GLOBALS['phpgw']->template->set_var('cal_fields',str_replace('="'.$info.'">','="'.$info.'" selected>',$cal_name_options));
+				GlobalService::get('phpgw')->template->set_var('trans',$trans);
+				GlobalService::get('phpgw')->template->set_var('cal_fields',str_replace('="'.$info.'">','="'.$info.'" selected>',$cal_name_options));
 			}
 			else
 			{
-				$GLOBALS['phpgw']->template->set_var('trans','');
-				$GLOBALS['phpgw']->template->set_var('cal_fields',$cal_name_options);
+				GlobalService::get('phpgw')->template->set_var('trans','');
+				GlobalService::get('phpgw')->template->set_var('cal_fields',$cal_name_options);
 			}
-			$GLOBALS['phpgw']->template->parse('rows','fields',True);
+			GlobalService::get('phpgw')->template->parse('rows','fields',True);
 		}
-		$GLOBALS['phpgw']->template->set_var('lang_start',lang('Startrecord'));
-		$GLOBALS['phpgw']->template->set_var('start',get_var('start',array('POST'),1));
+		GlobalService::get('phpgw')->template->set_var('lang_start',lang('Startrecord'));
+		GlobalService::get('phpgw')->template->set_var('start',get_var('start',array('POST'),1));
 		$msg = ($safe_mode = ini_get('safe_mode') == 'On') ? lang('to many might exceed your execution-time-limit'):
 			lang('empty for all');
-		$GLOBALS['phpgw']->template->set_var('lang_max',lang('Number of records to read (%1)',$msg));
-		$GLOBALS['phpgw']->template->set_var('max',get_var('max',array('POST'),$safe_mode ? 200 : ''));
-		$GLOBALS['phpgw']->template->set_var('debug',get_var('debug',array('POST'),True)?' checked':'');
-		$GLOBALS['phpgw']->template->parse('rows','ffooter',True);
+		GlobalService::get('phpgw')->template->set_var('lang_max',lang('Number of records to read (%1)',$msg));
+		GlobalService::get('phpgw')->template->set_var('max',get_var('max',array('POST'),$safe_mode ? 200 : ''));
+		GlobalService::get('phpgw')->template->set_var('debug',get_var('debug',array('POST'),True)?' checked':'');
+		GlobalService::get('phpgw')->template->parse('rows','ffooter',True);
 		fclose($fp);
 
-		$hiddenvars = $GLOBALS['phpgw']->html->input_hidden(array(
+		$hiddenvars = GlobalService::get('phpgw')->html->input_hidden(array(
 			'action'  => 'import',
 			'fieldsep'=> $_POST['fieldsep'],
 			'charset' => $_POST['charset']
@@ -268,7 +270,7 @@
 			"will be automaticaly added. This function is automaticaly called if the category is not numerical!<p>".
 			"I hope that helped to understand the features, if not <a href='mailto:RalfBecker@outdoor-training.de'>ask</a>.";
 
-		$GLOBALS['phpgw']->template->set_var('help_on_trans',lang($help_on_trans));	// I don't think anyone will translate this
+		GlobalService::get('phpgw')->template->set_var('help_on_trans',lang($help_on_trans));	// I don't think anyone will translate this
 		break;
 
 	case 'next':
@@ -276,7 +278,7 @@
 		$_POST['trans']       = unserialize(stripslashes($_POST['trans']));
 		// fall-through
 	case 'import':
-		$hiddenvars = $GLOBALS['phpgw']->html->input_hidden(array(
+		$hiddenvars = GlobalService::get('phpgw')->html->input_hidden(array(
 			'action'  => 'continue',
 			'fieldsep'=> $_POST['fieldsep'],
 			'charset' => $_POST['charset'],
@@ -289,7 +291,7 @@
 		@set_time_limit(0);
 		$fp=fopen($csvfile,'r');
 		$csv_fields = fgetcsv($fp,8000,$_POST['fieldsep']);
-		$csv_fields = $GLOBALS['phpgw']->translation->convert($csv_fields,$_POST['charset']);
+		$csv_fields = GlobalService::get('phpgw')->translation->convert($csv_fields,$_POST['charset']);
 		$csv_fields[] = 'no CSV 1';						// eg. for static assignments
 		$csv_fields[] = 'no CSV 2';
 		$csv_fields[] = 'no CSV 3';
@@ -306,9 +308,9 @@
 			}
 		}
 
-		$GLOBALS['phpgw']->preferences->read_repository();
-		$GLOBALS['phpgw']->preferences->add('calendar','cvs_import',$defaults);
-		$GLOBALS['phpgw']->preferences->save_repository(True);
+		GlobalService::get('phpgw')->preferences->read_repository();
+		GlobalService::get('phpgw')->preferences->add('calendar','cvs_import',$defaults);
+		GlobalService::get('phpgw')->preferences->save_repository(True);
 
 		$log = "<table border=1>\n\t<tr><td>#</td>\n";
 
@@ -359,7 +361,7 @@
 			{
 				break;	// EOF
 			}
-			$fields = $GLOBALS['phpgw']->translation->convert($fields,$_POST['charset']);
+			$fields = GlobalService::get('phpgw')->translation->convert($fields,$_POST['charset']);
 
 			$log .= "\t</tr><tr><td>".($start+$anz)."</td>\n";
 
@@ -417,11 +419,11 @@
 				//echo "values=<pre>".print_r($values,True)."</pre>\n";
 				if (!is_numeric($values['owner']))
 				{
-					$values['owner'] = $GLOBALS['phpgw']->accounts->name2id($values['owner']);
+					$values['owner'] = GlobalService::get('phpgw')->accounts->name2id($values['owner']);
 				}
-				if (!$values['owner'] || !$GLOBALS['phpgw']->accounts->exists($values['owner']))
+				if (!$values['owner'] || !GlobalService::get('phpgw')->accounts->exists($values['owner']))
 				{
-					$values['owner'] = $GLOBALS['phpgw_info']['user']['account_id'];
+					$values['owner'] = GlobalService::get('phpgw_info')['user']['account_id'];
 				}
 				if (!is_object($calendar))
 				{
@@ -466,7 +468,7 @@
 						if (preg_match('/(.*)\.[0-9]+/',$values[$date],$parts)) $values[$date] = $parts[1];
 						$values[$date] = strtotime($values[$date]);
 					}
-					$datearr = $GLOBALS['phpgw']->datetime->localdates($values[$date]);
+					$datearr = GlobalService::get('phpgw')->datetime->localdates($values[$date]);
 					$calendar->set_date($date,$datearr['year'],$datearr['month'],$datearr['day'],
 						$datearr['hour'],$datearr['minute'],$datearr['second']);
 				}
@@ -477,9 +479,9 @@
 					list($part,$status) = explode('=',$part_status);
 					$valid_status = array('U'=>'U','u'=>'U','A'=>'A','a'=>'A','R'=>'R','r'=>'R','T'=>'T','t'=>'T');
 					$status = isset($valid_status[$status]) ? $valid_status[$status] : 'U';
-					if ($GLOBALS['phpgw']->accounts->exists($part))
+					if (GlobalService::get('phpgw')->accounts->exists($part))
 					{
-						$part = $GLOBALS['phpgw']->accounts->name2id($part);
+						$part = GlobalService::get('phpgw')->accounts->name2id($part);
 					}
 					if ($part && is_numeric($part))
 					{
@@ -505,19 +507,19 @@
 		}
 		$log .= "\t</tr>\n</table>\n";
 
-		$GLOBALS['phpgw']->template->set_var('anz_imported',($_POST['debug'] ?
+		GlobalService::get('phpgw')->template->set_var('anz_imported',($_POST['debug'] ?
 			lang('%1 records read (not yet imported, you may go back and uncheck Test Import)',
 			$anz,'','') :
 			lang('%1 records imported',$anz)). '&nbsp;'.
-			(!$_POST['debug'] && $fields ? $GLOBALS['phpgw']->html->submit_button('next','Import next set') . '&nbsp;':'').
-			$GLOBALS['phpgw']->html->submit_button('continue','Back') . '&nbsp;'.
-			$GLOBALS['phpgw']->html->submit_button('cancel','Cancel'));
-		$GLOBALS['phpgw']->template->set_var('log',$log);
-		$GLOBALS['phpgw']->template->parse('rows','imported');
+			(!$_POST['debug'] && $fields ? GlobalService::get('phpgw')->html->submit_button('next','Import next set') . '&nbsp;':'').
+			GlobalService::get('phpgw')->html->submit_button('continue','Back') . '&nbsp;'.
+			GlobalService::get('phpgw')->html->submit_button('cancel','Cancel'));
+		GlobalService::get('phpgw')->template->set_var('log',$log);
+		GlobalService::get('phpgw')->template->parse('rows','imported');
 		break;
 	}
-	$GLOBALS['phpgw']->template->set_var('hiddenvars',str_replace('{','&#x7B;',$hiddenvars));
-	$GLOBALS['phpgw']->template->pfp('phpgw_body','import');
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->template->set_var('hiddenvars',str_replace('{','&#x7B;',$hiddenvars));
+	GlobalService::get('phpgw')->template->pfp('phpgw_body','import');
+	GlobalService::get('phpgw')->common->phpgw_footer();
 
 ?>

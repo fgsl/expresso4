@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - rss parser                                              *
   * ------------------------------------------------------------------------ *
@@ -91,42 +93,42 @@
 		switch($elem)
 		{
 			case 'CHANNEL':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth]    = 'channel';
-				$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth] = '';
-				$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth]  = '';
-				$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth]  = '';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth]    = 'channel';
+				GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth] = '';
+				GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth]  = '';
+				GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth]  = '';
 				break;
 			case 'IMAGE':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth]    = 'image';
-				$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth] = '';
-				$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth]  = '';
-				$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth]  = '';
-				$GLOBALS['_rss']->tmpurl[$GLOBALS['_rss']->depth]   = '';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth]    = 'image';
+				GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth] = '';
+				GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth]  = '';
+				GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth]  = '';
+				GlobalService::get('_rss')->tmpurl[GlobalService::get('_rss')->depth]   = '';
 				break;
 			case 'ITEM':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth]    = 'item';
-				$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth] = '';
-				$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth]  = '';
-				$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth]  = '';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth]    = 'item';
+				GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth] = '';
+				GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth]  = '';
+				GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth]  = '';
 				break;
 			case 'TITLE':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth] = 'title';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth] = 'title';
 				break;
 			case 'LINK':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth] = 'link';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth] = 'link';
 				break;
 			case 'DESCRIPTION':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth] = 'desc';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth] = 'desc';
 				break;
 			case 'URL':
-				$GLOBALS['_rss']->depth++;
-				$GLOBALS['_rss']->state[$GLOBALS['_rss']->depth] = 'url';
+				GlobalService::get('_rss')->depth++;
+				GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth] = 'url';
 				break;
 		}
 	}
@@ -136,60 +138,60 @@
 		switch ($elem)
 		{
 			case 'CHANNEL':
-				$GLOBALS['_rss']->set_channel(
-					$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth]
+				GlobalService::get('_rss')->set_channel(
+					GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth]
 				);
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'IMAGE':
-				$GLOBALS['_rss']->set_image(
-					$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmpurl[$GLOBALS['_rss']->depth]
+				GlobalService::get('_rss')->set_image(
+					GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmpurl[GlobalService::get('_rss')->depth]
 				);
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'ITEM':
-				$GLOBALS['_rss']->add_item(
-					$GLOBALS['_rss']->tmptitle[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmplink[$GLOBALS['_rss']->depth],
-					$GLOBALS['_rss']->tmpdesc[$GLOBALS['_rss']->depth]
+				GlobalService::get('_rss')->add_item(
+					GlobalService::get('_rss')->tmptitle[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmplink[GlobalService::get('_rss')->depth],
+					GlobalService::get('_rss')->tmpdesc[GlobalService::get('_rss')->depth]
 				);
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'TITLE':
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'LINK':
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'DESCRIPTION':
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 			case 'URL':
-				$GLOBALS['_rss']->depth--;
+				GlobalService::get('_rss')->depth--;
 				break;
 		}
 	}
 
 	function _rssparse_elem_data ($parser, $data)
 	{
-		switch ($GLOBALS['_rss']->state[$GLOBALS['_rss']->depth])
+		switch (GlobalService::get('_rss')->state[GlobalService::get('_rss')->depth])
 		{
 			case 'title':
-				$GLOBALS['_rss']->tmptitle[($GLOBALS['_rss']->depth - 1)] .= $data;
+				GlobalService::get('_rss')->tmptitle[(GlobalService::get('_rss')->depth - 1)] .= $data;
 				break;
 			case 'link';
-				$GLOBALS['_rss']->tmplink[($GLOBALS['_rss']->depth - 1)] .= $data;
+				GlobalService::get('_rss')->tmplink[(GlobalService::get('_rss')->depth - 1)] .= $data;
 				break;
 			case 'desc':
-				$GLOBALS['_rss']->tmpdesc[($GLOBALS['_rss']->depth - 1)] .= $data;
+				GlobalService::get('_rss')->tmpdesc[(GlobalService::get('_rss')->depth - 1)] .= $data;
 				break;
 			case 'url':
-				$GLOBALS['_rss']->tmpurl[($GLOBALS['_rss']->depth - 1)] .= $data;
+				GlobalService::get('_rss')->tmpurl[(GlobalService::get('_rss')->depth - 1)] .= $data;
 				break;
 		}
 	}
@@ -261,13 +263,13 @@
 
 	function rssparse ($fp)
 	{
-		$GLOBALS['_rss'] = new rssparser();
+		GlobalService::get('_rss') = new rssparser();
 
-		if ($GLOBALS['_rss']->parse($fp))
+		if (GlobalService::get('_rss')->parse($fp))
 		{
 			return 0;
 		}
 
-		return $GLOBALS['_rss'];
+		return GlobalService::get('_rss');
 	}
 ?>

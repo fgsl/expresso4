@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare - administration                                              *
 	* http://www.egroupware.org                                                *
@@ -10,23 +12,23 @@
 	\**************************************************************************/
 
 
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'noheader'   => True,
 		'nonavbar'   => True,
 		'currentapp' => 'admin'
 	);
 	include('../header.inc.php');
 
-	if ($GLOBALS['phpgw']->acl->check('info_access',1,'admin'))
+	if (GlobalService::get('phpgw')->acl->check('info_access',1,'admin'))
 	{
-		$GLOBALS['phpgw']->redirect_link('/index.php');
+		GlobalService::get('phpgw')->redirect_link('/index.php');
 	}
 
 // Throw a little notice out if PHPaccelerator is enabled.
-	if($GLOBALS['_PHPA']['ENABLED'])
+	if(GlobalService::get('_PHPA')['ENABLED'])
 	{
 		echo 'PHPaccelerator enabled:</br>'."\n";
-		echo 'PHPaccelerator Version: '.$GLOBALS['_PHPA']['VERSION'].'</br></p>'."\n";
+		echo 'PHPaccelerator Version: '.GlobalService::get('_PHPA')['VERSION'].'</br></p>'."\n";
 	}
 
 	phpinfo();

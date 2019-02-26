@@ -107,7 +107,7 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $preset_file
+     * @param mixed unknown_type $preset_file
      */
     public function loadPresets( $preset_file = '' )
     {
@@ -367,8 +367,8 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $varname
-     * @param unknown_type $cleaned_variable
+     * @param mixed unknown_type $varname
+     * @param mixed unknown_type $cleaned_variable
      */
     protected function _assignCleanedVariable( $varname, $cleaned_variable )
     {
@@ -404,8 +404,8 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $signature
-     * @return unknown
+     * @param mixed unknown_type $signature
+     * @return mixed unknown
      */
     protected function _isSignaturePresetValid( $signature = array() )
     {
@@ -417,8 +417,8 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $signature
-     * @return unknown
+     * @param mixed unknown_type $signature
+     * @return mixed unknown
      */
     protected function _getSignaturePresetData( $signature = array() )
     {
@@ -432,8 +432,8 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $signature
-     * @return unknown
+     * @param mixed unknown_type $signature
+     * @return mixed unknown
      */
     protected function _isSignatureVarTypeValid( $signature = array() )
     {
@@ -445,8 +445,8 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $signature
-     * @return unknown
+     * @param mixed unknown_type $signature
+     * @return mixed unknown
      */
     protected function _isSignatureMethodsValid( $signature = array() )
     {
@@ -493,7 +493,7 @@ class NanoSanitizer
         return utf8_decode($string);
         /*
         return strtr($string,
-        "???????¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿ",
+        "???????ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",
         "SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyy");
         */
     }
@@ -516,14 +516,14 @@ class NanoSanitizer
     // default string sanitization -- only let the alphanumeric set through
     protected function _sanitizeDefaultGermanAlphaNumericString($string, $limits = array() )
     {
-        return $this->_getLimitedString(preg_replace("/[^a-zA-Z0-9_\-\ äöüÄÖÜß]/", "", $string), $limits);
+        return $this->_getLimitedString(preg_replace("/[^a-zA-Z0-9_\-\ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]/", "", $string), $limits);
     }
 
 
     // paranoid sanitization -- only let the alphanumeric set through
     protected function _sanitizeParanoidGermanAlphaNumericString($string, $limits = array() )
     {
-        return $this->_getLimitedString(preg_replace("/[^a-zA-Z0-9äöüÄÖÜß]/", "", $string), $limits);
+        return $this->_getLimitedString(preg_replace("/[^a-zA-Z0-9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]/", "", $string), $limits);
     }
 
     // sanitize a string in prep for passing a single argument to
@@ -601,10 +601,10 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $input
-     * @param unknown_type $min
-     * @param unknown_type $max
-     * @return unknown
+     * @param mixed unknown_type $input
+     * @param mixed unknown_type $min
+     * @param mixed unknown_type $max
+     * @return mixed unknown
      */
     function check_float($input, $min='', $max='')
     {
@@ -617,10 +617,10 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $input
-     * @param unknown_type $min
-     * @param unknown_type $max
-     * @return unknown
+     * @param mixed unknown_type $input
+     * @param mixed unknown_type $min
+     * @param mixed unknown_type $max
+     * @return mixed unknown
      */
     function check_sql_string($input, $min='', $max='')
     {
@@ -632,10 +632,10 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $input
-     * @param unknown_type $min
-     * @param unknown_type $max
-     * @return unknown
+     * @param mixed unknown_type $input
+     * @param mixed unknown_type $min
+     * @param mixed unknown_type $max
+     * @return mixed unknown
      */
     function check_ldap_string($input, $min='', $max='')
     {
@@ -647,10 +647,10 @@ class NanoSanitizer
     /**
      * Enter description here...
      *
-     * @param unknown_type $input
-     * @param unknown_type $min
-     * @param unknown_type $max
-     * @return unknown
+     * @param mixed unknown_type $input
+     * @param mixed unknown_type $min
+     * @param mixed unknown_type $max
+     * @return mixed unknown
      */
     function check_system_string($input, $min='', $max='')
     {
@@ -763,7 +763,7 @@ class NanoSanitizer
      */
     private function _throw( $method, $msg )
     {
-        throw new Exception("[".$method.']: '.$msg);
+        throw new \Exception("[".$method.']: '.$msg);
     }
 }
 

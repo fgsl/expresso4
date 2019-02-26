@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare API - smtp mailer using PHPMailer                             *
 * This file written by RalfBecker@outdoor-training.de                      *
@@ -43,8 +45,8 @@ class send extends PHPMailer
 		{
 			return PHPMailer::Send();
 		}
-		$this->CharSet = $GLOBALS['phpgw']->translation->charset();
-		list($lang,$nation) = explode('-',$GLOBALS['phpgw_info']['user']['preferences']['common']['lang']);
+		$this->CharSet = GlobalService::get('phpgw')->translation->charset();
+		list($lang,$nation) = explode('-',GlobalService::get('phpgw_info')['user']['preferences']['common']['lang']);
 		$lang_path = PHPGW_SERVER_ROOT.'/phpgwapi/setup/';
 		if ($nation && file_exists($lang_path."phpmailer.lang-$nation.php"))	// atm. only for pt-br => br
 		{
@@ -53,13 +55,13 @@ class send extends PHPMailer
 		$this->SetLanguage($lang,$lang_path);
 		
 		$this->IsSmtp();
-		$this->Host = $GLOBALS['phpgw_info']['server']['smtp_server']?$GLOBALS['phpgw_info']['server']['smtp_server']:'localhost';
-		$this->Port = $GLOBALS['phpgw_info']['server']['smtp_port']?$GLOBALS['phpgw_info']['server']['smtp_port']:25;
-		$this->SMTPAuth = !empty($GLOBALS['phpgw_info']['server']['smtp_auth_user']);
-		$this->Username = $GLOBALS['phpgw_info']['server']['smtp_auth_user'];
-		$this->Password = $GLOBALS['phpgw_info']['server']['smtp_auth_passwd'];
+		$this->Host = GlobalService::get('phpgw_info')['server']['smtp_server']?GlobalService::get('phpgw_info')['server']['smtp_server']:'localhost';
+		$this->Port = GlobalService::get('phpgw_info')['server']['smtp_port']?GlobalService::get('phpgw_info')['server']['smtp_port']:25;
+		$this->SMTPAuth = !empty(GlobalService::get('phpgw_info')['server']['smtp_auth_user']);
+		$this->Username = GlobalService::get('phpgw_info')['server']['smtp_auth_user'];
+		$this->Password = GlobalService::get('phpgw_info')['server']['smtp_auth_passwd'];
 		
-		$this->Hostname = $GLOBALS['phpgw_info']['server']['hostname'];
+		$this->Hostname = GlobalService::get('phpgw_info')['server']['hostname'];
 	}
 		
 	/**
@@ -75,8 +77,8 @@ class send extends PHPMailer
 		$this->ClearAttachments();
 		$this->ClearCustomHeaders();
 			
-		$this->FromName = $GLOBALS['phpgw_info']['user']['fullname'];
-		$this->From = $GLOBALS['phpgw_info']['user']['email'];
+		$this->FromName = GlobalService::get('phpgw_info')['user']['fullname'];
+		$this->From = GlobalService::get('phpgw_info')['user']['email'];
 		$this->Sender = '';
 		
 		$this->AddCustomHeader('X-Mailer:eGroupWare (http://www.eGroupWare.org)');

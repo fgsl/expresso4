@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - API jsCalendar wrapper-class                                *
   * http://www.eGroupWare.org                                                *
@@ -28,15 +30,15 @@
 		*/
 		function jscalendar($do_header=True,$path='jscalendar')
 		{
-			$this->jscalendar_url = $GLOBALS['phpgw_info']['server']['webserver_url'].'/phpgwapi/js/'.$path;
-			$this->dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$this->jscalendar_url = GlobalService::get('phpgw_info')['server']['webserver_url'].'/phpgwapi/js/'.$path;
+			$this->dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 			
-			if ($do_header && !strpos($GLOBALS['phpgw_info']['flags']['java_script'],'jscalendar'))
+			if ($do_header && !strpos(GlobalService::get('phpgw_info')['flags']['java_script'],'jscalendar'))
 			{
-				$GLOBALS['phpgw_info']['flags']['java_script'] .=
+				GlobalService::get('phpgw_info')['flags']['java_script'] .=
 '<link rel="stylesheet" type="text/css" media="all" href="'.$this->jscalendar_url.'/calendar-win2k-cold-1.css" title="" />
 <script type="text/javascript" src="'.$this->jscalendar_url.'/calendar.js"></script>
-<script type="text/javascript" src="'.preg_replace('/[?&]*click_history=[0-9a-f]*/','',$GLOBALS['phpgw']->link('/phpgwapi/inc/jscalendar-setup.php')).'"></script>
+<script type="text/javascript" src="'.preg_replace('/[?&]*click_history=[0-9a-f]*/','',GlobalService::get('phpgw')->link('/phpgwapi/inc/jscalendar-setup.php')).'"></script>
 ';
 			}
 		}
@@ -83,7 +85,7 @@
 			return
 '<input type="text" id="'.$name.'" name="'.$name.'" size="10" value="'.$date.'"'.$options.'/>
 <script type="text/javascript">
-	document.writeln(\'<img id="'.$name.'-trigger" src="'.$GLOBALS['phpgw']->common->find_image('phpgwpai','datepopup').'" title="'.lang('Select date').'" style="cursor:pointer; cursor:hand;"/>\');
+	document.writeln(\'<img id="'.$name.'-trigger" src="'.GlobalService::get('phpgw')->common->find_image('phpgwpai','datepopup').'" title="'.lang('Select date').'" style="cursor:pointer; cursor:hand;"/>\');
 	Calendar.setup(
 	{
 		inputField  : "'.$name.'",

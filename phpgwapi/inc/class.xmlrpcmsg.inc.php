@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	// by Edd Dumbill (C) 1999-2001
 	// <edd@usefulinc.com>
 	// xmlrpc.inc,v 1.18 2001/07/06 18:23:57 edmundd
@@ -110,15 +112,15 @@
 
 		function parseResponse($data='')
 		{
-			$parser = xml_parser_create($GLOBALS['xmlrpc_defencoding']);
+			$parser = xml_parser_create(GlobalService::get('xmlrpc_defencoding'));
 
-			$GLOBALS['_xh'][$parser]        = array();
-			$GLOBALS['_xh'][$parser]['st']  = ''; 
-			$GLOBALS['_xh'][$parser]['cm']  = 0; 
-			$GLOBALS['_xh'][$parser]['isf'] = 0; 
-			$GLOBALS['_xh'][$parser]['ac']  = '';
-			$GLOBALS['_xh'][$parser]['qt']  = '';
-			$GLOBALS['_xh'][$parser]['ha']  = '';
+			GlobalService::get('_xh')[$parser]        = array();
+			GlobalService::get('_xh')[$parser]['st']  = ''; 
+			GlobalService::get('_xh')[$parser]['cm']  = 0; 
+			GlobalService::get('_xh')[$parser]['isf'] = 0; 
+			GlobalService::get('_xh')[$parser]['ac']  = '';
+			GlobalService::get('_xh')[$parser]['qt']  = '';
+			GlobalService::get('_xh')[$parser]['ha']  = '';
 
 			xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
 			xml_set_element_handler($parser, 'xmlrpc_se', 'xmlrpc_ee');
@@ -137,8 +139,8 @@
 				$r = CreateObject(
 					'phpgwapi.xmlrpcresp',
 					0,
-					$GLOBALS['xmlrpcerr']['no_data'],
-					$GLOBALS['xmlrpcstr']['no_data']
+					GlobalService::get('xmlrpcerr')['no_data'],
+					GlobalService::get('xmlrpcstr')['no_data']
 				);
 				xml_parser_free($parser);
 				return $r;
@@ -150,8 +152,8 @@
 			{
 				$errstr = substr($data, 0, strpos($data, "\n")-1);
 				error_log('HTTP error, got response: ' .$errstr);
-				$r = CreateObject('phpgwapi.xmlrpcresp','', $GLOBALS['xmlrpcerr']['http_error'],
-					$GLOBALS['xmlrpcstr']['http_error'] . ' (' . $errstr . ')');
+				$r = CreateObject('phpgwapi.xmlrpcresp','', GlobalService::get('xmlrpcerr')['http_error'],
+					GlobalService::get('xmlrpcstr')['http_error'] . ' (' . $errstr . ')');
 				xml_parser_free($parser);
 				return $r;
 			}
@@ -169,7 +171,7 @@
 					{
 						if (strlen($ar[$i])>0)
 						{
-							$GLOBALS['_xh'][$parser]['ha'] .= $ar[$i]. "\r\n";
+							GlobalService::get('_xh')[$parser]['ha'] .= $ar[$i]. "\r\n";
 						}
 						else
 						{
@@ -198,7 +200,7 @@
 						xml_get_current_line_number($parser));
 				}
 				error_log($errstr);
-				$r = CreateObject('phpgwapi.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
+				$r = CreateObject('phpgwapi.xmlrpcresp', '', GlobalService::get('xmlrpcerr')['invalid_return'],GlobalService::get('xmlrpcstr')['invalid_return']);
 				xml_parser_free($parser);
 				return $r;
 			}
@@ -206,22 +208,22 @@
 			if ($this->debug)
 			{
 				echo '<PRE style="text-align: left;">---EVALING---['
-					. strlen($GLOBALS['_xh'][$parser]['st']) . ' chars]---' . "\n"
-					. htmlspecialchars($GLOBALS['_xh'][$parser]['st']) . ';' . "\n" . '---END---</PRE>';
+					. strlen(GlobalService::get('_xh')[$parser]['st']) . ' chars]---' . "\n"
+					. htmlspecialchars(GlobalService::get('_xh')[$parser]['st']) . ';' . "\n" . '---END---</PRE>';
 			}
-			if (strlen($GLOBALS['_xh'][$parser]['st']) == 0)
+			if (strlen(GlobalService::get('_xh')[$parser]['st']) == 0)
 			{
 				// then something odd has happened
 				// and it's time to generate a client side error
 				// indicating something odd went on
-				$r = CreateObject('phpgwapi.xmlrpcresp', '', $GLOBALS['xmlrpcerr']['invalid_return'],$GLOBALS['xmlrpcstr']['invalid_return']);
+				$r = CreateObject('phpgwapi.xmlrpcresp', '', GlobalService::get('xmlrpcerr')['invalid_return'],GlobalService::get('xmlrpcstr')['invalid_return']);
 			}
 			else
 			{
-				$code = '$v=' . $GLOBALS['_xh'][$parser]['st'] . '; $allOK=1;';
+				$code = '$v=' . GlobalService::get('_xh')[$parser]['st'] . '; $allOK=1;';
 				$code = str_replace(',,',",'',",$code);
 				eval($code);
-				if ($GLOBALS['_xh'][$parser]['isf'])
+				if (GlobalService::get('_xh')[$parser]['isf'])
 				{
 					$f  = $v->structmem('faultCode');
 					$fs = $v->structmem('faultString');
@@ -232,7 +234,7 @@
 					$r = CreateObject('phpgwapi.xmlrpcresp',$v);
 				}
 			}
-			$r->hdrs = $GLOBALS['_xh'][$parser]['ha']; //preg_split("/\r?\n/", $GLOBALS['_xh'][$parser]['ha'][1]);
+			$r->hdrs = GlobalService::get('_xh')[$parser]['ha']; //preg_split("/\r?\n/", GlobalService::get('_xh')[$parser]['ha'][1]);
 			return $r;
 		}
 	}

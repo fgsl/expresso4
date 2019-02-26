@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -19,8 +21,8 @@
 
 		function so_group ()
 		{
-			$this->db    = $GLOBALS['phpgw']->db;
-			$this->owner = $GLOBALS['phpgw_info']['user']['account_id']; 
+			$this->db    = GlobalService::get('phpgw')->db;
+			$this->owner = GlobalService::get('phpgw_info')['user']['account_id']; 
 		}
 		
 		function select($id = '')
@@ -48,7 +50,7 @@
 
 		function remove_accents($string) {
  			return strtr($string, 
- 			"?Ó??ó?Ý?úÁÀÃÂÄÇÉÈÊËÍÌ?ÎÏÑÕÔÓÒÖÚÙ?ÛÜ?áàãâäçéèêëíì?îïñóòõôöúù?ûüýÿ", 
+ 			"?ï¿½??ï¿½?ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½", 
  			"SOZsozYYuAAAAACEEEEIIIIINOOOOOUUUUUsaaaaaceeeeiiiiinooooouuuuuyy");
 		}
 		
@@ -57,7 +59,7 @@
 			$this->db->query("select * from phpgw_cc_groups where 
 					upper(title) like '".strtoupper($data['title'])."' and owner=".$this->owner);
 			if($this->db->next_record()) 
-				return false;//Não posso criar grupos com nomes iguais
+				return false;//Nï¿½o posso criar grupos com nomes iguais
 			$shortName = $this -> remove_accents(strtolower(str_replace(" ","", $data['title'])));			
 			
 			$query = "INSERT INTO phpgw_cc_groups(title, owner,short_name) ".
@@ -79,7 +81,7 @@
 					id_group!='".$data['id_group']."' and
 					upper(title) like '".strtoupper($data['title'])."' and owner=".$this->owner);
 			if($this->db->next_record()) 
-				return false;//Não posso criar grupos com nomes iguais
+				return false;//Nï¿½o posso criar grupos com nomes iguais
 			$shortName = $this -> remove_accents(strtolower(str_replace(" ","", $data['title'])));
 						
 			$query = "UPDATE phpgw_cc_groups SET title = '".$data['title']."',short_name = '".$shortName."' WHERE id_group = ".$data['id_group'];

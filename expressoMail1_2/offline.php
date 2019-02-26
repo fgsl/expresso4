@@ -1,6 +1,8 @@
 <?php
 		
-	$GLOBALS['phpgw_info']['flags'] = array(
+	use Expresso\Core\GlobalService;
+
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'noheader' => False,
 		'nonavbar' => True,
 		'currentapp' => 'expressoMail1_2',
@@ -9,7 +11,7 @@
 	);
 	
 	include('../header.inc.php');
-	$GLOBALS['phpgw_info']['flags']['currentapp'] = "expresso_offline";
+	GlobalService::get('phpgw_info')['flags']['currentapp'] = "expresso_offline";
 	echo "
 
 
@@ -35,7 +37,7 @@
 	";
 	/*echo parse_navbar();
 	exit;*/
-	$update_version = $GLOBALS['phpgw_info']['flags']['update_version'];
+	$update_version = GlobalService::get('phpgw_info')['flags']['update_version'];
 	//Info do usuário
 	echo "<script language='javascript'> 
 				var account_id = null;
@@ -59,28 +61,28 @@
 /*	// Get Data from ldap_manager and emailadmin.
 	$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
 	$_SESSION['phpgw_info']['expressomail']['email_server'] = CreateObject('emailadmin.bo')->getProfile();
-	$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
-	$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+	$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];
+	$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 	$_SESSION['phpgw_info']['expressomail']['ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
-	$_SESSION['phpgw_info']['expressomail']['user']['email'] = $GLOBALS['phpgw']->preferences->values['email'];
+	$_SESSION['phpgw_info']['expressomail']['user']['email'] = GlobalService::get('phpgw')->preferences->values['email'];
 	if($current_config['enable_local_messages']!='True')  {
-		$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_local_messages'] = 0;
+		GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_local_messages'] = 0;
 	}
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail'] = array(
 			'voip_enabled'						=> "0",
-//			'outoffice'							=> $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['outoffice'],
-//			'telephone_number'					=> $GLOBALS['phpgw_info']['user']['telephonenumber'],
+//			'outoffice'							=> GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['outoffice'],
+//			'telephone_number'					=> GlobalService::get('phpgw_info')['user']['telephonenumber'],
 			'max_email_per_page' 				=> "25",
     		'save_deleted_msg' 					=> "0",
-//            'delete_trash_messages_after_n_days'=> $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'],
+//            'delete_trash_messages_after_n_days'=> GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_trash_messages_after_n_days'],
     		'delete_and_show_previous_message' 	=> "1",
     		'alert_new_msg' 					=> "0",
-//    		'mainscreen_showmail' 				=> $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['mainscreen_showmail'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['mainscreen_showmail'] : "0",
+//    		'mainscreen_showmail' 				=> GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['mainscreen_showmail'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['mainscreen_showmail'] : "0",
     		'signature' 						=> "0",
     		'use_signature' 					=> "0",
 			'hide_folders' 						=> "1",    		
-    		'save_in_folder' 					=> $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'] : "-1",
-    		'line_height' 						=> $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['line_height'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['line_height'] : "30",
+    		'save_in_folder' 					=> GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['save_in_folder'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['save_in_folder'] : "-1",
+    		'line_height' 						=> GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['line_height'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['line_height'] : "30",
     		'font_size' 						=> "11",
     		'use_shortcuts' 					=> "0",
     		'auto_save_draft'					=> "0",
@@ -113,7 +115,7 @@
 		$template->set_var("start_coment_logoff"," ");
 		$template->set_var("end_coment_logoff","");
 	}
-	$template->set_var("user_organization", $acc->get_organization($GLOBALS['phpgw_info']['user']['account_dn']));
+	$template->set_var("user_organization", $acc->get_organization(GlobalService::get('phpgw_info')['user']['account_dn']));
 	$template->set_var("cyrus_delimiter",$_SESSION['phpgw_info']['expressomail']['email_server']['imapDelimiter']);	
 	// Fix problem with cyrus delimiter changes in preferences.
 	// Dots in names: enabled/disabled.
@@ -125,7 +127,7 @@
 	$template->set_file(Array('expressoMail' => 'index_offline.tpl'));
 	$template->set_block('expressoMail','list');
 	$template->pfp('out','list');
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
     
     // Loading Admin Config Module
 
@@ -176,18 +178,18 @@
 					//		"js/rich_text_editor.js," .
 							"js/wfolders.js,".
 							"js/offline_access.js,",
-							$GLOBALS['phpgw_info']['flags']['update_version']);
+							GlobalService::get('phpgw_info')['flags']['update_version']);
 
-	echo $obj -> getFilesJs("js/rich_text_editor.js,",$GLOBALS['phpgw_info']['flags']['update_version']);
+	echo $obj -> getFilesJs("js/rich_text_editor.js,",GlobalService::get('phpgw_info')['flags']['update_version']);
 
-	if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_shortcuts'])
+	if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_shortcuts'])
 	{
-		echo $obj -> getFilesJs("js/shortcut.js", $GLOBALS['phpgw_info']['flags']['update_version']);
+		echo $obj -> getFilesJs("js/shortcut.js", GlobalService::get('phpgw_info')['flags']['update_version']);
 	}
 
 	// Get Preferences or redirect to preferences page.
-	$GLOBALS['phpgw']->preferences->read_repository();
-	/*if ($GLOBALS['phpgw_info']['user']['preferences']['expressoMail'] == null){
+	GlobalService::get('phpgw')->preferences->read_repository();
+	/*if (GlobalService::get('phpgw_info')['user']['preferences']['expressoMail'] == null){
 		echo '<script>alert("' . lang('Dear user,\nthis is your first time in the ExpressoMail, your preferences must be saved.\nPlease, choose your preferences and click on the button Save.') . '")</script>';
 		echo "<script>location.href='./preferences.php'</script>";
 	}*/	
@@ -212,14 +214,14 @@
 	expresso_offline_access.has_permition();
 	preferences = {
 			'voip_enabled'						: "0",
-			'max_email_per_page' 				: "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['max_email_per_page']?>",
+			'max_email_per_page' 				: "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['max_email_per_page']?>",
     		'save_deleted_msg' 					: "0",
-    		'delete_and_show_previous_message' 	: "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['delete_and_show_previous_message']?>",
+    		'delete_and_show_previous_message' 	: "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['delete_and_show_previous_message']?>",
     		'alert_new_msg' 					: "0",
-    		'signature' 						: "<?php echo str_replace('"','\"',str_replace(array("\r\n", "\n", "\r"),' ',$GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['signature']))?>",
-    		'use_signature' 					: "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_signature']?>",
+    		'signature' 						: "<?php echo str_replace('"','\"',str_replace(array("\r\n", "\n", "\r"),' ',GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['signature']))?>",
+    		'use_signature' 					: "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_signature']?>",
 			'hide_folders' 						: "0",    		
-    		'save_in_folder'		    : "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'] : '-1' ?>",
+    		'save_in_folder'		    : "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['save_in_folder'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['save_in_folder'] : '-1' ?>",
     		'line_height' 						: "0",
     		'font_size' 						: "11",
     		'use_shortcuts' 					: "0",
@@ -229,8 +231,8 @@
 			'remove_attachments_function'		: "False",
 			'use_assinar_criptografar'			:'0',
 			'use_signature_digital_cripto'		:'0',
-			'use_important_flag'				: "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_important_flag'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_important_flag'] : '0'?>",
-			'search_result_number'				: "<?php echo $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] ? $GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['search_result_number'] : '100' ?>"
+			'use_important_flag'				: "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_important_flag'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['use_important_flag'] : '0'?>",
+			'search_result_number'				: "<?php echo GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_result_number'] ? GlobalService::get('phpgw_info')['user']['preferences']['expressoMail']['search_result_number'] : '100' ?>"
 
 
 	};

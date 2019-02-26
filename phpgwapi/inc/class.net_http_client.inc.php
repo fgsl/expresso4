@@ -144,7 +144,7 @@ class net_http_client
 	/**
 	 * turn on debug messages
 	 * @param level a combinaison of debug flags
-	 * @see debug flags ( DBG..) defined at top of file
+	 * see debug flags ( DBG..) defined at top of file
 	 **/	
 	function setDebug( $level )
 	{
@@ -387,7 +387,7 @@ class net_http_client
 	 * @param uri the location of the file on the server. dont forget the heading "/"
 	 * @param filecontent the content of the file. binary content accepted
 	 * @return string response status code 201 (Created) if ok
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function Put( $uri, $filecontent )
 	{
@@ -406,7 +406,7 @@ class net_http_client
 	 * @param destUri the destination location on the server. this is *not* a full URL
 	 * @param overwrite boolean - true to overwrite an existing destinationn default if yes
 	 * @return string response status code 204 (Unchanged) if ok
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function Move( $srcUri, $destUri, $overwrite=true, $scope=0 )
 	{
@@ -437,7 +437,7 @@ class net_http_client
 	 * @param destUri the destination location on the server. this is *not* a full URL
 	 * @param overwrite boolean - true to overwrite an existing destination - overwrite by default
 	 * @return string response status code 204 (Unchanged) if ok
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function Copy( $srcUri, $destUri, $overwrite=true, $scope=0)
 	{
@@ -469,7 +469,7 @@ class net_http_client
 	 * Create a collection (directory) on the server
 	 * @param uri the directory location on the server. dont forget the heading "/"
 	 * @return string response status code 201 (Created) if ok
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function MkCol( $uri )
 	{
@@ -487,7 +487,7 @@ class net_http_client
 	 * Only partially supports "collection" deletion, as the XML response is not parsed
 	 * @param uri the location of the file on the server. dont forget the heading "/"
 	 * @return string response status code 204 (Unchanged) if ok
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function Delete( $uri, $scope=0)
 	{
@@ -511,7 +511,7 @@ class net_http_client
 	 *         1 : infos for the node and its direct children ( one level)
 	 *         Infinity : infos for the node and all its children nodes (recursive)
 	 * @return string response status code - 207 (Multi-Status) if OK
-	 * @see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
+	 * see RFC2518 "HTTP Extensions for Distributed Authoring WEBDAV"
 	 **/
 	function PropFind( $uri, $scope=0 )
 	{
@@ -529,12 +529,12 @@ class net_http_client
 	/**
 	 * Lock - WARNING: EXPERIMENTAL
 	 * Lock a ressource on the server. XML reply is not parsed, you'll need to do it
-	 * @param $uri URL (relative) of the resource to lock
+	 * @param $uri string URL (relative) of the resource to lock
 	 * @param $lockScope -  use "exclusive" for an eclusive lock, "inclusive" for a shared lock
 	 * @param $lockType - acces type of the lock : "write"
 	 * @param $lockScope -  use "exclusive" for an eclusive lock, "inclusive" for a shared lock	 
 	 * @param $lockOwner - an url representing the owner for this lock
-	 * @return server reply code, 200 if ok
+	 * @return object server reply code, 200 if ok
 	 **/
 	function Lock( $uri, $lockScope, $lockType, $lockOwner )
 	{
@@ -554,9 +554,9 @@ class net_http_client
 	/**
 	 * Unlock - WARNING: EXPERIMENTAL
 	 * unlock a ressource on the server
-	 * @param $uri URL (relative) of the resource to unlock
-	 * @param $lockToken  the lock token given at lock time, eg: opaquelocktoken:e71d4fae-5dec-22d6-fea5-00a0c91e6be4
-	 * @return server reply code, 204 if ok
+	 * @param $uri string URL (relative) of the resource to unlock
+	 * @param $lockToken string the lock token given at lock time, eg: opaquelocktoken:e71d4fae-5dec-22d6-fea5-00a0c91e6be4
+	 * @return object server reply code, 204 if ok
 	 **/
 	function Unlock( $uri, $lockToken )
 	{
@@ -586,7 +586,7 @@ class net_http_client
 	 * getHeader
 	 * return the response header "headername"
 	 * @param headername the name of the header
-	 * @return header value or NULL if no such header is defined
+	 * @return string header value or NULL if no such header is defined
 	 **/
 	function getHeader( $headername )
 	{
@@ -615,7 +615,7 @@ class net_http_client
 	  *  - 30x : document moved
 	  *  - 40x : client error ( bad url, document not found, etc...)
 	  *  - 50x : server error 
-	  * @see RFC2616 "Hypertext Transfer Protocol -- HTTP/1.1"
+	  * see RFC2616 "Hypertext Transfer Protocol -- HTTP/1.1"
 	  **/
 	function getStatus() 
 	{
@@ -840,7 +840,7 @@ class net_http_client
 	/**
 	 * Calculate and return the URI to be sent ( proxy purpose )
 	 * @param the local URI
-	 * @return URI to be used in the HTTP request
+	 * @return string URI to be used in the HTTP request
 	 * @scope private
 	 **/
 	 

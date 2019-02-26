@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/*************************************************************************************\
-	* Expresso Administração                										     *
+	* Expresso Administraï¿½ï¿½o                										     *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  	 *
 	* -----------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it			 *
@@ -12,8 +14,8 @@
 
 	$time_start = microtime(true);
 	
-	$GLOBALS['phpgw_info'] = array();
-	$GLOBALS['phpgw_info']['flags']['currentapp'] = 'expressoAdmin1_2';
+	GlobalService::get('phpgw_info') = array();
+	GlobalService::get('phpgw_info')['flags']['currentapp'] = 'expressoAdmin1_2';
 	
 	include('../header.inc.php');
 	
@@ -22,12 +24,12 @@
 	
 	$current_config = $c->config_data;
 	$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
-	$_SESSION['phpgw_info']['expresso']['user'] = $GLOBALS['phpgw_info']['user'];
-	$_SESSION['phpgw_info']['expresso']['server'] = $GLOBALS['phpgw_info']['server'];
+	$_SESSION['phpgw_info']['expresso']['user'] = GlobalService::get('phpgw_info')['user'];
+	$_SESSION['phpgw_info']['expresso']['server'] = GlobalService::get('phpgw_info')['server'];
 	$_SESSION['phpgw_info']['expresso']['cc_ldap_server'] = $ldap_manager ? $ldap_manager->srcs[1] : null;
 	$_SESSION['phpgw_info']['expresso']['expressoAdmin'] = $current_config;
-	$_SESSION['phpgw_info']['expresso']['global_denied_users'] = $GLOBALS['phpgw_info']['server']['global_denied_users'];
-	$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = $GLOBALS['phpgw_info']['server']['global_denied_groups'];
+	$_SESSION['phpgw_info']['expresso']['global_denied_users'] = GlobalService::get('phpgw_info')['server']['global_denied_users'];
+	$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = GlobalService::get('phpgw_info')['server']['global_denied_groups'];
 	
 	$template = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 	$template->set_file(Array('expressoAdmin' => 'index.tpl'));
@@ -54,7 +56,7 @@
 	/* save lang and session */
 	if (empty($_SESSION['phpgw_info']['expressoAdmin']['lang']))
 	{
-		$_SESSION['phpgw_info']['expressoAdmin']['user']['preferences']['common']['lang'] = $GLOBALS['phpgw_info']['user']['preferences']['common']['lang'];
+		$_SESSION['phpgw_info']['expressoAdmin']['user']['preferences']['common']['lang'] = GlobalService::get('phpgw_info')['user']['preferences']['common']['lang'];
 		$fn = './setup/phpgw_'.$_SESSION['phpgw_info']['expressoAdmin']['user']['preferences']['common']['lang'].'.lang';
 		if (file_exists($fn))
 		{
@@ -68,5 +70,5 @@
 		}
 	}
 
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

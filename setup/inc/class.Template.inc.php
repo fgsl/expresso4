@@ -59,7 +59,7 @@
 		function set_root($root)
 		{
 			if (!is_dir($root))
-			{
+			{$e = new \Exception(); echo $e->getTraceAsString();exit;
 				$this->halt("set_root: $root is not a directory.");
 				return false;
 			}

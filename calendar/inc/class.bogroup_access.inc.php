@@ -1,5 +1,7 @@
 <?php
 
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * Expresso Livre - Grant Group Access - administration                     *
   *															                 *
@@ -49,13 +51,13 @@ class bogroup_access
 	} 
 	
 	public function get_grants($app){
-		$db2 = $GLOBALS['phpgw']->db;
+		$db2 = GlobalService::get('phpgw')->db;
 		$db2->select('phpgw_acl',array('acl_location','acl_account','acl_rights'),"acl_appname='".$app."' AND acl_location <> 'run'",__LINE__,__FILE__);
 			
 		$grants = array();
 		while ($db2->next_record())	{				
 			$objectID = $db2->f('acl_account');
-			$type = $GLOBALS['phpgw']->accounts->get_type($objectID);				
+			$type = GlobalService::get('phpgw')->accounts->get_type($objectID);				
 			if($type == 'g') {
 				$userID	= $db2->f('acl_location');
 				$rights = $db2->f('acl_rights');				

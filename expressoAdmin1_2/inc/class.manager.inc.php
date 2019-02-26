@@ -1,6 +1,8 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/***********************************************************************************\
-	* Expresso Administração                 										   *
+	* Expresso Administraï¿½ï¿½o                 										   *
 	* by Joao Alfredo Knopik Junior (joao.alfredo@gmail.com, jakjr@celepar.pr.gov.br)  *
 	* ---------------------------------------------------------------------------------*
 	*  This program is free software; you can redistribute it and/or modify it		   *
@@ -68,9 +70,9 @@
 		function validate($params)
 		{
 			if (is_array($_SESSION['phpgw_info']['expresso']['server']))
-				$GLOBALS['phpgw_info']['server'] = $_SESSION['phpgw_info']['expresso']['server'];
+				GlobalService::get('phpgw_info')['server'] = $_SESSION['phpgw_info']['expresso']['server'];
 			else
-				$_SESSION['phpgw_info']['expresso']['server'] = $GLOBALS['phpgw_info']['server'];
+				$_SESSION['phpgw_info']['expresso']['server'] = GlobalService::get('phpgw_info')['server'];
 			
 			$return['status'] = 'true';
 			
@@ -95,9 +97,9 @@
 			}
 			
 			// Verifica se o contexto existe.
-			$dn			= $GLOBALS['phpgw_info']['server']['ldap_root_dn'];
-			$passwd		= $GLOBALS['phpgw_info']['server']['ldap_root_pw'];
-			$ldap_conn	= ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$dn			= GlobalService::get('phpgw_info')['server']['ldap_root_dn'];
+			$passwd		= GlobalService::get('phpgw_info')['server']['ldap_root_pw'];
+			$ldap_conn	= ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
 			ldap_bind($ldap_conn,$dn,$passwd);

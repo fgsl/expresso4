@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -35,8 +37,8 @@
 
 			$template->set_file(array('api' => 'api_common.tpl'));
 			/* Style Sheets */
-			$template->set_var('cc_css', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/styles/cc_api.css');
-			$template->set_var('cc_dtree_css', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/js/dftree/dftree.css');
+			$template->set_var('cc_css', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/styles/cc_api.css');
+			$template->set_var('cc_dtree_css', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/js/dftree/dftree.css');
 
 			$template->set_var('cc_email_id_type', $preferences['personCardEmail']);
 			
@@ -60,18 +62,18 @@
 			$template->set_var('cc_loading_1', lang('Contacting Server...'));
 			$template->set_var('cc_loading_2', lang('Server Contacted. Waiting for response...'));
 			$template->set_var('cc_loading_3', lang('Processing Information...'));
-			$template->set_var('cc_loading_image', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/templates/default/images/loading_back.png');
-			$template->set_var('cc_server_root', $GLOBALS['phpgw_info']['server']['webserver_url']);
-			$template->set_var('cc_phpgw_img_dir', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/images');
+			$template->set_var('cc_loading_image', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/templates/default/images/loading_back.png');
+			$template->set_var('cc_server_root', GlobalService::get('phpgw_info')['server']['webserver_url']);
+			$template->set_var('cc_phpgw_img_dir', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/images');
 
 			/* JS Files */
-			$template->set_var('cc_js_aux', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/ccAux.js');
-			$template->set_var('cc_js_connector', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/connector.js');
-			$template->set_var('cc_js_wz_dragdrop', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/js/wz_dragdrop/wz_dragdrop.js');
-			$template->set_var('cc_js_dtree', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/js/dftree/dftree.js');
-			$template->set_var('cc_js_dtabs', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/js/dTabs/dTabs.js');
-			$template->set_var('cc_js_djswin', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/js/dJSWin/dJSWin.js');
-			$template->set_var('cc_js_catalog_tree', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/cc_tree.js');
+			$template->set_var('cc_js_aux', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/ccAux.js');
+			$template->set_var('cc_js_connector', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/connector.js');
+			$template->set_var('cc_js_wz_dragdrop', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/js/wz_dragdrop/wz_dragdrop.js');
+			$template->set_var('cc_js_dtree', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/js/dftree/dftree.js');
+			$template->set_var('cc_js_dtabs', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/js/dTabs/dTabs.js');
+			$template->set_var('cc_js_djswin', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/js/dJSWin/dJSWin.js');
+			$template->set_var('cc_js_catalog_tree', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/cc_tree.js');
 			
 			$template->parse('out','api');
 
@@ -105,7 +107,7 @@
 			}
 			
 			//$template->set_var('cc_search_win', $search);
-			$template->set_var('cc_js_search', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/cc_search.js');
+			$template->set_var('cc_js_search', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/cc_search.js');
 			
 			$template->set_var('cc_email_id_type', $search);
 			
@@ -136,9 +138,9 @@
 			$template->set_var('cc_label_catalogue_type',lang('Type Of Catalogue').':');
 			$template->set_var('cc_label_ordinance_type',lang('Type Of Ordinace').':');
 			
-			$template->set_var('phpgw_img_dir', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/images');
+			$template->set_var('phpgw_img_dir', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/images');
 			
-			$template->set_var('cc_js_email_win', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/cc_email_win.js');
+			$template->set_var('cc_js_email_win', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/cc_email_win.js');
 			
 			$template->parse('out','email_win');
 
@@ -176,9 +178,9 @@
 			$template->set_var('cc_search_go',lang('Go'));
 			$template->set_var('cc_search_cancel',lang('Cancel'));
 			
-			$template->set_var('cc_js_search_win', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/cc_search_win.js');
+			$template->set_var('cc_js_search_win', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/cc_search_win.js');
 			
-			$template->set_var('phpgw_img_dir', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/phpgwapi/images');
+			$template->set_var('phpgw_img_dir', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/phpgwapi/images');
 			
 			$template->parse('out','search');
 
@@ -187,7 +189,7 @@
 
 		function get_search_obj()
 		{
-			return "\n".'<script type="text/javascript" src="'.$GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/cc_search.js'.'"></script>'."\n";
+			return "\n".'<script type="text/javascript" src="'.GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/cc_search.js'.'"></script>'."\n";
 		}
 
 		function ui_get_full_add()
@@ -198,7 +200,7 @@
 		function get_full_add()
 		{
 			$template = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
-            if($GLOBALS['phpgw_info']['server']['personal_contact_type']=='True'){
+            if(GlobalService::get('phpgw_info')['server']['personal_contact_type']=='True'){
 				$template->set_file(array('full_add' => 'corporative_full_add.tpl'));
 				$template->set_var('cc_contact_type','advanced');
 			}else{
@@ -241,7 +243,7 @@
 			/* End Contact */
 			
 			/* Contact - Personal Data */
-			$dateformat = $GLOBALS['phpgw_info']['user']['preferences']['common']['dateformat'];
+			$dateformat = GlobalService::get('phpgw_info')['user']['preferences']['common']['dateformat'];
 		
 			$j = 0;
 			for ($i = 0; $i < 5; $i+=2)
@@ -364,7 +366,7 @@
 				$template->set_var('cc_api', '');
 			}
 			
-			$template->set_var('ccQAPluginFile', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/ccQuickAdd-plugin.js');
+			$template->set_var('ccQAPluginFile', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/ccQuickAdd-plugin.js');
 
 			/* Fields Insertion */
 
@@ -404,7 +406,7 @@
 			$template->set_var('ccQAFunctionsTop', ($fieldsTop+$i*$fieldsSpace).'px');
 			
 			/* Images Dir */
-			$template->set_var('ccQACardImgRoot', $GLOBALS['phpgw_info']['server']['webserver_url'].'/contactcenter/templates/default/images/');
+			$template->set_var('ccQACardImgRoot', GlobalService::get('phpgw_info')['server']['webserver_url'].'/contactcenter/templates/default/images/');
 			
 			/* Texts */
 			$template->set_var('ccQATitle', lang('Contact Center').' - '.lang('Quick Add'));
@@ -435,12 +437,12 @@
 				$template->set_var('cc_api', '');
 			}
 			
-			$template->set_var('ccAGFile', $GLOBALS['phpgw_info']['server']['webserver_url'] . '/contactcenter/js/ccAddGroup.js');			
+			$template->set_var('ccAGFile', GlobalService::get('phpgw_info')['server']['webserver_url'] . '/contactcenter/js/ccAddGroup.js');			
 			$template->set_var('ccAGWinHeightIE', '285');			
 			$template->set_var('ccAGWinHeightMO', '335');
 			
 			/* Images Dir */
-			$template->set_var('ccAGCardImgRoot', $GLOBALS['phpgw_info']['server']['webserver_url'].'/contactcenter/templates/default/images/');
+			$template->set_var('ccAGCardImgRoot', GlobalService::get('phpgw_info')['server']['webserver_url'].'/contactcenter/templates/default/images/');
 			
 			/* Texts */
 			$template->set_var('ccAGTitle', lang('Contact Center').' - '.lang('Group Add'));

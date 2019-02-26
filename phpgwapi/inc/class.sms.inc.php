@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**
  * SMS
  *
@@ -84,27 +86,27 @@ class sms
 			$options = array();
 			
 			foreach ($this->_options as $key => $value)
-				if (isset($GLOBALS['phpgw_info']['server']['sms_'.$key]))
-					$options[$key] = $GLOBALS['phpgw_info']['server']['sms_'.$key];
+				if (isset(GlobalService::get('phpgw_info')['server']['sms_'.$key]))
+					$options[$key] = GlobalService::get('phpgw_info')['server']['sms_'.$key];
 			
 			if( count($options) > 0 )
 				$this->_setOptions($options);
 			
 			if ($this->isEnabled()) $this->_setUser();
 			
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {}
 	}
 	
 	/**
 	 * Allows setting options as an associative array of option => value pairs.
 	 *
-	 * @param  array|Zend_Config $options
+	 * @param  array|\Zend_Config $options
 	 * @return SMSAdapter $this
 	 * @throws $this->runException('UNKNOWN_OPTION');
 	 */
 	private function _setOptions($options)
 	{
-		if ($options instanceof Zend_Config) {
+		if ($options instanceof \Zend_Config) {
 			$options = $options->toArray();
 		}
 		
@@ -126,10 +128,10 @@ class sms
 	 */
 	private function _setUser()
 	{
-		if (!isset($GLOBALS['phpgw_info']['user']['account_id'])) $this->runException('LOGIN_NOT_LOGGED_IN');
-		if ( $this->_account_id == $GLOBALS['phpgw_info']['user']['account_id']) return $this;
+		if (!isset(GlobalService::get('phpgw_info')['user']['account_id'])) $this->runException('LOGIN_NOT_LOGGED_IN');
+		if ( $this->_account_id == GlobalService::get('phpgw_info')['user']['account_id']) return $this;
 		$this->_error = null;
-		$this->_account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+		$this->_account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 		$this->_pref = new preferences();
 		$this->_pref->read_repository();
 		return $this;
@@ -190,17 +192,17 @@ class sms
 	 * 
 	 * @param string $uid
 	 * @param string|array $params
-	 * @return stdClass
+	 * @return \stdClass
 	 */
 	private function _ldapSearch( $uid, $params )
 	{
 		$uid = (string)$uid;
 		$params = is_array($params)? $params : array($params);
 		
-		$ldap_conn = $GLOBALS['phpgw']->common->ldapConnect();
-		$entries = ldap_get_entries($ldap_conn, ldap_search($ldap_conn, $GLOBALS['phpgw_info']['server']['ldap_context'], 'uid='.$uid, $params));
+		$ldap_conn = GlobalService::get('phpgw')->common->ldapConnect();
+		$entries = ldap_get_entries($ldap_conn, ldap_search($ldap_conn, GlobalService::get('phpgw_info')['server']['ldap_context'], 'uid='.$uid, $params));
 		
-		$result = new stdClass();
+		$result = new \stdClass();
 		foreach ($params as $param)
 			$result->{$param} = isset($entries[0][strtolower($param)][0])? $entries[0][strtolower($param)][0] : null;
 		
@@ -264,8 +266,8 @@ class sms
 		$result = true;
 		try {
 			$this->checkSendAuth();
-			if (!(isset($this->_sendAuth['user']) && isset($this->_sendAuth['passwd']))) throw new Exception();
-		} catch (Exception $e) {
+			if (!(isset($this->_sendAuth['user']) && isset($this->_sendAuth['passwd']))) throw new \Exception();
+		} catch (\Exception $e) {
 			$result = false;
 		}
 		return $result;
@@ -284,9 +286,9 @@ class sms
 		$sendAuth = false;
 		try {
 			// Get groups that the user belongs
-			if (isset($GLOBALS['phpgw_info']['accounts']['cache']['membership_list'][$account_id])) {
+			if (isset(GlobalService::get('phpgw_info')['accounts']['cache']['membership_list'][$account_id])) {
 				
-				$member_of = $GLOBALS['phpgw_info']['accounts']['cache']['membership_list'][$account_id];
+				$member_of = GlobalService::get('phpgw_info')['accounts']['cache']['membership_list'][$account_id];
 				
 			} else {
 				
@@ -295,7 +297,7 @@ class sms
 			}
 			
 			// Empty membership array
-			if ( !is_array($member_of) ) throw new Exception();
+			if ( !is_array($member_of) ) throw new \Exception();
 			
 			// Make a integer array
 			foreach ($member_of as $key => $value) $member_of[$key] = (int)$value['account_id'];
@@ -319,7 +321,7 @@ class sms
 				}
 				
 			}
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {}
 		
 		return $sendAuth;
 	}
@@ -494,7 +496,7 @@ class sms
 			// Send message using system uidNumber
 			$this->_send($this->getSendAuth($this->_ldapSearch($this->_options['user'],'uidNumber')->uidNumber), $number, $message);
 			
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			
 			$this->runException('WS_SMS_ERROR',$e->getMessage());
 		}
@@ -541,7 +543,7 @@ class sms
 				// Try get receiver phone number, but without throwing exception
 				$number = $this->checkRecvAuth($id);
 				
-			} catch (Exception $e) { $number = false; }
+			} catch (\Exception $e) { $number = false; }
 			
 			// Is a valid phone number?
 			if ($number) {
@@ -553,7 +555,7 @@ class sms
 					// If nothing throw count one success
 					$cnt_success = $cnt_success + 1;
 					
-				} catch (Exception $e) {
+				} catch (\Exception $e) {
 					
 					$this->runException('WS_SMS_ERROR', $e->getMessage());
 				}
@@ -600,7 +602,7 @@ class sms
 			// Success register
 			$this->log($sendAuth, $number, $message, $response->id, $response->resultado, null);
 			
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			
 			// Fail register and rethrow exception
 			$this->log($sendAuth, $number, $message, null, ($e->faultcode? $e->faultcode : $e->getCode()), $e->getMessage());
@@ -637,7 +639,7 @@ class sms
 		$cols = implode(',',array_keys($data));
 		$sql = 'INSERT INTO phpgw_log_sms ('.$cols.') VALUES('.preg_replace('/[^,]+/', '?', $cols).')';
 		
-		if (!$GLOBALS['phpgw']->db->Link_ID->query($sql,$data)) {
+		if (!GlobalService::get('phpgw')->db->Link_ID->query($sql,$data)) {
 			
 			openlog(get_class(), LOG_PID, LOG_LOCAL0);
 			syslog(LOG_NOTICE,print_r($data,true));
@@ -649,7 +651,7 @@ class sms
 	private function _char_filter( $string )
 	{
 		return str_replace(
-			array('á','à','â','ã','ä','é','è','ê','ë','í','ì','î','ï','ó','ò','ô','õ','ö','ú','ù','û','ü','ç','Á','À','Â','Ã','Ä','É','È','Ê','Ë','Í','Ì','Î','Ï','Ó','Ò','Ô','Õ','Ö','Ú','Ù','Û','Ü','Ç'),
+			array('ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½','ï¿½'),
 			array('a','a','a','a','a','e','e','e','e','i','i','i','i','o','o','o','o','o','u','u','u','u','c','A','A','A','A','A','E','E','E','E','I','I','I','I','O','O','O','O','O','U','U','U','U','C'),
 			$string
 		);
@@ -663,7 +665,7 @@ class sms
 	{
 		$this->_setUser();
 		try {
-			if (!is_null($this->_error)) throw new Exception();
+			if (!is_null($this->_error)) throw new \Exception();
 			
 			// Send cheking code and store security preferences
 			$this->sendCheckCodeToPhoneNumber( $this->getParam('phoneNumber') );
@@ -673,7 +675,7 @@ class sms
 			
 			$this->setResult( true );
 			
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {}
 		
 		$this->getResponse();
 	}
@@ -682,7 +684,7 @@ class sms
 	{
 		$this->_setUser();
 		try {
-			if (!is_null($this->_error)) throw new Exception();
+			if (!is_null($this->_error)) throw new \Exception();
 			
 			// Filter numbers only
 			$phoneNumber = preg_replace('/[^\d]/', '', $this->getParam('phoneNumber'));
@@ -698,7 +700,7 @@ class sms
 			
 			$this->setResult( true );
 			
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {}
 		
 		$this->getResponse();
 	}
@@ -713,7 +715,7 @@ class sms
 		$args = func_get_args();
 		array_shift($args);
 		$this->_error['message'] = utf8_encode( lang( $this->_error['message'], $args ) );
-		throw new Exception( $this->_error['message'], $this->_error['code'] );
+		throw new \Exception( $this->_error['message'], $this->_error['code'] );
 	}
 	
 	private function getParam( $name )

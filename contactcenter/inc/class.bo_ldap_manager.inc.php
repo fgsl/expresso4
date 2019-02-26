@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * eGroupWare - Contacts Center                                              *
   * http://www.egroupware.org                                                 *
@@ -26,7 +28,7 @@
 		
 		function bo_ldap_manager ()
 		{
-			if (!($this->srcs = $GLOBALS['phpgw']->session->appsession('bo_ldap_manager.srcs','contactcenter')))
+			if (!($this->srcs = GlobalService::get('phpgw')->session->appsession('bo_ldap_manager.srcs','contactcenter')))
 			{
 				$c = CreateObject('phpgwapi.config','contactcenter');
 				$data = $c->read_repository();
@@ -268,7 +270,7 @@
 				return null;
 			}
 			
-			$ldap = $GLOBALS['phpgw']->common->ldapConnect($this->srcs[$id_source]['host'], $this->srcs[$id_source]['acc'],$this->srcs[$id_source]['pw'], true);
+			$ldap = GlobalService::get('phpgw')->common->ldapConnect($this->srcs[$id_source]['host'], $this->srcs[$id_source]['acc'],$this->srcs[$id_source]['pw'], true);
 			if (!$ldap)
 			{
 				return false;
@@ -318,7 +320,7 @@
 				);
 			}
 
-			$ldap = $GLOBALS['phpgw']->common->ldapConnect($external_srcs[$id_source]['host'], $external_srcs[$id_source]['acc'],$external_srcs[$id_source]['pw'], false);
+			$ldap = GlobalService::get('phpgw')->common->ldapConnect($external_srcs[$id_source]['host'], $external_srcs[$id_source]['acc'],$external_srcs[$id_source]['pw'], false);
 			if (!$ldap)
 			{
 				return false;
@@ -457,8 +459,8 @@
 		function translate_accentuation($text)
 		{
 			/*
-			 * Esta operação resolve o problema causado pela conversão de caracteres acentuados realizada
-			 * pela função ldap_explode_dn().
+			 * Esta operaï¿½ï¿½o resolve o problema causado pela conversï¿½o de caracteres acentuados realizada
+			 * pela funï¿½ï¿½o ldap_explode_dn().
 			 */
 
 			return utf8_decode(preg_replace_callback('/\\\([0-9A-Fa-f]{2})/', function ($matches) { return chr(hexdec($matches[1])); }, $text));

@@ -4,28 +4,29 @@ namespace App\Services\Base\Modules\calendar;
 
 use App\Services\Base\Adapters\CalendarAdapter;
 use App\Services\Base\Commons\Errors;
+use Expresso\Core\GlobalService;
 
 class AddEventResource extends CalendarAdapter {
 
 	public function setDocumentation() {
-		$this->setResource("Calendar","Calendar/AddEvent","Adiciona ou altera um evento na agenda do usuário.",array("POST"));
+		$this->setResource("Calendar","Calendar/AddEvent","Adiciona ou altera um evento na agenda do usuÃ¡rio.",array("POST"));
 		$this->setIsMobile(true);
-		$this->addResourceParam("auth","string",true,"Chave de autenticação do Usuário.",false);
-		$this->addResourceParam("eventID","integer",false,"Código do Evento (Informado quando for alterar um evento existente)");
-		$this->addResourceParam("eventDateStart","date",true,"Data de início (DD/MM/YYYY)");
-		$this->addResourceParam("eventDateEnd","date",true,"Data de término (DD/MM/YYYY)");
-		$this->addResourceParam("eventTimeStart","time",true,"Hora de início (HH:MM)");
-		$this->addResourceParam("eventTimeEnd","time",true,"Hora de término (HH:MM)");
+		$this->addResourceParam("auth","string",true,"Chave de autenticaÃ§Ã£o do UsuÃ¡rio.",false);
+		$this->addResourceParam("eventID","integer",false,"CÃ³digo do Evento (Informado quando for alterar um evento existente)");
+		$this->addResourceParam("eventDateStart","date",true,"Data de inÃ­cio (DD/MM/YYYY)");
+		$this->addResourceParam("eventDateEnd","date",true,"Data de tÃ©rmino (DD/MM/YYYY)");
+		$this->addResourceParam("eventTimeStart","time",true,"Hora de inÃ­cio (HH:MM)");
+		$this->addResourceParam("eventTimeEnd","time",true,"Hora de tÃ©rmino (HH:MM)");
 		$this->addResourceParam("eventCategoryID","integer",false,"ID da categoria do Evento.");
 		$this->addResourceParam("eventType","integer",true,"Tipo do Evento. (1=Normal, 2=Restrito)",false,"1");
 		$this->addResourceParam("eventName","string",true,"Nome do Evento.");
-		$this->addResourceParam("eventDescription","string",false,"Descrição do Evento.");
-		$this->addResourceParam("eventLocation","string",false,"Localização do Evento.");
+		$this->addResourceParam("eventDescription","string",false,"DescriÃ§Ã£o do Evento.");
+		$this->addResourceParam("eventLocation","string",false,"LocalizaÃ§Ã£o do Evento.");
 		$this->addResourceParam("eventPriority","integer",false,"Prioridade do Evento (1,2,3,4) ");
-		$this->addResourceParam("eventOwnerIsParticipant","integer",false,"0 - Proprietário do evento não participa do evento. 1 - Proprietário do Evento também participa do Evento.");
+		$this->addResourceParam("eventOwnerIsParticipant","integer",false,"0 - ProprietÃ¡rio do evento nÃ£o participa do evento. 1 - ProprietÃ¡rio do Evento tambÃ©m participa do Evento.");
 		$this->addResourceParam("eventParticipants","string",false,"Participantes do Evento.");
 		$this->addResourceParam("eventExternalParticipants","string",false,"Participantes externos do evento.");
-		$this->addResourceParam("eventIgnoreConflicts","integer",false,"Usado para forçar a inclusão de um evento, 1 quando for para ignorar conflitos e 0 para não ignorar.");
+		$this->addResourceParam("eventIgnoreConflicts","integer",false,"Usado para forÃ§ar a inclusÃ£o de um evento, 1 quando for para ignorar conflitos e 0 para nÃ£o ignorar.");
 	}
 
 	public function post( $request ){
@@ -104,7 +105,7 @@ class AddEventResource extends CalendarAdapter {
 			$arrParticipants = explode(",",$eventParticipants);
 			foreach ($arrParticipants as $participantID) {
 				$this->validateInteger(trim($participantID),false,"CALENDAR_INVALID_EVENT_PARTICIPANTS");
-				$accountData = $GLOBALS['phpgw']->accounts->get_account_data($participantID);
+				$accountData = GlobalService::get('phpgw')->accounts->get_account_data($participantID);
 				//CHECK IF THE PARTICIPANT EXISTS IN LDAP.
 
 				if (isset($accountData[""])) {
@@ -138,7 +139,7 @@ class AddEventResource extends CalendarAdapter {
 		$cal['title']			= $eventName;
 		$cal['description']		= $eventDescription;
 		$cal['location'] 		= $eventLocation;	
-		$cal['owner']			= ( trim($ownerEvent) !== "" ? $ownerEvent : $GLOBALS['phpgw_info']['user']['account_id'] );
+		$cal['owner']			= ( trim($ownerEvent) !== "" ? $ownerEvent : GlobalService::get('phpgw_info')['user']['account_id'] );
 		$cal['priority']		= $eventPriority;
 		$cal['type'] 			= $eventFormatedType;
 

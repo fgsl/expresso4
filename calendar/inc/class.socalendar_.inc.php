@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -13,16 +15,16 @@
   \**************************************************************************/
 
 
-	if(@$GLOBALS['phpgw_info']['server']['calendar_type'] == 'mcal' &&
+	if(@GlobalService::get('phpgw_info')['server']['calendar_type'] == 'mcal' &&
 		extension_loaded('mcal') == False)
 	{
-		$GLOBALS['phpgw_info']['server']['calendar_type'] = 'sql';
+		GlobalService::get('phpgw_info')['server']['calendar_type'] = 'sql';
 	}
 /* This will be elminated when ical is fully implemented */
 	else
 	{
-		$GLOBALS['phpgw_info']['server']['calendar_type'] = 'sql';
+		GlobalService::get('phpgw_info')['server']['calendar_type'] = 'sql';
 	}
 	include(PHPGW_INCLUDE_ROOT.'/calendar/inc/class.socalendar__.inc.php');
-	include(PHPGW_INCLUDE_ROOT.'/calendar/inc/class.socalendar_'.$GLOBALS['phpgw_info']['server']['calendar_type'].'.inc.php');
+	include(PHPGW_INCLUDE_ROOT.'/calendar/inc/class.socalendar_'.GlobalService::get('phpgw_info')['server']['calendar_type'].'.inc.php');
 ?>

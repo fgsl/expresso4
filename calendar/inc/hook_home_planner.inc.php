@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar - Planner                                          *
   * http://www.egroupware.org                                                *
@@ -17,10 +19,10 @@
 	if($d1 == 'htt' || $d1 == 'ftp' )
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>'."\n";
-		$GLOBALS['phpgw']->common->phpgw_exit();
+		GlobalService::get('phpgw')->common->phpgw_exit();
 	}
 	unset($d1);
 
-	$GLOBALS['extra_data'] = '<table width="100%" cellpadding="0"><tr><td bgcolor="white">'.
-		ExecMethod('calendar.uicalendar.planner').'</td></tr></table>';
+	GlobalService::set('extra_data','<table width="100%" cellpadding="0"><tr><td bgcolor="white">'.
+		ExecMethod('calendar.uicalendar.planner').'</td></tr></table>');
 ?>

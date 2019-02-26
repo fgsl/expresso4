@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare - Calendar                                                    *
   * http://www.egroupware.org                                                *
@@ -17,26 +19,26 @@
 	if($d1 == 'htt' || $d1 == 'ftp' )
 	{
 		echo 'Failed attempt to break in via an old Security Hole!<br>'."\n";
-		$GLOBALS['phpgw']->common->phpgw_exit();
+		GlobalService::get('phpgw')->common->phpgw_exit();
 	}
 	unset($d1);
 
-	$GLOBALS['extra_data'] = $GLOBALS['css']."\n".'<td>'."\n".'<table border="0" cols="3"><tr><td align="center" width="35%" valign="top">'
+	GlobalService::set('extra_data',GlobalService::get('css')."\n".'<td>'."\n".'<table border="0" cols="3"><tr><td align="center" width="35%" valign="top">')
 		. ExecMethod('calendar.uicalendar.mini_calendar',
 			Array(
-				'day'		=> $GLOBALS['g_day'],
-				'month'	=> $GLOBALS['g_month'],
-				'year'	=> $GLOBALS['g_year'],
+				'day'		=> GlobalService::get('g_day'),
+				'month'	=> GlobalService::get('g_month'),
+				'year'	=> GlobalService::get('g_year'),
 				'link'	=> 'day'
 			)
 		).'</td><td align="center"><table border="0" width="100%" cellspacing="0" cellpadding="0">'
 		. '<tr><td align="center">'.ExecMethod('calendar.bocalendar.long_date',time())
-		.'</td></tr><tr><td bgcolor="'.$GLOBALS['phpgw_info']['theme']['bg_text']
+		.'</td></tr><tr><td bgcolor="'.GlobalService::get('phpgw_info')['theme']['bg_text']
 		.'" valign="top">'.ExecMethod('calendar.uicalendar.print_day',
 			Array(
-				'year'	=> $GLOBALS['g_year'],
-				'month'	=> $GLOBALS['g_month'],
-				'day'		=> $GLOBALS['g_day']
+				'year'	=> GlobalService::get('g_year'),
+				'month'	=> GlobalService::get('g_month'),
+				'day'		=> GlobalService::get('g_day')
 			)
 		).'</td></tr></table>'."\n".'</td>'."\n".'</tr>'."\n".'</table>'."\n".'</td>'."\n";
 ?>

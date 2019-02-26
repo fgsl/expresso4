@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/************************************************************************************************\
 	* Administracao de Listas (baseadas no Mailman)							*
 	* by Rommel de Brito Cysne (rommel.cysne@serpro.gov.br, rommel.cysne@gmail.com)			*
@@ -9,19 +11,19 @@
 	*  option) any later version.									*
 	\************************************************************************************************/
 
-	$GLOBALS['phpgw_info'] = array();
-	$GLOBALS['phpgw_info']['flags']['currentapp'] = 'listAdmin';
+	GlobalService::get('phpgw_info') = array();
+	GlobalService::get('phpgw_info')['flags']['currentapp'] = 'listAdmin';
 	include('../header.inc.php');
 
 	$c = CreateObject('phpgwapi.config','listAdmin');
 	$c->read_repository();
 	$current_config = $c->config_data;
 	
-	$_SESSION['phpgw_info']['expresso']['user'] = $GLOBALS['phpgw_info']['user'];
-	$_SESSION['phpgw_info']['expresso']['server'] = $GLOBALS['phpgw_info']['server'];
+	$_SESSION['phpgw_info']['expresso']['user'] = GlobalService::get('phpgw_info')['user'];
+	$_SESSION['phpgw_info']['expresso']['server'] = GlobalService::get('phpgw_info')['server'];
 	$_SESSION['phpgw_info']['expresso']['listAdmin'] = $current_config;
-	$_SESSION['phpgw_info']['expresso']['global_denied_users'] = $GLOBALS['phpgw_info']['server']['global_denied_users'];
-	$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = $GLOBALS['phpgw_info']['server']['global_denied_groups'];
+	$_SESSION['phpgw_info']['expresso']['global_denied_users'] = GlobalService::get('phpgw_info')['server']['global_denied_users'];
+	$_SESSION['phpgw_info']['expresso']['global_denied_groups'] = GlobalService::get('phpgw_info')['server']['global_denied_groups'];
 	
 	$template = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 	$template->set_file(Array('listAdmin' => 'index.tpl'));
@@ -43,5 +45,5 @@
 //	$obj = CreateObject('listAdmin.uimaillists');
 //	$obj->list_maillists();
 	
-	$GLOBALS['phpgw']->common->phpgw_footer();
+	GlobalService::get('phpgw')->common->phpgw_footer();
 ?>

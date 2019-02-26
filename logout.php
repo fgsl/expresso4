@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* phpGroupWare                                                             *
 	* http://www.phpgroupware.org                                              *
@@ -12,7 +14,7 @@
 
 
 	$phpgw_info = array();
-	$GLOBALS['phpgw_info']['flags'] = array(
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'disable_Template_class' => True,
 		'currentapp'             => 'logout',
 		'noheader'               => True,
@@ -21,45 +23,45 @@
 	);
 	include(dirname( __FILE__ ).'/header.inc.php');
 
-	$GLOBALS['sessionid'] = get_var('sessionid',array('GET','COOKIE'));
-	$GLOBALS['kp3']       = get_var('kp3',array('GET','COOKIE'));
-	$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-	$verified = $GLOBALS['phpgw']->session->verify();
+	GlobalService::set('sessionid', get_var('sessionid',array('GET','COOKIE')));
+	GlobalService::set('kp3', get_var('kp3',array('GET','COOKIE')));
+	$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+	$verified = GlobalService::get('phpgw')->session->verify();
 	if ($verified)
 	{
-		if (file_exists($GLOBALS['phpgw_info']['server']['temp_dir'] . SEP . $GLOBALS['sessionid']))
+		if (file_exists(GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP . GlobalService::get('sessionid')))
 		{
-			$dh = opendir($GLOBALS['phpgw_info']['server']['temp_dir'] . SEP . $GLOBALS['sessionid']);
+			$dh = opendir(GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP . GlobalService::get('sessionid'));
 			while ($file = readdir($dh))
 			{
 				if ($file != '.' && $file != '..')
 				{
-					unlink($GLOBALS['phpgw_info']['server']['temp_dir'] . SEP . $GLOBALS['sessionid'] . SEP . $file);
+					unlink(GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP . GlobalService::get('sessionid') . SEP . $file);
 				}
 			}
-			rmdir($GLOBALS['phpgw_info']['server']['temp_dir'] . SEP . $GLOBALS['sessionid']);
+			rmdir(GlobalService::get('phpgw_info')['server']['temp_dir'] . SEP . GlobalService::get('sessionid'));
 		}
-		$GLOBALS['phpgw']->hooks->process('logout');
-		$GLOBALS['phpgw']->session->destroy($GLOBALS['sessionid'],$GLOBALS['kp3']);
+		GlobalService::get('phpgw')->hooks->process('logout');
+		GlobalService::get('phpgw')->session->destroy(GlobalService::get('sessionid'),GlobalService::get('kp3'));
 	}
 	else
 	{	
-		if(is_object($GLOBALS['phpgw']->log) && $account_id != '')
+		if(is_object(GlobalService::get('phpgw')->log) && $account_id != '')
 		{
-			$GLOBALS['phpgw']->log->write(array(
+			GlobalService::get('phpgw')->log->write(array(
 				'text' => 'W-VerifySession, could not verify session during logout',
 				'line' => __LINE__,
 				'file' => __FILE__
 			));
 		}
 	}
-	$GLOBALS['phpgw']->session->phpgw_setcookie('sessionid');
-	$GLOBALS['phpgw']->session->phpgw_setcookie('kp3');
-	$GLOBALS['phpgw']->session->phpgw_setcookie('domain');
-	if($GLOBALS['phpgw_info']['server']['sessions_type'] == 'php4')
+	GlobalService::get('phpgw')->session->phpgw_setcookie('sessionid');
+	GlobalService::get('phpgw')->session->phpgw_setcookie('kp3');
+	GlobalService::get('phpgw')->session->phpgw_setcookie('domain');
+	if(GlobalService::get('phpgw_info')['server']['sessions_type'] == 'php4')
 	{
-		$GLOBALS['phpgw']->session->phpgw_setcookie(PHPGW_PHPSESSID);
+		GlobalService::get('phpgw')->session->phpgw_setcookie(PHPGW_PHPSESSID);
 	}
 
-	$GLOBALS['phpgw']->redirect($GLOBALS['phpgw_info']['server']['webserver_url'].'/login.php?cd=1');
+	GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw_info')['server']['webserver_url'].'/login.php?cd=1');
 ?>

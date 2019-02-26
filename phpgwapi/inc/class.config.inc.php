@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Application configuration in a centralized location     *
 	* This file written by Joseph Engo <jengo@phpgroupware.org>                *
@@ -32,10 +34,10 @@
 		{
 			if (! $appname)
 			{
-				$appname = $GLOBALS['phpgw_info']['flags']['currentapp'];
+				$appname = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			}
 
-			$this->db      = is_object($GLOBALS['phpgw']->db) ? $GLOBALS['phpgw']->db : $GLOBALS['phpgw_setup']->db;
+			$this->db      = is_object(GlobalService::get('phpgw')->db) ? GlobalService::get('phpgw')->db : GlobalService::get('phpgw_setup')->db;
 			$this->appname = $appname;
 		}
 

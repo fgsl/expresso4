@@ -1,6 +1,8 @@
 <?php
-	if(!isset($GLOBALS['phpgw_info'])){
-        	$GLOBALS['phpgw_info']['flags'] = array(
+	use Expresso\Core\GlobalService;
+
+	if(!isset(GlobalService::get('phpgw_info'))){
+        	GlobalService::get('phpgw_info')['flags'] = array(
                 	'currentapp' => 'expressoMail1_2',
                 	'nonavbar'   => true,
                 	'noheader'   => true
@@ -11,7 +13,7 @@
 	$current_app = 'expressoMail1_2';
 	$current_name	 = 'Expresso Mail';
 	if(!$_SESSION['phpgw_info']['user']['preferences']['expressoMail']) { 
-		$preferences = $GLOBALS['phpgw']->preferences->read(); 
+		$preferences = GlobalService::get('phpgw')->preferences->read(); 
 		$_SESSION['phpgw_info']['user']['preferences']['expressoMail'] = $preferences['expressoMail'];
 	}
   	$homedisplay = $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['mainscreen_showmail'];
@@ -21,26 +23,26 @@
 	}	
 	$homedisplay = intval($homedisplay);
 	
-	$prev_currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
-	$GLOBALS['phpgw_info']['flags']['currentapp'] = $current_app;
+	$prev_currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
+	GlobalService::get('phpgw_info')['flags']['currentapp'] = $current_app;
 	 
 	if(intval($homedisplay))
 	{
 		$_SESSION['phpgw_info']['expressomail']['email_server'] = CreateObject('emailadmin.bo')->getProfile();
-		$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
-		$_SESSION['phpgw_info']['expressomail']['server'] = $GLOBALS['phpgw_info']['server'];
+		$_SESSION['phpgw_info']['expressomail']['user'] = GlobalService::get('phpgw_info')['user'];
+		$_SESSION['phpgw_info']['expressomail']['server'] = GlobalService::get('phpgw_info')['server'];
 		$expressoMail	= CreateObject($current_app.'.imap_functions');
 		$mbox_stream = $expressoMail-> open_mbox(False,false); 		
 		if(!$mbox_stream) {
 			$portalbox = CreateObject('phpgwapi.listbox',
 				Array(
 					'title'     => "<font color=red>".lang('Connection failed with %1 Server. Try later.',lang('Mail'))."</font>",
-					'primary'   => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-					'secondary' => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-					'tertiary'  => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
+					'primary'   => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+					'secondary' => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+					'tertiary'  => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
 					'width'     => '100%',
 					'outerborderwidth' => '0',
-					'header_background_image' => $GLOBALS['phpgw']->common->image('phpgwapi/templates/phpgw_website','bg_filler')
+					'header_background_image' => GlobalService::get('phpgw')->common->image('phpgwapi/templates/phpgw_website','bg_filler')
 				)
 			);
 		}
@@ -68,7 +70,7 @@
 				if(strlen($text) > 105)
 					$text = substr($text,0,105).' ...';
 			
-				$link_msg = $GLOBALS['phpgw']->link(
+				$link_msg = GlobalService::get('phpgw')->link(
 						'/'.$current_app.'/index.php',
 						'msgball[msgnum]='.$message.'&msgball[folder]=INBOX');
 				$data[] = array('text' => $text, 'link' => $link_msg);					
@@ -77,31 +79,31 @@
 			$errors = imap_errors();
 			if(is_array($errors)){
 				if( preg_match('/SECURITY PROBLEM: insecure server advertised AUTH=PLAIN/i', $errors[0]) === false){
-				  throw new Exception('IMAP error detected');
+				  throw new \Exception('IMAP error detected');
 				}
 			}
 			imap_close($mbox_stream);
 			
 			$title = $current_name." - ".($num_new_messages > 1 ? lang("You have %1 new messages!","<font color=red>".$num_new_messages."</font>") : ($num_new_messages == 1 ? str_replace("1","<font color=red>1</font>",lang("you have 1 new message!")) : lang("you have no new messages")));			
-			$GLOBALS['phpgw']->translation->add_app($current_app);
+			GlobalService::get('phpgw')->translation->add_app($current_app);
 	
-			if ((isset($prev_currentapp)) && ($prev_currentapp)	&& ($GLOBALS['phpgw_info']['flags']['currentapp'] != $prev_currentapp))		
-				$GLOBALS['phpgw_info']['flags']['currentapp'] = $prev_currentapp;
+			if ((isset($prev_currentapp)) && ($prev_currentapp)	&& (GlobalService::get('phpgw_info')['flags']['currentapp'] != $prev_currentapp))		
+				GlobalService::get('phpgw_info')['flags']['currentapp'] = $prev_currentapp;
 			
 			$portalbox = CreateObject('phpgwapi.listbox',
 				Array(
 					'title'     => $title,
-					'primary'   => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-					'secondary' => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
-					'tertiary'  => $GLOBALS['phpgw_info']['theme']['navbar_bg'],
+					'primary'   => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+					'secondary' => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
+					'tertiary'  => GlobalService::get('phpgw_info')['theme']['navbar_bg'],
 					'width'     => '100%',
 					'outerborderwidth' => '0',
-					'header_background_image' => $GLOBALS['phpgw']->common->image('phpgwapi/templates/phpgw_website','bg_filler')
+					'header_background_image' => GlobalService::get('phpgw')->common->image('phpgwapi/templates/phpgw_website','bg_filler')
 				)
 			);
 	
-			$app_id = $GLOBALS['phpgw']->applications->name2id('expressoMail');
-			$GLOBALS['portal_order'][] = $app_id;
+			$app_id = GlobalService::get('phpgw')->applications->name2id('expressoMail');
+			GlobalService::get('portal_order')[] = $app_id;
 	
 			$var = Array(
 				'up'       => Array('url' => '/set_box.php', 'app' => $app_id),

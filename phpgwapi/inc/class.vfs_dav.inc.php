@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - VFS                                                     *
   * This file written by Jason Wies (Zone) <zone@phpgroupware.org>           *
@@ -64,10 +66,10 @@
 
 		function vfs ()
 		{
-			$this->basedir = $GLOBALS['phpgw_info']['server']['files_dir'];
+			$this->basedir = GlobalService::get('phpgw_info')['server']['files_dir'];
 			$this->fakebase = '/home';
-			$this->working_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$this->working_lid = $GLOBALS['phpgw']->accounts->id2name($this->working_id);
+			$this->working_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$this->working_lid = GlobalService::get('phpgw')->accounts->id2name($this->working_id);
 			$this->now = date ('Y-m-d');
 			$this->override_acl = 0;
 			/*
@@ -106,26 +108,26 @@
 			$this->meta_types = array ('journal', 'journal-deleted');
 
 			/* We store the linked directories in an array now, so we don't have to make the SQL call again */
-			if ($GLOBALS['phpgw_info']['server']['db_type']=='mssql'
-				|| $GLOBALS['phpgw_info']['server']['db_type']=='sybase')
+			if (GlobalService::get('phpgw_info')['server']['db_type']=='mssql'
+				|| GlobalService::get('phpgw_info')['server']['db_type']=='sybase')
 			{
-				$query = $GLOBALS['phpgw']->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE CONVERT(varchar,link_directory) != '' AND CONVERT(varchar,link_name) != ''" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE CONVERT(varchar,link_directory) != '' AND CONVERT(varchar,link_name) != ''" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
 			}
 			else
 			{
-				$query = $GLOBALS['phpgw']->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE (link_directory IS NOT NULL or link_directory != '') AND (link_name IS NOT NULL or link_name != '')" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("SELECT directory, name, link_directory, link_name FROM phpgw_vfs WHERE (link_directory IS NOT NULL or link_directory != '') AND (link_name IS NOT NULL or link_name != '')" . $this->extra_sql (array ('query_type' => VFS_SQL_SELECT)), __LINE__,__FILE__);
 			}
 
 			$this->linked_dirs = array ();
-			while ($GLOBALS['phpgw']->db->next_record ())
+			while (GlobalService::get('phpgw')->db->next_record ())
 			{
-				$this->linked_dirs[] = $GLOBALS['phpgw']->db->Record;
+				$this->linked_dirs[] = GlobalService::get('phpgw')->db->Record;
 			}
 
 			
-			$this->repository = $GLOBALS['phpgw_info']['server']['files_dir'];
-			$this->dav_user=$GLOBALS['phpgw_info']['user']['userid'];
-			$this->dav_pwd=$GLOBALS['phpgw_info']['user']['passwd'];
+			$this->repository = GlobalService::get('phpgw_info')['server']['files_dir'];
+			$this->dav_user=GlobalService::get('phpgw_info')['user']['userid'];
+			$this->dav_pwd=GlobalService::get('phpgw_info')['user']['passwd'];
 			$parsed_url = parse_url($this->repository);
 			$this->dav_host=$parsed_url['host'];
 			$this->dav_port=@isset($parsed_url['port']) ? $parsed_url['port'] : 80;
@@ -153,8 +155,8 @@
 			}
 */	
 			//Reload the overriden_locks
-			$app = $GLOBALS['phpgw_info']['flags']['currentapp'];
-			$session_data = base64_decode($GLOBALS['phpgw']->session->appsession ('vfs_dav',$app));
+			$app = GlobalService::get('phpgw_info')['flags']['currentapp'];
+			$session_data = base64_decode(GlobalService::get('phpgw')->session->appsession ('vfs_dav',$app));
 			$this->override_locks = array();
 			if ($session_data)
 			{
@@ -748,12 +750,12 @@
 
 			if (($data['mask'][0] & RELATIVE_USER) || ($data['mask'][0] & RELATIVE_USER_APP))
 			{
-				$basedir = $basedir . $GLOBALS['phpgw_info']['user']['account_lid'] . $sep;
+				$basedir = $basedir . GlobalService::get('phpgw_info')['user']['account_lid'] . $sep;
 			}
 
 			if ($data['mask'][0] & RELATIVE_USER_APP)
 			{
-				$basedir = $basedir . "." . $GLOBALS['phpgw_info']['flags']['currentapp'] . $sep;
+				$basedir = $basedir . "." . GlobalService::get('phpgw_info')['flags']['currentapp'] . $sep;
 			}
 
 			/* Don't add string if it's a /, just for aesthetics */
@@ -775,7 +777,7 @@
 
 		/*!
 		@function acl_check
-		@abstract Check ACL access to $file for $GLOBALS['phpgw_info']["user"]["account_id"];
+		@abstract Check ACL access to $file for GlobalService::get('phpgw_info')["user"]["account_id"];
 		@param string File to check access of
 		@discussion To check the access for a file or directory, pass 'string'/'relatives'/'must_exist'.
 				To check the access to another user or group, pass 'owner_id'.
@@ -878,7 +880,7 @@
 				$owner_id = 0;
 			}
 
-			$user_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$user_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			/* They always have access to their own files */
 			if ($owner_id == $user_id)
@@ -887,7 +889,7 @@
 			}
 
 			/* Check if they're in the group */
-			$memberships = $GLOBALS['phpgw']->accounts->membership ($user_id);
+			$memberships = GlobalService::get('phpgw')->accounts->membership ($user_id);
 
 			if (is_array ($memberships))
 			{
@@ -990,7 +992,7 @@
 				}
 				else
 				{
-					$currentdir = $GLOBALS['phpgw']->session->appsession('vfs','');
+					$currentdir = GlobalService::get('phpgw')->session->appsession('vfs','');
 					$basedir = $this->getabsolutepath (array(
 							'string'	=> $currentdir . $sep . $data['string'],
 							'mask'	=> array ($data['relatives'][0]),
@@ -1008,7 +1010,7 @@
 				);
 			}
 
-			$GLOBALS['phpgw']->session->appsession('vfs','',$basedir);
+			GlobalService::get('phpgw')->session->appsession('vfs','',$basedir);
 
 			return True;
 		}
@@ -1028,7 +1030,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$currentdir = $GLOBALS['phpgw']->session->appsession('vfs','');
+			$currentdir = GlobalService::get('phpgw')->session->appsession('vfs','');
 
 			if (!$data['full'])
 			{
@@ -1058,7 +1060,7 @@
 			/*If the user really wants to 'view' the file in the browser, it
 			is much smarter simply to redirect them to the files web-accessable
 			url */
-/*			$app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+/*			$app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			if ( ! $data['noview'] && ($app == 'phpwebhosting' || $app = 'filemanager' ))
 			{
 				$this->view($data);
@@ -1191,7 +1193,7 @@
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 			
-			$ls_array = $GLOBALS['phpgw']->vfs->ls (array (
+			$ls_array = GlobalService::get('phpgw')->vfs->ls (array (
 			'string'	=> $data['string'],
 			'relatives'	=> $data['relatives']
 			)
@@ -1228,7 +1230,7 @@
 			
 			if (!strlen($data['token']))
 			{
-				$ls_array = $GLOBALS['phpgw']->vfs->ls (array (
+				$ls_array = GlobalService::get('phpgw')->vfs->ls (array (
 				'string'	=> $data['string'],
 				'relatives'	=> $data['relatives']
 				)
@@ -1270,7 +1272,7 @@
 			
 			if (!strlen($data['token']))
 			{
-				$ls_array = $GLOBALS['phpgw']->vfs->ls (array (
+				$ls_array = GlobalService::get('phpgw')->vfs->ls (array (
 				'string'	=> $data['string'],
 				'relatives'	=> $data['relatives']
 				)
@@ -1451,8 +1453,8 @@ $this->debug('Put complete,  status: '.$status);
 						);
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$p = $this->path_parts (array(
 						      'string'	=> $data['string'],
@@ -1526,7 +1528,7 @@ $this->debug('Put complete,  status: '.$status);
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			$f = $this->path_parts (array(
 					'string'	=> $data['from'],
@@ -1713,7 +1715,7 @@ $this->debug('Put complete,  status: '.$status);
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
 
 			$f = $this->path_parts (array(
 					'string'	=> $data['from'],
@@ -1986,7 +1988,7 @@ $this->debug('Put complete,  status: '.$status);
 					)
 				);
 
-				$query = $GLOBALS['phpgw']->db->query ("DELETE FROM phpgw_vfs WHERE directory='$p->fake_leading_dirs_clean' AND name='$p->fake_name_clean'" . $this->extra_sql (array ('query_type' => VFS_SQL_DELETE)), __LINE__, __FILE__);
+				$query = GlobalService::get('phpgw')->db->query ("DELETE FROM phpgw_vfs WHERE directory='$p->fake_leading_dirs_clean' AND name='$p->fake_name_clean'" . $this->extra_sql (array ('query_type' => VFS_SQL_DELETE)), __LINE__, __FILE__);
 
 				//rmdir ($p->real_full_path);
 				$this->dav_client->delete($p->real_full_path.'/','Infinity', $this->override_locks[$p->real_full_path]);
@@ -2025,8 +2027,8 @@ $this->debug('Put complete,  status: '.$status);
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$p = $this->path_parts (array(
 					'string'	=> $data['string'],
@@ -2076,7 +2078,7 @@ $this->debug('Put complete,  status: '.$status);
 					$conf->read_repository();
 					if (!$conf->config_data['acl_default'] == 'grant')
 					{
-						$htaccess = 'require user '.$GLOBALS['phpgw_info']['user']['account_lid'];
+						$htaccess = 'require user '.GlobalService::get('phpgw_info')['user']['account_lid'];
 						if ( ! $this->write(array(
 								'string' =>  $p->fake_full_path.'/.htaccess',
 								'content' => $htaccess,
@@ -2116,8 +2118,8 @@ $this->debug('Put complete,  status: '.$status);
 
 			$data = array_merge ($this->default_values ($data, $default_values), $data);
 
-			$account_id = $GLOBALS['phpgw_info']['user']['account_id'];
-			$currentapp = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$account_id = GlobalService::get('phpgw_info')['user']['account_id'];
+			$currentapp = GlobalService::get('phpgw_info')['flags']['currentapp'];
 
 			$vp = $this->path_parts (array(
 					'string'	=> $data['vdir'],
@@ -2219,19 +2221,19 @@ $this->debug('Put complete,  status: '.$status);
 			}
 			if ($id=$data['attributes']['owner_id'])
 			{
-				$GLOBALS['phpgw']->accounts->get_account_name($id,&$lid,&$fname,&$lname);
+				GlobalService::get('phpgw')->accounts->get_account_name($id,&$lid,&$fname,&$lname);
 				$dav_properties['dc:publisher'] = $fname .' '. $lname;
 				$dav_properties['publisher_id'] = $id;
 			}
 			if ($id=$data['attributes']['createdby_id'])
 			{
-				$GLOBALS['phpgw']->accounts->get_account_name($id,&$lid,&$fname,&$lname);
+				GlobalService::get('phpgw')->accounts->get_account_name($id,&$lid,&$fname,&$lname);
 				$dav_properties['dc:creator'] = $fname .' '. $lname;
 				$dav_properties['creator_id'] = $id;
 			}
 			if ($id=$data['attributes']['modifiedby_id'])
 			{
-				$GLOBALS['phpgw']->accounts->get_account_name($id,&$lid,&$fname,&$lname);
+				GlobalService::get('phpgw')->accounts->get_account_name($id,&$lid,&$fname,&$lname);
 				$dav_properties['dc:contributor'] = $fname .' '. $lname;
 				$dav_properties['contributor_id'] = $id;
 			}
@@ -2279,7 +2281,7 @@ $this->debug('Put complete,  status: '.$status);
 			elseif (preg_match ("+^$this->fakebase\/(.*)$+U", $p->fake_full_path, $matches))
 			{
 				$set_attributes_array = Array(
-					'owner_id' => $GLOBALS['phpgw']->accounts->name2id ($matches[1])
+					'owner_id' => GlobalService::get('phpgw')->accounts->name2id ($matches[1])
 				);
 			}
 			else
@@ -2904,14 +2906,14 @@ $this->debug('ls:returning 3:');
 		function save_session()
 		{
 			//Save the overrided locks in the session
-			$app = $GLOBALS['phpgw_info']['flags']['currentapp'];
+			$app = GlobalService::get('phpgw_info')['flags']['currentapp'];
 			$a = array();
 			foreach ($this->override_locks as $name => $token)
 			{
 				$a[] = $name.';'.$token;	
 			}	
 			$session_data = implode('\n', $a);
-			$this->session = $GLOBALS['phpgw']->session->appsession ('vfs_dav',$app, base64_encode($session_data));
+			$this->session = GlobalService::get('phpgw')->session->appsession ('vfs_dav',$app, base64_encode($session_data));
 				
 		}	
 	}

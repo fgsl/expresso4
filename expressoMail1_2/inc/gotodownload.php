@@ -1,6 +1,8 @@
 <?php
-if(!isset($GLOBALS['phpgw_info'])){
-	$GLOBALS['phpgw_info']['flags'] = array(
+use Expresso\Core\GlobalService;
+
+if(!isset(GlobalService::get('phpgw_info'))){
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'currentapp' => 'expressoMail1_2',
 		'nonavbar'   => true,
 		'noheader'   => true
@@ -167,7 +169,7 @@ require_once '../../header.inc.php';
 		}
 		else
 		{
-			if (strstr($strFileName,$GLOBALS['phpgw']->session->sessionid)&&file_exists($strFileName))
+			if (strstr($strFileName,GlobalService::get('phpgw')->session->sessionid)&&file_exists($strFileName))
 			{
 			    header("Content-Type: $ContentType");
 			    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -179,9 +181,9 @@ require_once '../../header.inc.php';
 			    
 			    if( file_exists($strFileName) )
 			    {
-			    	if( is_dir($GLOBALS['phpgw_info']['server']['temp_dir'] ."/export_" . $_SESSION[ 'phpgw_session' ][ 'session_id' ]) )
+			    	if( is_dir(GlobalService::get('phpgw_info')['server']['temp_dir'] ."/export_" . $_SESSION[ 'phpgw_session' ][ 'session_id' ]) )
 			    	{
-			    		exec("rm -rf ".$GLOBALS['phpgw_info']['server']['temp_dir'] ."/export_" . $_SESSION[ 'phpgw_session' ][ 'session_id' ]);
+			    		exec("rm -rf ".GlobalService::get('phpgw_info')['server']['temp_dir'] ."/export_" . $_SESSION[ 'phpgw_session' ][ 'session_id' ]);
 			    	}
 			    }
 			}
@@ -190,9 +192,9 @@ require_once '../../header.inc.php';
 			    header("HTTP/1.1 404 Not Found");
 			}
 
-			$temp_dir = empty($GLOBALS['phpgw_info']['server']['temp_dir'])? '/tmp' : $GLOBALS['phpgw_info']['server']['temp_dir'];
+			$temp_dir = empty(GlobalService::get('phpgw_info')['server']['temp_dir'])? '/tmp' : GlobalService::get('phpgw_info')['server']['temp_dir'];
 			
-			if (preg_match("#^".$temp_dir."/(".$GLOBALS['phpgw']->session->sessionid."/)*[A-z]+_".$GLOBALS['phpgw']->session->sessionid."[A-z0-9]*(\.[A-z]{3,4})?$#",$strFileName))
+			if (preg_match("#^".$temp_dir."/(".GlobalService::get('phpgw')->session->sessionid."/)*[A-z]+_".GlobalService::get('phpgw')->session->sessionid."[A-z0-9]*(\.[A-z]{3,4})?$#",$strFileName))
 			{
 				if ( ! preg_match("#^".dirname( __FILE__ ) . '/../tmpLclAtt'."/source_#",$strFileName)) {
 					//reset time limit for big files

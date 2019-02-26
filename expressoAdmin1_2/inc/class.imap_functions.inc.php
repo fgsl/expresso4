@@ -122,7 +122,7 @@ class imap_functions
 		try {
 			$imap = new imap( $this->_profile, $uid );
 			$imap->clean_shared();
-		} catch( Exception $e) {}
+		} catch( \Exception $e) {}
 		
 		$result['status'] = true;
 
@@ -145,7 +145,7 @@ class imap_functions
 		try {
 			$imap = new imap( $this->_profile, $uid );
 			$result['hasLostShare'] = ( count( $imap->get_acl( 'INBOX' ) ) > 1 ) || count( $imap->get_shared( 'INBOX' ) );
-		} catch( Exception $e) {}
+		} catch( \Exception $e) {}
 		
 		if ($this->_imap === false)
 			return array_merge($result,array('mailbox_error' => 'couldntOpenStream'));
@@ -207,7 +207,7 @@ class imap_functions
 		try {
 			$imap = new imap( $this->_profile, $uid );
 			$shared = $imap->get_shared();
-		} catch( Exception $e) {
+		} catch( \Exception $e) {
 			$result['status'] = false;
 			$result['msg'] = $this->functions->lang('Server returns') . ': ' . $e->getMessage();
 			return $result;
@@ -222,7 +222,7 @@ class imap_functions
 		
 		try {
 			$imap->clean_shared( $shared );
-		} catch( Exception $e) {}
+		} catch( \Exception $e) {}
 		
 		return $result;
 	}
@@ -275,7 +275,7 @@ class imap_functions
 		try {
 			$imap = new imap( $this->_profile, $old_mailbox );
 			$shared = $imap->get_shared();
-		} catch( Exception $e) {
+		} catch( \Exception $e) {
 			$result['status'] = false;
 			$result['msg'] = $this->functions->lang('Server returns') . ': ' . $e->getMessage();
 			return $result;
@@ -316,7 +316,7 @@ class imap_functions
 					foreach ( $params['mbox'] as $path => $acl )
 						$imap->rename_acl( array( 'user', $user_share, $path ), $old_mailbox, $new_mailbox );
 				
-			} catch( Exception $e) {}
+			} catch( \Exception $e) {}
 			
 		}
 		
@@ -430,7 +430,7 @@ class imap_functions
 			$async->log($tag.'init: '.$uid.' from: '.$old_profile['imapServer'].' to: '.$new_profile['imapServer']);
 			
 			$old_imap = new imap( $old_profile, $uid );
-			if (!$old_imap->has_inbox()) throw new Exception('Inbox not exists in origin');
+			if (!$old_imap->has_inbox()) throw new \Exception('Inbox not exists in origin');
 			
 			$new_imap = new imap( $new_profile, $uid );
 			
@@ -440,7 +440,7 @@ class imap_functions
 			// If the inbox already exists in the destination, choose delete or throw an exception
 			if ( $new_imap->has_inbox() ) {
 				if ( $force_delete ) $new_imap->delete_inbox();
-				else throw new Exception('Inbox already exists in destiny');
+				else throw new \Exception('Inbox already exists in destiny');
 			}
 			
 			foreach ($old_imap->list_folders() as $mailbox) {
@@ -452,7 +452,7 @@ class imap_functions
 				// Set current mailbox in origin and destiny
 				$async->log($tag.'sync folder in origin and destiny');
 				if ( !($old_imap->set_mailbox($mailbox) && $new_imap->set_mailbox($mailbox)) )
-					throw new Exception('Cannot open mailbox');
+					throw new \Exception('Cannot open mailbox');
 				
 				// Copy mail one by one
 				$num = $old_imap->get_num_msgs();
@@ -472,7 +472,7 @@ class imap_functions
 			
 			$async->log($tag.'sieve: '.$uid);
 			$result = $this->sieve_functions->move_scripts($uid, $old_profile, $new_profile);
-			if ( !$result['status'] ) throw new Exception($result['msg']);
+			if ( !$result['status'] ) throw new \Exception($result['msg']);
 			
 			try {
 				$async->log($tag.'delete: '.$uid);
@@ -483,7 +483,7 @@ class imap_functions
 			
 			$status = true;
 			
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			$async->log($tag.'exception: '.$e->getMessage());
 		}
 		

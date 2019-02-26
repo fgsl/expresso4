@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 /**************************************************************************\
 * eGroupWare - Admin - delete ACL records of deleted accounts              *
 * http://www.egroupware.org                                                *
@@ -21,26 +23,26 @@
  * @license GPL
  */
 
-$GLOBALS['phpgw_info'] = array(
+GlobalService::get('phpgw_info') = array(
 	'flags' => array(
 		'currentapp' => 'admin',
 ));
 include('../header.inc.php');
 
-if (!$GLOBALS['phpgw_info']['user']['apps']['admin'])
+if (!GlobalService::get('phpgw_info')['user']['apps']['admin'])
 {
 	echo '<p align="center">'.lang('Permission denied')."</p>\n";
 }
 else
 {
 	$deleted = 0;
-	if (($all_accounts = $GLOBALS['phpgw']->accounts->search(array('type'=>'both'))))
+	if (($all_accounts = GlobalService::get('phpgw')->accounts->search(array('type'=>'both'))))
 	{
 		$all_accounts = array_keys($all_accounts);
-		$GLOBALS['phpgw']->db->query("DELETE FROM phpgw_acl WHERE acl_account NOT IN (".implode(',',$all_accounts).") OR acl_appname='phpgw_group' AND acl_location NOT IN ('".implode("','",$all_accounts)."')",__LINE__,__FILE__);
-		$deleted = $GLOBALS['phpgw']->db->affected_rows();
+		GlobalService::get('phpgw')->db->query("DELETE FROM phpgw_acl WHERE acl_account NOT IN (".implode(',',$all_accounts).") OR acl_appname='phpgw_group' AND acl_location NOT IN ('".implode("','",$all_accounts)."')",__LINE__,__FILE__);
+		$deleted = GlobalService::get('phpgw')->db->affected_rows();
 	}
 	echo '<p align="center">'.lang('%1 ACL records of not (longer) existing accounts deleted.',$deleted)."</p>\n";
 }
-$GLOBALS['phpgw']->common->phpgw_footer();
-$GLOBALS['phpgw']->common->phpgw_exit();
+GlobalService::get('phpgw')->common->phpgw_footer();
+GlobalService::get('phpgw')->common->phpgw_exit();

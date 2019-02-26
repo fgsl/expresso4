@@ -1,5 +1,7 @@
 <?php
 
+use Expresso\Core\GlobalService;
+
 function set_response( $data, $isJSON = true, $isUTF8 = true ){
 	header( 'Content-Type: '.( $isJSON? 'application/json' : 'text/html' ).'; charset='.( $isUTF8? 'utf-8' : 'iso-8859-1' ).';' );
 	$datachr = ( $isUTF8? utf8enc( $data ) : $data );
@@ -17,7 +19,7 @@ function sconv( $obj ) {
 	return is_string( $obj )? utf8_encode($obj) : $obj;
 }
 
-$GLOBALS['phpgw_info']['flags'] = array(
+GlobalService::get('phpgw_info')['flags'] = array(
 	'currentapp' => 'expressoAdmin1_2',
 	'nonavbar'   => true,
 	'noheader'   => true,

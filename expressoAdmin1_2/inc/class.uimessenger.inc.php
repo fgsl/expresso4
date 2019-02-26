@@ -1,4 +1,6 @@
 <?php
+use Expresso\Core\GlobalService;
+
 class uimessenger
 {
 	var $public_functions = array(
@@ -12,17 +14,17 @@ class uimessenger
 	function uimessenger()
 	{
 		$this->_so = CreateObject('expressoAdmin1_2.somessenger');
-		if ( !@is_object($GLOBALS['phpgw']->js) ) $GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+		if ( !@is_object(GlobalService::get('phpgw')->js) ) GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 	}
 	
 	function save()
 	{
 		if ( !( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ) ) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			return false;
 		}
 		
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
 		
 		$result = $this->_so->setMessengerConf( $_POST );
 		if ( $result === true ) $this->_setResponse( utf8_encode(lang('Configuration saved successfully')) );
@@ -32,11 +34,11 @@ class uimessenger
 	function config()
 	{
 		if ( !( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ) ) {
-			$GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+			GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 			return false;
 		}
 		
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) $this->_setResponse( null, 401 );
 		
 		$result = array(
 			Messenger::CONFIG_ENABLED        => $this->_so->_im->enabled,
@@ -61,19 +63,19 @@ class uimessenger
 	
 	function edit()
 	{
-		if ( !$GLOBALS['phpgw']->acl->check('run',1,'admin') ) $GLOBALS['phpgw']->redirect($GLOBALS['phpgw']->link('/admin/index.php'));
+		if ( !GlobalService::get('phpgw')->acl->check('run',1,'admin') ) GlobalService::get('phpgw')->redirect(GlobalService::get('phpgw')->link('/admin/index.php'));
 		
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
-		$GLOBALS['phpgw']->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
-		$GLOBALS['phpgw']->js->validate_file('jscode','connector','expressoAdmin1_2');
-		$GLOBALS['phpgw']->js->validate_file('jscode','lang','expressoAdmin1_2');
-		$GLOBALS['phpgw']->js->validate_file('jscode','messenger_config','expressoAdmin1_2');
-		$GLOBALS['phpgw']->css->validate_file('./prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
-		$GLOBALS['phpgw']->css->validate_file('expressoAdmin1_2/templates/default/css/custom.css');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-latest.min.js');
+		GlobalService::get('phpgw')->js->add('src','./prototype/plugins/jquery/jquery-ui-latest.min.js');
+		GlobalService::get('phpgw')->js->validate_file('jscode','connector','expressoAdmin1_2');
+		GlobalService::get('phpgw')->js->validate_file('jscode','lang','expressoAdmin1_2');
+		GlobalService::get('phpgw')->js->validate_file('jscode','messenger_config','expressoAdmin1_2');
+		GlobalService::get('phpgw')->css->validate_file('./prototype/plugins/jquery/css/redmond/jquery-ui-latest.min.css');
+		GlobalService::get('phpgw')->css->validate_file('expressoAdmin1_2/templates/default/css/custom.css');
 		
-		unset($GLOBALS['phpgw_info']['flags']['nonavbar']);
-		$GLOBALS['phpgw_info']['flags']['app_header'] = $GLOBALS['phpgw_info']['apps']['expressoAdmin1_2']['title'].' - '.lang('Expresso Messenger');
-		$GLOBALS['phpgw']->common->phpgw_header();
+		unset(GlobalService::get('phpgw_info')['flags']['nonavbar']);
+		GlobalService::get('phpgw_info')['flags']['app_header'] = GlobalService::get('phpgw_info')['apps']['expressoAdmin1_2']['title'].' - '.lang('Expresso Messenger');
+		GlobalService::get('phpgw')->common->phpgw_header();
 		
 		$p = CreateObject('phpgwapi.Template',PHPGW_APP_TPL);
 		$p->set_file(array('messenger' => 'messenger.tpl'));

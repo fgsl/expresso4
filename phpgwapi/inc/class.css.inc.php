@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * Expresso API - CSS                                                       *
   * ------------------------------------------------------------------------ *
@@ -13,9 +15,9 @@
        *
        * Only instanstiate this class using:
        * <code>
-       *  if(!@is_object($GLOBALS['phpgw']->css))
+       *  if(!@is_object(GlobalService::get('phpgw')->css))
        *  {
-       *    $GLOBALS['phpgw']->css = CreateObject('phpgwapi.css');
+       *    GlobalService::get('phpgw')->css = CreateObject('phpgwapi.css');
        *  }
        * </code>
        */
@@ -40,15 +42,15 @@
 
 		function get_css()
 		{
-			$path = ( ! empty( $GLOBALS[ 'phpgw_info' ][ 'server' ][ 'webserver_url' ] ) ) ?
-				$GLOBALS[ 'phpgw_info' ][ 'server' ][ 'webserver_url' ] : '/';
+			$path = ( ! empty( GlobalService::get( 'phpgw_info' )[ 'server' ][ 'webserver_url' ] ) ) ?
+				GlobalService::get( 'phpgw_info' )[ 'server' ][ 'webserver_url' ] : '/';
 
 			if ( strpos( $path, '/' ) != ( strlen( $path ) - 1 ) )
 				$path .= '/';
 
 			foreach ( $this -> files as $cssFile )
 			{
-				if ( $GLOBALS[ 'phpgw_info' ][ 'server' ][ 'csspacker' ] == "True" )
+				if ( GlobalService::get( 'phpgw_info' )[ 'server' ][ 'csspacker' ] == "True" )
 				{
 					if ( ! file_exists( PHPGW_SERVER_ROOT . SEP . $cssFile . 'pack.css' ) )
 						$this -> create_pack( $cssFile );

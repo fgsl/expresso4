@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /**************************************************************************\
   * eGroupWare API - phpgwapi footer                                         *
   * This file written by Dan Kuykendall <seek3r@phpgroupware.org>            *
@@ -36,18 +38,18 @@
 	if (PHPGW_APP_INC != PHPGW_API_INC &&	// this prevents an endless inclusion on the homepage 
 		                                	// (some apps set currentapp in hook_home => it's not releyable)
 		(file_exists (PHPGW_APP_INC . '/footer.inc.php') || isset($_GET['menuaction'])) &&
-		$GLOBALS['phpgw_info']['flags']['currentapp'] != 'home' &&
-		$GLOBALS['phpgw_info']['flags']['currentapp'] != 'login' &&
-		$GLOBALS['phpgw_info']['flags']['currentapp'] != 'logout' &&
-		!@$GLOBALS['phpgw_info']['flags']['noappfooter'])
+		GlobalService::get('phpgw_info')['flags']['currentapp'] != 'home' &&
+		GlobalService::get('phpgw_info')['flags']['currentapp'] != 'login' &&
+		GlobalService::get('phpgw_info')['flags']['currentapp'] != 'logout' &&
+		!@GlobalService::get('phpgw_info')['flags']['noappfooter'])
 	{
 		if ($_GET['menuaction'])
 		{
 			list($app,$class,$method) = explode('.',$_GET['menuaction']);
-			if (is_array($GLOBALS[$class]->public_functions) && isset($GLOBALS[$class]->public_functions['footer']))
+			if (is_array(GlobalService::get($class)->public_functions) && isset(GlobalService::get($class)->public_functions['footer']))
 			{
-//				eval("\$GLOBALS[$class]->footer();");
-				$GLOBALS[$class]->footer();
+//				eval("\GlobalService::get($class)->footer();");
+				GlobalService::get($class)->footer();
 			}
 			elseif(file_exists(PHPGW_APP_INC.'/footer.inc.php'))
 			{
@@ -59,9 +61,9 @@
 			include(PHPGW_APP_INC . '/footer.inc.php');
 		}
 	}
-	if ($GLOBALS['phpgw_info']['flags']['need_footer'])
+	if (GlobalService::get('phpgw_info')['flags']['need_footer'])
 	{
-		echo $GLOBALS['phpgw_info']['flags']['need_footer'];
+		echo GlobalService::get('phpgw_info')['flags']['need_footer'];
 	}
 	if(function_exists('parse_navbar_end'))
 	{
@@ -69,6 +71,6 @@
 	}
 	if (DEBUG_TIMER)
 	{
-		$GLOBALS['debug_timer_stop'] = perfgetmicrotime();
-		echo 'Page loaded in ' . ($GLOBALS['debug_timer_stop'] - $GLOBALS['debug_timer_start']) . ' seconds.';
+		GlobalService::set('debug_timer_stop',perfgetmicrotime());
+		echo 'Page loaded in ' . (GlobalService::get('debug_timer_stop') - GlobalService::get('debug_timer_start')) . ' seconds.';
 	}

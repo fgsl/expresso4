@@ -1,6 +1,8 @@
 <?php			
 	
-	$GLOBALS['phpgw_info']['flags'] = array(
+	use Expresso\Core\GlobalService;
+
+	GlobalService::get('phpgw_info')['flags'] = array(
 		'noheader' => True,
 		'nonavbar' => True,
 		'currentapp' => 'calendar'		
@@ -9,15 +11,15 @@
 	include('../../../header.inc.php');
 	include('../../../phpgwapi/templates/classic/head.inc.php');
 
-	$owner = $GLOBALS['_GET']['owner'];
+	$owner = GlobalService::get('_GET')['owner'];
 	
-	if(!@is_object($GLOBALS['phpgw']->js))	{
-		$GLOBALS['phpgw']->js = CreateObject('phpgwapi.javascript');
+	if(!@is_object(GlobalService::get('phpgw')->js))	{
+		GlobalService::get('phpgw')->js = CreateObject('phpgwapi.javascript');
 	}
 	
-	$GLOBALS['phpgw']->js->validate_file('jscode','scripts','preferences');		
+	GlobalService::get('phpgw')->js->validate_file('jscode','scripts','preferences');		
 	
-	$t = &$GLOBALS['phpgw']->template;						
+	$t = &GlobalService::get('phpgw')->template;						
 	// seta o Template
 	$t->set_file(array('addUser_t' => '../../../calendar/templates/classic/listUsers.tpl'));
 	
@@ -30,27 +32,27 @@
 	$obj_org_sector = CreateObject('phpgwapi.sector_search_ldap');
 	if ((!$post_select_organization) && (!$post_select_sector)) //primeira vez
 	{
-		$user_org = $obj_account->get_organization($GLOBALS['phpgw_info']['user']['account_dn']);
-		$user_sector = $obj_account->get_sector($GLOBALS['phpgw_info']['user']['account_dn']);
-		$user_context = $obj_account->get_context($GLOBALS['phpgw_info']['user']['account_dn']);
+		$user_org = $obj_account->get_organization(GlobalService::get('phpgw_info')['user']['account_dn']);
+		$user_sector = $obj_account->get_sector(GlobalService::get('phpgw_info')['user']['account_dn']);
+		$user_context = $obj_account->get_context(GlobalService::get('phpgw_info')['user']['account_dn']);
 		
-		$organizations_info = $obj_org_sector->organization_search($GLOBALS['phpgw_info']['server']['ldap_context']);
+		$organizations_info = $obj_org_sector->organization_search(GlobalService::get('phpgw_info')['server']['ldap_context']);
 		@asort($organizations_info);
 		@reset($organizations_info);					
-		$sectors_info = $obj_org_sector->sector_search('ou='.$user_org.','.$GLOBALS['phpgw_info']['server']['ldap_context']);
+		$sectors_info = $obj_org_sector->sector_search('ou='.$user_org.','.GlobalService::get('phpgw_info')['server']['ldap_context']);
 	}
 	else //mudou uma das combos
 	{
 		$user_org = $post_select_organization;
 		$user_sector = $post_select_sector;
 		if ($change_organization == "True")
-			$user_context = 'ou='.$user_org.','.$GLOBALS['phpgw_info']['server']['ldap_context'];
+			$user_context = 'ou='.$user_org.','.GlobalService::get('phpgw_info')['server']['ldap_context'];
 		else
 			$user_context = $post_select_sector;
-		$organizations_info = $obj_org_sector->organization_search($GLOBALS['phpgw_info']['server']['ldap_context']);
+		$organizations_info = $obj_org_sector->organization_search(GlobalService::get('phpgw_info')['server']['ldap_context']);
 		@asort($organizations_info);
 		@reset($organizations_info);					
-		$sectors_info = $obj_org_sector->sector_search('ou='.$user_org.','.$GLOBALS['phpgw_info']['server']['ldap_context']);
+		$sectors_info = $obj_org_sector->sector_search('ou='.$user_org.','.GlobalService::get('phpgw_info')['server']['ldap_context']);
 	}
 	
 	foreach($organizations_info as $organization)
@@ -74,7 +76,7 @@
 		$combo_organization .= '>' .$organization.'</option>'."\n";
 	}
 	
-	$combo_sector .= '<option value="ou='.$user_org.','.$GLOBALS['phpgw_info']['server']['ldap_context'].'"> --------- </option>'."\n";
+	$combo_sector .= '<option value="ou='.$user_org.','.GlobalService::get('phpgw_info')['server']['ldap_context'].'"> --------- </option>'."\n";
 	foreach($sectors_info as $sector)
 	{
 		if ($sector->sector_level == 1)
@@ -104,11 +106,11 @@
 		$combo_sector .= '>' .$sector->sector_name.'</option>'."\n";
 	}			
 	
-	// Monta lista de Grupos e Usuários
+	// Monta lista de Grupos e Usuï¿½rios
 	$users = Array();
 	$groups = Array();
 
-	$ds = $GLOBALS['phpgw']->common->ldapConnect();
+	$ds = GlobalService::get('phpgw')->common->ldapConnect();
     if ($ds) 
     {
 		$sr=ldap_list($ds, $user_context, ("(&(cn=*)(phpgwaccounttype=g))"));
@@ -142,7 +144,7 @@
 	}
 	
 	if(count($users))
-		$options .= '<option  value="-1" disabled>-------------------&nbsp;&nbsp;&nbsp;&nbsp;Usuários&nbsp;&nbsp;&nbsp;&nbsp;------------------ </option>'."\n";
+		$options .= '<option  value="-1" disabled>-------------------&nbsp;&nbsp;&nbsp;&nbsp;Usuï¿½rios&nbsp;&nbsp;&nbsp;&nbsp;------------------ </option>'."\n";
 	
 	foreach($users as $id => $user_array) {
 		if($owner != $id){
@@ -164,5 +166,5 @@
 	$t->set_var('combo_sector', $combo_sector);
 	$t->parse('out','addUser_t',true);
 	$t->p('out');
-	$GLOBALS['phpgw']->common->phpgw_exit();	
+	GlobalService::get('phpgw')->common->phpgw_exit();	
 ?>

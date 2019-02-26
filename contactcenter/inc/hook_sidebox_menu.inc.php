@@ -1,4 +1,6 @@
 <?php
+  use Expresso\Core\GlobalService;
+
   /***************************************************************************\
   * Expresso Livre - Contact Center                                           *
   * http://www.expressolivre.org                                              *
@@ -20,10 +22,10 @@
 
 	display_sidebox can be called as much as you like
  */
-	if ($GLOBALS['phpgw_info']['user']['apps']['preferences'])	{
+	if (GlobalService::get('phpgw_info')['user']['apps']['preferences'])	{
 		$menu_title = lang('Preferences');
 		$file = Array(
-			'Grant Access'=>$GLOBALS['phpgw']->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app=contactcenter')
+			'Grant Access'=>GlobalService::get('phpgw')->link('/index.php','menuaction=preferences.uiaclprefs.index&acl_app=contactcenter')
 		);
 		display_sidebox($appname,$menu_title,$file);
 	}

@@ -22,55 +22,55 @@ class Request {
     
     /**
      * The requested URI
-     * @var str
+     * @var string
      */
     public $uri;
     
     /**
      * The URI where the front controller is positioned in the server URI-space
-     * @var str
+     * @var string
      */
     public $baseUri = '';
     
     /**
      * Array of possible URIs based upon accept and accept-language request headers in order of preference
-     * @var str[]
+     * @var string[]
      */
     public $negotiatedUris = array();
     
     /**
      * Array of possible URIs based upon accept request headers in order of preference
-     * @var str[]
+     * @var string[]
      */
     public $formatNegotiatedUris = array();
     
     /**
      * Array of possible URIs based upon accept-language request headers in order of preference
-     * @var str[]
+     * @var string[]
      */
     public $languageNegotiatedUris = array();
     
     /**
      * Array of accept headers in order of preference
-     * @var str[][]
+     * @var string[][]
      */
     public $accept = array();
     
     /**
      * Array of accept-language headers in order of preference
-     * @var str[][]
+     * @var string[][]
      */
     public $acceptLang = array();
     
     /**
      * Array of accept-encoding headers in order of preference
-     * @var str[]
+     * @var string[]
      */
     public $acceptEncoding = array();
     
     /**
      * Map of file/URI extensions to mimetypes
-     * @var str[]
+     * @var string[]
      */
     public $mimetypes = array(
         'html' => 'text/html',
@@ -100,7 +100,7 @@ class Request {
     
     /**
      * Supported HTTP methods
-     * @var str[]
+     * @var string[]
      */
     public $HTTPMethods = array(
         'GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'
@@ -108,44 +108,44 @@ class Request {
     
     /**
      * Allowed resource methods
-     * @var str[]
+     * @var string[]
      */
     public $allowedMethods = array();
     
     /**
      * HTTP request method of incoming request
-     * @var str
+     * @var string
      */
     public $method = 'GET';
     
     /**
      * Body data of incoming request
-     * @var str
+     * @var string
      */
     public $data;
     
     /**
      * Array of if-match etags
-     * @var str[]
+     * @var string[]
      */
     public $ifMatch = array();
     
     /**
      * Array of if-none-match etags
-     * @var str[]
+     * @var string[]
      */
     public $ifNoneMatch = array();
     
     /**
      * The resource classes loaded and how they are wired to URIs
-     * @var str[]
+     * @var string[]
      */
     public $resources = array();
     
     /**
      * A list of URL to namespace/package mappings for routing requests to a
      * group of resources that are wired into a different URL-space
-     * @var str[]
+     * @var string[]
      */
     public $mounts = array();
     
@@ -379,7 +379,7 @@ class Request {
      */
     protected function getResourceClassDetails($className) {
         
-        $resourceReflector = new ReflectionClass($className);
+        $resourceReflector = new \ReflectionClass($className);
         $comment = $resourceReflector->getDocComment();
         
         $className = $resourceReflector->getName();
@@ -418,7 +418,7 @@ class Request {
     
     /**
      * Convert the object into a string suitable for printing
-     * @return str
+     * @return string
      * @codeCoverageIgnore
      */
     function __toString() {
@@ -530,7 +530,7 @@ class Request {
             if (!$resource['loaded']) { // autoload
                 //echo $resource['class'];
                 if (!class_exists($resource['class'])) {
-                    throw new Exception('Unable to load resource');
+                    throw new \Exception('Unable to load resource');
                 }
                 $resourceDetails = $this->getResourceClassDetails($resource['class']);
                 $resource = $this->resources[$uri] = array(
@@ -581,7 +581,7 @@ class Request {
      * Return the most acceptable of the given formats based on the accept array
      * @param str[] formats
      * @param str default The default format if the requested format does not match $formats
-     * @return str
+     * @return string
      */
     function mostAcceptable($formats, $default = NULL) {
         foreach (call_user_func_array('array_merge', $this->accept) as $format) {
@@ -612,7 +612,7 @@ class Resource {
     
     /**
      * Convert the object into a string suitable for printing
-     * @return str
+     * @return string
      * @codeCoverageIgnore
      */
     function __toString() {
@@ -636,7 +636,7 @@ class Resource {
             method_exists($this, $request->method)
         ) {
             
-            $method = new ReflectionMethod($this, $request->method);
+            $method = new \ReflectionMethod($this, $request->method);
             $parameters = array();
             foreach ($method->getParameters() as $param) {
                 if ($param->name == 'request') {
@@ -657,7 +657,7 @@ class Resource {
             
             $responseClassName = class_exists('Tonic\\Response') ? 'Tonic\\Response' : 'Response';
             if (!$response || !($response instanceof $responseClassName)) {
-                throw new Exception('Method '.$request->method.' of '.get_class($this).' did not return a Response object');
+                throw new \Exception('Method '.$request->method.' of '.get_class($this).' did not return a Response object');
             }
             
         } else {
@@ -722,13 +722,13 @@ class Response {
     
     /**
      * The HTTP headers to send
-     * @var str[]
+     * @var string[]
      */
     public $headers = array();
     
     /**
      * The HTTP response body to send
-     * @var str
+     * @var string
      */
     public $body;
     
@@ -752,7 +752,7 @@ class Response {
     
     /**
      * Convert the object into a string suitable for printing
-     * @return str
+     * @return string
      * @codeCoverageIgnore
      */
     function __toString() {
@@ -826,7 +826,7 @@ class Response {
  * Exception class for HTTP response errors
  * @namespace Tonic\Lib
  */
-class ResponseException extends Exception {
+class ResponseException extends \Exception {
     
     /**
      * Generate a default response for this exception

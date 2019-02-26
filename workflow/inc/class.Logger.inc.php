@@ -13,7 +13,7 @@
 require_once 'log/Log.php';
 
 /**
- * Classe de logs de dentro dos processos e módulo
+ * Classe de logs de dentro dos processos e mï¿½dulo
  * @package Workflow
  * @author Guilherme Striquer Bisotto - gbisotto@celepar.pr.gov.br
  * @license http://www.gnu.org/copyleft/gpl.html GPL
@@ -22,7 +22,7 @@ require_once 'log/Log.php';
 class Logger
 {
 	/**
-	 * @var object $db Objeto de banco de dados já conectado
+	 * @var object $db Objeto de banco de dados jï¿½ conectado
 	 * @access private
 	 */
 	private $db = null;
@@ -34,13 +34,13 @@ class Logger
 	private $dbGalaxia = null;
 
 	/**
-	 * @var string $logPath Caminho onde será salvo o arquivo de log, caso o tipo de log Log_file seja adicionado à composição
+	 * @var string $logPath Caminho onde serï¿½ salvo o arquivo de log, caso o tipo de log Log_file seja adicionado ï¿½ composiï¿½ï¿½o
 	 * @access private
 	 */
 	private $logPath = null;
 
 	/**
-	 * @var string $logFileName Nome do arquivo de log, caso o tipo de log Log_file seja adicionado à composição
+	 * @var string $logFileName Nome do arquivo de log, caso o tipo de log Log_file seja adicionado ï¿½ composiï¿½ï¿½o
 	 * @access private
 	 */
 	private $logFileName = 'workflow.log';
@@ -58,7 +58,7 @@ class Logger
 	private $logsAllowed = array();
 
 	/**
-	 * @var array $logTypes Array com ponteiros para os objetos de log adicionados à composição
+	 * @var array $logTypes Array com ponteiros para os objetos de log adicionados ï¿½ composiï¿½ï¿½o
 	 * @access private
 	 */
 	private $logTypes = array();
@@ -70,7 +70,7 @@ class Logger
 	private $log = null;
 
 	/**
-	 * @var int $logLevel nível de log atualmente configurado
+	 * @var int $logLevel nï¿½vel de log atualmente configurado
 	 * @access protected
 	 */
 	protected $logLevel = null;
@@ -78,7 +78,7 @@ class Logger
 	/**
 	 * Construtor da classe Logger
 	 * @param array $logTypes array com os tipos de logs que se deseja gerar
-	 * @param string $curProcessName nome normalizado do processo que utilizará o log
+	 * @param string $curProcessName nome normalizado do processo que utilizarï¿½ o log
 	 * @return object Objeto da classe Logger
 	 * @access public
 	 */
@@ -97,13 +97,13 @@ class Logger
 					egw_wf_processes';
 
 			if(!($result = $this->dbGalaxia->query($query)))
-				throw new Exception(lang('Cannot execute query'));
+				throw new \Exception(lang('Cannot execute query'));
 
 			while($row = $result->fetchRow())
 				$processNames[] = $row['wf_normalized_name'];
 
 			if(!in_array($curProcessName, $processNames))
-				throw new Exception(lang('Cannot find the process provided'));
+				throw new \Exception(lang('Cannot find the process provided'));
 
 			$this->curProcessName = $curProcessName;
 		}
@@ -176,7 +176,7 @@ class Logger
 	/**
 	 * Configura e salva um objeto de log
 	 * @params string logType tipo de log a ser criado
-	 * @return object Objeto da classe Log_($logType) ou null caso o tipo de log não exista ou não seja permitido no frontend
+	 * @return object Objeto da classe Log_($logType) ou null caso o tipo de log nï¿½o exista ou nï¿½o seja permitido no frontend
 	 * @access private
 	 */
 	private function setLogType($logType)
@@ -190,9 +190,9 @@ class Logger
 	}
 
 	/**
-	 * Adiciona um tipo de log à composição de logs caso ela já não tenha sido adicionada
+	 * Adiciona um tipo de log ï¿½ composiï¿½ï¿½o de logs caso ela jï¿½ nï¿½o tenha sido adicionada
 	 * @params string $logType tipo de log a ser adicionado
-	 * @return boolean true no caso do tipo de log ter sido adicionado com sucesso, false caso contrário
+	 * @return boolean true no caso do tipo de log ter sido adicionado com sucesso, false caso contrï¿½rio
 	 * @access public
 	 */
 	public function addLogType($logType)
@@ -207,9 +207,9 @@ class Logger
 	}
 
 	/**
-	 * Remove um tipo de log da composição de logs
+	 * Remove um tipo de log da composiï¿½ï¿½o de logs
 	 * @params $logType tipo de log a ser removido
-	 * @return object Objeto Log_($logType) removido, ou null caso não tenha removido qualquer um
+	 * @return object Objeto Log_($logType) removido, ou null caso nï¿½o tenha removido qualquer um
 	 * @access public
 	 */
 	public function removeLogType($logType)
@@ -259,9 +259,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível emergência (sistema inoperante)
+	 * Grava um log do nï¿½vel emergï¿½ncia (sistema inoperante)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function emerg($message)
@@ -270,9 +270,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível alerta (ação imediata requerida)
+	 * Grava um log do nï¿½vel alerta (aï¿½ï¿½o imediata requerida)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function alert($message)
@@ -281,9 +281,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível crítico (situações críticas)
+	 * Grava um log do nï¿½vel crï¿½tico (situaï¿½ï¿½es crï¿½ticas)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function crit($message)
@@ -292,9 +292,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível erro (situações de erro)
+	 * Grava um log do nï¿½vel erro (situaï¿½ï¿½es de erro)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function err($message)
@@ -303,9 +303,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível aviso (condições de aviso - warning)
+	 * Grava um log do nï¿½vel aviso (condiï¿½ï¿½es de aviso - warning)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function warning($message)
@@ -314,9 +314,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível notificação (situações normais, mas significantes)
+	 * Grava um log do nï¿½vel notificaï¿½ï¿½o (situaï¿½ï¿½es normais, mas significantes)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function notice($message)
@@ -325,9 +325,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível informação (informacional)
+	 * Grava um log do nï¿½vel informaï¿½ï¿½o (informacional)
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function info($message)
@@ -336,9 +336,9 @@ class Logger
 	}
 
 	/**
-	 * Grava um log do nível debug
+	 * Grava um log do nï¿½vel debug
 	 * @params string $message Mensagem a ser gravada do log
-	 * @return boolean true em caso de sucesso e false caso contrário
+	 * @return boolean true em caso de sucesso e false caso contrï¿½rio
 	 * @access public
 	 */
 	public function debug($message)

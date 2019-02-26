@@ -1,4 +1,6 @@
 <?php
+	use Expresso\Core\GlobalService;
+
 	/**************************************************************************\
 	* eGroupWare API - Auth from LDAP                                          *
 	* This file written by Lars Kneschke <lkneschke@linux-at-work.de>          *
@@ -35,14 +37,14 @@
 				return False;
 			}
 
-			if(!$ldap = @ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']))
+			if(!$ldap = @ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']))
 			{
-				$GLOBALS['phpgw']->log->message('F-Abort, Failed connecting to LDAP server for authenication, execution stopped');
-				$GLOBALS['phpgw']->log->commit();
+				GlobalService::get('phpgw')->log->message('F-Abort, Failed connecting to LDAP server for authenication, execution stopped');
+				GlobalService::get('phpgw')->log->commit();
 				return False;
 			}
 
-			if($GLOBALS['phpgw_info']['server']['ldap_version3'])
+			if(GlobalService::get('phpgw_info')['server']['ldap_version3'])
 			{
 				ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 			}
@@ -50,27 +52,27 @@
 			ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
 			/* Login with the LDAP Admin. User to find the User DN.  */
-			if(!@ldap_bind($ldap, $GLOBALS['phpgw_info']['server']['ldap_root_dn'], $GLOBALS['phpgw_info']['server']['ldap_root_pw']))
+			if(!@ldap_bind($ldap, GlobalService::get('phpgw_info')['server']['ldap_root_dn'], GlobalService::get('phpgw_info')['server']['ldap_root_pw']))
 			{
 				return False;
 			}
 			/* find the dn for this uid, the uid is not always in the dn */
 			$attributes	= array('uid','dn','givenName','sn','mail','uidNumber','gidNumber');
 			
-			$filter = $GLOBALS['phpgw_info']['server']['ldap_search_filter'] ? $GLOBALS['phpgw_info']['server']['ldap_search_filter'] : '(uid=%user)';
-			$filter = str_replace(array('%user','%domain'),array($username,$GLOBALS['phpgw_info']['user']['domain']),$filter);
+			$filter = GlobalService::get('phpgw_info')['server']['ldap_search_filter'] ? GlobalService::get('phpgw_info')['server']['ldap_search_filter'] : '(uid=%user)';
+			$filter = str_replace(array('%user','%domain'),array($username,GlobalService::get('phpgw_info')['user']['domain']),$filter);
 
-			if ($GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap')
+			if (GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap')
 			{
 				$filter = "(&$filter(phpgwaccountstatus=A))";
 			}
 
-			$sri = ldap_search($ldap, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter, $attributes);
+			$sri = ldap_search($ldap, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter, $attributes);
 			$allValues = ldap_get_entries($ldap, $sri);
 
 			if ($allValues['count'] > 0)
 			{
-				if($GLOBALS['phpgw_info']['server']['case_sensitive_username'] == true)
+				if(GlobalService::get('phpgw_info')['server']['case_sensitive_username'] == true)
 				{
 					if($allValues[0]['uid'][0] != $username)
 					{
@@ -80,7 +82,7 @@
 				/* we only care about the first dn */
 				$userDN = $allValues[0]['dn'];
 
-				$GLOBALS['phpgw']->session->phpgw_setcookie('last_dn', $userDN ,time()+1209600); /* For 2 weeks */
+				GlobalService::get('phpgw')->session->phpgw_setcookie('last_dn', $userDN ,time()+1209600); /* For 2 weeks */
 				/*
 				generate a bogus password to pass if the user doesn't give us one 
 				this gets around systems that are anonymous search enabled
@@ -92,13 +94,13 @@
 				/* try to bind as the user with user suplied password */
 				if (@ldap_bind($ldap, $userDN, $passwd))
 				{
-					if ($GLOBALS['phpgw_info']['server']['account_repository'] != 'ldap')
+					if (GlobalService::get('phpgw_info')['server']['account_repository'] != 'ldap')
 					{
 						$account = CreateObject('phpgwapi.accounts',$username,'u');
-						if (!$account->account_id && $GLOBALS['phpgw_info']['server']['auto_create_acct'])
+						if (!$account->account_id && GlobalService::get('phpgw_info')['server']['auto_create_acct'])
 						{
 							// create a global array with all availible info about that account
-							$GLOBALS['auto_create_acct'] = array();
+							GlobalService::set('auto_create_acct', array());
 							foreach(array(
 								'givenname' => 'firstname',
 								'sn'        => 'lastname',
@@ -107,8 +109,8 @@
 								'gidnumber' => 'primary_group',
 							) as $ldap_name => $acct_name)
 							{
-								$GLOBALS['auto_create_acct'][$acct_name] =
-									$GLOBALS['phpgw']->translation->convert($allValues[0][$ldap_name][0],'utf-8');
+								GlobalService::get('auto_create_acct')[$acct_name] =
+									GlobalService::get('phpgw')->translation->convert($allValues[0][$ldap_name][0],'utf-8');
 							}
 							return True;
 						}
@@ -126,32 +128,32 @@
 		{
 			if ('' == $_account_id)
 			{
-				$username = $GLOBALS['phpgw_info']['user']['account_lid'];
+				$username = GlobalService::get('phpgw_info')['user']['account_lid'];
 			}
 			else
 			{
-				$username = $GLOBALS['phpgw']->accounts->id2name($_account_id);
+				$username = GlobalService::get('phpgw')->accounts->id2name($_account_id);
 			}
-			$filter = $GLOBALS['phpgw_info']['server']['ldap_search_filter'] ? $GLOBALS['phpgw_info']['server']['ldap_search_filter'] : '(uid=%user)';
-			$filter = str_replace(array('%user','%domain'),array($username,$GLOBALS['phpgw_info']['user']['domain']),$filter);
+			$filter = GlobalService::get('phpgw_info')['server']['ldap_search_filter'] ? GlobalService::get('phpgw_info')['server']['ldap_search_filter'] : '(uid=%user)';
+			$filter = str_replace(array('%user','%domain'),array($username,GlobalService::get('phpgw_info')['user']['domain']),$filter);
 
 			// LDAP Replication mode. 
-			if ( (!empty($GLOBALS['phpgw_info']['server']['ldap_master_host'])) &&
-				 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_dn'])) &&
-			 	 (!empty($GLOBALS['phpgw_info']['server']['ldap_master_root_pw'])) )
+			if ( (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_host'])) &&
+				 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'])) &&
+			 	 (!empty(GlobalService::get('phpgw_info')['server']['ldap_master_root_pw'])) )
 			{
-				$ds = $GLOBALS['phpgw']->common->ldapConnect(
-											   $GLOBALS['phpgw_info']['server']['ldap_master_host'],
-											   $GLOBALS['phpgw_info']['server']['ldap_master_root_dn'],
-											   $GLOBALS['phpgw_info']['server']['ldap_master_root_pw']
+				$ds = GlobalService::get('phpgw')->common->ldapConnect(
+											   GlobalService::get('phpgw_info')['server']['ldap_master_host'],
+											   GlobalService::get('phpgw_info')['server']['ldap_master_root_dn'],
+											   GlobalService::get('phpgw_info')['server']['ldap_master_root_pw']
 											   );
 			}
 			else
 			{
-				$ds = $GLOBALS['phpgw']->common->ldapConnect();
+				$ds = GlobalService::get('phpgw')->common->ldapConnect();
 			}
 
-			$sri = ldap_search($ds, $GLOBALS['phpgw_info']['server']['ldap_context'], $filter);
+			$sri = ldap_search($ds, GlobalService::get('phpgw_info')['server']['ldap_context'], $filter);
 			$allValues = ldap_get_entries($ds, $sri);
 			$entry['userpassword'] = $this->encrypt_password($new_passwd);
 			$entry['phpgwlastpasswdchange'] = time();
@@ -197,7 +199,7 @@
 			{
 				return false;
 			}
-			$GLOBALS['phpgw']->session->appsession('password','phpgwapi',base64_encode($new_passwd));
+			GlobalService::get('phpgw')->session->appsession('password','phpgwapi',base64_encode($new_passwd));
 			return $new_passwd;
 		}
 
@@ -208,7 +210,7 @@
 			//system('echo "CP new_passwd: '.$new_passwd.'" >>/tmp/controle');
 			//system('echo "CP dn: '.$dn.'" >>/tmp/controle');
 			//system('echo "CP referrals: '.$referrals.'" >>/tmp/controle');
-			$ds=ldap_connect($GLOBALS['phpgw_info']['server']['ldap_host']);
+			$ds=ldap_connect(GlobalService::get('phpgw_info')['server']['ldap_host']);
 			if (!$ds)
 				{
 				//system('echo "CP Nao conectou no ldap" >>/tmp/controle');
@@ -224,7 +226,7 @@
 					$this->dn=$dn;
 					ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 					ldap_set_option($ds, LDAP_OPT_REFERRALS, 1);
-					if($GLOBALS['phpgw_info']['server']['diretorioescravo'])
+					if(GlobalService::get('phpgw_info')['server']['diretorioescravo'])
 						{
 						ldap_set_rebind_proc($ds, array($this, '_rebindProc'));
 						}
@@ -234,7 +236,7 @@
 					{
 					//system('echo "CP nao conseguiu dar bind" >>/tmp/controle');
 					//Se a politica estiver no diretorio eh necessario tentar alterar a senha mesmo que nao haja um bind, pois a negacao de bind pode ser proveniente de uma expiracao
-					if($GLOBALS['phpgw_info']['server']['politicasenhas']=='diretorio')
+					if(GlobalService::get('phpgw_info')['server']['politicasenhas']=='diretorio')
 						{
 						//system('echo "CP politica eh no diretorio" >>/tmp/controle');
 						if (!@ldap_mod_replace($ds,$dn,$modify))
@@ -246,7 +248,7 @@
 							else
 							{
 							//system('echo "CP replace funcionou!" >>/tmp/controle');
-                                                        $GLOBALS['phpgw']->session->appsession('password','phpgwapi',base64_encode($new_passwd));
+                                                        GlobalService::get('phpgw')->session->appsession('password','phpgwapi',base64_encode($new_passwd));
 							return $new_passwd;
 							}
 						}
@@ -263,7 +265,7 @@
 						}
 						else
 						{
-						$GLOBALS['phpgw']->session->appsession('password','phpgwapi',base64_encode($new_passwd));
+						GlobalService::get('phpgw')->session->appsession('password','phpgwapi',base64_encode($new_passwd));
                                                 return $new_passwd;
 						}
 					}
@@ -273,13 +275,13 @@
 
 		function update_lastlogin($_account_id, $ip)
 		{
-			if ($GLOBALS['phpgw_info']['server']['account_repository'] == 'ldap')
+			if (GlobalService::get('phpgw_info')['server']['account_repository'] == 'ldap')
 			{
 				$entry['phpgwaccountlastlogin']     = time();
 				$entry['phpgwaccountlastloginfrom'] = $ip;
 	
-				$ds = $GLOBALS['phpgw']->common->ldapConnect();
-				$sri = ldap_search($ds, $GLOBALS['phpgw_info']['server']['ldap_context'], 'uidnumber=' . (int)$_account_id);
+				$ds = GlobalService::get('phpgw')->common->ldapConnect();
+				$sri = ldap_search($ds, GlobalService::get('phpgw_info')['server']['ldap_context'], 'uidnumber=' . (int)$_account_id);
 				$allValues = ldap_get_entries($ds, $sri);
 	
 				$dn = $allValues[0]['dn'];
@@ -289,11 +291,11 @@
 			}
 			else
 			{
-				$GLOBALS['phpgw']->db->query("select account_lastlogin from phpgw_accounts where account_id='$_account_id'",__LINE__,__FILE__);
-				$GLOBALS['phpgw']->db->next_record();
-				$this->previous_login = $GLOBALS['phpgw']->db->f('account_lastlogin');
+				GlobalService::get('phpgw')->db->query("select account_lastlogin from phpgw_accounts where account_id='$_account_id'",__LINE__,__FILE__);
+				GlobalService::get('phpgw')->db->next_record();
+				$this->previous_login = GlobalService::get('phpgw')->db->f('account_lastlogin');
 	
-				$GLOBALS['phpgw']->db->query("update phpgw_accounts set account_lastloginfrom='"
+				GlobalService::get('phpgw')->db->query("update phpgw_accounts set account_lastloginfrom='"
 					. "$ip', account_lastlogin='" . time()
 					. "' where account_id='$_account_id'",__LINE__,__FILE__);
 			}

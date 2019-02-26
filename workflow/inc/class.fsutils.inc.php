@@ -1,7 +1,7 @@
 <?php
 /**
  * Supporting class for file system handling.
- * @author Carlos Eduardo Nogueira Gonçalves
+ * @author Carlos Eduardo Nogueira Gonï¿½alves
  * @version 1.0
  * @package Workflow
  * @license http://www.gnu.org/copyleft/gpl.html GPL
@@ -26,7 +26,6 @@ class FsUtils {
 	/**
 	 * Sets constants and initializes attributes
 	 * @access public
-	 * @return FileSystem
 	 */
 	function FsUtils()
 	{
@@ -65,19 +64,19 @@ class FsUtils {
 		$absolute = $this->processDir . $path; /* absolute path to the processes dir - prevents access to other dirs */
 
 		if (! is_dir($absolute) ) {			
-			$this->_appendError("O caminho $absolute não é um diretório.");
+			$this->_appendError("O caminho $absolute nï¿½o ï¿½ um diretï¿½rio.");
 			return false; 
 		}
 		
 		if (! $dir = @opendir($absolute) ) {			
-			$this->_appendError("O diretório $absolute não pode ser lido.");
+			$this->_appendError("O diretï¿½rio $absolute nï¿½o pode ser lido.");
 			return false; 					
 		} else {			
 			while ( false !== ( $fileName = readdir($dir) ) ) {				
 				$file = $absolute . $fileName; /* gets full path reference */
 				if ( is_file($file) ) { /* ignores subdirs */										
 					if (! is_readable($file) ) {
-						$this->_appendError("O arquivo " . $path . $file . " não pode ser lido.");
+						$this->_appendError("O arquivo " . $path . $file . " nï¿½o pode ser lido.");
 					} else {
 						@$contents[$fileName] = file_get_contents($file); /* reads each file contents */						
 					}								
@@ -103,11 +102,11 @@ class FsUtils {
 		$absolute = $this->configDir . $configFile; /* absolute path to the config file - prevents access to other dirs */
 		
 		if (! file_exists($absolute) ) {			
-			return "O arquivo $configFile não existe.";
+			return "O arquivo $configFile nï¿½o existe.";
 		} elseif (! is_file($absolute) ) {
-			return $configFile . " não é um arquivo comum.";
+			return $configFile . " nï¿½o ï¿½ um arquivo comum.";
 		} elseif (! is_readable($absolute) ) {
-			return "O arquivo $configFile não pode ser lido.";
+			return "O arquivo $configFile nï¿½o pode ser lido.";
 		}
 
 		return parse_ini_file($absolute);
